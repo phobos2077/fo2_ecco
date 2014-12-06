@@ -1,0 +1,202 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/******************************************************************************************
+        Item: Library Comptuer
+        Description: On Vault 15 map in the library on level 1
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: September 26, 1997
+
+           Updated:
+******************************************************************************************/
+
+
+/* Include Files */
+#include "..\headers\define.h"
+
+#define NAME                    SCRIPT_BSCOMP1
+#define CUR_COMP_SCRIPT         SCRIPT_BSCOMP1
+
+#include "..\headers\command.h"
+#include "..\headers\v15.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure use_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure use_obj_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure talk_p_proc;
+
+/*****************************************************************
+   Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_
+*****************************************************************/
+#define LVAR_Got_Info                    (0)
+
+/*******************************************************************
+   Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_)
+*******************************************************************/
+
+/*******************************************************************
+   Local variables which do not need to be saved between map changes.
+*******************************************************************/
+
+
+/*******************************************************************
+*******                         PROCEDURES                   *******
+*******************************************************************/
+
+procedure Node001;
+procedure Node002;
+procedure Node999;
+
+#include "learn_craft.h"
+procedure NodeCraft1; // pbs
+
+/*******************************************************************
+   The start procedure is the first procedure called when the map is
+   first entered. Any initial information that needs to be set up
+   should be placed in here.
+*******************************************************************/
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+end
+
+/********************************************************************
+********************************************************************/
+
+procedure use_p_proc begin
+   script_overrides;
+   dialogue_system_enter;
+end
+
+/***************************************************************************
+   This is cursory glance description that the player will receive should
+   he just pass the Action Cursor over. Examines which give more information
+   need to be in the description_p_proc procedure.
+***************************************************************************/
+
+procedure look_at_p_proc begin
+   script_overrides;
+//   if (local_var(LVAR_Herebefore) == 0) then
+//      display_msg(mstr(101));
+//   else
+      display_msg(mstr(101));
+end
+
+
+/**********************************************************************************
+**********************************************************************************/
+
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+
+/**********************************************************************************
+   Make sure the door is working.
+**********************************************************************************/
+
+procedure use_skill_on_p_proc begin
+   variable Skill_Used;
+
+   Skill_Used:=action_being_used;
+
+   if (Skill_Used == SKILL_SCIENCE) then
+      call use_p_proc;
+end
+
+
+/**********************************************************************************
+   This is called when the player is using an object on the door. When the check is
+   made to find out what is being used, obj_pid(obj_being_used_with) will need to
+   be checked against a prototype.
+**********************************************************************************/
+
+procedure use_obj_on_p_proc begin
+end
+
+
+/******************************************************************************************
+   IF it gets damaged it breaks
+******************************************************************************************/
+
+procedure damage_p_proc begin
+end
+
+/***************************************************************************************
+   Whenever the map is first entered, this procedure will be called.
+***************************************************************************************/
+
+procedure map_enter_p_proc begin
+end
+
+
+/**************************************************************************************
+   This procedure gets called roughly every 30 seconds of real time.
+**************************************************************************************/
+
+procedure map_update_p_proc begin
+end
+
+procedure talk_p_proc begin
+   if (local_var(LVAR_Got_Info) == 0) then begin
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+          call Node001;
+      gSay_End;
+      end_dialogue;
+   end else begin
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+          call Node002;
+      gSay_End;
+      end_dialogue;
+   end
+end
+
+procedure Node999 begin
+end
+
+procedure Node001 begin
+   if (is_success(roll_vs_skill(dude_obj, SKILL_SCIENCE, 0))) then begin
+      set_local_var(LVAR_Got_Info, 1);
+      mark_vault_13_on_map
+      Reply(103);
+      NOption(200, NodeCraft1, 004); // pbs
+   end else begin
+      Reply(104);
+      ENDOPTION; // pbs
+   end
+   // ENDOPTION;
+end
+
+procedure Node002 begin
+   Reply(106);
+   ENDOPTION;
+end
+
+procedure NodeCraft1 begin
+   Reply(201);
+   set_sfall_global(SGVAR_CRAFT_ELECTRONICS, 1);
+   set_sfall_global(SGVAR_CRAFT_ELECTRONICS2, 1);
+   display_msg(fixit_mstr(85));
+   ENDOPTION;
+end

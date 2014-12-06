@@ -1,0 +1,872 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Grisham
+        Location: Modoc
+        Description: Father of the two you can marry.
+
+        Log: the following defines need to be changed:
+
+
+          Created: February 15, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+#define NAME                        SCRIPT_MCGRISHA
+#define TOWN_REP_VAR                GVAR_TOWN_REP_MODOC
+
+#include "..\headers\command.h"
+#include "..\headers\modoc.h"
+#include "..\headers\modBrah.h"
+#include "..\headers\ModReact.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_exit_p_proc;
+procedure combat_p_proc;
+procedure timed_event_p_proc;
+procedure push_p_proc;
+
+// dialog nodes
+procedure Node000;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node040;
+procedure Node041;
+procedure Node042;
+procedure Node043;
+procedure Node044;
+procedure Node045;
+procedure Node046;
+procedure Node047;
+procedure Node048;
+procedure Node050;
+procedure Node051;
+procedure Node052;
+
+procedure Node999;                                      // This is the do nothing node
+procedure Node998;                                      // This Node is Always Combat
+procedure Node996;
+procedure Node995;
+procedure Node994;
+procedure Node993;
+procedure Node992;
+procedure Node991;
+procedure Node990;
+procedure Node989;
+procedure Node988;
+procedure Node987;
+procedure Node985;
+
+#define LVAR_Home_Tile                    (4)
+#define LVAR_Flags                        (5)
+
+#define grisham_angry_bit                 bit_10
+#define offered_job_bit                   bit_11
+#define found_catch_bit                   bit_12
+#define drew_gun_bit                      bit_13
+
+#define grisham_angry                     lvar_bit(LVAR_Flags, grisham_angry_bit)
+#define set_grisham_angry                 set_lvar_bit_on(LVAR_Flags, grisham_angry_bit)
+
+#define offered_job                       lvar_bit(LVAR_Flags, offered_job_bit)
+#define set_offered_job                   set_lvar_bit_on(LVAR_Flags, offered_job_bit)
+
+#define found_catch                       lvar_bit(LVAR_Flags, found_catch_bit)
+#define set_found_catch                   set_lvar_bit_on(LVAR_Flags, found_catch_bit)
+
+#define drew_gun                          lvar_bit(LVAR_Flags, drew_gun_bit)
+#define set_drew_gun                      if (drew_gun == false) then begin                     \
+                                          end                                                   \
+                                          set_lvar_bit_on(LVAR_Flags, drew_gun_bit)
+                                          /*
+                                             if (cur_map_index != MAP_GHOST_FARM) then begin    \
+                                                remove_pid_qty(self_obj, PID_SHOTGUN, 1)        \
+                                                arm_obj(self_obj, PID_SHOTGUN, 1, 0, 0)         \
+                                             end                                                \
+                                          */
+
+variable current_seat;
+import variable modoc_grisham_box_obj;
+import variable generic_temp_box;
+import variable modoc_jo_obj;
+import variable ghost_farm_slag_obj;
+
+procedure start begin
+end
+
+procedure push_p_proc begin
+   if ((self_tile == local_var(LVAR_Home_Tile)) or (is_staging_wedding) or (is_staging_rape)) then begin
+      script_overrides;
+   end
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == param_clear_float) then begin
+      float_msg(self_obj, " ", FLOAT_COLOR_NORMAL);
+      float_msg(dude_obj, " ", FLOAT_COLOR_NORMAL);
+      float_msg_clear(self_obj);
+      float_msg_clear(dude_obj);
+   end
+end
+procedure combat_p_proc begin
+   if (dude_enemy_modoc) then begin
+      if (self_team == TEAM_PLAYER) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_MODOC);
+      end
+   end else if (cur_map_index == MAP_GHOST_FARM) then begin
+      critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+   end
+end
+
+procedure map_enter_p_proc begin
+   //added by killap
+   if (grisham_dead) then begin
+      destroy_object(self_obj);
+   end
+   //end added by killap
+
+   reg_anim_clear(dude_obj); //added by killap
+   
+   match_dude_elevation;
+   
+   //added by killap
+   //if (grisham_dead) then begin
+   //   if (cur_map_index == MAP_GHOST_FARM) then begin
+   //      check_set_obj_visiblility(self_obj, true);
+   //      destroy_object(self_obj);
+   //   end                     
+   //end else begin
+      check_show_ghost_farm_attackers
+   //end
+   //end added by killap
+   
+   if (map_first_run) then begin
+      set_local_var(LVAR_Home_Tile, self_tile);
+      if (cur_map_index != MAP_GHOST_FARM) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_MODOC);
+      end
+      critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_PEASANT);
+   end else if (cur_map_index != MAP_GHOST_FARM) then begin
+      critter_attempt_placement(self_obj, local_var(LVAR_Home_Tile), dude_elevation);
+   end
+
+end
+procedure map_exit_p_proc begin
+   if ((is_staging_rape) or (is_staging_wedding)) then begin
+      clear_stage
+      set_enemy_modoc;
+   end
+end
+
+procedure critter_p_proc begin
+   if (is_staging_wedding) then begin
+      off_hostile;
+      if (self_is_armed == false) then begin
+         arm_obj(self_obj, PID_SHOTGUN, 1, 0, 1) //added by killap
+         //set_drew_gun; --comment out by killap - did nothing and everytime you enter dialog, you must rearm, so making note of being armed is meaningless
+      end
+      if (get_sub_stage == wedding_stage_place_important) then begin
+         set_sub_stage(wedding_stage_place_party)
+      end else if (get_sub_stage == wedding_stage_place_party) then begin
+         // place regular party members
+         current_seat := 1;
+         check_seat_party_member(Vic)
+         check_seat_party_member(Myron)
+         check_seat_party_member(MacRae)
+         check_seat_party_member(Sulik)
+         check_seat_party_member(Lenny)
+         check_seat_party_member(Doc)
+         // place odd party members
+         if (current_seat <= 8) then begin
+            current_seat := 9;
+         end
+         check_seat_party_member(Marcus)
+         check_seat_party_member(Cyberdog)
+         check_seat_party_member(Goris)
+         check_seat_party_member(Laddie)
+         check_seat_party_member(Robobrain)
+         check_seat_party_member(Bess)
+         set_sub_stage(wedding_stage_place_butcher_1)
+      end else if ((get_sub_stage == wedding_stage_place_butcher_1) or (get_sub_stage == wedding_stage_place_butcher_2)) then begin
+         set_sub_stage(wedding_stage_place_guest_1)
+      end else if (is_staging_wedding_placing_guests) then begin
+         set_sub_stage(wedding_stage_ready)
+      end else if (stage_time_ready) then begin
+         if (get_sub_stage == wedding_stage_grisham_what) then begin
+            if ( ( (self_can_see_dude) or (dude_is_sneaking) ) and (anim_busy(self_obj) == false)) then begin //edit by killap - added (dude_is_sneaking)
+               gfade_in(1);
+               game_ui_enable;
+               floater_bad(400);
+               set_next_stage_time(quick_stage_time)
+               set_sub_stage(wedding_stage_what_response)
+            end else begin
+               critter_attempt_placement(self_obj, ((28103 * is_staging_miria_wedding) + (28097 * is_staging_davin_wedding)), self_elevation); // Altered by Seraph
+            end
+         end else if (get_sub_stage == wedding_stage_grisham_response) then begin
+            if (sex_act_straight) then begin
+               floater_type_msg(mstr(403 + (1000*grisham_dead)) + mstr(412 + is_staging_davin_wedding + (1000*grisham_dead)) + mstr(453), FLOAT_COLOR_BAD); // Seraph's Fix: added (1000*grisham_dead)
+            end else begin
+               floater_type_msg(mstr(402) + mstr(412 + is_staging_davin_wedding) + mstr(452), FLOAT_COLOR_BAD);
+            end
+            set_next_stage_time(wait_stage_time)
+            set_sub_stage(wedding_stage_response_wait)
+         end else if (get_sub_stage == wedding_stage_response_wait) then begin
+            gfade_out(1);
+            game_time_advance(5*ONE_GAME_MINUTE); //added by killap
+            move_to(modoc_jo_obj, church_jo_spot, dude_elevation);
+            place_in_church_seat(self_obj, church_grisham_seat);
+            place_in_church_seat(dude_obj, church_player_seat);
+            game_ui_disable;
+            reg_anim_clear(dude_obj);
+            set_sub_stage(wedding_stage_place_important)
+         end else if (get_sub_stage == wedding_stage_ask_skip) then begin
+            floater(404 + (10*jo_dead)); // Altered by Seraph: added (10*jo_dead)
+            set_next_stage_time(quick_stage_time)
+            set_sub_stage(wedding_stage_jo_question)
+         end else if (get_sub_stage == wedding_stage_question_response_2) then begin
+            floater_bad(406 + dude_is_female);
+            set_next_stage_time(quick_stage_time)
+            set_sub_stage(wedding_stage_continue)
+         end else if (get_sub_stage == wedding_stage_grisham_response_2) then begin
+            floater_type_msg(mstr(410) + mstr(412 + is_staging_davin_wedding) + mstr(460 + is_staging_davin_wedding), FLOAT_COLOR_BAD);
+            set_next_stage_time(default_stage_time)
+            set_sub_stage(wedding_stage_player_vow_response)
+            set_local_var(LVAR_Home_Tile, 28710); //added by killap
+         end
+      end else if (get_sub_stage == wedding_stage_response_wait) then begin
+         if (get_sub_stage == wedding_stage_grisham_what) then begin
+            if (is_staging_davin_wedding) then begin
+              animate_run_to_tile(27495);
+            end else begin
+              animate_run_to_tile(27501);
+            end
+         end else begin
+            Follow_Dude_Run_Only(4, 1)
+         end
+         if (tile_in_grisham_wedding_wait_zone(dude_tile) == false) then begin
+            floater_bad(420 + dude_is_female); // Seraph's Fix: changed '220' to '420'; thanks Wasteland Ghost!
+            call Node998;
+         end
+      end
+   end else if (is_staging_rape) then begin
+      if (self_is_armed == false) then begin
+         arm_obj(self_obj, PID_SHOTGUN, 1, 0, 1) //added by killap
+         //set_drew_gun;  --comment out by killap - did nothing and everytime you enter dialog, you must rearm, so making note of being armed is meaningless
+      end
+      if ( (self_can_see_dude) or (dude_is_sneaking) ) then begin //edit by killap - added (dude_is_sneaking)
+         /* if (inven_count(dude_obj) > 0) then begin // Disabled by Seraph
+            clear_stage
+            self_attack_dude;
+         end else */ if (stage_time_ready) then begin
+            if (get_sub_stage == rape_stage_confront) then begin
+               game_ui_enable;
+               gfade_in(1);
+               floater_bad(300);
+               set_next_stage_time(quick_stage_time)
+               set_sub_stage(rape_stage_go_away)
+            end else if (get_sub_stage == rape_stage_go_away) then begin
+               dude_floater(301);
+               set_next_stage_time(quick_stage_time)
+               set_sub_stage(rape_stage_attack)
+            end else if (get_sub_stage == rape_stage_attack) then begin
+               floater_bad(302);
+               set_next_stage_time(quick_stage_time)
+               set_enemy_modoc;
+               clear_stage
+            end
+         end
+      end else begin
+         if (get_sub_stage == rape_stage_confront) then begin
+            animate_run_to_tile(27501);
+         end else begin
+            Follow_Dude_Run_Only(4, 1)
+         end
+      end
+   end else begin
+      if (cur_map_index == MAP_GHOST_FARM) then begin
+         Do_Attacking_Slag(13,10)
+      end else if (self_can_see_dude) then begin
+         if ((hostile) or (dude_enemy_modoc)) then begin
+            self_attack_dude;
+         end
+      end
+      if (self_tile != local_var(LVAR_Home_Tile)) then begin
+         anim_move_to_point_rate(local_var(LVAR_Home_Tile), 5)
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_hostile;
+      set_enemy_modoc;
+      if ((is_staging_rape) or (is_staging_wedding)) then begin
+         clear_stage
+      end
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+variable temp_dog;
+   debug_msg("talk_p_proc");
+   if (cur_map_index == MAP_GHOST_FARM) then begin
+      kill_them_all_floater;
+   end else if (is_staging_rape) then begin
+   end else if (is_staging_wedding) then begin
+      if (get_sub_stage == wedding_stage_response_wait) then begin
+         move_obj_inven_to_obj(self_obj,generic_temp_box);
+         move_obj_inven_to_obj(modoc_grisham_box_obj,self_obj);
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            if (sex_act_straight) then begin
+               call Node041;
+            end else begin
+               call Node040;
+            end
+         gSay_End;
+         end_dialogue;
+         move_obj_inven_to_obj(self_obj,modoc_grisham_box_obj);
+         move_obj_inven_to_obj(generic_temp_box,self_obj);
+         if (is_staging_wedding) then begin
+            set_next_stage_time_only(0)
+         end
+      end
+   end else begin
+      script_overrides;
+      if (grisham_angry) then begin
+         floater(random(151,154));
+      end else if ((dude_is_married) and not(brahmin_seed_active)) then begin // edit by killap - added not(brahmin_seed_active)
+         if (marriage_same_sex) then begin
+            floater(random(156 - dude_spouse_is_female + (1000*grisham_dead),157 + dude_spouse_is_male + (1000*grisham_dead))); // Seraph's Fix: added (1000*grisham_dead)
+         end else begin
+            floater(random(160 - dude_spouse_is_female + (1000*grisham_dead),160 + dude_spouse_is_male + (1000*grisham_dead))); // Seraph's Fix: added (1000*grisham_dead)
+         end
+      end else if (dude_was_married) then begin
+         if (grisham_dead == false) then begin
+            move_obj_inven_to_obj(self_obj,generic_temp_box);
+            move_obj_inven_to_obj(modoc_grisham_box_obj,self_obj);
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node050;
+            gSay_End;
+            end_dialogue;
+            move_obj_inven_to_obj(self_obj,modoc_grisham_box_obj);
+            move_obj_inven_to_obj(generic_temp_box,self_obj);
+         end
+
+         if (grisham_dead) then begin
+            kill_critter(self_obj, random(ANIM_fall_back_sf, ANIM_fall_front_sf));
+         end
+      end else begin
+         if (global_var(GVAR_MODOC_KILL_ALL_BRAHMIN_TIME) != 0) then begin
+            check_kill_all_brahmin
+         end
+         set_dude_met_grisham;
+         move_obj_inven_to_obj(self_obj,generic_temp_box);
+         move_obj_inven_to_obj(modoc_grisham_box_obj,self_obj);
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            if (herebefore == false) then begin
+               call Node000;
+            end else if (brahmin_seed_active) then begin
+               if (all_brahmin_dead) then begin
+                  call Node003;
+               end else begin
+                  call Node002;
+               end
+            end else begin
+               call Node001;
+            end
+         gSay_End;
+         end_dialogue;
+         move_obj_inven_to_obj(self_obj,modoc_grisham_box_obj);
+         move_obj_inven_to_obj(generic_temp_box,self_obj);
+      end
+      set_herebefore;
+      debug_msg("  brahmin seed state == "+global_var(GVAR_MODOC_BRAHMIN_SEED));
+   end
+   //added by killap
+   if (self_is_armed == false) then begin
+      arm_obj(self_obj, PID_SHOTGUN, 1, 0, 0) //added by killap
+      //set_drew_gun; --comment out by killap - did nothing and everytime you enter dialog, you must rearm, so making note of being armed is meaningless
+   end
+   //end added  
+end
+
+procedure destroy_p_proc begin
+   /*if (grisham_dead) then begin
+      destroy_object(self_obj);
+   end*/
+   inc_good_critter
+   set_grisham_dead;
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   if (herebefore) then begin
+      display_msg(mstr(101 + (1000*grisham_dead))); // Seraph's Fix: added (1000*grisham_dead)
+   end else begin
+      display_msg(mstr(100));
+   end
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+// dialog action functions
+procedure Node999 begin
+  // do absolutely everything that pertains to nothing
+end
+procedure Node998 begin
+   set_hostile;
+end
+procedure Node996 begin
+   if (brahmin_seed_unknown) then begin
+      call Node012;
+   end else begin
+      call Node999;
+   end
+end
+procedure Node995 begin
+   if (brahmin_seed_unknown) then begin
+      call Node029;
+   end else begin
+      call Node999;
+   end
+end
+procedure Node994 begin
+   if (is_success(roll_vs_skill(dude_obj,SKILL_CONVERSANT,0))) then begin
+      call Node020;
+   end else begin
+      call Node016;
+   end
+end
+procedure Node993 begin
+   item_caps_adjust(self_obj,1500);
+   item_caps_adjust(dude_obj,-1500);
+   call Node021;
+end
+procedure Node992 begin
+   if (dude_caps >= 10) then begin
+      call Node011;
+   end else begin
+      call Node031;
+   end
+end
+procedure Node991 begin
+   item_caps_adjust(self_obj,1000);
+   item_caps_adjust(dude_obj,-1000);
+   call Node021;
+end
+procedure Node990 begin
+   if (is_success(roll_vs_skill(dude_obj,SKILL_CONVERSANT,-20))) then begin
+      call Node022;
+   end else begin
+      call Node026;
+   end
+end
+procedure Node989 begin
+   item_caps_adjust(self_obj,750);
+   item_caps_adjust(dude_obj,-750);
+   call Node024;
+end
+procedure Node988 begin
+   if (is_success(roll_vs_skill(dude_obj,SKILL_CONVERSANT,-50))) then begin
+      call Node023;
+   end else begin
+      call Node026;
+   end
+end
+procedure Node987 begin
+   item_caps_adjust(self_obj,50);
+   item_caps_adjust(dude_obj,-50);
+   call Node024;
+end
+procedure Node985 begin
+   if (is_success(roll_vs_skill(dude_obj,SKILL_CONVERSANT,0))) then begin
+      call Node047;
+   end else begin
+      call Node048;
+   end
+end
+procedure Node983 begin
+   set_brahmin_seed_active;
+   gfade_out(1);
+      game_time_advance_hour(dog_attack_late_hour - 1);
+      load_map(MAP_MODOC_BRAHMINPASTURES,0);
+   gfade_in(1);
+end
+
+// dialog nodes
+procedure Node000 begin
+   Reply(162);
+   NOption(163,Node010,004);
+   if (family_feud_seed_active) then begin
+      NOption(164,Node017,004);
+   end
+   if (Bess_In_Party) then begin
+      if ((obj_can_see_obj(self_obj, Bess_Ptr)) or (obj_can_see_obj(dude_obj, Bess_Ptr)) or (tile_distance_objs(self_obj, Bess_Ptr) < 6)) then begin
+         NOption(350,Node004,004);
+      end
+   end
+   NOption(g_bye,Node996,004);
+   NOption(g_grunt,Node995,-003);
+end
+procedure Node001 begin
+   Reply(165);
+   NOption(166,Node010,004);
+   if (family_feud_seed_active) then begin
+      NOption(164,Node017,004);
+   end
+   if (Bess_In_Party) then begin
+      if ((obj_can_see_obj(self_obj, Bess_Ptr)) or (obj_can_see_obj(dude_obj, Bess_Ptr)) or (tile_distance_objs(self_obj, Bess_Ptr) < 6)) then begin
+         NOption(360,Node004,004);
+      end
+   end
+   NOption(168,Node027,004);
+   NOption(169,Node028,004);
+   NOption(g_bye,Node996,004);
+   NOption(g_grunt,Node995,-003);
+end
+procedure Node002 begin
+   item_caps_adjust(dude_obj, brahmin_seed_reward);
+   set_brahmin_seed_inactive;
+   
+   //moved out of the 'if' statement below to allow both cases (no brahmin killed/some brahmin killed) to get the rewards- killap
+   inc_global_var_amt(GVAR_TOWN_REP_MODOC,REP_TOWN_FINISH_BRAHMIN_SEED); // Seraph's Fix: changed 'inc_global_var' to 'inc_global_var_amt'. Thanks Rob!
+   display_mstr(800);
+   give_xp(EXP_FINISH_BRAHMIN_SEED);
+   //end move out of 'if' statement
+   
+   if (brahmin_killed > 0) then begin
+//      inc_global_var_amt(GVAR_TOWN_REP_MODOC,REP_TOWN_FINISH_BRAHMIN_SEED); // Seraph's Fix: changed 'inc_global_var' to 'inc_global_var_amt'. Thanks Rob!
+//      display_mstr(800);
+//      give_xp(EXP_FINISH_BRAHMIN_SEED);
+      Reply(mstr(170) + brahmin_killed + mstr(171) + brahmin_seed_reward + mstr(172));
+      if (found_catch == false) then begin
+         NOption(173,Node018,004);
+         NOption(174,Node019,004);
+      end
+   end else begin
+      Reply(260);
+   end
+   NOption(175,Node999,004);
+   NOption(g_grunt,Node999,-003);
+end
+procedure Node003 begin
+   Reply(176);
+   if (dude_caps >= 1500) then begin
+      NOption(177,Node994,006);
+      NOption(g_mstr(355),Node993,001);
+   end
+   NOption(178,Node024,004);
+   NOption(179,Node999,004);
+   NOption(g_grunt,Node033,-003);
+end
+
+procedure Node004 begin
+   Reply(500);
+   NOption(501,Node005,004);
+   NOption(502,Node006,004);
+   NOption(503,Node996,004);
+end
+procedure Node005 begin
+   Reply(510);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node006 begin
+   gfade_out(ONE_GAME_SECOND);
+      inc_general_rep(REP_BONUS_MODOC_SELL_BESS);
+      critter_attempt_placement(Bess_Ptr, bess_in_pen_tile, dude_elevation);
+      party_remove(Bess_Ptr);
+      set_sold_bess_for_jerky
+   gfade_in(ONE_GAME_SECOND);
+   Reply(515);
+   NOption(g_mstr(350),Node996,004);
+end
+
+procedure Node010 begin
+   Reply(180);
+   NOption(181,Node992,004);
+   NOption(194,Node001,004);
+   NOption(g_bye,Node996,004);
+end
+procedure Node011 begin
+   add_obj_to_inven(dude_obj,create_object(grisham_jerky_pid,0,0));
+   item_caps_adjust(self_obj,10);
+   item_caps_adjust(dude_obj,-10);
+   Reply(183);
+   if (family_feud_seed_active) then begin
+      NOption(164,Node017,004);
+   end
+   NOption(182,Node001,004);
+   NOption(g_bye,Node996,004);
+end
+procedure Node012 begin
+   if (offered_job) then begin
+      Reply(186);
+   end else begin
+      Reply(185);
+      set_offered_job;
+   end
+   NOption(187,Node013,008);
+   NOption(g_mstr(206),Node016,004);
+   NOption(g_mstr(205),Node999,004);
+end
+procedure Node013 begin
+   Reply(188);
+   if (dude_perception > 6) then begin
+      NOption(189,Node014,004);
+   end
+   NOption(g_mstr(206),Node016,004);
+   NOption(g_mstr(205),Node999,004);
+end
+procedure Node014 begin
+   set_found_catch;
+   Reply(190);
+   NOption(g_mstr(206),Node016,004);
+   NOption(g_mstr(205),Node999,004);
+end
+procedure Node016 begin
+   set_brahmin_seed_active;
+   Reply(191);
+   NOption(g_mstr(350),Node983,004);
+   NOption(g_grunt,Node983,-003);
+end
+procedure Node017 begin
+   Reply(192);
+   if (feud_help_farrel_seed_active) then begin
+      NOption(193,Node036,004);
+   end
+   NOption(194,Node001,004);
+   NOption(195,Node996,004);
+end
+procedure Node018 begin
+   Reply(196);
+   NOption(g_bye,Node999,004);
+end
+procedure Node019 begin
+   Reply(197);
+   NOption(g_bye,Node999,004);
+end
+procedure Node020 begin
+   Reply(198);
+   NOption(199,Node991,004);
+   NOption(200,Node990,004);
+   NOption(201,Node024,004);
+end
+procedure Node021 begin
+   set_brahmin_seed_inactive; // Seraph's Code
+   Reply(202);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node022 begin
+   Reply(203);
+   NOption(g_mstr(355),Node989,004);
+   NOption(204,Node988,004);
+   NOption(201,Node024,004);
+end
+procedure Node023 begin
+   Reply(206);
+   NOption(g_mstr(355),Node987,004);
+   NOption(207,Node024,004);
+end
+procedure Node024 begin
+   set_brahmin_seed_inactive; // Seraph's Code
+   set_grisham_angry;
+   Reply(208);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node026 begin
+   set_brahmin_seed_inactive; // Seraph's Code
+   set_grisham_angry;
+   Reply(209);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node027 begin
+   Reply(210);
+   NOption(211,Node035,008);
+   NOption(194,Node001,004);
+   NOption(g_bye,Node996,004);
+end
+procedure Node028 begin
+   Reply(213);
+   NOption(194,Node001,004);
+   NOption(g_bye,Node996,004);
+end
+procedure Node029 begin
+   Reply(215);
+   NOption(216,Node999,001);
+   NOption(217,Node030,001);
+end
+procedure Node030 begin
+   set_brahmin_seed_active;
+   Reply(218);
+   NOption(g_mstr(350),Node983,001);
+end
+procedure Node031 begin
+   Reply(219);
+   NOption(194,Node001,004);
+   NOption(g_mstr(350),Node996,004);
+end
+procedure Node033 begin
+   set_grisham_angry;
+   Reply(221);
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node034 begin
+   Reply(222);
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node035 begin
+   Reply(223);
+   NOption(194,Node001,004);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node036 begin
+   Reply(225);
+   NOption(194,Node001,004);
+   NOption(195,Node999,004);
+end
+procedure Node040 begin
+   set_next_stage_time_only(0)
+   Reply(228 + dude_is_female + (1000*grisham_dead)); // Seraph's Fix: added (1000*grisham_dead)
+   if (jo_dead) then
+      modoc_jo_obj := create_object_sid(PID_JO, 20143, elevation(self_obj), SCRIPT_MCJO); // Seraph's Code - added here too by killap
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node041 begin
+   Reply(230 + having_sex_with_davin + (1000*grisham_dead)); // Seraph's Fix: added (1000*grisham_dead)
+   NOption(233 + having_sex_with_davin,Node046,004);
+   NOption(232,Node042,004);
+   NOption(235,Node043,004);
+end
+procedure Node042 begin
+   if (dude_is_male) then begin
+      Reply(236 + (1000*grisham_dead)); // Seraph's Fix: added (1000*grisham_dead)
+   end else begin
+      Reply(237 + (1000*grisham_dead)); // Seraph's Fix: added (1000*grisham_dead)
+   end
+   if (jo_dead) then
+      modoc_jo_obj := create_object_sid(PID_JO, 20143, elevation(self_obj), SCRIPT_MCJO); // Seraph's Code - added here too by killap
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node043 begin
+   if (having_sex_with_davin) then begin
+      Reply(239 + (1000*grisham_dead)); // Seraph's Fix: added (1000*grisham_dead)
+   end else begin
+      Reply(238 + (1000*grisham_dead)); // Seraph's Fix: added (1000*grisham_dead)
+   end
+   NOption(240,Node044,004);
+end
+procedure Node044 begin
+   Reply(241);
+   NOption(242,Node045,004);
+end
+procedure Node045 begin
+   Reply(243);
+   if (jo_dead) then
+      modoc_jo_obj := create_object_sid(PID_JO, 20143, elevation(self_obj), SCRIPT_MCJO); // Seraph's Code - added here too by killap
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node046 begin
+   Reply(244);
+   NOption(245,Node985,004);
+end
+procedure Node047 begin
+   clear_stage
+   party_no_follow_off; // Seraph's Code
+   Reply(246);
+   NOption(247,Node999,004);
+end
+procedure Node048 begin
+   Reply(248);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node050 begin
+   if (dude_spouse_was_female) then begin
+      Reply(mstr(600) + dude_name + mstr(1600));
+      if (miria_dead) then begin
+         BOption(603, Node051, 004);
+      end else begin
+         BOption(604, Node051, 004);
+      end
+      GOption(607, Node052, 004);
+      NOption(g_grunt, Node999, -003);
+   end else begin
+      Reply(mstr(601) + dude_name + mstr(1601));
+      if (davin_dead) then begin
+         BOption(602, Node051, 004);
+      end else begin
+         BOption(605, Node051, 004);
+      end
+      GOption(606, Node052, 004);
+      NOption(g_grunt, Node999, -003);
+   end
+end
+procedure Node051 begin
+   if (grisham_dead == false) then begin
+      set_grisham_dead;
+      inc_general_rep(REP_BONUS_MODOC_GRISHAM_HEARTATTACK);
+   end
+   Reply(700);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node052 begin
+   Reply(750);
+   NOption(g_bye, Node999, 004);
+end

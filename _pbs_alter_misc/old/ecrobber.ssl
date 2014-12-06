@@ -1,0 +1,1335 @@
+variable ProtoOfItemGiven;
+variable ValueOfRollCheck := 1;
+variable Scenery_Creation;
+variable Scenery_Creation_Hex;
+variable Scenery_Creation_Count;
+variable Temp_Scenery_Creation_Hex;
+variable Scenery_Creation_Ptr;
+variable How_Many_Party_Members_Are_Injured;
+variable How_Many_Party_Members_Armed;
+variable PartyHealingItem;
+
+procedure checkPartyMembersNearDoor;
+
+variable Finding_New_Tile;
+variable tmp_gen_rep;
+variable global_temp;
+variable dest_tile;
+variable step_tile;
+variable in_dialog;
+variable forced_node;
+variable restock_amt;
+variable restock_obj;
+variable restock_trash;
+variable removed_qty;
+
+procedure start;
+procedure critter_p_proc;
+procedure map_enter_p_proc;
+procedure destroy_p_proc;
+procedure timed_event_p_proc;
+
+variable starttile;
+variable wep_pid;
+variable ammo_pid;
+variable ammo_qty;
+variable val;
+variable val1;
+variable do_once;
+
+procedure combat_p_proc;
+
+#define _BOUNTY_ECROBBER
+#include "..\_pbs_main\quests_bounty.h"
+
+procedure checkPartyMembersNearDoor
+begin
+	if (party_member_obj(16777278) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777278)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777376) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777376)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777377) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777377)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777305) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777305)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777313) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777313)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777323) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777323)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777352) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777352)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777378) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777378)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777368) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777368)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777379) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777379)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777380) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777380)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777295) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777295)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777381) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777381)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777407) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777407)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777411) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777411)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777412) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777412)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777413) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777413)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777481) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777481)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777558) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777558)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777600) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777600)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777718) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777718)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777719) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777719)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777720) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777720)) <= 5) then begin
+			return 1;
+		end
+	end
+	return 0;
+end
+
+procedure start
+begin
+end
+
+procedure critter_p_proc
+begin
+	variable LVar0 := 0;
+	if (obj_can_see_obj(self_obj, dude_obj)) then begin
+		attack_complex(dude_obj, 0, 1, 0, 0, 30000, 0, 0);
+	end
+	if (not(anim_busy(self_obj))) then begin
+		LVar0 := random(1, 10);
+		if (LVar0 == 10) then begin
+			reg_anim_func(2, self_obj);
+			reg_anim_func(1, 1);
+			animate_move_obj_to_tile(self_obj, tile_num_in_direction(starttile, random(0, 5), random(3, 10)), 0);
+			reg_anim_func(3, 0);
+		end
+		else
+		if (LVar0 == 9) then begin
+			reg_anim_func(2, self_obj);
+			reg_anim_func(1, 1);
+			anim(self_obj, 1000, random(0, 5));
+			reg_anim_func(3, 0);
+		end
+	end
+end
+
+procedure map_enter_p_proc
+begin
+	critter_add_trait(self_obj, 1, 6, 135);
+	critter_add_trait(self_obj, 1, 5, 22);
+	starttile := tile_num(self_obj);
+	if ((elevation(self_obj) != 0) and not(metarule(22, 0))) then begin
+		item_caps_adjust(self_obj, random(5, 15) * get_critter_stat(dude_obj, 6));
+		add_mult_objs_to_inven(self_obj, create_object_sid(40, tile_num(self_obj), 0, -1), 1);
+		val := random(1, 5);
+		if (get_pc_stat(1) < 6) then begin
+			if (val == 1) then begin
+				wep_pid := 8;
+				ammo_pid := 29;
+				ammo_qty := 2;
+			end
+			else
+			if (val == 2) then begin
+				wep_pid := 9;
+				ammo_pid := 29;
+				ammo_qty := 2;
+			end
+			else
+			if (val == 3) then begin
+				wep_pid := 7;
+			end
+			else
+			if (val == 4) then begin
+				wep_pid := 236;
+			end
+			else
+			if (val == 5) then begin
+				wep_pid := 21;
+			end
+		end
+		else
+		if (get_pc_stat(1) < 11) then begin
+			if (val == 1) then begin
+				wep_pid := 9;
+				ammo_pid := 30;
+				ammo_qty := random(1, 2);
+			end
+			else
+			if (val == 2) then begin
+				val1 := random(1, 4);
+				if (val1 == 1) then begin
+					wep_pid := 18;
+					ammo_pid := 31;
+					ammo_qty := random(1, 2);
+				end
+				else
+				if (val1 == 2) then begin
+					wep_pid := 94;
+					ammo_pid := 95;
+					ammo_qty := random(1, 2);
+				end
+				else
+				if (val1 == 3) then begin
+					wep_pid := 287;
+					ammo_pid := 34;
+					ammo_qty := random(1, 2);
+				end
+				else
+				if (val1 == 4) then begin
+					wep_pid := 313;
+					ammo_pid := 111;
+					ammo_qty := random(1, 2);
+				end
+			end
+			else
+			if (val == 3) then begin
+				wep_pid := 236;
+			end
+			else
+			if (val == 4) then begin
+				wep_pid := 6;
+			end
+			else
+			if (val == 5) then begin
+				wep_pid := 293;
+			end
+		end
+		else
+		if (get_pc_stat(1) < 15) then begin
+			if (val == 1) then begin
+				wep_pid := 241;
+				ammo_pid := 34;
+				ammo_qty := random(1, 2);
+			end
+			else
+			if (val == 2) then begin
+				val1 := random(1, 4);
+				if (val1 == 1) then begin
+					wep_pid := 241;
+					ammo_pid := 34;
+					ammo_qty := random(1, 2);
+				end
+				else
+				if (val1 == 2) then begin
+					wep_pid := 12;
+					ammo_pid := 36;
+					ammo_qty := random(1, 2);
+				end
+				else
+				if (val1 == 3) then begin
+					wep_pid := 385;
+					ammo_pid := 95;
+					ammo_qty := random(1, 2);
+				end
+				else
+				if (val1 == 4) then begin
+					wep_pid := 296;
+					ammo_pid := 29;
+					ammo_qty := random(1, 2);
+				end
+			end
+			else
+			if (val == 3) then begin
+				wep_pid := 116;
+				ammo_pid := 38;
+				ammo_qty := random(1, 2);
+			end
+			else
+			if (val == 4) then begin
+				wep_pid := 399;
+				ammo_pid := 38;
+				ammo_qty := random(1, 2);
+			end
+			else
+			if (val == 5) then begin
+				wep_pid := 235;
+				ammo_pid := 38;
+				ammo_qty := random(1, 2);
+			end
+		end
+		else
+		if (val == 1) then begin
+			wep_pid := 233;
+			ammo_pid := 39;
+			ammo_qty := random(1, 2);
+		end
+		else
+		if (val == 2) then begin
+			val1 := random(1, 4);
+			if (val1 == 1) then begin
+				wep_pid := 332;
+				ammo_pid := 357;
+				ammo_qty := random(1, 2);
+			end
+			else
+			if (val1 == 2) then begin
+				wep_pid := 268;
+				ammo_pid := 95;
+				ammo_qty := random(1, 2);
+			end
+			else
+			if (val1 == 3) then begin
+				wep_pid := 392;
+				ammo_pid := 358;
+				ammo_qty := random(1, 2);
+			end
+			else
+			if (val1 == 4) then begin
+				wep_pid := 351;
+				ammo_pid := 363;
+				ammo_qty := random(1, 2);
+			end
+		end
+		else
+		if (val == 3) then begin
+			wep_pid := 391;
+			ammo_pid := 359;
+			ammo_qty := random(0, 2);
+		end
+		else
+		if (val == 4) then begin
+			wep_pid := 397;
+			ammo_pid := 39;
+			ammo_qty := random(1, 2);
+		end
+		else
+		if (val == 5) then begin
+			wep_pid := 407;
+			ammo_pid := 38;
+			ammo_qty := random(1, 2);
+		end
+	end
+	if (obj_is_carrying_obj_pid(self_obj, wep_pid) < 1) then begin
+		restock_obj := create_object_sid(wep_pid, 0, 0, -1);
+		add_mult_objs_to_inven(self_obj, restock_obj, 1 - obj_is_carrying_obj_pid(self_obj, wep_pid));
+	end
+	else
+	if (obj_is_carrying_obj_pid(self_obj, wep_pid) > 1) then begin
+		removed_qty := obj_is_carrying_obj_pid(self_obj, wep_pid);
+		if ((obj_is_carrying_obj_pid(self_obj, wep_pid) - 1) < removed_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, wep_pid) - 1;
+		end
+		if (removed_qty > 0) then begin
+			restock_obj := obj_carrying_pid_obj(self_obj, wep_pid);
+			if (obj_type(self_obj) == 1) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, wep_pid);
+				if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+					if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+						restock_obj := critter_inven_obj(self_obj, 0);
+						debug_msg("armour pid == " + obj_pid(restock_obj));
+						rm_obj_from_inven(self_obj, restock_obj);
+						add_obj_to_inven(self_obj, restock_obj);
+					end
+				end
+				else
+				if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+					metarule(43, self_obj);
+				end
+			end
+			restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+			destroy_object(restock_obj);
+		end
+		restock_obj := 0;
+		restock_amt := 0;
+	end
+	else begin
+		restock_obj := 0;
+	end
+	if (0) then begin
+		if (obj_is_carrying_obj_pid(self_obj, wep_pid)) then begin
+			wield_obj_critter(self_obj, obj_carrying_pid_obj(self_obj, wep_pid));
+		end
+		else begin
+			debug_msg("NOT ARMING THE WEAPON!!!");
+		end
+	end
+	if (ammo_pid != 0) then begin
+		if (obj_is_carrying_obj_pid(self_obj, ammo_pid) < ammo_qty) then begin
+			restock_obj := create_object_sid(ammo_pid, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, ammo_pid));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, ammo_pid) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, ammo_pid);
+			if ((obj_is_carrying_obj_pid(self_obj, ammo_pid) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, ammo_pid) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, ammo_pid);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, ammo_pid);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 8) or (wep_pid == 300) or (wep_pid == 9)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 29) < ammo_qty) then begin
+			restock_obj := create_object_sid(29, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 29));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 29) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 29);
+			if ((obj_is_carrying_obj_pid(self_obj, 29) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 29) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 29);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 29);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 10) or (wep_pid == 350) or (wep_pid == 355) or (wep_pid == 143) or (wep_pid == 241) or (wep_pid == 287)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 34) < ammo_qty) then begin
+			restock_obj := create_object_sid(34, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 34));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 34) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 34);
+			if ((obj_is_carrying_obj_pid(self_obj, 34) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 34) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 34);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 34);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 11) or (wep_pid == 400)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 32) < ammo_qty) then begin
+			restock_obj := create_object_sid(32, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 32));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 32) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 32);
+			if ((obj_is_carrying_obj_pid(self_obj, 32) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 32) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 32);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 32);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 12) or (wep_pid == 353) or (wep_pid == 389) or (wep_pid == 405) or (wep_pid == 23)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 35) < ammo_qty) then begin
+			restock_obj := create_object_sid(35, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 35));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 35) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 35);
+			if ((obj_is_carrying_obj_pid(self_obj, 35) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 35) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 35);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 35);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if (wep_pid == 13) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 14) < ammo_qty) then begin
+			restock_obj := create_object_sid(14, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 14));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 14) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 14);
+			if ((obj_is_carrying_obj_pid(self_obj, 14) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 14) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 14);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 14);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 15) or (wep_pid == 397) or (wep_pid == 28) or (wep_pid == 118) or (wep_pid == 401) or (wep_pid == 233)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 39) < ammo_qty) then begin
+			restock_obj := create_object_sid(39, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 39));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 39) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 39);
+			if ((obj_is_carrying_obj_pid(self_obj, 39) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 39) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 39);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 39);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 16) or (wep_pid == 235) or (wep_pid == 407) or (wep_pid == 116) or (wep_pid == 160) or (wep_pid == 399) or (wep_pid == 24) or (wep_pid == 406) or (wep_pid == 393) or (wep_pid == 396) or (wep_pid == 120) or (wep_pid == 402)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 38) < ammo_qty) then begin
+			restock_obj := create_object_sid(38, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 38));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 38) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 38);
+			if ((obj_is_carrying_obj_pid(self_obj, 38) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 38) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 38);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 38);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 18) or (wep_pid == 398) or (wep_pid == 404) or (wep_pid == 313)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 31) < ammo_qty) then begin
+			restock_obj := create_object_sid(31, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 31));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 31) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 31);
+			if ((obj_is_carrying_obj_pid(self_obj, 31) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 31) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 31);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 31);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if (wep_pid == 22) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 33) < ammo_qty) then begin
+			restock_obj := create_object_sid(33, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 33));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 33) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 33);
+			if ((obj_is_carrying_obj_pid(self_obj, 33) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 33) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 33);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 33);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 94) or (wep_pid == 354) or (wep_pid == 385) or (wep_pid == 242) or (wep_pid == 268)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 95) < ammo_qty) then begin
+			restock_obj := create_object_sid(95, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 95));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 95) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 95);
+			if ((obj_is_carrying_obj_pid(self_obj, 95) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 95) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 95);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 95);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if (wep_pid == 122) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 121) < ammo_qty) then begin
+			restock_obj := create_object_sid(121, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 121));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 121) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 121);
+			if ((obj_is_carrying_obj_pid(self_obj, 121) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 121) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 121);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 121);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if (wep_pid == 296) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 360) < ammo_qty) then begin
+			restock_obj := create_object_sid(360, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 360));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 360) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 360);
+			if ((obj_is_carrying_obj_pid(self_obj, 360) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 360) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 360);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 360);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if (wep_pid == 270) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 274) < ammo_qty) then begin
+			restock_obj := create_object_sid(274, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 274));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 274) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 274);
+			if ((obj_is_carrying_obj_pid(self_obj, 274) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 274) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 274);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 274);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if (wep_pid == 299) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 19) < ammo_qty) then begin
+			restock_obj := create_object_sid(19, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 19));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 19) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 19);
+			if ((obj_is_carrying_obj_pid(self_obj, 19) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 19) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 19);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 19);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 161) or (wep_pid == 162) or (wep_pid == 261)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 163) < ammo_qty) then begin
+			restock_obj := create_object_sid(163, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 163));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 163) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 163);
+			if ((obj_is_carrying_obj_pid(self_obj, 163) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 163) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 163);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 163);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 283) or (wep_pid == 332)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 357) < ammo_qty) then begin
+			restock_obj := create_object_sid(357, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 357));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 357) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 357);
+			if ((obj_is_carrying_obj_pid(self_obj, 357) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 357) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 357);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 357);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 351) or (wep_pid == 403) or (wep_pid == 387)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 363) < ammo_qty) then begin
+			restock_obj := create_object_sid(363, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 363));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 363) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 363);
+			if ((obj_is_carrying_obj_pid(self_obj, 363) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 363) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 363);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 363);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 392) or (wep_pid == 394)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 358) < ammo_qty) then begin
+			restock_obj := create_object_sid(358, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 358));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 358) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 358);
+			if ((obj_is_carrying_obj_pid(self_obj, 358) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 358) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 358);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 358);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if ((wep_pid == 352) or (wep_pid == 391) or (wep_pid == 395)) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 359) < ammo_qty) then begin
+			restock_obj := create_object_sid(359, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 359));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 359) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 359);
+			if ((obj_is_carrying_obj_pid(self_obj, 359) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 359) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 359);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 359);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	else
+	if (wep_pid == 388) then begin
+		if (obj_is_carrying_obj_pid(self_obj, 361) < ammo_qty) then begin
+			restock_obj := create_object_sid(361, 0, 0, -1);
+			add_mult_objs_to_inven(self_obj, restock_obj, ammo_qty - obj_is_carrying_obj_pid(self_obj, 361));
+		end
+		else
+		if (obj_is_carrying_obj_pid(self_obj, 361) > ammo_qty) then begin
+			removed_qty := obj_is_carrying_obj_pid(self_obj, 361);
+			if ((obj_is_carrying_obj_pid(self_obj, 361) - ammo_qty) < removed_qty) then begin
+				removed_qty := obj_is_carrying_obj_pid(self_obj, 361) - ammo_qty;
+			end
+			if (removed_qty > 0) then begin
+				restock_obj := obj_carrying_pid_obj(self_obj, 361);
+				if (obj_type(self_obj) == 1) then begin
+					restock_obj := obj_carrying_pid_obj(self_obj, 361);
+					if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+						if (obj_item_subtype(critter_inven_obj(self_obj, 0)) == 0) then begin
+							restock_obj := critter_inven_obj(self_obj, 0);
+							debug_msg("armour pid == " + obj_pid(restock_obj));
+							rm_obj_from_inven(self_obj, restock_obj);
+							add_obj_to_inven(self_obj, restock_obj);
+						end
+					end
+					else
+					if ((critter_inven_obj(self_obj, 2) == restock_obj) or (critter_inven_obj(self_obj, 1) == restock_obj)) then begin
+						metarule(43, self_obj);
+					end
+				end
+				restock_amt := rm_mult_objs_from_inven(self_obj, restock_obj, removed_qty);
+				destroy_object(restock_obj);
+			end
+			restock_obj := 0;
+			restock_amt := 0;
+		end
+		else begin
+			restock_obj := 0;
+		end
+	end
+	reg_anim_func(2, self_obj);
+	reg_anim_func(1, 1);
+	anim(self_obj, 1000, random(0, 5));
+	reg_anim_func(3, 0);
+end
+
+procedure destroy_p_proc
+begin
+	call bounty_hook_destroy;
+	if (source_obj == dude_obj) then begin
+		set_global_var(4, global_var(4) + 1);
+		if (((global_var(4) + global_var(5)) >= 25) and ((global_var(5) > (2 * global_var(4))) or (global_var(3) == 1))) then begin
+			set_global_var(3, 1);
+			set_global_var(2, 0);
+		end
+		if (((global_var(4) + global_var(5)) >= 25) and ((global_var(4) > (3 * global_var(5))) or (global_var(2) == 1)) and (global_var(1) == 0)) then begin
+			set_global_var(2, 1);
+			set_global_var(3, 0);
+		end
+		set_global_var(0, global_var(0) + 5);
+		debug_msg("Player gains " + 5 + " Karma Points.");
+		set_global_var(37, 0);
+		set_global_var(38, 0);
+		set_global_var(39, 0);
+		set_global_var(40, 0);
+		set_global_var(41, 0);
+		set_global_var(42, 0);
+		set_global_var(43, 0);
+		set_global_var(44, 0);
+		set_global_var(45, 0);
+		tmp_gen_rep := global_var(0);
+		if (has_trait(0, dude_obj, 95)) then begin
+			tmp_gen_rep := global_var(0) * 2;
+		end
+		if (tmp_gen_rep >= 1000) then begin
+			set_global_var(37, 1);
+		end
+		else
+		if (tmp_gen_rep >= 750) then begin
+			set_global_var(38, 1);
+		end
+		else
+		if (tmp_gen_rep >= 500) then begin
+			set_global_var(39, 1);
+		end
+		else
+		if (tmp_gen_rep >= 250) then begin
+			set_global_var(40, 1);
+		end
+		else
+		if (tmp_gen_rep > -250) then begin
+			set_global_var(41, 1);
+		end
+		else
+		if (tmp_gen_rep > -500) then begin
+			set_global_var(42, 1);
+		end
+		else
+		if (tmp_gen_rep > -750) then begin
+			set_global_var(43, 1);
+		end
+		else
+		if (tmp_gen_rep > -1000) then begin
+			set_global_var(44, 1);
+		end
+		else begin
+			set_global_var(45, 1);
+		end
+	end
+	if (cur_map_index == 94) then begin
+		set_map_var(1, map_var(1) - 1);
+	end
+end
+
+procedure timed_event_p_proc
+begin
+	if (fixed_param == 1) then begin
+		if (obj_carrying_pid_obj(self_obj, wep_pid)) then begin
+			wield_obj_critter(self_obj, obj_carrying_pid_obj(self_obj, wep_pid));
+		end
+	end
+end
+
+procedure combat_p_proc
+begin
+	if ((elevation(dude_obj) == 1) and ((cur_map_index == 70) or (cur_map_index == 71) or (cur_map_index == 72) or (cur_map_index == 73) or (cur_map_index == 80))) then begin
+		if (do_once == 0) then begin
+			do_once := 1;
+			if ((wep_pid != 21) and (wep_pid != 293) and (wep_pid != 235) and (wep_pid != 407)) then begin
+				metarule(43, self_obj);
+			end
+		end
+	end
+end
+

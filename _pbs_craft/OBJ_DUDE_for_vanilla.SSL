@@ -1,0 +1,243 @@
+/*
+    Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/* This is a very special script. This is the only script that
+   goes anywhere in the game. This is the script that is attached
+   to the obj_dude in the game. Only very specific things need to be
+   in here.
+   -rwh [2/23/1998]
+*/
+
+//#include "..\headers\define.h"
+
+#define NAME                    SCRIPT_OBJ_DUDE
+
+#include "test0.ssl"
+
+//#include "..\headers\command.h"
+#include "..\headers\NewReno.h"
+#include "..\headers\v13.h"
+
+#define LVAR_Last_Digest_Time    (0)
+
+#define DRTROY_INJECTION          (1)
+//Set for Entrance level of Vault 15
+#define CHECK_DUDE_V15ENT_LEVEL   (2)
+//For the random bess encounter:
+#define CHECK_RNDBESS_FLOAT       (3)
+
+#define TIMER_INIT_V13_SEQUENCE    (4)
+
+//For the random bess encounter
+#define BESS_DEATH_TILE     19894
+#define BESS_FLOAT_DISTANCE 10
+
+
+
+procedure start;
+procedure timed_event_p_proc;
+procedure critter_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+procedure map_update_p_proc;
+procedure is_dropping_p_proc;
+
+procedure Check_Bess_Float;
+
+
+variable Did_Bess_Float;
+import variable prize_fighter_obj;
+variable lastmsg;
+
+procedure combat_p_proc begin
+   if (cur_map_index == MAP_NEW_RENO_2) then begin
+      if (prize_fighter_obj == 0) then begin
+      end else if (fixed_param == COMBAT_SUBTYPE_TURN) then begin
+         if (currently_fighting) then begin
+            if (round_time_over) then begin
+               nr_add_timer_event_tic(prize_fighter_obj, 0, round_over_param);
+            end else if ((is_critter_prone(dude_obj)) or (is_critter_prone(prize_fighter_obj))) then begin
+               nr_add_timer_event_tic(prize_fighter_obj, 0, knockout_param);
+            end
+         end
+      end
+   end
+end
+
+procedure start begin
+   // initialize stomach
+   if (local_var(LVAR_Last_Digest_Time) == 0) then begin
+      set_local_var(LVAR_Last_Digest_Time,game_time);
+      dude_eat_food(starting_stomach_full);
+   end
+end
+
+procedure is_dropping_p_proc begin
+   if (obj_pid(source_obj) == PID_GECK) then begin
+       script_overrides;
+       display_msg(g_mstr(1099));
+   end
+end
+
+procedure map_enter_p_proc begin
+/*
+   variable Outdoor;
+   variable Doctor;
+   variable First_Aid;
+   variable tail;
+   variable flower;
+   variable root;
+   variable item;
+   variable count;
+   variable count1;
+   variable Junkit;
+   variable Junkit1;
+
+   if (not(is_loading_game)) then begin
+       if (obj_is_carrying_obj_pid(self_obj,PID_SCORPION_TAIL)) then begin
+           First_Aid:=has_skill(self_obj,SKILL_FIRST_AID);
+           Outdoor:=has_skill(self_obj,SKILL_OUTDOORSMAN);
+           if (((First_Aid + Outdoor) >= 125) and (skill_success(self_obj,SKILL_SCIENCE,0))) then begin
+               tail:=obj_carrying_pid_obj(self_obj,PID_SCORPION_TAIL);
+               count:=obj_is_carrying_obj_pid(self_obj,PID_SCORPION_TAIL);
+               Junkit:=rm_mult_objs_from_inven(self_obj,tail,count);
+               item:=create_object(PID_ANTIDOTE,0,0);
+               add_mult_objs_to_inven(self_obj,item,count);
+               display_msg(g_mstr(1050));
+           end
+       end
+       if ((obj_is_carrying_obj_pid(self_obj,PID_XANDER_ROOT)) and (obj_is_carrying_obj_pid(self_obj,PID_BROC_FLOWER))) then begin
+           Doctor:=has_skill(self_obj,SKILL_DOCTOR);
+           Outdoor:=has_skill(self_obj,SKILL_OUTDOORSMAN);
+           if (((Doctor + Outdoor) >= 125) and (skill_success(self_obj,SKILL_SCIENCE,0))) then begin
+               flower:=obj_carrying_pid_obj(self_obj,PID_BROC_FLOWER);
+               root:=obj_carrying_pid_obj(self_obj,PID_XANDER_ROOT);
+               count:=obj_is_carrying_obj_pid(self_obj,PID_BROC_FLOWER);
+               count1:=obj_is_carrying_obj_pid(self_obj,PID_XANDER_ROOT);
+               if (count > count1) then
+                   count:=count1;
+               Junkit:=rm_mult_objs_from_inven(self_obj,flower,count);
+               Junkit1:=rm_mult_objs_from_inven(self_obj,root,count);
+               item:=create_object(PID_HEALING_POWDER,0,0);
+               add_mult_objs_to_inven(self_obj,item,count);
+               display_msg(g_mstr(1051));
+           end
+       end
+   end
+*/
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == DRTROY_INJECTION) then begin
+      critter_damage(self_obj,400);
+      display_msg(g_mstr(400));
+   end else if (fixed_param == CHECK_DUDE_V15ENT_LEVEL) then begin
+      if (global_var(GVAR_NCR_V15_DARION_DEAL) == 3 and global_var(GVAR_NCR_V15_DARION_DEAD)) then begin
+         move_to(dude_obj, dude_tile, 1);
+         fadein(1);
+      end
+   end else if (fixed_param == CHECK_RNDBESS_FLOAT) then begin
+      if (not Check_Bess_Float) then
+         add_timer_event(dude_obj, 1, CHECK_RNDBESS_FLOAT);
+   end else if (fixed_param == TIMER_INIT_V13_SEQUENCE) then begin
+      set_global_var(GVAR_DUDE_START_SEQ_1, game_time + (ONE_GAME_WEEK * 2));
+   end
+end
+
+procedure map_update_p_proc begin
+variable x;
+variable days_since_exposed;
+   // digest food
+   x := amt_food_digested_in_time(local_var(LVAR_Last_Digest_Time));
+   if (x > 0) then begin
+      dude_eat_food(-x);
+   end
+   //MUTATION CODE
+   if (global_var(GVAR_HAVE_MUTATED) == 0) then begin
+      if (global_var(GVAR_MUTATE_STAGE) > 0) then begin
+         days_since_exposed := GAME_TIME_IN_DAYS - global_var(GVAR_MUTATE_WHEN);
+         //debug_msg("days since exposed "+days_since_exposed);
+         if (days_since_exposed > 30) then begin
+            if (global_var(GVAR_MUTATE_STAGE) < 5) then begin
+               display_msg(mstr(140));
+               set_global_var(GVAR_MUTATE_STAGE,5);
+               set_global_var(GVAR_HAVE_MUTATED,1);
+            end
+         end
+         else if (days_since_exposed > 25) then begin
+            if (global_var(GVAR_MUTATE_STAGE) < 4) then begin
+               display_msg(mstr(130));
+               set_global_var(GVAR_MUTATE_STAGE,4);
+            end
+         end
+         else if (days_since_exposed > 20) then begin
+            if (global_var(GVAR_MUTATE_STAGE) < 3) then begin
+               display_msg(mstr(120));
+               set_global_var(GVAR_MUTATE_STAGE,3);
+            end
+         end
+         else if (days_since_exposed > 15) then begin
+            if (global_var(GVAR_MUTATE_STAGE) < 2) then begin
+               display_msg(mstr(110));
+               set_global_var(GVAR_MUTATE_STAGE,2);
+            end
+         end
+      end//if mutate_stage>0
+   end//if have_mutated=0
+   if (self_obj) then begin
+      if (self_item(PID_GECK) and not global_var(GVAR_GAVE_GECK_EXP)) then begin
+         set_global_var(GVAR_GAVE_GECK_EXP, 1);
+         display_msg(mstr(150) + EXP_GOT_GECK + mstr(151));
+         give_exp_points(EXP_GOT_GECK);
+      end
+   end
+end
+
+
+procedure critter_p_proc begin
+   if (global_var(GVAR_DUDE_START_SEQ_1) != 0) then begin
+      if (game_time > global_var(GVAR_DUDE_START_SEQ_1) and not v13_status(FLG_GRUTHAR_DEAD) and cur_map_index != MAP_VAULT_13) then begin
+         ON_VAULT13_SEQ;
+         set_global_var(GVAR_DUDE_START_SEQ_1, 0);
+      end
+   end
+end
+
+procedure use_obj_on_p_proc begin
+   if (source_obj == dude_obj) then begin
+      // this is related to filling the player's stomach when they eat
+      if (pid_is_drink_pid(obj_being_used_with)) then begin
+         dude_eat_food(drink_meal);
+      end else if (pid_is_snack_pid(obj_being_used_with)) then begin
+         dude_eat_food(snack_meal);
+      end else if (pid_is_light_meal_pid(obj_being_used_with)) then begin
+         dude_eat_food(light_meal);
+      end else if (pid_is_medium_meal(obj_being_used_with)) then begin
+         dude_eat_food(medium_meal);
+      end else if (pid_is_large_meal(obj_being_used_with)) then begin
+         dude_eat_food(large_meal);
+      end else if (pid_is_huge_meal(obj_being_used_with)) then begin
+         dude_eat_food(huge_meal);
+      end
+   end
+end
+
+
+procedure Check_Bess_Float begin
+   if (tile_distance(BESS_DEATH_TILE, dude_tile) < BESS_FLOAT_DISTANCE) then begin
+      if (not Did_Bess_Float) then begin
+         Did_Bess_Float := 1;
+         float_msg(dude_obj, mstr(141), FLOAT_MSG_NORMAL);
+      end
+      return 1;
+   end
+   return 0;
+end
+
+procedure description_p_proc begin
+    if (not(combat_is_initialized)) then begin
+        script_overrides;
+        call batch_init;
+    end
+end

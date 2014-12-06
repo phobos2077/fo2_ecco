@@ -1,0 +1,97 @@
+procedure start;
+
+#include "define_lite.h"
+#include "lib.arrays.h"
+#include "mod.h"
+
+/**
+	Runs after fallout has decided if an attack will hit or miss
+	
+	int     arg1 - If the attack will hit. (0 - critical miss, 1 - miss, 2 - hit, 3 - critical hit)
+	critter arg2 - The attacker
+	critter arg3 - The target of the attack
+	int     arg4 - The bodypart
+	int     arg5 - The hit chance
+	
+	int     ret1 - Override the hit/miss
+	int     ret2 - Override the targeted bodypart
+	critter ret3 - Override the target of the attack
+*/
+
+variable begin
+	ini_sneak_attack;
+	ini_sneak_attack_min_skill;
+	ini_sneak_attack_max_skill;
+end
+
+variable set_who_see_dude;
+
+procedure start begin
+	variable willHit;
+	variable attacker;
+	variable target;
+	variable bodyPart;
+	variable hitChance;
+	
+	variable wpn, i;
+	variable skill;
+	variable agility;
+	variable attackTypes_8;
+	variable attackTypes;
+	variable damageType;
+	variable bonusDamage;
+	
+    if (init_hook) then begin
+    	ini_sneak_attack := atoi(get_ini_string("combat.ini|STEALTH|sneak_attack"));
+ 		ini_sneak_attack_min_skill := atoi(get_ini_string("combat.ini|STEALTH|sneak_attack_min_skill"));
+ 		ini_sneak_attack_max_skill := atoi(get_ini_string("combat.ini|STEALTH|sneak_attack_max_skill"));
+ 		
+ 		set_who_see_dude := get_sfall_global_array(SGVAR_CRITTERS_SEE_DUDE, ARRAY_SET_BLOCK_SIZE, 4);
+    end else 
+      begin
+         willHit := get_sfall_arg;
+         attacker := get_sfall_arg;
+         target := get_sfall_arg;
+         bodyPart := get_sfall_arg; 
+         hitChance := get_sfall_arg;
+         
+         if (target and attacker) then begin
+	         debug_msg("afterhitroll: "+willHit+" chance="+hitChance+"%% t="+target+" type="+obj_type(target)+" tpid="+obj_pid(target));
+	         // for Molotov:
+	         if (obj_type(target) == OBJ_TYPE_CRITTER and (willHit == 2 or willHit == 3)) then damageType := DMG_fire;
+	         else damageType := DMG_explosion;
+	         set_proto_data(PID_MOLOTOV_COCKTAIL, 48, damageType);
+	         // end Molotov code
+	         
+	         // fix for grenade launcher
+	         if (damageType == DMG_fire) then begin
+	            damageType := DMG_explosion;
+	            i:=1;
+   	         while (i<=2) do begin
+                  wpn := critter_inven_obj(attacker, i);
+                  if (wpn) then 
+                     if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
+                        damageType := DMG_fire;
+                  i++;
+               end
+            end
+            set_proto_data(PID_PBS_M79, 48, damageType);
+            set_proto_data(PID_PBS_MGL, 48, damageType);
+	         
+	         /*(attackType > 3 or isMelee) and */
+	         
+	         if (ini_sneak_attack and obj_type(target) == OBJ_TYPE_CRITTER and attacker == dude_obj) then begin
+		         skill := has_skill(attacker, SKILL_SNEAK);
+		         if ((willHit == 2 or willHit == 3)
+			         and using_skill(attacker,SKILL_SNEAK)
+			         and random(ini_sneak_attack_min_skill,ini_sneak_attack_max_skill) < skill
+		    	     //and (obj_can_see_obj(target,attacker)==0 or attacker_behind_target(attacker,target) )
+		    	     and not(is_in_array(target, set_who_see_dude))) then begin
+		         	set_sfall_return(3);
+		         	if (attacker == dude_obj) then display_msg(combat_mstr(5001));
+		         end
+		         call add_array_set(set_who_see_dude, target);
+	         end
+         end
+      end
+end

@@ -1,0 +1,205 @@
+
+import variable gecko_percy_box;
+
+#include "sfall.h"
+#include "define_lite.h"
+#include "lib.arrays.h"
+#include "lib.strings.h"
+#include "mod.h"
+#include "..\headers\aipacket.h"
+#include "..\headers\teams.h"
+//#include "traps.h"
+
+#include "_arrays_test.ssl"
+//#include "_dialogs_test.ssl"
+
+variable victim := 0;
+variable key_1 := false;
+variable cursor_obj := 0;
+
+variable iii := 0;
+
+variable ary;
+
+export procedure testexport111(variable a);
+
+procedure testexport111(variable a) begin
+   display_msg("Hello from gl_test! "+a);
+end
+
+procedure set_item_count(variable invenobj, variable itempid, variable newcount, variable wield)
+begin
+   variable begin
+      count;
+      item;
+   end
+   count := obj_is_carrying_obj_pid(invenobj, itempid);
+   if (newcount > count) then begin
+      item := create_object_sid(itempid, 0, 0, -1);
+      add_mult_objs_to_inven(invenobj, item, newcount - count);
+      if (wield) then wield_obj_critter(invenobj, item);
+   end else if (newcount < count) then begin
+      count := rm_mult_objs_from_inven(invenobj, obj_carrying_pid_obj(invenobj, itempid), count - newcount);
+      destroy_object(item);
+   end
+end
+
+procedure destroy_p_proc begin
+
+end
+
+procedure testret(variable a) begin
+   if (a==1) then return 111;
+   if (a==2) then return 222;
+   if (a==3) then return 333;
+   return "nope";
+end
+
+procedure how_many_misc begin
+   return len_array(list_as_array(LIST_MISC));
+end
+
+procedure skip_call(variable adr) begin
+   variable i := 0;
+   while (i<5) do begin
+      write_byte(adr+i, 0x90);
+      i++;
+   end
+end
+
+variable objs;
+variable arr;
+
+procedure start begin
+  if game_loaded then begin
+   
+   variable s := "";
+   variable obj;
+   variable item;
+   variable i, k, v;
+   variable temp, coll;
+   
+   //test_suite_verbose := true;
+   //call array_test_suite; 
+   //call arrays_lib_tests; 
+   //return;
+   
+   // WARNING! DANGEROUS CODE!
+   // call _PURGE_all_saved_arrays;
+   // WARNING! End of dangerous code
+   
+   /*temp := ["John", "Mike", "Kate", "Presley", "Rob", "Jim", "Steven", "Greg"];
+   coll := create_array_map;
+   for (i:=1; i<=7; i++) begin
+      coll[i] := {
+         "name":  array_random_value(temp), 
+         "phone": random(10000, 99999), 
+         "price": (random(1000, 9999) / 100.0), 
+         "something": "else"
+      };
+   end
+   call save_collection("people", coll);*/
+   
+   
+   coll := load_collection("people");
+   foreach (k: v in coll) 
+      display_msg(""+k+": "+debug_array_str(v));
+   
+   unset_array(coll, 7);
+   call save_collection("people", coll);
+   
+   
+   /*display_msg(debug_array_str(
+      array_diff([1, 2, 3, 4, 5], [2, 1, 4, 25])
+   ));*/
+   
+  end else begin
+     /*obj := get_sfall_global_int(SGVAR_REMOVE_ITEM);
+     if (obj) then begin
+         temp := rm_mult_objs_from_inven(dude_obj, obj, 1);
+         destroy_object(obj);
+         set_sfall_global(SGVAR_REMOVE_ITEM, 0);
+     end*/
+     
+     /*obj := critter_inven_obj(dude_obj, 1);
+     if (obj) then begin
+        set_weapon_ammo_count(obj, random(1, 20));
+        display_msg("pid:"+obj_pid(obj)+", wtf: "+get_weapon_ammo_count(obj));
+     end*/
+     
+     //ar := get_sfall_global_array(SGVAR_TRAPS_BY_DUDE, 0, 4);
+     //s := get_sfall_global_array(SGVAR_TRAPS_BY_DUDE_LOCAL, 0, 4);
+     //display_msg("global: "+len_array(ar)+", local: "+len_array(s));
+     
+     
+     if (key_pressed(DIK_1) and (game_time-key_1)>50) then begin
+      key_1 := game_time;
+      
+      
+     end
+     
+     if (key_pressed(DIK_LCONTROL) and key_pressed(DIK_F2)) then begin
+        if (not(key_1)) then begin
+        
+        
+         temp := tile_num_in_direction(tile_num(dude_obj), 0, 9);
+         for (i:=0; i<5; i++) begin
+            create_object_sid(16777228, tile_num_in_direction(temp, i, 1), elevation(dude_obj), -1);
+         end
+         
+        /*obj := create_object_sid(0x01000000+1, tile_num_in_direction(tile_num(dude_obj), 0, 7), elevation(dude_obj), -1);
+         temp := tile_num_in_direction(tile_num(dude_obj), 0, 9);
+         obj := create_object_sid(0x01000000+2, temp, elevation(dude_obj), -1);
+         obj := create_object_sid(0x01000000+3, tile_num_in_direction(temp, 1, 1), elevation(dude_obj), -1);
+         obj := create_object_sid(0x01000000+3, tile_num_in_direction(temp, 5, 1), elevation(dude_obj), -1);
+         
+         
+         call set_item_count(dude_obj, PID_MINIGUN, 1, 1);*/
+            //call set_item_count(dude_obj, PID_CHEEZY_POOFS, 1, 1);
+            //critter_mod_skill(dude_obj, SKILL_ENERGY_WEAPONS, 100);
+            /*i := critter_facing_dir(dude_obj);
+            obj := tile_get_next_critter(tile_num_in_direction(dude_tile, i, 2), dude_elevation, 0);
+            if (obj) then begin
+               s := create_object_sid(obj_pid(obj), tile_num_in_direction(dude_tile, i, 1), dude_elevation, -1);
+               set_script(s, get_script(obj));
+               move_obj_inven_to_obj(obj, s);
+               //destroy_object(obj);
+            end*/
+         //attack_setup(obj, dude_obj);
+         
+         
+         key_1 := true;
+      end
+   end
+   
+   // follow cursor
+   //if (combat_is_initialized) then begin
+      if (cursor_obj == 0) then begin
+         cursor_obj := create_object_sid(PID_STEAM_2, 0, 0, -1);
+         move_to(cursor_obj, tile_under_cursor, elevation(dude_obj));
+         reg_anim_combat_check(0);
+         reg_anim_begin();
+         reg_anim_animate_forever(cursor_obj, 0);
+         reg_anim_end();
+         game_ui_enable;
+      end
+   //end
+   
+   //reg_anim_change_fid(0, 0, 0); // refresh display
+   //if (i) then   display_msg("cr: "+proto_data(obj_pid(i), cr_name));
+     
+  end
+end
+
+
+procedure map_enter_p_proc begin
+   display_msg("Map enter gl_test");
+end
+
+procedure map_update_p_proc begin
+   display_msg("Map update gl_test");
+end
+
+procedure map_exit_p_proc begin
+   display_msg("Map exit gl_test");
+end

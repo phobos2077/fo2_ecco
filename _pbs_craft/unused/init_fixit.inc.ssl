@@ -1,0 +1,50 @@
+procedure check_create_workbench(variable tile, variable elev, variable toolboard);
+procedure set_script_for_all_workbenches_on_map;
+procedure initialize_map_workbenches;
+
+#include "..\!sfall\sfall.h"
+#include "..\HEADERS\maps.h"
+#define PID_BLOCKING_HEX                    (33554499)
+#define PID_WORKBENCH                    (157)
+#define PID_TOOLBOARD                    (158)
+#define SCRIPT_TEST0            (2)
+
+procedure set_script_for_all_workbenches_on_map begin
+	variable list;
+	variable obj;
+	variable n := 0;
+	list := list_begin(LIST_GROUNDITEMS);
+	obj := list_next(list);
+	while (obj != 0) do begin
+		if (obj_pid(obj) == PID_WORKBENCH and get_script(obj) == -1) then begin
+			set_script(obj, SCRIPT_TEST0);
+			n++;
+		end
+		obj := list_next(list);
+	end
+	list_end(list);
+	if (n > 0) then display_msg("Converted " + n + " workbenches.");
+end
+
+procedure initialize_map_workbenches begin
+	if (cur_map_index == MAP_KLAMATH_1) then begin
+		call check_create_workbench(16910, 0, true);
+	end else if (cur_map_index == MAP_NEW_RENO_3) then begin
+		call check_create_workbench(14275, 0, true);
+	end
+	call set_script_for_all_workbenches_on_map;
+end
+
+procedure check_create_workbench(variable tile, variable elev, variable toolboard) begin
+	if (tile_contains_obj_pid(tile, elev, PID_WORKBENCH) == false) then begin
+		create_object_sid(PID_WORKBENCH, tile, elev,SCRIPT_TEST0);
+		if (toolboard) then begin
+			create_object_sid(PID_TOOLBOARD, tile, elev, -1);
+		end
+		create_object_sid(PID_BLOCKING_HEX, tile, elev,-1);
+		tile := tile_num_in_direction(tile, 4, 1);
+		create_object_sid(PID_BLOCKING_HEX, tile, elev,-1);
+		create_object_sid(PID_BLOCKING_HEX, tile_num_in_direction(tile, 3, 1), elev,-1);
+	end
+end
+

@@ -1,0 +1,812 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location:
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+#include "..\headers\RedDown.h"
+
+#define NAME                    SCRIPT_RCASCORT
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_REDDING)
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node037;
+procedure Node038;
+procedure Node039;
+procedure Node040;
+procedure Node041;
+procedure Node042;
+procedure Node043;
+procedure Node044;
+procedure Node045;
+procedure Node046;
+procedure Node047;
+procedure Node048;
+procedure Node049;
+
+procedure Node003a;
+procedure Node012a;
+procedure Node015a;
+procedure Node018a;
+procedure Node018b;
+procedure Node028a;
+procedure Node032a;
+procedure Node042a;
+procedure Node045a;
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Wanamingo_Deed             (7)
+#define LVAR_Looked_Before              (8)
+#define LVAR_Said_2                     (9)
+
+
+#define Deed_Sold_To_Player             (1)
+#define Deed_Offered_Buy_Back           (2)
+#define Deed_Sold_To_Ascorti            (3)
+
+
+// by phobos2077 - bounty hunt
+#define _BOUNTY_RCASCORT
+#include "..\_pbs_main\quests_bounty.h"
+// ;
+
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+
+procedure start begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_REDDING);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_CITIZEN);
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ((global_var(GVAR_ENEMY_REDDING) == 1) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+       attack(dude_obj);
+   end
+
+   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION1;
+
+   CheckKarma;
+
+   GetReaction;
+
+   if (dude_iq < 4) then begin
+       call Node001;
+   end
+
+   else if (local_var(LVAR_Wanamingo_Deed) == Deed_Offered_Buy_Back) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node025;
+       gSay_End;
+       end_dialogue;
+   end
+
+   else if (local_var(LVAR_Wanamingo_Deed) == Deed_Sold_To_Player) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node015;
+       gSay_End;
+       end_dialogue;
+   end
+
+   else if (map_var(MVAR_Widow_Rooney) == WIDOW_JOB_ACCEPTED) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node026;
+       gSay_End;
+       end_dialogue;
+   end
+
+   else if (map_var(MVAR_Widow_Rooney) == WIDOW_KICKED_OUT) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node030;
+       gSay_End;
+       end_dialogue;
+   end
+
+   else if (map_var(MVAR_Widow_Rooney) == WIDOW_PAID) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node035;
+       gSay_End;
+       end_dialogue;
+   end
+
+   else if (map_var(MVAR_Widow_Rooney) == WIDOW_KILLED) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node036;
+       gSay_End;
+       end_dialogue;
+   end
+
+   else begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node002;
+       gSay_End;
+       end_dialogue;
+   end
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+   set_global_var(GVAR_ENEMY_REDDING,1);
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Looked_Before) == 0) then begin
+       inc_local_var(LVAR_Looked_Before);
+       display_msg(mstr(100));
+   end
+   else
+       display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   floater(random(103,109));
+end
+
+procedure Node002 begin
+   if (local_var(LVAR_Said_2) == 0) then begin
+       inc_local_var(LVAR_Said_2);
+       Reply(110);
+   end
+   else
+       Reply(111);
+
+   // pbs bounty quest begin       
+   INJECT_BOUNTY_DONE
+   INJECT_GIVE_PROOF
+   // end
+
+   NOption(112,Node045,004);
+   NOption(113,Node048,004);
+   if (not(dude_found_geck)) then
+       NOption(114,Node049,004);
+   NOption(115,Node003,004);
+   NOption(116,Node999,004);
+end
+
+procedure Node003 begin
+   Reply(117);
+
+   NOption(118,Node003a,004);
+   NOption(119,Node002,004);
+end
+
+procedure Node003a begin
+   if (local_var(LVAR_Wanamingo_Deed) == Deed_Offered_Buy_Back) then
+       call Node004;
+   else if (local_var(LVAR_Wanamingo_Deed) == Deed_Sold_To_Player) then
+       call Node005;
+   else if (local_var(LVAR_Wanamingo_Deed) == Deed_Sold_To_Ascorti) then
+       call Node006;
+   else
+       call Node007;
+end
+
+procedure Node004 begin
+   Reply(120);
+
+   NOption(121,Node018,004);
+   NOption(122,Node002,004);
+   NOption(123,Node999,004);
+end
+
+procedure Node005 begin
+   Reply(124);
+
+   NOption(125,Node002,004);
+   NOption(126,Node999,004);
+end
+
+procedure Node006 begin
+   Reply(127);
+
+   NOption(128,Node002,004);
+   NOption(129,Node999,004);
+end
+
+procedure Node007 begin
+   Reply(130);
+
+   GOption(131,Node008,004);
+   NOption(132,Node002,004);
+   NOption(133,Node999,004);
+end
+
+procedure Node008 begin
+   Reply(134);
+
+   NOption(135,Node009,004);
+   NOption(136,Node010,006);
+   NOption(137,Node002,004);
+end
+
+procedure Node009 begin
+   Reply(138);
+
+   NOption(139,Node011,004);
+   NOption(140,Node014,004);
+   NOption(141,Node019,006);
+end
+
+procedure Node010 begin
+   Reply(142);
+
+   GOption(143,Node009,004);
+   NOption(144,Node002,004);
+   NOption(145,Node999,004);
+end
+
+procedure Node011 begin
+   Reply(146);
+
+   GOption(147,Node012,004);
+   BOption(148,Node002,004);
+end
+
+procedure Node012 begin
+   Reply(149);
+
+   if (item_caps_total(dude_obj) > 999) then
+       NOption(150,Node012a,004);
+   else
+       BOption(151,Node002,004);
+   NOption(152,Node002,004);
+   NOption(153,Node999,004);
+end
+
+procedure Node012a begin
+   item_caps_adjust(dude_obj,-1000);
+   item_caps_adjust(self_obj,300);
+
+   set_local_var(LVAR_Wanamingo_Deed,Deed_Sold_To_Player);
+   //added by killap - expansion
+   if (global_var(GVAR_MINE_DEED) < DEED_ACCEPTED) then
+      set_global_var(GVAR_MINE_DEED,DEED_ACCEPTED);
+   //end added
+   call Node013;
+end
+
+procedure Node013 begin
+   Reply(154);
+
+   NOption(155,Node002,004);
+   NOption(156,Node999,004);
+end
+
+procedure Node014 begin
+   Reply(157);
+
+   GOption(158,Node011,004);
+   NOption(159,Node002,004);
+   NOption(160,Node999,004);
+end
+
+procedure Node015 begin
+   Reply(161);
+
+   GOption(162,Node015a,004);
+   NOption(163,Node002,004);
+   NOption(164,Node999,004);
+end
+
+procedure Node015a begin
+   if (global_var(GVAR_WANAMINGO_OCCUPADO) == WANAMINGO_WANAMINGO) then
+       call Node016;
+   else if (global_var(GVAR_WANAMINGO_OCCUPADO ) == WANAMINGO_MORTON) then
+       call Node017;
+   else
+       call Node018;
+end
+
+procedure Node016 begin
+   Reply(165);
+
+   NOption(166,Node002,004);
+   NOption(167,Node999,004);
+end
+
+procedure Node017 begin
+   Reply(168);
+
+   NOption(169,Node021,004);
+end
+
+procedure Node018 begin
+   Reply(170);
+
+   NOption(171,Node018a,004);
+   NOption(172,Node018b,004);
+end
+
+procedure Node018a begin
+   set_local_var(LVAR_Wanamingo_Deed,Deed_Offered_Buy_Back);
+end
+
+procedure Node018b begin
+   item_caps_adjust(dude_obj,3000); // pbs: from 2500 to 3000
+   set_local_var(LVAR_Wanamingo_Deed,Deed_Sold_To_Ascorti);
+   give_xp(EXP_SELL_MINE_DEED);
+   inc_global_var_amt(GVAR_TOWN_REP_REDDING, 15); //added by killap
+end
+
+procedure Node019 begin
+   Reply(173);
+
+   NOption(174,Node020,004);
+end
+
+procedure Node020 begin
+   Reply(175);
+
+   NOption(176,Node011,004);
+end
+
+procedure Node021 begin
+   set_global_var(GVAR_FROG_MORTON,FROG_KNOWN);
+
+   Reply(177);
+
+   NOption(178,Node022,004);
+   NOption(179,Node023,004);
+   NOption(180,Node024,004);
+end
+
+procedure Node022 begin
+   Reply(181);
+
+   NOption(182,Node023,004);
+   NOption(183,Node024,004);
+   NOption(184,Node999,004);
+end
+
+procedure Node023 begin
+   Reply(185);
+
+   NOption(186,Node022,004);
+   NOption(187,Node024,004);
+   NOption(188,Node999,004);
+end
+
+procedure Node024 begin
+   Reply(189);
+
+   GOption(190,Node999,004);
+end
+
+procedure Node025 begin
+   Reply(191);
+
+   NOption(192,Node018,004);
+   NOption(193,Node999,004);
+end
+
+procedure Node026 begin
+   Reply(194);
+
+   BOption(195,Node027,004);
+   NOption(196,Node028,004);
+   NOption(197,Node002,004);
+   if (local_var(LVAR_Said_2) == 0) then
+       NOption(198,Node002,004);
+end
+
+procedure Node027 begin
+   Reply(199);
+
+   NOption(200,Node028,004);
+   NOption(201,Node999,004);
+end
+
+procedure Node028 begin
+   Reply(202);
+
+   if (item_caps_total(dude_obj) >= 120) then
+       GOption(203,Node028a,004);
+   NOption(204,Node002,004);
+   GOption(205,Node999,004);
+end
+
+procedure Node028a begin
+   set_map_var(MVAR_Widow_Rooney,WIDOW_PAID);
+   
+   //added by killap
+   item_caps_adjust(dude_obj,-120);
+   set_global_var(GVAR_WIDOW_ROONEY,WIDOW_PAID);
+   inc_general_rep(REP_BONUS_HELPED_ROONEY);
+   inc_global_var_amt(GVAR_TOWN_REP_REDDING, 5);
+   display_msg(g_mstr(1008));
+   give_xp(EXP_HELPED_ROONEY);
+   //added by killap
+   
+   call Node029;
+end
+
+procedure Node029 begin
+   Reply(206);
+
+   GOption(207,Node002,004);
+   GOption(208,Node999,004);
+end
+
+procedure Node030 begin
+   Reply(209);
+
+   NOption(210,Node031,004);
+   GOption(211,Node032,004);
+end
+
+procedure Node031 begin
+   Reply(212);
+
+   NOption(213,Node032,004);
+   BOption(214,Node034,004);
+end
+
+procedure Node032 begin
+   Reply(215);
+
+   GOption(216,Node032a,004);
+   BOption(217,Node999,004);
+end
+
+procedure Node032a begin
+   variable item;
+
+   item:=create_object(PID_BEER,0,0);
+   add_obj_to_inven(dude_obj,item);
+
+   call Node033;
+end
+
+procedure Node033 begin
+   Reply(218);
+
+   GOption(219,Node002,004);
+   GOption(220,Node999,004);
+end
+
+procedure Node034 begin
+   Reply(221);
+
+   NOption(222,Node032,004);
+   BOption(223,Node999,004);
+end
+
+procedure Node035 begin
+   Reply(224);
+
+   NOption(225,Node002,004);
+   BOption(226,Node999,004);
+end
+
+procedure Node036 begin
+   Reply(227);
+
+   BOption(228,Node037,004);
+   NOption(229,Node038,004);
+end
+
+procedure Node037 begin
+   Reply(230);
+
+   BOption(231,Node039,004);
+   NOption(232,Node999,004);
+end
+
+procedure Node038 begin
+   Reply(233);
+
+   NOption(234,Node002,004);
+   NOption(235,Node999,004);
+end
+
+procedure Node039 begin
+   Reply(236);
+
+   BOption(237,Node040,004);
+   NOption(238,Node999,004);
+end
+
+procedure Node040 begin
+   Reply(239);
+
+   BOption(240,Node041,004);
+   NOption(241,Node999,004);
+end
+
+procedure Node041 begin
+   Reply(242);
+
+   BOption(243,Node998,004);
+   NOption(244,Node999,004);
+end
+
+procedure Node042 begin
+   Reply(245);
+
+   NOption(246,Node002,004);
+   NOption(247,Node042a,004);
+   NOption(248,Node999,004);
+end
+
+procedure Node042a begin
+   if (global_var(GVAR_REDDING_EXCAVATOR_CHIP) >= CHIP_DELIVERED_MARGE) then
+       call Node046;
+   else
+       call Node047;
+end
+
+procedure Node043 begin
+   Reply(249);
+
+   GOption(250,Node002,004);
+   NOption(251,Node042a,004);
+   NOption(252,Node999,004);
+end
+
+procedure Node044 begin
+   Reply(253);
+
+   NOption(254,Node002,004);
+   NOption(255,Node042a,004);
+   NOption(256,Node999,004);
+end
+
+procedure Node045 begin
+   Reply(257);
+
+   NOption(258,Node045a,004);
+   NOption(259,Node042a,004);
+   INJECT_ASK_BOUNTY  // pbs
+   INJECT_BOUNTY_DONE  // pbs
+   NOption(260,Node002,004);
+   NOption(261,Node999,004);
+end
+
+procedure Node045a begin
+   if (global_var(GVAR_REDDING_SHERIFF) == SHERIFF_AGREED) then
+       call Node042;
+   else if (global_var(GVAR_REDDING_SHERIFF) == SHERIFF_FINISHED) then
+       call Node043;
+   else
+       call Node044;
+end
+
+procedure Node046 begin
+   Reply(262);
+
+   NOption(263,Node045a,004);
+   NOption(264,Node002,004);
+   NOption(265,Node999,004);
+end
+
+procedure Node047 begin
+   Reply(266);
+
+   NOption(267,Node045a,004);
+   NOption(268,Node002,004);
+   NOption(269,Node999,004);
+end
+
+procedure Node048 begin
+   if (global_var(GVAR_REDDING_JET_LEVEL) == JET_LOW) then begin
+       set_global_var(GVAR_VAULT_REDDING_PROBLEM,REDDING_PROBLEM_KNOW_JET);
+       Reply(270);
+   end
+   else if (global_var(GVAR_REDDING_JET_LEVEL) == JET_HIGH) then begin
+       set_global_var(GVAR_VAULT_REDDING_PROBLEM,REDDING_PROBLEM_KNOW_JET);
+       Reply(271);
+   end
+   else if (global_var(GVAR_REDDING_JET_LEVEL) == JET_ALL) then begin
+       set_global_var(GVAR_VAULT_REDDING_PROBLEM,REDDING_PROBLEM_KNOW_JET);
+       Reply(272);
+   end
+   else if (global_var(GVAR_REDDING_JET_LEVEL) == JET_ON_CURE) then
+       Reply(273);
+   else
+       Reply(274);
+
+   NOption(275,Node002,004);
+   NOption(276,Node999,004);
+end
+
+procedure Node049 begin
+   Reply(277);
+
+   NOption(278,Node002,004);
+   NOption(279,Node999,004);
+end
+
+//xxxxxxxxxxxxxxxxxxxx

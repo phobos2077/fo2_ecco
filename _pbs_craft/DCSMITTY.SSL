@@ -1,0 +1,466 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location: Den
+        Description:
+
+        Log:
+
+           Created: August 22, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+#define NAME                    SCRIPT_DCSMITTY
+#define TOWN_REPUTATION         GVAR_TOWN_REP_THE_DEN
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+#include "..\headers\DenBus1.h"
+#include "..\headers\Den.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+procedure Node000;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Flags                        (4)
+#define LVAR_Home_Tile                    (5)
+#define LVAR_Home_Rotation                (6)
+
+#define say_thanks_bit                    bit_10
+#define tamper_warned_bit                 bit_11
+#define heard_tamper_bit                  bit_12
+#define repeated_car_warning_bit          bit_13
+
+#define say_thanks                        lvar_bit(LVAR_Flags, say_thanks_bit)
+#define set_say_thanks                    set_lvar_bit_on(LVAR_Flags, say_thanks_bit)
+#define off_say_thanks                    set_lvar_bit_off(LVAR_Flags, say_thanks_bit)
+
+#define tamper_warned                     lvar_bit(LVAR_Flags, tamper_warned_bit)
+#define set_tamper_warned                 set_lvar_bit_on(LVAR_Flags, tamper_warned_bit)
+
+#define heard_tamper                      lvar_bit(LVAR_Flags, heard_tamper_bit)
+#define set_heard_tamper                  set_lvar_bit_on(LVAR_Flags, heard_tamper_bit)
+#define off_heard_tamper                  set_lvar_bit_off(LVAR_Flags, heard_tamper_bit)
+
+#define repeated_car_warning              lvar_bit(LVAR_Flags, repeated_car_warning_bit)
+#define set_repeated_car_warning          set_lvar_bit_on(LVAR_Flags, repeated_car_warning_bit)
+
+// by phobos2077: crafting
+#define _LEARN_CRAFT_SMITTY
+#include "learn_craft.h"
+
+
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+
+import variable den_smitty_box_obj;
+import variable generic_temp_box;
+import variable smitty_obj;
+
+procedure start begin
+   smitty_obj := self_obj;
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == timed_event_float) then begin
+      if (combat_is_initialized == false) then begin
+      end
+      // flush_add_timer_event_sec(self_obj, random(15, 90), timed_event_float);
+   end else if (fixed_param == timed_event_wander) then begin
+      if (combat_is_initialized == false) then begin
+         if (heard_tamper == false) then begin
+            // ### make him wander around area sometimes, expecially if tamper_warned
+         end
+      end
+      flush_add_timer_event_sec(self_obj, random(15, 90), timed_event_wander);
+   end else if (fixed_param == timed_event_car_tamper) then begin
+      if (tamper_warned) then begin
+         set_hostile;
+      end
+      set_heard_tamper;
+   end
+end
+
+procedure map_enter_p_proc begin
+   smitty_obj := self_obj;
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_THE_DEN);
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_CITIZEN);
+         set_local_var(LVAR_Home_Tile, self_tile);
+         set_local_var(LVAR_Home_Rotation, self_cur_rot);
+      end
+      flush_add_timer_event_sec(self_obj, random(15, 90), timed_event_float);
+      flush_add_timer_event_sec(self_obj, random(15, 90), timed_event_wander);
+   end
+end
+
+procedure critter_p_proc begin
+   if (self_can_see_dude) then begin
+      if (hostile) then begin
+         self_attack_dude;
+      end else if (heard_tamper) then begin
+         off_heard_tamper;
+         set_tamper_warned;
+         floater(600);
+      end
+   end else if (heard_tamper) then begin
+      if (tamper_warned == false) then begin
+         Follow_Dude_Run_Only(2,2)
+      end
+   end else if (self_tile != local_var(LVAR_Home_Tile)) then begin
+      animate_move_to_tile(local_var(LVAR_Home_Tile));
+   end else if (self_cur_rot != local_var(LVAR_Home_Rotation)) then begin
+      animate_rotation(local_var(LVAR_Home_Rotation));
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   if ((mom_attacked) or (mom_killed)) then begin
+      call Node001;
+   end else if (dude_is_stupid) then begin
+      call Node002;
+   end else begin
+      move_obj_inven_to_obj(self_obj,generic_temp_box);
+      move_obj_inven_to_obj(den_smitty_box_obj,self_obj);
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            call Node000;
+         gSay_End;
+         end_dialogue;
+      move_obj_inven_to_obj(self_obj,den_smitty_box_obj);
+      move_obj_inven_to_obj(generic_temp_box,self_obj);
+      set_herebefore;
+   end
+   set_herebefore;
+end
+
+procedure destroy_p_proc begin
+   smitty_obj := 0;
+   move_obj_inven_to_obj(den_smitty_box_obj,self_obj);
+   inc_good_critter
+   //added by killap
+   if (smitty_deliver(state_smitty_deliver_in_progress)) then
+      set_smitty_deliver(state_smitty_deliver_failed);
+   //end added by killap
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(151 - herebefore);
+   set_examined;
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node998 begin
+   set_hostile;
+end
+procedure Node999 begin
+end
+
+procedure Node000 begin
+   if (player_has_car) then begin
+      call Node018;
+   end else if (((tamper_warned) or (heard_tamper)) and (repeated_car_warning == false)) then begin
+      call Node027;
+   end else begin
+      call Node003;
+   end
+end
+
+procedure Node990 begin
+   //play_gmovie(CAR_MOVIE);
+end
+
+procedure Node001 begin
+   floater_rand(200,204);
+end
+
+procedure Node002 begin
+   floater_rand(220,224);
+end
+
+procedure Node003 begin
+   if (herebefore) then begin
+      Reply(242 + say_thanks);
+      off_say_thanks;
+   end else begin
+      Reply(240 + dude_is_female);
+   end
+   NOption(244, Node020, 004);
+   if (dude_has_car_repair_part) then begin
+      GOption(245, Node004, 004);
+   end else if (smitty_part(state_smitty_part_known)) then begin
+      GOption(246, Node011, 004);
+   end
+   if (dude_has_car_upgrade_part) then begin
+      GOption(248, Node005, 004);
+   end
+   if ((smitty_deliver(state_smitty_deliver_in_progress)) and (dude_has_smitty_meal)) then begin
+      GOption(247, Node008, 004);
+   end
+   // by phobos2077: crafting
+   if (get_sfall_global_int(SGVAR_CRAFT_EXPLOSIVES) == 0) then begin
+      NOption(701, NodeCraft1, 004);
+   end
+   NOption(249, Node999, 004);
+end
+
+procedure Node004 begin
+   Reply(260);
+   GOption(261, Node006, 004);
+   NOption(262, Node003, 004);
+   BOption(263, Node999, 004);
+end
+
+procedure Node005 begin
+   Reply(280);
+   GOption(281, Node007, 004);
+   NOption(282, Node003, 004);
+   BOption(283, Node999, 004);
+end
+
+procedure Node006 begin
+   Reply(300);
+   NOption(301, Node009, 004);
+end
+
+procedure Node007 begin
+   Reply(310);
+   NOption(311, Node009, 004);
+end
+
+procedure Node008 begin
+   if (smitty_deliver_time_up) then begin
+      set_smitty_deliver(state_smitty_deliver_failed); //changed to failed - killap
+      Reply(322);
+      BOption(323, Node999, 004);
+      NOption(324, Node999, 004);
+      BOption(325, Node999, 004);
+      NOption(326, Node999, 004);
+      NOption(327, Node999, 004);
+   end else begin
+      set_say_thanks;
+      set_smitty_deliver(state_smitty_deliver_finished);
+      give_pid_qty(dude_obj, PID_STIMPAK, 1)
+      remove_pid_qty(dude_obj, PID_SMITTY_MEAL, 1)
+      Reply(320);
+      GOption(321, Node999, 004);
+   end
+end
+
+procedure Node009 begin
+   Reply(330);
+   if (dude_has_car_repair_part) then begin
+      NOption(331, Node010, 004);
+   end else begin
+      NOption(331, Node013, 004);
+   end
+end
+
+procedure Node010 begin
+   Reply(340);
+   NOption(341, Node011, 004);
+end
+
+procedure Node011 begin
+   set_smitty_part(state_smitty_part_known);
+   Reply(350);
+   if (dude_has_car_repair_part) then begin
+      if (dude_caps >= 2000) then begin
+         GOption(351, Node012, 004);
+      end
+      NOption(352, Node003, 004);
+   end
+   NOption(353, Node999, 004);
+end
+
+procedure Node012 begin
+   gfade_out(ONE_GAME_SECOND);
+      game_time_advance(ONE_GAME_HOUR);
+      set_smitty_part(state_smitty_part_given);
+      set_car_part_pip(car_part_pip_done);
+      item_caps_adjust(self_obj,2000);
+      item_caps_adjust(dude_obj,-2000);
+      set_global_var(GVAR_PLAYER_GOT_CAR, 1);
+      remove_pid_qty(dude_obj, PID_CAR_FUEL_CELL_CONTROLLER, 1)
+   gfade_in(ONE_GAME_SECOND);
+   Reply(370);
+   NOption(371, Node990, 004);
+end
+
+procedure Node013 begin
+   Reply(380);
+   NOption(381, Node014, 004);
+end
+
+procedure Node014 begin
+   Reply(390);
+   NOption(391, Node015, 004);
+end
+
+procedure Node015 begin
+   set_smitty_part(state_smitty_part_known);
+   Reply(400);
+   NOption(401, Node016, 004);
+end
+
+procedure Node016 begin
+   Reply(410);
+   NOption(411, Node017, 004);
+end
+
+procedure Node017 begin
+   Reply(420);
+   NOption(421, Node003, 004);
+   NOption(422, Node999, 004);
+end
+
+procedure Node018 begin
+   Reply(430);
+   if ((dude_has_car_upgrade_part) and ((car_current_town == AREA_DEN) or (took_car_off_den_bus_1 == false))) then begin
+      GOption(431, Node019, 004);
+   end
+   if ((smitty_deliver(state_smitty_deliver_in_progress)) and (dude_has_smitty_meal)) then begin
+      GOption(432, Node008, 004);
+   end
+   // by phobos2077: crafting
+   if (get_sfall_global_int(SGVAR_CRAFT_EXPLOSIVES) == 0) then begin
+       NOption(702, NodeCraft1, 004);
+   end
+   NOption(433, Node999, 004);
+end
+
+procedure Node019 begin
+   Reply(450);
+   if (dude_caps >= 750) then begin
+      GOption(451, Node026, 004);
+   end
+   NOption(452, Node999, 004);
+end
+
+procedure Node020 begin
+   Reply(460);
+   NOption(461, Node021, 004);
+   BOption(462, Node003, 004);
+end
+
+procedure Node021 begin
+   Reply(470);
+   NOption(471, Node022, 004);
+end
+
+procedure Node022 begin
+   Reply(480);
+   NOption(481, Node023, 004);
+   NOption(482, Node024, 004);
+end
+
+procedure Node023 begin
+   Reply(490);
+   NOption(491, Node025, 004);
+end
+
+procedure Node024 begin
+   Reply(500);
+   NOption(501, Node025, 004);
+
+end
+
+procedure Node025 begin
+   set_smitty_part(state_smitty_part_known);
+   Reply(510);
+   NOption(511, Node003, 004);
+   NOption(512, Node999, 004);
+end
+
+procedure Node026 begin
+   gfade_out(ONE_GAME_SECOND);
+      game_time_advance(ONE_GAME_HOUR);
+      item_caps_adjust(self_obj,750);
+      item_caps_adjust(dude_obj,-750);
+      remove_pid_qty(dude_obj, PID_CAR_FUEL_INJECTION, 1)
+      set_car_upgrade_fuel_cell_regulator;
+   gfade_in(ONE_GAME_SECOND);
+   Reply(520);
+   NOption(521, Node999, 004);
+end
+
+procedure Node027 begin
+   set_repeated_car_warning;
+   Reply(650);
+   NOption(651, Node999, 004);
+   NOption(652, Node999, -003);
+end

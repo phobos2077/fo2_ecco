@@ -1,0 +1,126 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Gecko
+        Location: Arroyo
+        Description: Geckos on the hunting grounds map.
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+#include "..\headers\ArGarden.h"
+
+#define NAME                    SCRIPT_ACGECKO
+
+#include "..\headers\command.h"
+
+procedure start;
+procedure critter_p_proc;
+procedure timed_event_p_proc;
+procedure destroy_p_proc;
+procedure combat_p_proc;
+
+variable Sneer;
+variable In_Timed_Event:=0;
+
+#define LVAR_Hostile    (0)
+
+// by phobos2077: gecko eat food
+#include "gecko_hunger.h"
+variable food:=0;
+#define FOOD_DETECT_RADIUS    (15)
+
+procedure start begin
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_GECKO);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_WIMPY_GECKO);
+end
+
+procedure critter_p_proc begin
+   if ((random(0,20) == 1) and (In_Timed_Event == 0)) then begin
+       In_Timed_Event:=1;
+       add_timer_event(self_obj,game_ticks(5),1);
+   end
+
+   if ((obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+       attack(dude_obj);
+   end
+
+   if (local_var(LVAR_Hostile) == 1) then
+       attack(dude_obj);
+   
+   if (not(combat_is_initialized) and not(In_Timed_Event)) then begin
+      if (random(0, 50) == 1 and not(food)) then begin
+         food := getNearestFood(FOOD_DETECT_RADIUS);
+         if (food) then
+            call anim_go_eat_food(food);
+      end else if (food and not(anim_busy(self_obj))) then begin
+         destroy_object(food);
+         food := 0;
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then
+       set_local_var(LVAR_Hostile,1);
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == 1) then begin
+       In_Timed_Event:=0;
+       animate_move_to_tile(tile_num_in_direction(tile_num(self_obj),random(0,5),random(3,6)));
+   end
+end
+
+procedure destroy_p_proc begin
+   variable item;
+
+   if (obj_pid(self_obj) == PID_GECKO_SMALL) then begin
+       set_map_var(MVAR_Current_Gecko_Easy,map_var(MVAR_Current_Gecko_Easy)-1);
+   end
+   else if (obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL) then begin
+       set_map_var(MVAR_Current_Gecko_Hard,map_var(MVAR_Current_Gecko_Hard)-1);
+   end
+
+   if (has_trait(TRAIT_PERK,dude_obj,PERK_gecko_skinning_perk)) then begin
+       item:=create_object(PID_GECKO_PELT,0,0);
+       add_obj_to_inven(self_obj,item);
+   end
+end
+
+procedure combat_p_proc begin
+   if (fixed_param == COMBAT_SUBTYPE_HIT_SUCCEEDED) then begin
+       if (random(0,100) == 1) then begin
+           if (Sneer == 0) then begin
+               if (source_obj == dude_obj) then begin
+                   display_msg(mstr(100));
+                   Sneer:=1;
+               end
+               else begin
+                   display_msg(mstr(101)+obj_name(source_obj));
+               end
+           end
+           else begin
+               Sneer:=0;
+           end
+       end
+   end
+end

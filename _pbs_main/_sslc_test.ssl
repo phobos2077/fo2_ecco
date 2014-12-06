@@ -1,0 +1,54 @@
+procedure stuff begin
+   variable ar[5], i, k, v;
+   
+   for (i:=0; i<45; i++)
+      k := 1;
+   
+   /* i:=0;
+   while (i<45) do begin
+      ar[i] := random(0, 99);
+      i++;
+   end*/
+   
+   foreach v in ar begin
+      k := 100;
+      v := 200;
+   end
+   
+   foreach k: v in [1,2,3] while (i < 0) begin
+      k := 100;
+      v := 200;
+   end
+end
+
+procedure start begin
+   variable a,b,c,d,f,trap;
+   variable k,v,i;
+   
+   call stuff;
+   trap := {};
+   trap.id := 3434 % 23;
+   trap.key := 232;
+   //c[0] := 1;
+   b.ccc := a.fwfw + 3434;
+
+   a := {"fdf": 2, 6: -1};
+   f := [1,2];
+   
+   f := (a.fwf == 0);
+   
+   d := [(1 and 2), -3.14*2,["W", "T", "F"]];
+   
+   c[0] := f["sfs"];
+   
+   a:=.23;
+   
+   a:=1;
+   a:=1;
+   
+   //a := b.key;   
+   for (i:=0; i<5; i++) begin
+      a:=1;
+      i++;
+   end
+end

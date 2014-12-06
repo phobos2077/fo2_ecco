@@ -1,0 +1,783 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/******************************************************************************************
+        Item: Gun merchant Table
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: September 26, 1997
+
+           Updated:
+******************************************************************************************/
+
+
+/* Include Files */
+#include "..\headers\define.h"
+
+#define NAME                    SCRIPT_FIGUNTBL
+#define CUR_COMP_SCRIPT         SCRIPT_FIGUNTBL
+
+#include "..\headers\command.h"
+#include "..\headers\sanfran.h"
+
+#include "stock.h"   // by phobos2077
+
+/* Standard Script Procedures */
+procedure start;
+procedure use_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure use_obj_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+
+procedure validHandle(variable handle);
+
+/*****************************************************************
+   Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_
+*****************************************************************/
+#define LVAR_Restock_Time                         (0)
+#define LVAR_Restock_Time_Fix                     (1) //added by killap
+
+/*******************************************************************
+   Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_)
+*******************************************************************/
+import variable i_table_swap;
+import variable i_gun_merchant;
+
+/*******************************************************************
+   Local variables which do not need to be saved between map changes.
+*******************************************************************/
+
+
+/*******************************************************************
+*******                         PROCEDURES                   *******
+*******************************************************************/
+//#define TABLE_1 26460
+//#define TABLE_2 27660
+//#define TABLE_3 20059
+
+//edited for expansion maps - killap
+#define TABLE_1 26858
+#define TABLE_2 28058
+//#define TABLE_3 20059
+
+
+/*******************************************************************
+   The start procedure is the first procedure called when the map is
+   first entered. Any initial information that needs to be set up
+   should be placed in here.
+*******************************************************************/
+
+procedure start begin
+   i_table_swap := self_obj;
+end
+
+procedure timed_event_p_proc begin
+end
+
+/********************************************************************
+********************************************************************/
+
+procedure use_p_proc begin
+   if (validHandle(i_gun_merchant)) then begin
+      script_overrides;
+      i_table_swap := self_obj;
+      add_timer_event(i_gun_merchant, 0, TIMER_USE_TABLE);
+   end
+end
+
+/***************************************************************************
+   This is cursory glance description that the player will receive should
+   he just pass the Action Cursor over. Examines which give more information
+   need to be in the description_p_proc procedure.
+***************************************************************************/
+
+procedure look_at_p_proc begin
+end
+
+
+/**********************************************************************************
+**********************************************************************************/
+
+procedure description_p_proc begin
+end
+
+
+/**********************************************************************************
+   Make sure the door is working.
+**********************************************************************************/
+
+procedure use_skill_on_p_proc begin
+   if (validHandle(i_gun_merchant)) then begin
+      call use_p_proc;
+   end
+end
+
+
+/**********************************************************************************
+   This is called when the player is using an object on the door. When the check is
+   made to find out what is being used, obj_pid(obj_being_used_with) will need to
+   be checked against a prototype.
+**********************************************************************************/
+
+procedure use_obj_on_p_proc begin
+   if (validHandle(i_gun_merchant)) then begin
+      call use_p_proc;
+   end
+end
+
+
+/******************************************************************************************
+   IF it gets damaged it breaks
+******************************************************************************************/
+
+procedure damage_p_proc begin
+end
+
+/***************************************************************************************
+   Whenever the map is first entered, this procedure will be called.
+***************************************************************************************/
+
+procedure map_enter_p_proc begin
+   //added by killap
+   variable tmp;
+   variable special_item;
+   //end added 
+   
+   if (validHandle(i_gun_merchant)) then begin
+      debug_msg("FIGUNTBL: self_tile: " + self_tile);
+      
+      //added by killap - fix for game_time going negative after 7 years
+      if (((game_time) < 0) and (local_var(LVAR_Restock_Time_Fix) == 0)) then begin
+         set_local_var(LVAR_Restock_Time, game_time - 1);
+         set_local_var(LVAR_Restock_Time_Fix, 1);
+      end
+      //end added
+         
+      if (local_var(LVAR_Restock_Time) < game_time) then begin
+         if (self_tile == TABLE_1) then begin //Armor table
+            
+                                     //new added
+      tmp := create_object(PID_FOOTLOCKER_CLEAN_LEFT,5,0);
+      if (obj_is_carrying_obj_pid(self_obj, PID_NAV_COMPUTER_PARTS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_NAV_COMPUTER_PARTS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_NAVCOM_PARTS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_NAVCOM_PARTS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_COMPUTER_VOICE_MODULE ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_COMPUTER_VOICE_MODULE);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_V15_COMPUTER_PART ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_V15_COMPUTER_PART);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_GECK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_GECK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_VERTIBIRD_PLANS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_VERTIBIRD_PLANS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_TANKER_FOB ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_TANKER_FOB);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);   
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_CELL ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_CELL);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);   
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_CELL_CONTROLLER ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_CELL_CONTROLLER);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);   
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_INJECTION ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_INJECTION);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_VIC_RADIO ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_VIC_RADIO);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_VIC_WATER_FLASK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_VIC_WATER_FLASK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_HY_MAG_PART ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_HY_MAG_PART);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_DAY_PASS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_DAY_PASS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_FAKE_CITIZENSHIP ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_FAKE_CITIZENSHIP);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_CORNELIUS_GOLD_WATCH ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CORNELIUS_GOLD_WATCH);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RED_PASS_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RED_PASS_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_BLUE_PASS_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_BLUE_PASS_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_GOLD_LOCKET ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_GOLD_LOCKET);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_YELLOW_PASS_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_YELLOW_PASS_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_ANNA_GOLD_LOCKET ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_ANNA_GOLD_LOCKET);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_TRAPPER_TOWN_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_TRAPPER_TOWN_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_GECKO_DATA_DISK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_GECKO_DATA_DISK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_REACTOR_DATA_DISK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_REACTOR_DATA_DISK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_YELLOW_REACTOR_KEYCARD ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_YELLOW_REACTOR_KEYCARD);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RED_REACTOR_KEYCARD ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RED_REACTOR_KEYCARD);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_PLASMA_TRANSFORMER ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_PLASMA_TRANSFORMER);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_MOORE_BAD_BRIEFCASE ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_MOORE_BAD_BRIEFCASE);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_MOORE_GOOD_BRIEFCASE ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_MOORE_GOOD_BRIEFCASE);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_LYNETTE_HOLO ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_LYNETTE_HOLO);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_WESTIN_HOLO ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_WESTIN_HOLO);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_SPY_HOLO ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_SPY_HOLO);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_DR_HENRY_PAPERS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_DR_HENRY_PAPERS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end      
+      if (obj_is_carrying_obj_pid(self_obj, PID_PRESIDENTIAL_PASS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_PRESIDENTIAL_PASS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_VAULT_13_SHACK_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_VAULT_13_SHACK_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_EXCAVATOR_CHIP ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_EXCAVATOR_CHIP);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_OPEN ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_OPEN);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_BISHOPS_HOLODISK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_BISHOPS_HOLODISK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_ACCOUNT_BOOK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_ACCOUNT_BOOK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_ECON_HOLODISK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_ECON_HOLODISK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_CELL_DOOR_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CELL_DOOR_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_SMITTY_MEAL ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_SMITTY_MEAL);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_BECKY_BOOK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_BECKY_BOOK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_ENLIGHTENED_ONE_LETTER ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_ENLIGHTENED_ONE_LETTER);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_K9_MOTIVATOR ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_K9_MOTIVATOR);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_PRES_ACCESS_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_PRES_ACCESS_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      //end new added
+            
+            destroy_obj_inven(self_obj); //added by killap - one of the preventives I am adding towards the "too many items bug"
+            debug_msg("FIGUNTBL: table 1 set");
+            //Used to be on Table 3
+            check_restock_item(PID_BOTTLE_CAPS, 1000, 8000, 100)   // by phobos2077 - max increased from 2000 to 8000 
+            check_restock_item(PID_FLAMER, 1, 2, 60)
+            check_restock_item(PID_MINIGUN, 1, 3, 65)
+            check_restock_item(PID_ROCKET_LAUNCHER, 1, 3, 30)
+            check_restock_item(PID_LASER_PISTOL, 2, 4, 30)
+            check_restock_item(PID_FRAG_GRENADE, 3, 7, 45)
+            check_restock_item(PID_PLASMA_GRENADE, 1, 2, 20)
+            check_restock_item(PID_GATLING_LASER, 1, 1, 50)
+            check_restock_item(PID_THROWING_KNIFE, 5, 7, 60)
+            check_restock_item(PID_PBS_THROWING_AXE, 5, 7, 60)  // pbs
+            check_restock_item(PID_SUPER_SLEDGE, 1, 2, 70)
+            check_restock_item(PID_RIPPER, 2, 4, 50)
+            check_restock_item(PID_LASER_RIFLE, 1, 3, 65)
+            check_restock_item(PID_MOLOTOV_COCKTAIL, 5, 10, 60)
+            check_restock_item(PID_SPIKED_KNUCKLES, 1, 7, 30)
+            check_restock_item(PID_POWER_FIST, 1, 2, 60)
+            check_restock_item(PID_COMBAT_KNIFE, 1, 3, 90)
+            check_restock_item(PID_223_PISTOL, 1, 2, 35)
+            check_restock_item(PID_INDEPENDENT, 1, 2, 35) // pbs
+            check_restock_item(PID_PBS_MGL, 1, 2, 30) // pbs
+            //Used to be on Table 3
+
+            check_restock_item(PID_COMBAT_ARMOR, 1, 2, 50)
+            check_restock_item(PID_CURED_LEATHER_ARMOR, 1, 2, 50)
+            check_restock_item(PID_TESLA_ARMOR, 2, 4, 40)
+            check_restock_item(PID_METAL_ARMOR, 2, 4, 50)
+            check_restock_item(PID_LEATHER_JACKET, 2, 4, 60)
+            check_restock_item(PID_POWERED_ARMOR, 1, 3, 30)
+            check_restock_item(PID_LEATHER_ARMOR_MK_II, 1, 2, 40)
+            check_restock_item(PID_METAL_ARMOR_MK_II, 1, 3, 35)
+            check_restock_item(PID_COMBAT_ARMOR_MK_II, 1, 1, 30)
+            
+            //new added - killap
+            move_obj_inven_to_obj(tmp, self_obj);
+            destroy_object(tmp);
+            //end new added
+            
+         end else if (self_tile == TABLE_2) then begin //Ammo table
+            
+                                           //new added
+      tmp := create_object(PID_FOOTLOCKER_CLEAN_LEFT,5,0);
+      if (obj_is_carrying_obj_pid(self_obj, PID_NAV_COMPUTER_PARTS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_NAV_COMPUTER_PARTS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_NAVCOM_PARTS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_NAVCOM_PARTS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_COMPUTER_VOICE_MODULE ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_COMPUTER_VOICE_MODULE);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_V15_COMPUTER_PART ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_V15_COMPUTER_PART);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_GECK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_GECK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_VERTIBIRD_PLANS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_VERTIBIRD_PLANS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_TANKER_FOB ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_TANKER_FOB);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);   
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_CELL ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_CELL);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);   
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_CELL_CONTROLLER ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_CELL_CONTROLLER);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);   
+      end 
+      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_INJECTION ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_INJECTION);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_VIC_RADIO ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_VIC_RADIO);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_VIC_WATER_FLASK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_VIC_WATER_FLASK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_HY_MAG_PART ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_HY_MAG_PART);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_DAY_PASS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_DAY_PASS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_FAKE_CITIZENSHIP ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_FAKE_CITIZENSHIP);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_CORNELIUS_GOLD_WATCH ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CORNELIUS_GOLD_WATCH);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RED_PASS_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RED_PASS_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_BLUE_PASS_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_BLUE_PASS_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_GOLD_LOCKET ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_GOLD_LOCKET);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_YELLOW_PASS_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_YELLOW_PASS_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_ANNA_GOLD_LOCKET ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_ANNA_GOLD_LOCKET);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_TRAPPER_TOWN_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_TRAPPER_TOWN_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_GECKO_DATA_DISK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_GECKO_DATA_DISK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_REACTOR_DATA_DISK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_REACTOR_DATA_DISK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_YELLOW_REACTOR_KEYCARD ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_YELLOW_REACTOR_KEYCARD);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RED_REACTOR_KEYCARD ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RED_REACTOR_KEYCARD);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_PLASMA_TRANSFORMER ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_PLASMA_TRANSFORMER);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_MOORE_BAD_BRIEFCASE ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_MOORE_BAD_BRIEFCASE);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_MOORE_GOOD_BRIEFCASE ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_MOORE_GOOD_BRIEFCASE);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_LYNETTE_HOLO ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_LYNETTE_HOLO);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_WESTIN_HOLO ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_WESTIN_HOLO);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_SPY_HOLO ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_SPY_HOLO);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_DR_HENRY_PAPERS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_DR_HENRY_PAPERS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end      
+      if (obj_is_carrying_obj_pid(self_obj, PID_PRESIDENTIAL_PASS ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_PRESIDENTIAL_PASS);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_VAULT_13_SHACK_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_VAULT_13_SHACK_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_EXCAVATOR_CHIP ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_EXCAVATOR_CHIP);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_OPEN ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_OPEN);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_BISHOPS_HOLODISK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_BISHOPS_HOLODISK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_ACCOUNT_BOOK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_ACCOUNT_BOOK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_ECON_HOLODISK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_ECON_HOLODISK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_CELL_DOOR_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_CELL_DOOR_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_SMITTY_MEAL ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_SMITTY_MEAL);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_BECKY_BOOK ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_BECKY_BOOK);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_ENLIGHTENED_ONE_LETTER ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_ENLIGHTENED_ONE_LETTER);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_K9_MOTIVATOR ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_K9_MOTIVATOR);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      if (obj_is_carrying_obj_pid(self_obj, PID_PRES_ACCESS_KEY ) > 0) then begin
+         special_item := obj_carrying_pid_obj(self_obj, PID_PRES_ACCESS_KEY);
+         rm_obj_from_inven(self_obj,special_item);
+         add_obj_to_inven(tmp, special_item);  
+      end
+      //end new added
+            
+            destroy_obj_inven(self_obj); //added by killap - one of the preventives I am adding towards the "too many items bug"
+            debug_msg("FIGUNTBL: table 2 set");
+
+            //Used to be on table 3
+            check_restock_item(PID_HK_CAWS, 1, 5, 40)
+            check_restock_item(PID_HK_P90C, 1, 2, 55)
+            check_restock_item(PID_44_MAGNUM_REVOLVER, 1, 3, 46)
+            check_restock_item(PID_BOZAR, 1, 1, 30) //edit by killap - had a 0% chance to restock 0 of them
+            check_restock_item(PID_LIGHT_SUPPORT_WEAPON, 1, 1, 45)
+            check_restock_item(PID_FN_FAL_HPFA, 1, 3, 50)
+            check_restock_item(PID_HK_G11, 1, 4, 75)
+            check_restock_item(PID_PANCOR_JACKHAMMER, 1, 2, 45)
+            check_restock_item(PID_AVENGER_MINIGUN, 1, 1, 35)
+            check_restock_item(PID_HK_G11E, 1, 1, 30) //edit by killap - was PID_HK_G11; dup didn't make sense
+            check_restock_item(PID_M72_GAUSS_RIFLE, 1, 1, 30)
+            check_restock_item(PID_PK12_GAUSS_PISTOL, 1, 1, 30)
+            check_restock_item(PID_VINDICATOR_MINIGUN, 1, 1, 30)
+            check_restock_item(PID_MEGA_POWER_FIST, 1, 2, 40)
+            //Used to be on table 3
+
+            check_restock_item(PID_EXPLOSIVE_ROCKET, 1, 3, 100)
+            check_restock_item(PID_10MM_JHP, 5, 10, 100)
+            check_restock_item(PID_10MM_AP, 5, 10, 100)
+            check_restock_item(PID_9MM_AMMO, 1, 5, 100)
+            check_restock_item(PID_7_62MM_AMMO, 3, 7, 100)
+            check_restock_item(PID_FLAMETHROWER_FUEL_MK_II, 1, 5, 100)
+            check_restock_item(PID_MICRO_FUSION_CELL, 3, 7, 50)
+            check_restock_item(PID_SMALL_ENERGY_CELL, 5, 9, 50)
+            check_restock_item(PID_ROCKET_AP, 4, 6, 100)
+            check_restock_item(PID_5MM_AP, 5, 10, 75)
+            check_restock_item(PID_5MM_JHP, 5, 10, 75)
+            check_restock_item(PID_223_FMJ, 5, 10, 100)
+            check_restock_item(PID_PBS_223_AP, 3, 6, 50) // pbs
+            check_restock_item(PID_14MM_AP, 1, 5, 100)
+            check_restock_item(PID_FLAMETHROWER_FUEL, 3, 5, 100)
+            check_restock_item(PID_44_MAGNUM_JHP, 3, 5, 100)
+            check_restock_item(PID_44_FMJ_MAGNUM, 3, 5, 100)
+            check_restock_item(PID_45_CALIBER_AMMO, 4, 7, 100)
+            check_restock_item(PID_HN_NEEDLER_CARTRIDGE, 1, 10, 75)
+            check_restock_item(PID_HN_AP_NEEDLER_CARTRIDGE, 1, 10, 75)
+            check_restock_item(PID_SHOTGUN_SHELLS, 5, 7, 100)
+            check_restock_item(PID_4_7MM_CASELESS, 1, 4, 33)
+            check_restock_item(PID_2MM_EC_AMMO, 1, 4, 33)
+            check_restock_item(PID_PBS_50_AMMO, 1, 4, 33) // by phobos2077
+            check_restock_item(PID_PBS_40MM_HE, 2, 6, 100) // pbs
+            check_restock_item(PID_PBS_40MM_IC, 1, 3, 100) // pbs
+                        
+            //new added - killap
+            move_obj_inven_to_obj(tmp, self_obj);
+            destroy_object(tmp);
+            //end new added
+            
+         end
+         set_local_Var(LVAR_Restock_Time, game_time + (ONE_GAME_DAY * Random(2, 4)));
+      end
+   end
+end
+
+
+/**************************************************************************************
+   This procedure gets called roughly every 30 seconds of real time.
+**************************************************************************************/
+
+procedure map_update_p_proc begin
+end
+
+procedure validHandle(variable handle) begin
+   if (handle != 0 and handle != -1) then begin
+      return 1;
+   end
+   return 0;
+end

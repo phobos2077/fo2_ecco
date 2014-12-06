@@ -1,0 +1,27 @@
+procedure start;
+#include "sfall.h"
+#include "DEFINE_lite.H"
+
+//export variable abc;
+
+procedure start begin
+  variable critter, type, aimed, i;
+  if not init_hook then begin
+    critter:=get_sfall_arg;
+    type:=get_sfall_arg;
+    aimed:=get_sfall_arg;
+   //display_msg("Crit: "+critter+" type: "+type+" arg3: "+aimed);
+   // abc++;
+    i:=-1;
+    if (type == ATKTYPE_PALMSTRIKE) or (type == ATKTYPE_PIERCINGSTRIKE) or (type == ATKTYPE_JAB) then begin
+      i:= 4 - (has_trait(TRAIT_PERK, dude_obj, PERK_bonus_hth_attacks) > 0);
+    end
+    if (type == ATKTYPE_HIPKICK) or (type == ATKTYPE_HOOKKICK) or (type == ATKTYPE_PIERCINGKICK) then begin
+      i:=5 - (has_trait(TRAIT_PERK, dude_obj, PERK_bonus_hth_attacks) > 0);
+    end
+    if i != -1 then begin
+      if aimed then i++;
+      set_sfall_return(i);
+    end
+  end
+end

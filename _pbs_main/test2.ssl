@@ -1,0 +1,308 @@
+/**
+
+	This is universal script for all trap-related objects:
+	- visible floor traps (can be looked at and disarmed),
+	- read to be installed trap items lying on the ground,
+	- explosion visual effects (misc objects)
+
+	@author phobos2077
+	
+*/
+
+
+#define NAME	SCRIPT_TEST2
+
+#include "define_lite.h"
+#include "command_lite.h"
+#include "traps.h"
+
+procedure start;
+procedure timed_event_p_proc;
+//procedure map_enter_p_proc;
+procedure map_exit_p_proc;
+//procedure spatial_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_p_proc;
+procedure use_obj_on_p_proc;
+procedure use_skill_on_p_proc;
+procedure identify_me;
+procedure dude_disarm_and_pickup_trap;
+procedure dude_try_to_arm_trap(variable armament_obj);
+
+variable ar_global;
+
+#define INDEX_UNKNOWN		-1
+#define INDEX_EXPLOSION		-3
+
+
+variable my_trap_index := INDEX_UNKNOWN;
+variable my_trap_state;
+variable my_trap_armpid;
+variable my_trap_charges;
+variable my_trap_type;
+
+#define LVAR_index			(1)
+#define LVAR_identified		(2)
+
+#define set_charges_left(x)	 set_charges(ar_global, my_trap_index, x)
+
+//#define is_explosive_trap	(is_explosive_trap_pid(obj_pid(self_obj)))
+//#define is_melee_trap		(is_melee_trap_pid(obj_pid(self_obj)))
+
+#define i_am_trap			(my_trap_index >= 0)
+#define i_am_armed			(my_trap_state == TRAP_STATE_ACTIVE)
+#define i_am_customizable	(is_trap_customizable_type(my_trap_type))
+
+#define is_in_inventory 	(self_tile == -1)
+
+
+procedure identify_me begin
+	variable i;
+	if (my_trap_index == INDEX_UNKNOWN) then begin
+		if (is_explosion_misc_pid(self_pid)) then begin
+			my_trap_index := INDEX_EXPLOSION;
+		end else begin
+			ar_global := get_sfall_global_array(SGVAR_TRAPS_BY_DUDE, 0, 4);
+			if (local_var(LVAR_identified) == true) then begin
+				my_trap_index := local_var(LVAR_index);
+			end else begin
+				i := 0;
+				debug_msg("Search.. "+len_array(ar_global));
+				while (i < len_array(ar_global)) do begin
+					if (trap_objpid(ar_global, i) == self_pid
+						and trap_tile(ar_global, i) == self_tile
+						and trap_elev(ar_global, i) == self_elevation
+						and trap_map(ar_global, i) == cur_map_index) then
+					begin
+						my_trap_index := i;
+						i := len_array(ar_global); // break
+					end
+					i += TRAPINFO_SIZE;
+				end
+				set_local_var(LVAR_identified, true);
+				set_local_var(LVAR_index, my_trap_index);
+			end
+		end
+	end
+	// update temp local vars from global array
+	if (my_trap_index >= 0) then begin
+	 	my_trap_state := trap_state(ar_global, my_trap_index);
+ 		my_trap_armpid := trap_armpid(ar_global, my_trap_index);
+		my_trap_charges := trap_charges(ar_global, my_trap_index);
+		my_trap_type := trap_type(ar_global, my_trap_index);
+	end
+	debug_msg("identify_me: "+my_trap_index);
+end
+
+procedure start begin
+
+	/*call identify_me;
+	if (my_trap_index == INDEX_EXPLOSION) then begin
+		display_msg("I am explosion!");
+		anim(self_obj, ANIM_stand, 0);
+		add_timer_event(self_obj, 100, 0);
+	end*/
+end
+
+procedure timed_event_p_proc begin
+	variable varn;
+	variable val;
+	variable pid;
+	variable new_me;
+	variable signal;
+	variable param;
+	call identify_me;
+	if (fixed_param == 0) then begin
+		// DO NOTHING
+	end else if (fixed_param == TRAP_EVENT_DESTROY) then begin
+		destroy_object(self_obj);
+	end
+end
+
+/*procedure map_enter_p_proc begin
+	variable explosion_initialized;
+	explosion_initialized := (local_var(LVAR_index) == INDEX_EXPLOSION);
+	display_msg("Map enter "+self_pid+" "+get_uptime+" i:"+explosion_initialized);
+	call identify_me;
+	if (my_trap_index == INDEX_EXPLOSION and explosion_initialized) then begin
+		destroy_object(self_obj);
+	end
+end*/
+
+procedure map_exit_p_proc begin
+	debug_msg("Map exit: "+self_obj +", "+self_pid+ ", map:"+cur_map_index);
+	call identify_me;
+	if (my_trap_index == INDEX_EXPLOSION) then begin
+		destroy_object(self_obj);
+	end else if (i_am_trap and cur_map_index == 0) then begin
+		//display_msg("Destroy trap "+my_trap_index);
+		call remove_trap_info(my_trap_index);
+		destroy_object(self_obj);
+	end
+end
+
+/*procedure spatial_p_proc begin
+	script_overrides;
+	display_msg("SPATIAL!!!");
+end*/
+
+procedure look_at_p_proc begin
+	call identify_me;
+	//display_msg("trap id:"+my_trap_index /*+", pid:" +my_arm_pid*/ +"obj.pid:"+obj_pid(self_obj)/*+", inv:"+ inven_ptr(self_obj, 0)*/);
+	debug_msg("Charges: "+my_trap_charges);
+	if (i_am_trap) then begin
+		script_overrides;
+		display_mstr((my_trap_type == TRAP_TYPE_SPIKE)*50 + (my_trap_type == TRAP_TYPE_MINE)*60 + (my_trap_type == TRAP_TYPE_SENSOR)*70);
+	end else if (my_trap_index == INDEX_UNKNOWN) then begin
+		display_msg("Error identify trap!");
+	end
+end
+
+procedure description_p_proc begin
+	variable n, arm_name := "";
+	call identify_me;
+	if (i_am_trap) then begin
+		script_overrides;
+		n := (my_trap_type == TRAP_TYPE_SPIKE)*100 + (my_trap_type == TRAP_TYPE_MINE)*110 + (my_trap_type == TRAP_TYPE_SENSOR)*120;
+		if (i_am_armed) then begin
+			if (my_trap_armpid > 0) then arm_name := proto_data(my_trap_armpid, it_name);
+			display_msg(parse_str_2(mstr(n + 1), arm_name, ""));
+		end else begin
+			display_mstr(n);
+		end
+	end
+end
+
+procedure use_p_proc begin
+	call identify_me;
+	if (source_obj == dude_obj and i_am_trap) then begin 
+		script_overrides;
+		// use always picks up the trap (and disarms if armed)
+		call dude_disarm_and_pickup_trap;
+	end
+end
+
+procedure use_obj_on_p_proc begin
+	variable pid;
+	pid := obj_pid(obj_being_used_with);
+	//display_msg("USE "+pid+" on me! " + inven_count(dude_obj));
+	if (i_am_trap and not(i_am_armed)) then begin
+		script_overrides;
+		if (i_am_customizable) then begin
+			if (is_explosive_pid(pid)) then begin
+				call dude_try_to_arm_trap(obj_being_used_with);
+			end else begin
+				display_mstr(411);
+			end
+		end else begin
+			display_mstr(431);
+		end
+	end
+end
+
+procedure use_skill_on_p_proc begin
+	variable begin
+		item;
+	end
+	call identify_me;
+	if (source_obj == dude_obj and i_am_trap) then begin
+		script_overrides;
+		if (action_being_used == SKILL_TRAPS) then begin
+			if (i_am_armed) then begin
+				// disarm trap
+				call dude_disarm_and_pickup_trap;
+			end else begin
+				if (i_am_customizable) then begin
+					// try to automatically find suited armament for trap
+					item := get_suitable_armament_in_inventory(source_obj);
+					if (item) then begin
+						call dude_try_to_arm_trap(item);
+					end else begin
+						display_mstr(421);
+					end
+				end else begin
+					call dude_try_to_arm_trap(0);
+				end
+			end
+		end else if (action_being_used == SKILL_REPAIR) then begin
+			if (i_am_armed) then begin
+				display_mstr(404);
+			end else begin
+				call dude_disarm_and_pickup_trap;
+			end
+		end
+	end
+end
+
+procedure dude_disarm_and_pickup_trap begin
+	variable item;
+	item := create_object(trapkit_pid_by_trap_type(my_trap_type), 0, 0);
+	set_weapon_ammo_count(item, my_trap_charges);
+	add_obj_to_inven(source_obj, item);
+	if (my_trap_armpid > 0) then begin
+		item := create_object(my_trap_armpid, 0, 0);
+		add_obj_to_inven(source_obj, item);
+	end
+	// TODO: maybe add proper roll-vs-skill for disarming when armed
+	if (i_am_armed) then display_mstr(202);
+	else display_mstr(204);
+	call remove_trap_info(my_trap_index);
+	destroy_trap_object(self_obj);
+end
+
+procedure dude_try_to_arm_trap(variable armament_obj) 
+begin
+	variable begin
+		roll_mod;
+		roll;
+		groundType;
+		arr;
+		i;
+		armament_pid := 0;
+	end
+
+	// install trap
+	if tile_is_dirt(self_tile) or tile_is_cloth_on_dirt(self_tile) or tile_is_grass(self_tile) then
+		groundType:="dirt";
+	else if tile_is_wood(self_tile) or tile_is_carpet(self_tile) then
+		groundType:="wood";
+	else if tile_is_stone(self_tile) then
+		groundType:="stone";
+	else
+		groundType:="other";
+		
+	roll_mod := -(get_ini_setting("combat.ini|TRAPS|skill_type_" + my_trap_type) + get_ini_setting("combat.ini|TRAPS|skill_ground_"+groundType));
+	if (armament_obj) then begin
+		armament_pid := obj_pid(armament_obj);
+		roll_mod -= get_ini_setting("combat.ini|TRAPS|skill_arm_" + armament_pid);
+		// remember last used armament (if any), regardless if it will be success or fail
+		set_sfall_global(SGVAR_TRAPS_LAST_ARMAMENT, armament_pid);
+	end
+	debug_msg("roll-vs-traps: "+roll_mod);
+	roll := roll_vs_skill(dude_obj, SKILL_TRAPS, roll_mod);
+	ini_trap_is_crime := get_ini_setting("combat.ini|TRAPS|trap_is_crime");
+	
+	if (is_success(roll)) then begin
+		if (armament_obj) then begin
+			rm_obj_from_inven(source_obj, armament_obj);
+			destroy_object(armament_obj);
+		end
+		call arm_trap(my_trap_index, armament_pid);
+		if (armament_pid) then display_msg(parse_str_2(mstr(201), proto_data(armament_pid, it_name), ""));
+		else display_mstr(200);
+	end else begin
+		if (is_critical(roll)) then begin
+			if (armament_obj) then begin
+				rm_obj_from_inven(source_obj, armament_obj);
+				destroy_object(armament_obj);
+			end
+			call setoff_trap(my_trap_index, source_obj, armament_pid);
+			display_mstr(311);
+		end else begin
+			if (armament_pid) then display_msg(parse_str_2(mstr(301), proto_data(armament_pid, it_name), ""));
+			else display_mstr(300);
+		end
+	end
+end
+

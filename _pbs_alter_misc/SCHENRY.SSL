@@ -1,0 +1,472 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Dr Henry
+        Location: NCR1.map
+        Description: He is the lunny doctor
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+#include "..\headers\ncr1.h"
+
+#define NAME                    SCRIPT_SCHENRY
+#define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+#include "..\headers\ncr.h"
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+
+procedure DoCallGuards;
+
+#define TIMER_DOCALLGUARDS 1
+#define TIMER_DESK_NOTIFY  2
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Node24_Count               (7)
+
+// by phobos2077 - bring X quest
+#define _BRINGX_SCHENRY
+#include "..\_pbs_main\quests_bringx.h"
+// ;
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+import variable cyber_dog_obj;
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable addCyberDog := 0;
+variable Node6Repeat := 0;
+variable callGuards := 0;
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == TIMER_DOCALLGUARDS) then begin
+      call DoCallGuards;
+   end else if (fixed_param == TIMER_DESK_NOTIFY) then begin
+      call Node024;
+   end
+end
+
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_DOCTOR);
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION4;
+
+   CheckKarma;
+
+   GetReaction;
+
+   if (global_var(GVAR_NCR_HENRY_HYPO) == HYPO_GIVEN or global_var(GVAR_NCR_HENRY_HYPO) == HYPO_USED) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node016;
+       gSay_End;
+       end_dialogue;
+   end else if (self_tile == HENRY_LAB_TILE) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node001;
+       gSay_End;
+       end_dialogue;
+       set_local_var(LVAR_Herebefore, 1);
+   end else begin
+      call Node022;
+   end
+
+   if (callGuards) then begin
+      callGuards := 0;
+      call DoCallGuards;
+   end
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+   set_mss(MSS_DR_HENRY_DEAD);
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Herebefore) == 0) then
+      display_msg(mstr(100));
+   else
+      display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   Node6Repeat := 0; //added by killap
+   // by phobos2077 begin:
+   if (is_new_monsterparts_enabled) then begin
+	   Reply(mstr(103 + (local_var(LVAR_Herebefore) > 0)) + " " + mstr(400));
+   end else 
+   // end;
+   if (local_var(LVAR_Herebefore) == 0) then
+      Reply(103);
+   else
+      Reply(104);
+   NLowOption(105, Node002);
+   NOption(mstr(106) + " " + dude_name + mstr(160), Node003, 4);
+   //if (merk_seed_status(MSS_DR_HENRY_ACCEPT)) then
+   if (merk_seed_status(MSS_DR_HENRY_ACCEPT) and not merk_seed_status(MSS_DR_HENRY_DONE)) then //added by killap
+      NOption(107, Node013, 4);
+   if (global_var(GVAR_NCR_ENCLAVE_INFO) bwand 1) then
+      NOption(108, Node014, 4);
+   INJECT_ASK_BRING
+   NOption(109, Node015, 4);
+end
+
+procedure Node002 begin
+   Reply(110);
+   ENDOPTION;
+end
+
+procedure Node003 begin
+   Reply(111);
+   NOption(112, Node004, 4);
+   if (has_skill(dude_obj, SKILL_SCIENCE) > 79) then
+      NOption(113, Node005, 4);
+   if ( ((has_skill(dude_obj, SKILL_SCIENCE) > 79) and (global_var(GVAR_NCR_HENRY_HYPO) < CYBER_DOG_JOIN)) ) then //edit by killap - changed to < rather than !=
+      NOption(114, Node006, 4);
+   NOption(115, Node999, 4);
+end
+
+procedure Node004 begin
+   Reply(116);
+   ENDOPTION;
+end
+
+procedure Node005 begin
+   Reply(117);
+   NOption(118, Node004, 4);
+   if (has_skill(dude_obj, SKILL_SCIENCE) > 79 and  global_var(GVAR_NCR_HENRY_HYPO) < CYBER_DOG_JOIN) then //edit by killap - changed to < rather than !=
+      NOption(119, Node006, 4);
+      //NOption(114, Node006, 4); --comment out by killap
+   BOption(120, Node999, 4);
+end
+
+procedure Node006 begin
+   Node6Repeat += 1;
+   if (Node6Repeat == 1) then begin
+      Reply(121);
+      NOption(124, Node006, 4);
+   end
+   else if (Node6Repeat == 2) then begin
+      Reply(122);
+      NOption(124, Node006, 4);
+   end
+   else if (Node6Repeat == 3) then
+      call Node007;
+end
+
+procedure Node007 begin
+   Reply(125);
+   NOption(126, Node008, 4);
+   NOption(127, Node004, 4);
+end
+
+procedure Node008 begin
+   Reply(128);
+   NOption(129, Node009, 4);
+   NOption(130, Node999, 4);
+end
+
+procedure Node009 begin
+   Reply(131);
+   NOption(132, Node010, 4);
+   NOption(133, Node011, 4);
+end
+
+procedure Node010 begin
+   Reply(134);
+   NOption(135, Node011, 4);
+end
+
+procedure Node011 begin
+   Reply(136);
+   NOption(137, Node012, 4);
+   NOption(138, Node999, 4);
+end
+
+procedure Node012 begin
+   add_obj_to_inven(dude_obj, create_object_sid(HENRY_SERUM, dude_tile, 0, SCRIPT_SIMSERUM));
+   set_global_var(GVAR_NCR_HENRY_HYPO, HYPO_GIVEN);
+   set_global_var(GVAR_BH_FTM,FTM_ENLISTED);  //added by killap - RP
+   Reply(139);
+   ENDOPTION;
+end
+
+procedure Node013 begin
+   Reply(140);
+   NOption(161, Node023, 4);
+   NOption(162, Node999, 4);
+end
+
+procedure Node014 begin
+   Reply(141);
+   ENDOPTION;
+end
+
+procedure Node015 begin
+   Reply(142);
+   ENDOPTION;
+end
+
+procedure Node016 begin
+   Reply(143);
+   if (global_var(GVAR_NCR_HENRY_HYPO) == HYPO_USED) then
+      NOption(144, Node018, 4);
+   if (global_var(GVAR_NCR_HENRY_HYPO) == HYPO_GIVEN) then
+      NOption(145, Node017, 4);
+end
+
+procedure Node017 begin
+   // by phobos2077:
+   if (is_new_monsterparts_enabled) then begin
+	   Reply(400);
+	   INJECT_ASK_BRING
+   end else Reply(146);
+   // end;
+   ENDOPTION;
+end
+
+procedure Node018 begin
+   Reply(147);
+   NOption(148, Node019, 4);
+   NOption(149, Node020, 4);
+end
+
+procedure Node999a begin
+   //do somthing with Karma + 20
+   call Node999;
+end
+
+procedure Node019 begin
+   Reply(150);
+   NOption(151, Node021, 4);
+   NOption(152, Node999a, 4);
+end
+
+procedure Node020 begin
+   Reply(153);
+   NOption(154, Node021, 4);
+   NOption(155, Node999, 4);
+end
+
+procedure Node021 begin
+   set_global_var(GVAR_NCR_HENRY_HYPO, CYBER_DOG_JOIN);
+   Reply(156);
+   ENDOPTION;
+end
+
+procedure Node022 begin
+   // by phobos2077:
+   if (is_new_monsterparts_enabled) then begin
+	  Reply(400);
+	  INJECT_ASK_BRING
+	  ENDOPTION;
+   end else float_msg(self_obj, mstr(157 + Random(0, 2)), FLOAT_MSG_NORMAL);
+   // end;
+end
+
+procedure Node023 begin
+   variable madeit;
+
+   madeit := skill_success(dude_obj, SKILL_CONVERSANT, 0);
+   if (madeit) then begin
+      Reply(163);
+   end else begin
+      callGuards := 1;
+      Reply(164);
+   end
+   if (madeit) then
+      NOption(165, Node999, 4);
+   else
+      NOption(166, Node999, 4);
+end
+
+
+procedure Node024 begin
+   if (local_var(LVAR_Node24_Count)) then begin
+      float_msg(self_obj, mstr(167), FLOAT_MSG_RED);
+      add_timer_event(self_obj, game_ticks(10), TIMER_DOCALLGUARDS);
+   end else begin
+      float_msg(self_obj, mstr(168), FLOAT_MSG_RED);
+      add_timer_event(self_obj, 0, TIMER_DOCALLGUARDS);
+   end
+end
+
+procedure DoCallGuards begin
+   //Do guard stuff here
+   set_ncr_flag(NCR_GUARD_ENEMY); //added by killap
+end
+
+
+//xxxxxxxxxxxxxxxxxxxx

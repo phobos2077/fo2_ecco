@@ -1,0 +1,97 @@
+/*     Script from map templete       */
+/*
+        Name: Nazwa
+        Location: Polozenie
+        Description: Opis
+
+        Log:
+           
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+#include "..\headers\define.h"
+//#include "..\headers\nazwamapy.h"
+#include "..\headers\updatmap.h"
+
+#define NAME                    SCRIPT_SLVCM1
+
+#include "..\headers\slvcamp.h"
+#include "..\headers\command.h"
+
+procedure start;
+procedure map_exit_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+
+export variable GUARD_obj;
+export variable CELLDOOR_obj;
+export variable DOG_obj;
+export variable PENGUARD_obj;
+export variable CELLDOOR2_obj;
+export variable SULIK_SIS_obj;
+export variable PENGUARD2_obj;
+
+//added by Lujo & Phobos2077 to fix shelf looting (way too easy motion tracker to grab) - reuses new reno shelves script
+export variable new_reno_bishop_men_obj := 0;
+//end
+
+procedure start
+begin
+end
+
+procedure map_enter_p_proc begin
+   variable Critter;
+   variable item;
+   
+   //help rangers attack camp
+   if (global_var(GVAR_LOAD_MAP_INDEX) == 5) then begin
+      set_map_var(MVAR_Came_With_Rangers,1);
+      move_to(dude_obj, 16692, 0);
+      Critter := create_object_sid(PID_MALE_NCR_RANGER,17097,elevation(dude_obj),SCRIPT_SCATKRNG);
+      critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+      item:=create_object(PID_ASSAULT_RIFLE,0,0);
+      add_obj_to_inven(Critter,item);
+      wield_obj_critter(Critter,item);
+      item:=create_object(PID_5MM_JHP,0,0);
+      add_obj_to_inven(Critter,item);
+      item:=create_object(PID_STIMPAK,0,0);
+      add_obj_to_inven(Critter,item);
+      
+      Critter := create_object_sid(PID_FEMALE_NCR_RANGER,17087,elevation(dude_obj),SCRIPT_SCATKRNG);
+      critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+      item:=create_object(PID_ASSAULT_RIFLE,0,0);
+      add_obj_to_inven(Critter,item);
+      wield_obj_critter(Critter,item);
+      item:=create_object(PID_5MM_JHP,0,0);
+      add_obj_to_inven(Critter,item);
+      item:=create_object(PID_STIMPAK,0,0);
+      add_obj_to_inven(Critter,item);
+      
+      set_map_var(MVAR_Attack_Slavers,1);
+
+   end
+   
+   if (map_first_run) then begin
+      display_msg(mstr(100));
+      set_map_var(MVAR_Slaver_Count,10);
+   end
+   
+   Check_Create_Car(CAR_SLAVER_CAMP_HEX, CAR_SLAVER_CAMP_ELEV)
+
+   Lighting;
+   set_global_var(GVAR_LOAD_MAP_INDEX,0);
+end
+
+procedure map_update_p_proc
+begin
+   Lighting;
+end
+ 
+procedure map_exit_p_proc
+begin
+end

@@ -1,0 +1,63 @@
+procedure start;
+
+//#define NAME	SCRIPT_TEST2
+
+#include "sfall.h"
+//#include "assoc_array.ssl"
+#include "define_lite.h"
+#include "mod.h"
+//#include "traps.h"
+
+//variable ini_need_sneak_on_drop;
+//variable ini_traps_min_skill;
+
+// NOT USED
+
+procedure start begin
+variable begin
+	critter;
+	item;
+	number;
+	reason;
+	
+	ammoPid;
+	ammoCal;
+	ammoMax;
+end
+   if init_hook then begin
+     // ini_need_sneak_on_drop := get_ini_setting("combat.ini|TRAPS|need_sneak_on_drop");
+      //ini_traps_min_skill := atof(get_ini_string("combat.ini|TRAPS|min_skill"));
+   end else begin
+      critter:=get_sfall_arg;
+      item:=get_sfall_arg;
+      number:=get_sfall_arg;
+      reason:=get_sfall_arg;
+      
+      //display_msg("removeinvenobj:" + /*"(cr: " + critter + ") " + */item + " " +proto_data(obj_pid(item), it_name)+" x" + number + ", reason: " + sprintf("0x%X",reason));
+      
+      if (item) then begin
+         // fixes for items saved on maps
+         if (reason == RMOBJ_EQUIP_WEAPON or reason == RMOBJ_REPLACE_WEAPON or reason == RMOBJ_TRADE) then begin
+            if (obj_item_subtype(item) == item_type_weapon and get_weapon_ammo_pid(item) > 0) then begin
+               // fix wrong ammo type and amount loaded in guns
+               ammoCal := get_proto_data(obj_pid(item), PROTO_WP_CALIBER); // proper caliber
+               ammoPid := get_proto_data(obj_pid(item), PROTO_WP_AMMO_PID); // proper default ammo
+               ammoMax := get_proto_data(obj_pid(item), PROTO_WP_MAG_SIZE); // proper max ammo
+               if (get_proto_data(get_weapon_ammo_pid(item), PROTO_AM_CALIBER) != ammoCal) then
+                  set_weapon_ammo_pid(item, ammoPid);
+               if (get_weapon_ammo_count(item) > ammoMax) then
+                  set_weapon_ammo_count(item, ammoMax);
+            end else if (obj_item_subtype(item) == item_type_ammo) then begin
+               // fix incorrect pack sizes for ammo
+               ammoMax := get_proto_data(obj_pid(item), PROTO_AM_PACK_SIZE);
+               if (get_weapon_ammo_count(item) > ammoMax) then
+                  set_weapon_ammo_count(item, ammoMax);
+            end
+         end
+         else  if (reason == RMOBJ_EQUIP_ARMOR) then begin
+            display_msg("Ammo: "+get_weapon_ammo_count(item));
+         end
+      end
+   end
+end
+

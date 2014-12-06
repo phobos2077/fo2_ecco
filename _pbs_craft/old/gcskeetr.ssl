@@ -1,0 +1,1654 @@
+variable ProtoOfItemGiven;
+variable ValueOfRollCheck := 1;
+variable Scenery_Creation;
+variable Scenery_Creation_Hex;
+variable Scenery_Creation_Count;
+variable Temp_Scenery_Creation_Hex;
+variable Scenery_Creation_Ptr;
+variable How_Many_Party_Members_Are_Injured;
+variable How_Many_Party_Members_Armed;
+variable PartyHealingItem;
+
+procedure checkPartyMembersNearDoor;
+
+variable tmp_gen_rep;
+variable global_temp;
+variable dest_tile;
+variable step_tile;
+variable in_dialog;
+variable forced_node;
+variable restock_amt;
+variable restock_obj;
+variable restock_trash;
+variable removed_qty;
+variable Static_Reaction;
+variable Evil_Critter;
+variable Slavery_Tolerant := 2;
+variable Karma_Perception;
+variable reaction_bonus_town_rep;
+variable reaction_bonus_karma;
+
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure combat;
+procedure Node910;
+procedure Node920;
+procedure Node922;
+procedure Node924;
+procedure Node926;
+procedure Node928;
+procedure Node930;
+procedure Node934;
+procedure Node935;
+procedure Node940;
+procedure Node982;
+procedure Node983;
+procedure Node984;
+procedure Node985;
+procedure Node986;
+procedure Node987;
+procedure Node995;
+procedure Node996;
+procedure Node997;
+procedure Node998;
+procedure Node999;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node110;
+procedure Node111;
+procedure Node112;
+procedure Node113;
+procedure Node137;
+procedure Node138;
+procedure Node139;
+procedure Node140;
+procedure Node150;
+
+variable Only_Once;
+variable k;
+variable item;
+variable combyn;
+
+procedure Node915;
+procedure Node033;
+
+#define _LEARN_CRAFT_SKEETER
+#include "learn_craft.h"
+
+procedure checkPartyMembersNearDoor
+begin
+    if (party_member_obj(16777278) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777278)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777376)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777377)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777305)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777313)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777323)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777352)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777378)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777368)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777379)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777380)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777295)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777381) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777381)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777407) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777407)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777411) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777411)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777412) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777412)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777413) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777413)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777481) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777481)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777558)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777600) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777600)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777718)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777719)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777720)) <= 5) then begin
+            return 1;
+        end
+    end
+    return 0;
+end
+
+procedure start
+begin
+end
+
+procedure critter_p_proc
+begin
+    if ((global_var(395) == 1) or global_var(238) and obj_can_see_obj(self_obj, dude_obj)) then begin
+        set_local_var(5, 1);
+        attack_complex(dude_obj, 0, 1, 0, 0, 30000, 0, 0);
+    end
+    else begin
+        if ((local_var(5) == 2) and obj_can_see_obj(self_obj, dude_obj)) then begin
+            set_local_var(5, 1);
+            attack_complex(dude_obj, 0, 1, 0, 0, 30000, 0, 0);
+        end
+    end
+end
+
+procedure pickup_p_proc
+begin
+    if (source_obj == dude_obj) then begin
+        set_local_var(5, 2);
+    end
+end
+
+procedure talk_p_proc
+begin
+    if (local_var(2) == 0) then begin
+        set_local_var(2, 1);
+        set_local_var(3, (get_critter_stat(dude_obj, 3) - get_critter_stat(self_obj, 3)) * 5);
+        debug_msg("Base Reaction == " + local_var(3));
+    end
+    Static_Reaction := 0;
+    set_local_var(0, 0);
+    debug_msg("Start Reaction == " + local_var(0));
+    if (reaction_bonus_karma >= 0) then begin
+        reaction_bonus_karma := reaction_bonus_karma / 1000;
+    end
+    else begin
+        reaction_bonus_karma := -1 * (-1 * reaction_bonus_karma / 1000);
+    end
+    if (global_var(51) >= 0) then begin
+        reaction_bonus_town_rep := global_var(51) / 2;
+    end
+    else begin
+        reaction_bonus_town_rep := -1 * (-1 * global_var(51) / 2);
+    end
+    if (has_trait(2, dude_obj, 13)) then begin
+        if (get_critter_stat(dude_obj, 34) == get_critter_stat(self_obj, 34)) then begin
+            Static_Reaction := Static_Reaction + -20;
+        end
+        else begin
+            Static_Reaction := Static_Reaction + 20;
+        end
+        debug_msg("Sex Appeal Bonus == " + Static_Reaction);
+    end
+    else begin
+        debug_msg("Sex Appeal Bonus == 0");
+    end
+    if (Evil_Critter == 1) then begin
+        if (reaction_bonus_karma >= 0) then begin
+            Static_Reaction := Static_Reaction - reaction_bonus_karma;
+        end
+        else begin
+            Static_Reaction := Static_Reaction + reaction_bonus_karma;
+        end
+        debug_msg("Karma Reaction Bonus == " + Static_Reaction);
+        if (reaction_bonus_town_rep >= 0) then begin
+            Static_Reaction := Static_Reaction - reaction_bonus_town_rep;
+        end
+        else begin
+            Static_Reaction := Static_Reaction + reaction_bonus_town_rep;
+        end
+        debug_msg("Town Rep Bonus == " + Static_Reaction);
+        set_global_var(37, 0);
+        set_global_var(38, 0);
+        set_global_var(39, 0);
+        set_global_var(40, 0);
+        set_global_var(41, 0);
+        set_global_var(42, 0);
+        set_global_var(43, 0);
+        set_global_var(44, 0);
+        set_global_var(45, 0);
+        tmp_gen_rep := global_var(0);
+        if (has_trait(0, dude_obj, 95)) then begin
+            tmp_gen_rep := global_var(0) * 2;
+        end
+        if (tmp_gen_rep >= 1000) then begin
+            set_global_var(37, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 750) then begin
+                set_global_var(38, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 500) then begin
+                    set_global_var(39, 1);
+                end
+                else begin
+                    if (tmp_gen_rep >= 250) then begin
+                        set_global_var(40, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -250) then begin
+                            set_global_var(41, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -500) then begin
+                                set_global_var(42, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -750) then begin
+                                    set_global_var(43, 1);
+                                end
+                                else begin
+                                    if (tmp_gen_rep > -1000) then begin
+                                        set_global_var(44, 1);
+                                    end
+                                    else begin
+                                        set_global_var(45, 1);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        if (global_var(37) == 1) then begin
+            Static_Reaction := Static_Reaction - 20;
+        end
+        else begin
+            if (global_var(38) == 1) then begin
+                Static_Reaction := Static_Reaction - 15;
+            end
+            else begin
+                if (global_var(39) == 1) then begin
+                    Static_Reaction := Static_Reaction - 10;
+                end
+                else begin
+                    if (global_var(40) == 1) then begin
+                        Static_Reaction := Static_Reaction - 5;
+                    end
+                    else begin
+                        if (global_var(41) == 1) then begin
+                            Static_Reaction := Static_Reaction - 0;
+                        end
+                        else begin
+                            if (global_var(42) == 1) then begin
+                                Static_Reaction := Static_Reaction + -5;
+                            end
+                            else begin
+                                if (global_var(43) == 1) then begin
+                                    Static_Reaction := Static_Reaction + -10;
+                                end
+                                else begin
+                                    if (global_var(44) == 1) then begin
+                                        Static_Reaction := Static_Reaction + -15;
+                                    end
+                                    else begin
+                                        Static_Reaction := Static_Reaction + -20;
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        debug_msg("Bad Person Reaction Bonus == " + Static_Reaction);
+    end
+    else begin
+        Static_Reaction := Static_Reaction + reaction_bonus_karma;
+        debug_msg("Karma Reaction Bonus == " + Static_Reaction);
+        Static_Reaction := Static_Reaction + reaction_bonus_town_rep;
+        debug_msg("Town Rep Bonus == " + Static_Reaction);
+        set_global_var(37, 0);
+        set_global_var(38, 0);
+        set_global_var(39, 0);
+        set_global_var(40, 0);
+        set_global_var(41, 0);
+        set_global_var(42, 0);
+        set_global_var(43, 0);
+        set_global_var(44, 0);
+        set_global_var(45, 0);
+        tmp_gen_rep := global_var(0);
+        if (has_trait(0, dude_obj, 95)) then begin
+            tmp_gen_rep := global_var(0) * 2;
+        end
+        if (tmp_gen_rep >= 1000) then begin
+            set_global_var(37, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 750) then begin
+                set_global_var(38, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 500) then begin
+                    set_global_var(39, 1);
+                end
+                else begin
+                    if (tmp_gen_rep >= 250) then begin
+                        set_global_var(40, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -250) then begin
+                            set_global_var(41, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -500) then begin
+                                set_global_var(42, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -750) then begin
+                                    set_global_var(43, 1);
+                                end
+                                else begin
+                                    if (tmp_gen_rep > -1000) then begin
+                                        set_global_var(44, 1);
+                                    end
+                                    else begin
+                                        set_global_var(45, 1);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        if (global_var(37) == 1) then begin
+            Static_Reaction := Static_Reaction + 20;
+        end
+        else begin
+            if (global_var(38) == 1) then begin
+                Static_Reaction := Static_Reaction + 15;
+            end
+            else begin
+                if (global_var(39) == 1) then begin
+                    Static_Reaction := Static_Reaction + 10;
+                end
+                else begin
+                    if (global_var(40) == 1) then begin
+                        Static_Reaction := Static_Reaction + 5;
+                    end
+                    else begin
+                        if (global_var(41) == 1) then begin
+                            Static_Reaction := Static_Reaction + 0;
+                        end
+                        else begin
+                            if (global_var(42) == 1) then begin
+                                Static_Reaction := Static_Reaction + -5;
+                            end
+                            else begin
+                                if (global_var(43) == 1) then begin
+                                    Static_Reaction := Static_Reaction + -10;
+                                end
+                                else begin
+                                    if (global_var(44) == 1) then begin
+                                        Static_Reaction := Static_Reaction + -15;
+                                    end
+                                    else begin
+                                        Static_Reaction := Static_Reaction + -20;
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        debug_msg("Good Person Reaction Bonus == " + Static_Reaction);
+    end
+    if (Slavery_Tolerant == 0) then begin
+        if (global_var(11) == 1) then begin
+            Static_Reaction := Static_Reaction + (2 * -25);
+        end
+    end
+    else begin
+        if (Slavery_Tolerant == 1) then begin
+            if (global_var(11) == 1) then begin
+                Static_Reaction := Static_Reaction + -25;
+            end
+        end
+        else begin
+            if (Slavery_Tolerant == 3) then begin
+                if (global_var(11) == 1) then begin
+                    Static_Reaction := Static_Reaction - -25;
+                end
+            end
+        end
+    end
+    debug_msg("Slaver + Aligned Reaction == " + Static_Reaction);
+    Static_Reaction := Static_Reaction + (10 * has_trait(0, dude_obj, 10));
+    debug_msg("Presence Reaction == " + Static_Reaction);
+    if (global_var(1) >= 2) then begin
+        Static_Reaction := Static_Reaction + -30;
+    end
+    debug_msg("Childkiller Reaction == " + Static_Reaction);
+    if (has_trait(0, dude_obj, 39)) then begin
+        if (Evil_Critter == 1) then begin
+            if (Static_Reaction > 0) then begin
+                Static_Reaction := Static_Reaction * -1;
+            end
+        end
+        else begin
+            if (Static_Reaction < 0) then begin
+                Static_Reaction := Static_Reaction * -1;
+            end
+        end
+    end
+    set_local_var(0, local_var(3) + Static_Reaction);
+    debug_msg("Initial Reaction == " + local_var(0));
+    if (local_var(6) == 1) then begin
+        call Node998;
+    end
+    else begin
+        if (get_critter_stat(dude_obj, 4) <= 3) then begin
+            call Node001;
+        end
+        else begin
+            if (obj_is_carrying_obj_pid(dude_obj, 308) and (local_var(7) != 2)) then begin
+                start_gdialog(136, self_obj, 4, -1, -1);
+                gsay_start;
+                call Node025;
+                gsay_end;
+                end_dialogue;
+            end
+            else begin
+                if (local_var(7) == 1) then begin
+                    start_gdialog(136, self_obj, 4, -1, -1);
+                    gsay_start;
+                    call Node036;
+                    gsay_end;
+                    end_dialogue;
+                end
+                else begin
+                    if (local_var(8) == 1) then begin
+                        start_gdialog(136, self_obj, 4, -1, -1);
+                        gsay_start;
+                        call Node032;
+                        gsay_end;
+                        end_dialogue;
+                    end
+                    else begin
+                        if (obj_is_carrying_obj_pid(dude_obj, 307)) then begin
+                            start_gdialog(136, self_obj, 4, -1, -1);
+                            gsay_start;
+                            call Node006;
+                            gsay_end;
+                            end_dialogue;
+                        end
+                        else begin
+                            if (global_var(160) == 1) then begin
+                                start_gdialog(136, self_obj, 4, -1, -1);
+                                gsay_start;
+                                call Node008;
+                                gsay_end;
+                                end_dialogue;
+                            end
+                            else begin
+                                if (global_var(83) == 9) then begin
+                                    start_gdialog(136, self_obj, 4, -1, -1);
+                                    gsay_start;
+                                    call Node007;
+                                    gsay_end;
+                                    end_dialogue;
+                                end
+                                else begin
+                                    if (global_var(83) == 15) then begin
+                                        start_gdialog(136, self_obj, 4, -1, -1);
+                                        gsay_start;
+                                        call Node007;
+                                        gsay_end;
+                                        end_dialogue;
+                                    end
+                                    else begin
+                                        start_gdialog(136, self_obj, 4, -1, -1);
+                                        gsay_start;
+                                        call Node009;
+                                        gsay_end;
+                                        end_dialogue;
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+procedure destroy_p_proc
+begin
+    if (local_var(7) < 2) then begin
+        item := create_object_sid(253, 0, 0, -1);
+        add_obj_to_inven(self_obj, item);
+    end
+    set_global_var(167, 1);
+    if (source_obj == dude_obj) then begin
+        set_global_var(5, global_var(5) + 1);
+        if (((global_var(4) + global_var(5)) >= 25) and ((global_var(4) > (3 * global_var(5))) or (global_var(2) == 1)) and (global_var(1) == 0)) then begin
+            set_global_var(2, 1);
+            set_global_var(3, 0);
+        end
+        if (metarule(51, self_obj) == 2) then begin
+            if (source_obj == dude_obj) then begin
+                set_global_var(2, 0);
+                set_global_var(1, global_var(1) + 1);
+                set_global_var(0, global_var(0) + -15);
+                debug_msg("Player gains " + -15 + " Karma Points.");
+                set_global_var(37, 0);
+                set_global_var(38, 0);
+                set_global_var(39, 0);
+                set_global_var(40, 0);
+                set_global_var(41, 0);
+                set_global_var(42, 0);
+                set_global_var(43, 0);
+                set_global_var(44, 0);
+                set_global_var(45, 0);
+                tmp_gen_rep := global_var(0);
+                if (has_trait(0, dude_obj, 95)) then begin
+                    tmp_gen_rep := global_var(0) * 2;
+                end
+                if (tmp_gen_rep >= 1000) then begin
+                    set_global_var(37, 1);
+                end
+                else begin
+                    if (tmp_gen_rep >= 750) then begin
+                        set_global_var(38, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep >= 500) then begin
+                            set_global_var(39, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep >= 250) then begin
+                                set_global_var(40, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -250) then begin
+                                    set_global_var(41, 1);
+                                end
+                                else begin
+                                    if (tmp_gen_rep > -500) then begin
+                                        set_global_var(42, 1);
+                                    end
+                                    else begin
+                                        if (tmp_gen_rep > -750) then begin
+                                            set_global_var(43, 1);
+                                        end
+                                        else begin
+                                            if (tmp_gen_rep > -1000) then begin
+                                                set_global_var(44, 1);
+                                            end
+                                            else begin
+                                                set_global_var(45, 1);
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+                set_global_var(51, global_var(51) + -8);
+                debug_msg("Added " + -8 + " to Town Rep");
+            end
+        end
+        if (((global_var(4) + global_var(5)) >= 25) and ((global_var(5) > (2 * global_var(4))) or (global_var(3) == 1))) then begin
+            set_global_var(3, 1);
+            set_global_var(2, 0);
+        end
+        set_global_var(0, global_var(0) + -10);
+        debug_msg("Player gains " + -10 + " Karma Points.");
+        set_global_var(37, 0);
+        set_global_var(38, 0);
+        set_global_var(39, 0);
+        set_global_var(40, 0);
+        set_global_var(41, 0);
+        set_global_var(42, 0);
+        set_global_var(43, 0);
+        set_global_var(44, 0);
+        set_global_var(45, 0);
+        tmp_gen_rep := global_var(0);
+        if (has_trait(0, dude_obj, 95)) then begin
+            tmp_gen_rep := global_var(0) * 2;
+        end
+        if (tmp_gen_rep >= 1000) then begin
+            set_global_var(37, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 750) then begin
+                set_global_var(38, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 500) then begin
+                    set_global_var(39, 1);
+                end
+                else begin
+                    if (tmp_gen_rep >= 250) then begin
+                        set_global_var(40, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -250) then begin
+                            set_global_var(41, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -500) then begin
+                                set_global_var(42, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -750) then begin
+                                    set_global_var(43, 1);
+                                end
+                                else begin
+                                    if (tmp_gen_rep > -1000) then begin
+                                        set_global_var(44, 1);
+                                    end
+                                    else begin
+                                        set_global_var(45, 1);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        set_global_var(51, global_var(51) + -5);
+        debug_msg("Added " + -5 + " to Town Rep");
+    end
+end
+
+procedure look_at_p_proc
+begin
+    script_overrides;
+    display_msg(message_str(136, 100));
+end
+
+procedure description_p_proc
+begin
+    script_overrides;
+    display_msg(message_str(136, 101));
+end
+
+procedure use_skill_on_p_proc
+begin
+end
+
+procedure damage_p_proc
+begin
+    if (source_obj == dude_obj) then begin
+        set_local_var(6, 1);
+        set_global_var(238, 1);
+    end
+end
+
+procedure map_enter_p_proc
+begin
+    Only_Once := 0;
+    critter_add_trait(self_obj, 1, 6, 49);
+    critter_add_trait(self_obj, 1, 5, 24);
+end
+
+procedure combat
+begin
+end
+
+procedure Node910
+begin
+    if (global_var(83) == 9) then begin
+        call Node008;
+    end
+    else begin
+        call Node007;
+    end
+end
+
+procedure Node920
+begin
+end
+
+procedure Node922
+begin
+end
+
+procedure Node924
+begin
+end
+
+procedure Node926
+begin
+end
+
+procedure Node928
+begin
+end
+
+procedure Node930
+begin
+end
+
+procedure Node934
+begin
+end
+
+procedure Node935
+begin
+end
+
+procedure Node940
+begin
+end
+
+procedure Node982
+begin
+    if (local_var(8) == 1) then begin
+        set_local_var(8, 2);
+    end
+    else begin
+        item_caps_adjust(dude_obj, -(1500 * (25000 / (160 + has_skill(dude_obj, 15))) / 100));
+        item_caps_adjust(self_obj, 1500 * (25000 / (160 + has_skill(dude_obj, 15))) / 100);
+    end
+    metarule(43, dude_obj);
+    removed_qty := obj_is_carrying_obj_pid(dude_obj, 160);
+    if (1 < removed_qty) then begin
+        removed_qty := 1;
+    end
+    if (removed_qty > 0) then begin
+        restock_obj := obj_carrying_pid_obj(dude_obj, 160);
+        if (obj_type(self_obj) == 1) then begin
+            restock_obj := obj_carrying_pid_obj(dude_obj, 160);
+            if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+                if (obj_item_subtype(critter_inven_obj(dude_obj, 0)) == 0) then begin
+                    restock_obj := critter_inven_obj(dude_obj, 0);
+                    debug_msg("armour pid == " + obj_pid(restock_obj));
+                    rm_obj_from_inven(dude_obj, restock_obj);
+                    add_obj_to_inven(dude_obj, restock_obj);
+                end
+            end
+            else begin
+                if ((critter_inven_obj(dude_obj, 2) == restock_obj) or (critter_inven_obj(dude_obj, 1) == restock_obj)) then begin
+                    metarule(43, dude_obj);
+                end
+            end
+        end
+        restock_amt := rm_mult_objs_from_inven(dude_obj, restock_obj, removed_qty);
+        destroy_object(restock_obj);
+    end
+    restock_obj := 0;
+    restock_amt := 0;
+    restock_obj := create_object_sid(399, 0, 0, -1);
+    add_mult_objs_to_inven(dude_obj, restock_obj, 1);
+    call Node137;
+end
+
+procedure Node983
+begin
+    if (local_var(8) == 1) then begin
+        set_local_var(8, 2);
+    end
+    else begin
+        item_caps_adjust(dude_obj, -(4000 * (25000 / (160 + has_skill(dude_obj, 15))) / 100));
+        item_caps_adjust(self_obj, 4000 * (25000 / (160 + has_skill(dude_obj, 15))) / 100);
+    end
+    metarule(43, dude_obj);
+    removed_qty := obj_is_carrying_obj_pid(dude_obj, 351);
+    if (1 < removed_qty) then begin
+        removed_qty := 1;
+    end
+    if (removed_qty > 0) then begin
+        restock_obj := obj_carrying_pid_obj(dude_obj, 351);
+        if (obj_type(self_obj) == 1) then begin
+            restock_obj := obj_carrying_pid_obj(dude_obj, 351);
+            if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+                if (obj_item_subtype(critter_inven_obj(dude_obj, 0)) == 0) then begin
+                    restock_obj := critter_inven_obj(dude_obj, 0);
+                    debug_msg("armour pid == " + obj_pid(restock_obj));
+                    rm_obj_from_inven(dude_obj, restock_obj);
+                    add_obj_to_inven(dude_obj, restock_obj);
+                end
+            end
+            else begin
+                if ((critter_inven_obj(dude_obj, 2) == restock_obj) or (critter_inven_obj(dude_obj, 1) == restock_obj)) then begin
+                    metarule(43, dude_obj);
+                end
+            end
+        end
+        restock_amt := rm_mult_objs_from_inven(dude_obj, restock_obj, removed_qty);
+        destroy_object(restock_obj);
+    end
+    restock_obj := 0;
+    restock_amt := 0;
+    restock_obj := create_object_sid(403, 0, 0, -1);
+    add_mult_objs_to_inven(dude_obj, restock_obj, 1);
+    call Node137;
+end
+
+procedure Node984
+begin
+    if (local_var(8) == 1) then begin
+        set_local_var(8, 2);
+    end
+    else begin
+        item_caps_adjust(dude_obj, -(2000 * (25000 / (160 + has_skill(dude_obj, 15))) / 100));
+        item_caps_adjust(self_obj, 2000 * (25000 / (160 + has_skill(dude_obj, 15))) / 100);
+    end
+    metarule(43, dude_obj);
+    removed_qty := obj_is_carrying_obj_pid(dude_obj, 23);
+    if (1 < removed_qty) then begin
+        removed_qty := 1;
+    end
+    if (removed_qty > 0) then begin
+        restock_obj := obj_carrying_pid_obj(dude_obj, 23);
+        if (obj_type(self_obj) == 1) then begin
+            restock_obj := obj_carrying_pid_obj(dude_obj, 23);
+            if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+                if (obj_item_subtype(critter_inven_obj(dude_obj, 0)) == 0) then begin
+                    restock_obj := critter_inven_obj(dude_obj, 0);
+                    debug_msg("armour pid == " + obj_pid(restock_obj));
+                    rm_obj_from_inven(dude_obj, restock_obj);
+                    add_obj_to_inven(dude_obj, restock_obj);
+                end
+            end
+            else begin
+                if ((critter_inven_obj(dude_obj, 2) == restock_obj) or (critter_inven_obj(dude_obj, 1) == restock_obj)) then begin
+                    metarule(43, dude_obj);
+                end
+            end
+        end
+        restock_amt := rm_mult_objs_from_inven(dude_obj, restock_obj, removed_qty);
+        destroy_object(restock_obj);
+    end
+    restock_obj := 0;
+    restock_amt := 0;
+    restock_obj := create_object_sid(405, 0, 0, -1);
+    add_mult_objs_to_inven(dude_obj, restock_obj, 1);
+    call Node137;
+end
+
+procedure Node985
+begin
+    if (local_var(8) == 1) then begin
+        set_local_var(8, 2);
+    end
+    else begin
+        item_caps_adjust(dude_obj, -(1750 * (25000 / (160 + has_skill(dude_obj, 15))) / 100));
+        item_caps_adjust(self_obj, 1750 * (25000 / (160 + has_skill(dude_obj, 15))) / 100);
+    end
+    metarule(43, dude_obj);
+    removed_qty := obj_is_carrying_obj_pid(dude_obj, 10);
+    if (1 < removed_qty) then begin
+        removed_qty := 1;
+    end
+    if (removed_qty > 0) then begin
+        restock_obj := obj_carrying_pid_obj(dude_obj, 10);
+        if (obj_type(self_obj) == 1) then begin
+            restock_obj := obj_carrying_pid_obj(dude_obj, 10);
+            if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+                if (obj_item_subtype(critter_inven_obj(dude_obj, 0)) == 0) then begin
+                    restock_obj := critter_inven_obj(dude_obj, 0);
+                    debug_msg("armour pid == " + obj_pid(restock_obj));
+                    rm_obj_from_inven(dude_obj, restock_obj);
+                    add_obj_to_inven(dude_obj, restock_obj);
+                end
+            end
+            else begin
+                if ((critter_inven_obj(dude_obj, 2) == restock_obj) or (critter_inven_obj(dude_obj, 1) == restock_obj)) then begin
+                    metarule(43, dude_obj);
+                end
+            end
+        end
+        restock_amt := rm_mult_objs_from_inven(dude_obj, restock_obj, removed_qty);
+        destroy_object(restock_obj);
+    end
+    restock_obj := 0;
+    restock_amt := 0;
+    restock_obj := create_object_sid(287, 0, 0, -1);
+    add_mult_objs_to_inven(dude_obj, restock_obj, 1);
+    call Node137;
+end
+
+procedure Node986
+begin
+    if (local_var(8) == 1) then begin
+        set_local_var(8, 2);
+    end
+    else begin
+        item_caps_adjust(dude_obj, -(1500 * (25000 / (160 + has_skill(dude_obj, 15))) / 100));
+        item_caps_adjust(self_obj, 1500 * (25000 / (160 + has_skill(dude_obj, 15))) / 100);
+    end
+    metarule(43, dude_obj);
+    removed_qty := obj_is_carrying_obj_pid(dude_obj, 18);
+    if (1 < removed_qty) then begin
+        removed_qty := 1;
+    end
+    if (removed_qty > 0) then begin
+        restock_obj := obj_carrying_pid_obj(dude_obj, 18);
+        if (obj_type(self_obj) == 1) then begin
+            restock_obj := obj_carrying_pid_obj(dude_obj, 18);
+            if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+                if (obj_item_subtype(critter_inven_obj(dude_obj, 0)) == 0) then begin
+                    restock_obj := critter_inven_obj(dude_obj, 0);
+                    debug_msg("armour pid == " + obj_pid(restock_obj));
+                    rm_obj_from_inven(dude_obj, restock_obj);
+                    add_obj_to_inven(dude_obj, restock_obj);
+                end
+            end
+            else begin
+                if ((critter_inven_obj(dude_obj, 2) == restock_obj) or (critter_inven_obj(dude_obj, 1) == restock_obj)) then begin
+                    metarule(43, dude_obj);
+                end
+            end
+        end
+        restock_amt := rm_mult_objs_from_inven(dude_obj, restock_obj, removed_qty);
+        destroy_object(restock_obj);
+    end
+    restock_obj := 0;
+    restock_amt := 0;
+    restock_obj := create_object_sid(404, 0, 0, -1);
+    add_mult_objs_to_inven(dude_obj, restock_obj, 1);
+    call Node137;
+end
+
+procedure Node987
+begin
+    if (local_var(8) == 1) then begin
+        set_local_var(8, 2);
+    end
+    else begin
+        item_caps_adjust(dude_obj, -(400 * (25000 / (160 + has_skill(dude_obj, 15))) / 100));
+        item_caps_adjust(self_obj, 400 * (25000 / (160 + has_skill(dude_obj, 15))) / 100);
+    end
+    metarule(43, dude_obj);
+    removed_qty := obj_is_carrying_obj_pid(dude_obj, 313);
+    if (1 < removed_qty) then begin
+        removed_qty := 1;
+    end
+    if (removed_qty > 0) then begin
+        restock_obj := obj_carrying_pid_obj(dude_obj, 313);
+        if (obj_type(self_obj) == 1) then begin
+            restock_obj := obj_carrying_pid_obj(dude_obj, 313);
+            if (critter_inven_obj(self_obj, 0) == restock_obj) then begin
+                if (obj_item_subtype(critter_inven_obj(dude_obj, 0)) == 0) then begin
+                    restock_obj := critter_inven_obj(dude_obj, 0);
+                    debug_msg("armour pid == " + obj_pid(restock_obj));
+                    rm_obj_from_inven(dude_obj, restock_obj);
+                    add_obj_to_inven(dude_obj, restock_obj);
+                end
+            end
+            else begin
+                if ((critter_inven_obj(dude_obj, 2) == restock_obj) or (critter_inven_obj(dude_obj, 1) == restock_obj)) then begin
+                    metarule(43, dude_obj);
+                end
+            end
+        end
+        restock_amt := rm_mult_objs_from_inven(dude_obj, restock_obj, removed_qty);
+        destroy_object(restock_obj);
+    end
+    restock_obj := 0;
+    restock_amt := 0;
+    restock_obj := create_object_sid(398, 0, 0, -1);
+    add_mult_objs_to_inven(dude_obj, restock_obj, 1);
+    call Node137;
+end
+
+procedure Node995
+begin
+    if (get_critter_stat(dude_obj, 3) >= 7) then begin
+        set_local_var(3, 100);
+        set_local_var(1, 4);
+    end
+    else begin
+        set_local_var(1, -4);
+        set_local_var(3, -100);
+    end
+end
+
+procedure Node996
+begin
+    set_local_var(1, -4);
+    set_local_var(3, -100);
+end
+
+procedure Node997
+begin
+    if (get_critter_stat(dude_obj, 3) >= 8) then begin
+        call Node004;
+    end
+    else begin
+        call Node005;
+    end
+end
+
+procedure Node998
+begin
+    set_local_var(5, 2);
+end
+
+procedure Node999
+begin
+end
+
+procedure Node001
+begin
+    float_msg(self_obj, message_str(136, random(110, 114)), 2);
+end
+
+procedure Node002
+begin
+    gsay_reply(136, 120);
+    giq_option(4, 136, 121, Node003, 50);
+    giq_option(4, 136, 122, Node004, 50);
+end
+
+procedure Node003
+begin
+    gsay_reply(136, 130);
+    giq_option(4, 136, 131, Node004, 50);
+end
+
+procedure Node004
+begin
+    gsay_reply(136, 140);
+    giq_option(4, 136, 141, Node005, 50);
+    giq_option(4, 136, 142, Node005, 50);
+    giq_option(4, 136, 143, Node999, 50);
+    giq_option(4, 136, 144, Node009, 50);
+end
+
+procedure Node005
+begin
+    gsay_reply(136, 150);
+    giq_option(4, 136, 151, Node021, 50);
+end
+
+procedure Node006
+begin
+    if (obj_is_carrying_obj_pid(dude_obj, 307)) then begin
+        item := obj_carrying_pid_obj(dude_obj, 307);
+        rm_obj_from_inven(dude_obj, item);
+        destroy_object(item);
+        set_global_var(160, 2);
+        set_global_var(51, global_var(51) + 5);
+        display_msg(message_str(136, 700));
+        give_exp_points(350);
+        display_msg(message_str(14, 100) + 350 + message_str(14, 101));
+        set_local_var(8, 1);
+    end
+    gsay_reply(136, 160);
+    giq_option(1, 136, 161, Node110, 50);
+    giq_option(4, 136, 162, Node999, 50);
+end
+
+procedure Node007
+begin
+    gsay_reply(136, 170);
+    giq_option(4, 136, 171, Node009, 50);
+    giq_option(4, 136, 172, Node999, 50);
+end
+
+procedure Node008
+begin
+    gsay_reply(136, 180);
+    giq_option(4, 136, 181, Node009, 50);
+    giq_option(4, 136, 182, Node999, 50);
+end
+
+procedure Node009
+begin
+    if (local_var(9) == 0) then begin
+        set_local_var(9, 1);
+        gsay_reply(136, 190);
+    end
+    else begin
+        gsay_reply(136, 192);
+    end
+    if (global_var(233)) then begin
+    end
+    else begin
+        giq_option(4, 136, 200, Node016, 50);
+    end
+    if ((global_var(393) == 0) and (global_var(162) > 0)) then begin
+        giq_option(4, 136, 201, Node002, 50);
+    end
+    giq_option(4, 136, 202, Node110, 50);
+    giq_option(4, 136, 203, Node015, 50);
+    giq_option(4, 136, 204, Node999, 50);
+end
+
+procedure Node010
+begin
+    gsay_reply(136, 210);
+    giq_option(1, 136, 211, Node920, 50);
+    giq_option(1, 136, 212, Node922, 50);
+    giq_option(1, 136, 213, Node924, 50);
+    giq_option(1, 136, 214, Node926, 50);
+    giq_option(1, 136, 215, Node928, 50);
+    giq_option(1, 136, 216, Node930, 50);
+    giq_option(1, 136, 217, Node035, 50);
+    giq_option(1, 136, 218, Node999, 50);
+end
+
+procedure Node011
+begin
+    gsay_reply(136, 220);
+    giq_option(1, 136, 222, Node034, 50);
+    giq_option(1, 136, 223, Node034, 50);
+    giq_option(1, 136, 224, Node034, 50);
+    giq_option(1, 136, 225, Node110, 50);
+    giq_option(1, 136, 226, Node999, 50);
+end
+
+procedure Node012
+begin
+    gsay_reply(136, 230);
+    giq_option(1, 136, 231, Node110, 50);
+    giq_option(1, 136, 232, Node019, 50);
+    giq_option(1, 136, 233, Node999, 50);
+end
+
+procedure Node013
+begin
+    gsay_reply(136, 240);
+    giq_option(1, 136, 241, Node110, 50);
+    giq_option(1, 136, 242, Node999, 50);
+end
+
+procedure Node014
+begin
+    gsay_reply(136, 250);
+    giq_option(1, 136, 251, Node110, 50);
+    giq_option(1, 136, 252, Node999, 50);
+end
+
+procedure Node015
+begin
+    gsay_reply(136, 260);
+    giq_option(4, 136, 261, Node009, 50);
+    giq_option(4, 136, 262, Node999, 50);
+end
+
+procedure Node016
+begin
+    gsay_reply(136, 270);
+    giq_option(4, 136, 271, Node017, 50);
+    giq_option(4, 136, 272, Node009, 50);
+    giq_option(4, 136, 273, Node999, 50);
+end
+
+procedure Node017
+begin
+    gsay_reply(136, 280);
+    giq_option(4, 136, 281, Node018, 50);
+end
+
+procedure Node018
+begin
+    gsay_reply(136, 290);
+    giq_option(4, 136, 291, Node009, 50);
+    giq_option(4, 136, 292, Node999, 50);
+end
+
+procedure Node019
+begin
+    gsay_reply(136, 300);
+    giq_option(1, 136, 301, Node020, 50);
+    giq_option(1, 136, 302, Node110, 50);
+    giq_option(1, 136, 303, Node999, 49);
+end
+
+procedure Node020
+begin
+    gsay_reply(136, 310);
+    giq_option(1, 136, 311, Node999, 50);
+    giq_option(1, 136, 312, Node110, 50);
+    giq_option(1, 136, 313, Node999, 49);
+end
+
+procedure Node021
+begin
+    gsay_reply(136, 320);
+    giq_option(4, 136, 321, Node022, 50);
+end
+
+procedure Node022
+begin
+    set_global_var(393, 1);
+    set_local_var(7, 1);
+    gsay_reply(136, 330);
+    giq_option(4, 136, 331, Node023, 50);
+end
+
+procedure Node023
+begin
+    gsay_reply(136, 340);
+    giq_option(4, 136, 341, Node009, 50);
+    giq_option(4, 136, 342, Node024, 50);
+    giq_option(4, 136, 343, Node999, 50);
+end
+
+procedure Node024
+begin
+    gsay_reply(136, 360);
+    giq_option(4, 136, 361, Node009, 50);
+    giq_option(4, 136, 362, combat, 51);
+    giq_option(7, 136, 363, Node999, 50);
+end
+
+procedure Node025
+begin
+    if (local_var(7) == 1) then begin
+        gsay_reply(136, 371);
+    end
+    else begin
+        gsay_reply(136, 370);
+    end
+    giq_option(4, 136, 372, Node915, 50);
+    giq_option(4, 136, 373, Node999, 50);
+end
+
+procedure Node026
+begin
+    call Node150;
+    if (combyn == 0) then begin
+        gsay_reply(136, 380);
+    end
+    else begin
+        gsay_reply(136, 381);
+        giq_option(4, 136, 382, Node027, 50);
+    end
+    giq_option(4, 136, 383, Node009, 50);
+    giq_option(4, 136, 384, Node999, 50);
+end
+
+procedure Node027
+begin
+    gsay_reply(136, 390);
+    giq_option(4, 136, 391, Node028, 50);
+end
+
+procedure Node028
+begin
+    gsay_reply(136, 400);
+    giq_option(4, 136, 401, Node029, 50);
+end
+
+procedure Node029
+begin
+    gsay_reply(136, 410);
+    giq_option(4, 136, 411, Node030, 50);
+end
+
+procedure Node030
+begin
+    gsay_reply(136, 420);
+    giq_option(4, 136, 421, Node031, 50);
+end
+
+procedure Node031
+begin
+    set_global_var(160, 1);
+    gsay_reply(136, 430);
+    giq_option(4, 136, 431, Node999, 50);
+    giq_option(4, 136, 432, Node999, 50);
+end
+
+procedure Node032
+begin
+    gsay_reply(136, 440);
+    giq_option(4, 136, 441, Node110, 50);
+    giq_option(4, 136, 442, Node999, 50);
+end
+
+procedure Node034
+begin
+    gsay_reply(136, 460);
+    giq_option(1, 136, 461, Node940, 50);
+    giq_option(1, 136, 462, Node110, 50);
+    giq_option(1, 136, 463, Node999, 50);
+end
+
+procedure Node035
+begin
+    gsay_reply(136, 470);
+    giq_option(1, 136, 471, Node110, 50);
+    giq_option(1, 136, 472, Node999, 50);
+end
+
+procedure Node036
+begin
+    gsay_reply(136, 500);
+    giq_option(1, 136, 501, Node999, 50);
+    giq_option(1, 136, 502, Node999, 50);
+end
+
+procedure Node110
+begin
+    gsay_reply(136, 600);
+    if (obj_is_carrying_obj_pid(dude_obj, 18) or obj_is_carrying_obj_pid(dude_obj, 313)) then begin
+        giq_option(4, 136, 601, Node111, 50);
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 10) or obj_is_carrying_obj_pid(dude_obj, 23) or obj_is_carrying_obj_pid(dude_obj, 351)) then begin
+        giq_option(4, 136, 602, Node112, 50);
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 160)) then begin
+        giq_option(4, 136, 603, Node113, 50);
+    end
+    if (get_sfall_global_int(SGVAR_CRAFT_AMMO) == 0) then begin
+    	NOption(1001, NodeCraft1, 004);
+    end
+    giq_option(4, 136, 604, Node009, 50);
+    giq_option(4, 136, 605, Node999, 50);
+end
+
+procedure Node111
+begin
+    variable LVar0 := "";
+    variable LVar1 := 0;
+    if (local_var(8) == 1) then begin
+        if (obj_is_carrying_obj_pid(dude_obj, 313)) then begin
+            LVar0 := LVar0 + (message_str(136, 680) + " ");
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 18)) then begin
+            LVar0 := LVar0 + message_str(136, 681);
+        end
+        gsay_reply(136, LVar0);
+        if (obj_is_carrying_obj_pid(dude_obj, 313)) then begin
+            giq_option(4, 136, 612, Node987, 50);
+            LVar1 := 1;
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 18)) then begin
+            giq_option(4, 136, 613, Node986, 50);
+            LVar1 := 1;
+        end
+    end
+    else begin
+        if (obj_is_carrying_obj_pid(dude_obj, 313)) then begin
+            LVar0 := LVar0 + (message_str(136, 610) + (400 * (25000 / (160 + has_skill(dude_obj, 15))) / 100) + message_str(136, 5500) + " ");
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 18)) then begin
+            LVar0 := LVar0 + (message_str(136, 611) + (1500 * (25000 / (160 + has_skill(dude_obj, 15))) / 100) + message_str(136, 5500));
+        end
+        gsay_reply(136, LVar0);
+        if (obj_is_carrying_obj_pid(dude_obj, 313) and (item_caps_total(dude_obj) >= (400 * (25000 / (160 + has_skill(dude_obj, 15))) / 100))) then begin
+            giq_option(4, 136, 612, Node987, 50);
+            LVar1 := 1;
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 18) and (item_caps_total(dude_obj) >= (1500 * (25000 / (160 + has_skill(dude_obj, 15))) / 100))) then begin
+            giq_option(4, 136, 613, Node986, 50);
+            LVar1 := 1;
+        end
+        if (LVar1 == 0) then begin
+            giq_option(4, 136, 617, Node999, 50);
+        end
+    end
+    giq_option(4, 136, 614, Node110, 50);
+    giq_option(4, 136, 615, Node009, 50);
+    giq_option(4, 136, 616, Node999, 50);
+end
+
+procedure Node112
+begin
+    variable LVar0 := 0;
+    variable LVar1 := 0;
+    if (local_var(8) == 1) then begin
+        LVar0 := message_str(136, 620);
+        if (obj_is_carrying_obj_pid(dude_obj, 10)) then begin
+            LVar0 := LVar0 + (message_str(136, 682) + " ");
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 23)) then begin
+            LVar0 := LVar0 + (message_str(136, 683) + " ");
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 351)) then begin
+            LVar0 := LVar0 + message_str(136, 684);
+        end
+        gsay_reply(136, LVar0);
+        if (obj_is_carrying_obj_pid(dude_obj, 10)) then begin
+            giq_option(4, 136, 624, Node985, 50);
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 23)) then begin
+            giq_option(4, 136, 625, Node984, 50);
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 351)) then begin
+            giq_option(4, 136, 626, Node983, 50);
+        end
+    end
+    else begin
+        LVar0 := message_str(136, 620);
+        if (obj_is_carrying_obj_pid(dude_obj, 10)) then begin
+            LVar0 := LVar0 + (message_str(136, 621) + (1750 * (25000 / (160 + has_skill(dude_obj, 15))) / 100) + message_str(136, 5500) + " ");
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 23)) then begin
+            LVar0 := LVar0 + (message_str(136, 622) + (2000 * (25000 / (160 + has_skill(dude_obj, 15))) / 100) + message_str(136, 5500) + " ");
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 351)) then begin
+            LVar0 := LVar0 + (message_str(136, 623) + (4000 * (25000 / (160 + has_skill(dude_obj, 15))) / 100) + message_str(136, 5500));
+        end
+        gsay_reply(136, LVar0);
+        if (obj_is_carrying_obj_pid(dude_obj, 10) and (item_caps_total(dude_obj) >= (1750 * (25000 / (160 + has_skill(dude_obj, 15))) / 100))) then begin
+            giq_option(4, 136, 624, Node985, 50);
+            LVar1 := 1;
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 23) and (item_caps_total(dude_obj) >= (2000 * (25000 / (160 + has_skill(dude_obj, 15))) / 100))) then begin
+            giq_option(4, 136, 625, Node984, 50);
+            LVar1 := 1;
+        end
+        if (obj_is_carrying_obj_pid(dude_obj, 351) and (item_caps_total(dude_obj) >= (4000 * (25000 / (160 + has_skill(dude_obj, 15))) / 100))) then begin
+            giq_option(4, 136, 626, Node983, 50);
+            LVar1 := 1;
+        end
+        if (LVar1 == 0) then begin
+            giq_option(4, 136, 617, Node999, 50);
+        end
+    end
+    giq_option(4, 136, 614, Node110, 50);
+    giq_option(4, 136, 615, Node009, 50);
+    giq_option(4, 136, 616, Node999, 50);
+end
+
+procedure Node113
+begin
+    if (local_var(8) == 1) then begin
+        gsay_reply(136, 685);
+    end
+    else begin
+        gsay_reply(136, message_str(136, 630) + (1500 * (25000 / (160 + has_skill(dude_obj, 15))) / 100) + message_str(136, 5500));
+    end
+    if ((item_caps_total(dude_obj) >= (1500 * (25000 / (160 + has_skill(dude_obj, 15))) / 100)) or (local_var(8) == 1)) then begin
+        giq_option(4, 136, 631, Node982, 50);
+    end
+    else begin
+        giq_option(4, 136, 617, Node999, 50);
+    end
+    giq_option(4, 136, 614, Node110, 50);
+    giq_option(4, 136, 615, Node009, 50);
+    giq_option(4, 136, 616, Node999, 50);
+end
+
+procedure Node137
+begin
+    game_time_advance(game_ticks(3 * 3600));
+    gsay_reply(136, 640);
+    giq_option(4, 136, 641, Node138, 50);
+end
+
+procedure Node138
+begin
+    gsay_reply(136, 650);
+    giq_option(4, 136, 651, Node139, 50);
+end
+
+procedure Node139
+begin
+    gsay_reply(136, 660);
+    giq_option(4, 136, 661, Node140, 50);
+end
+
+procedure Node140
+begin
+    gsay_reply(136, 670);
+    giq_option(4, 136, 671, Node110, 50);
+    giq_option(4, 136, 672, Node009, 50);
+    giq_option(4, 136, 673, Node999, 50);
+end
+
+procedure Node150
+begin
+    combyn := 0;
+    if (obj_is_carrying_obj_pid(dude_obj, 313)) then begin
+        combyn := 1;
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 18)) then begin
+        combyn := 1;
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 10)) then begin
+        combyn := 1;
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 23)) then begin
+        combyn := 1;
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 351)) then begin
+        combyn := 1;
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 160)) then begin
+        combyn := 1;
+    end
+end
+
+procedure Node915
+begin
+    if (obj_is_carrying_obj_pid(dude_obj, 308)) then begin
+        set_local_var(7, 2);
+        item := obj_carrying_pid_obj(dude_obj, 308);
+        rm_obj_from_inven(dude_obj, item);
+        add_obj_to_inven(self_obj, item);
+        item := create_object_sid(253, 0, 0, -1);
+        add_obj_to_inven(dude_obj, item);
+        set_global_var(393, 2);
+        set_global_var(51, global_var(51) + 5);
+        display_msg(message_str(136, 710));
+        give_exp_points(250);
+        display_msg(message_str(14, 100) + 250 + message_str(14, 101));
+    end
+    call Node026;
+end
+
+procedure Node033
+begin
+    gsay_reply(136, 450);
+    giq_option(1, 136, 451, Node110, 50);
+    giq_option(1, 136, 452, Node999, 50);
+end
+

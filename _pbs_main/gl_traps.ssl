@@ -1,0 +1,143 @@
+procedure start;
+
+/**
+
+	Global script for traps system. 
+	Should be of type 0 (local map) and repeated at least 5 times in second.
+
+	@author phobos2077
+	
+*/
+
+
+#include "sfall.h"
+#include "define_lite.h"
+#include "traps.h"
+
+variable angry_set;
+//variable victims_set;
+//variable ar_explosions;
+
+variable attack_delay := -1;
+variable ini_assemble_hotkey;
+
+procedure start begin
+	variable arr;
+	variable i;
+	
+	variable list;
+	variable list2;
+	variable obj;
+	variable closest_crit;
+	variable item;
+	variable flag;
+	variable n:=0;
+	variable len;
+	
+	variable key1;
+	
+  if game_loaded then begin
+  	//display_msg("traps init yo "+cur_map_index);
+	set_global_script_type(0);
+	set_global_script_repeat(100);
+	
+	//ar_explosions := get_sfall_global_array(SGVAR_FAKE_EXPLOSIONS, 0, 4);
+  	angry_set := get_sfall_global_array(SGVAR_ANGRY_TEAMS, 0, 4);
+  	//victims_Set := get_sfall_global_array(SGVAR_TRAP_VICTIMS, 0, 4);
+  	
+	ini_trap_reveals_dude := get_ini_setting("combat.ini|TRAPS|trap_reveals_dude");
+	ini_trap_friendfoe := get_ini_setting("combat.ini|TRAPS|trap_friendfoe");
+	ini_assemble_hotkey := parse_hotkey(get_ini_string("combat.ini|TRAPS|assemble_hotkey"));
+	
+  end else begin
+	
+	// check for angry people
+	if (len_array(angry_set) > 0) then begin
+		if (attack_delay == -1) then begin
+			attack_delay := get_uptime + 1500;
+		end else if (get_uptime > attack_delay) then begin
+			debug_msg("angry: " + angry_set[0]);
+			foreach n in angry_set begin
+				closest_crit := 0;
+				len := 999999;
+				if (n) then begin
+					foreach obj in list_as_array(LIST_CRITTERS) if obj then begin
+						if (obj != dude_obj and not(is_critter_dead(obj)) and has_trait(TRAIT_OBJECT, obj, OBJECT_TEAM_NUM) == n and tile_distance_objs(obj, dude_obj) < len) then begin
+							closest_crit := obj;
+							len := tile_distance_objs(obj, dude_obj);
+						end
+					end
+				end
+				if (closest_crit) then begin
+					attack_setup(closest_crit, dude_obj);
+				end
+			end
+			resize_array(angry_set, 0);
+			attack_delay := -1;
+		end
+	end
+	
+	/*if (len_array(victims_set) > 0) then begin
+	   i := 0;
+	   n := len_array(victims_set);
+	   while (i < n) do begin
+	      obj := victims_set[i+1];
+	      if (game_time >= victims_set[i+2]) then begin
+	         critter_heal(obj, -get_critter_stat(obj,STAT_max_hp));
+	         destroy_object(obj);
+	         call remove_array_block(victims_set, 3, i);
+	         i := 0;
+	      end
+	      i+=3;
+	   end
+	   //resize_array(victims_set, 0);
+	end*/
+	
+	// for TESTING
+	/*if (key_pressed(DIK_F3)) then begin
+		obj := create_object(PID_PBS_TRAP_KIT_SPIKE,0,0); add_mult_objs_to_inven(dude_obj, obj, 3);
+		obj := create_object(PID_PBS_TRAP_KIT_MINE,0,0); add_mult_objs_to_inven(dude_obj, obj, 3);
+		obj := create_object(PID_PBS_TRAP_KIT_SENSOR,0,0); add_mult_objs_to_inven(dude_obj, obj, 3);
+		//foreach obj in list_as_array(LIST_CRITTERS) begin
+			//if (obj != dude_obj and tile_distance_objs(dude_obj, obj) < 6 and not(anim_busy(obj))) then begin
+				obj := create_object(16777459, tile_num_in_direction(dude_tile, 4, 4), dude_elevation);
+				float_msg(dude_obj, "come here, "+proto_data(obj_pid(obj),cr_name), 0);
+				//attack_setup(obj, dude_obj);
+				//move_obj_inven_to_obj(obj, dude_obj);
+				reg_anim_clear(obj);
+				reg_anim_begin();
+				reg_anim_obj_move_to_obj(obj, dude_obj, -1);
+				reg_anim_end();
+				//victim_obj := obj;
+				
+				//animate_move_obj_to_tile(obj, tile_num_in_direction(dude_tile,0,1), (ANIMATE_RUN ));
+		  		//anim(obj, ANIMATE_ROTATION, 0);
+			//end
+		//end
+		
+	end*/
+	
+	if (hotkey_pressed(ini_assemble_hotkey)) then begin
+	   if (not(key1)) then begin
+	      item := critter_inven_obj(dude_obj, active_hand);
+	      //display_msg("active: "+obj_name(item));
+	      if (is_trap_kit_pid(obj_pid(item))) then begin
+	         call try_assemble_trap(dude_obj, item);
+	      end
+	      key1 := true;
+	   end else begin
+	      key1 := false;
+	   end
+	end
+	
+	// traps setoff, realtime
+	//display_msg("gl_traps: check setoff traps");
+	arr := get_traps_for_map();
+	if (len_array(arr) > 0) then begin
+		foreach obj in list_as_array(LIST_CRITTERS) if (obj) then begin
+			call check_setoff_traps(obj, arr);
+		end
+	end
+	
+  end
+end

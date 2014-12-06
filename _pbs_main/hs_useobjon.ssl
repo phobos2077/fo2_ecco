@@ -1,0 +1,41 @@
+procedure start;
+
+#include "define_lite.h"
+
+#include "traps.h"
+
+/**
+	hs_useobjon.int
+	
+	Runs when a critter uses an object on another critter. (Or themselves)
+	
+	This is fired before the object is used, and the relevent use_obj_on script procedures are run.
+	
+	Critter arg1 - The user
+	Critter arg2 - The target
+	int     arg3 - The object used
+*/
+
+// NOT USED
+
+procedure start begin
+	variable critter;
+	variable target;
+	variable item;
+	
+	variable begin
+	   tmp; charges; trapType; trapobj; pid; obj;
+	end
+	
+    if (init_hook == 0) then
+      begin
+         target := get_sfall_arg;
+         critter := get_sfall_arg;
+         item := get_sfall_arg;
+         
+         display_msg(""+critter+" use "+item+" on "+target);
+         display_msg("Dude is "+dude_obj);
+         
+         set_sfall_return(1);
+      end
+end

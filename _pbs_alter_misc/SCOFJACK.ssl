@@ -1,0 +1,603 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Officer Jack
+        Location: NCR 1
+        Description: He is the officer who goes crazy and takes over the power plant
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+#include "..\headers\ncr1.h"
+
+#define NAME                    SCRIPT_SCOFJACK
+#define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+
+#include "..\headers\ncr.h"
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+
+procedure doExplode;
+procedure warp_proc;
+procedure putDownExplosive;
+procedure checkLoadPos;
+procedure getTimeTile;
+procedure getTimeBit;
+procedure animateToTarget;
+procedure goCrazy;
+procedure KillJack;
+
+
+#define CHECK_STATE 1
+#define COUNT_DOWN  2
+#define TIMER_MOVE  3
+#define TIMER_DESTROY_ME 4
+#define TIMER_EXPLOSION 5
+
+#define POWER_PLANT_TIME  T8HRm(bit_8, bit_9, bit_10, bit_11, bit_12, bit_13, bit_14, bit_15)
+//32640
+#define POLICE_STATION_TIME T16HRm(bit_16, bit_17, bit_18, bit_19, bit_20, bit_21, bit_22, bit_23, bit_24, bit_1, bit_2, bit_3, bit_4, bit_5, bit_6, bit_7)
+//16744575
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Jack_Dieing                (7)
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+import variable i_jack_obj;
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once      := 0;
+variable target_tile    := 0;
+variable doTalkProc     := 0;
+variable warpJack       := 0;
+variable Node1Rep       := 0;
+variable Node2Rep       := 0;
+variable forceCountDown := 0;
+variable walking        := 0;
+
+procedure start begin
+   i_jack_obj := self_obj;
+end
+
+procedure combat_p_proc begin
+   if (self_tile == POS_POWER and jack_state == JACK_ALARM) then begin
+      float_msg(self_obj, mstr(Random(155, 160)), FLOAT_MSG_RED);
+      script_overrides;
+   end
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == CHECK_STATE) then begin
+      if (jack_state == JACK_ALARM) then begin
+         call putDownExplosive;
+         add_timer_event(self_obj, game_ticks(5), COUNT_DOWN);
+      end
+   end else if (fixed_param == COUNT_DOWN) then begin
+      if (local_var(LVAR_Jack_Dieing) == 0) then begin
+         if (jack_state != JACK_SURRENDER) then begin
+            if (not combat_is_initialized) then begin
+               forceCountDown := 1;
+               call talk_p_proc;
+            end
+            if (Node2Rep < 6) then
+               add_timer_event(self_obj, game_ticks(5), COUNT_DOWN);
+         end
+      end
+   end else if (fixed_param == TIMER_MOVE) then begin
+      if (jack_state == 0) then begin
+         target_tile := getTimeTile;
+
+         if not (anim_busy(self_obj)) then begin
+            call animateToTarget;
+            if (self_tile == target_tile) then
+               add_timer_event(self_obj, game_ticks(60), TIMER_MOVE);
+            else
+               add_timer_event(self_obj, game_ticks(1), TIMER_MOVE);
+         end else
+            add_timer_event(self_obj, game_ticks(2), TIMER_MOVE);
+      end
+   end else if (fixed_param == TIMER_DESTROY_ME) then begin
+      set_ncr_flag(NCR_BOMB_JACK);
+
+      if (global_var(GVAR_NCR_MIRA_STATE) == MJOBTAKEN) then begin
+         set_global_var(GVAR_NCR_MIRA_STATE, MJOBJACKEDWHACKED);
+         give_exp_points(EXP_MIRA_JACK_DEAD);
+         display_msg(mstr(161) + EXP_MIRA_JACK_DEAD + mstr(162));
+      end else begin
+         set_global_var(GVAR_NCR_MIRA_STATE, MJACKDEAD);
+      end
+
+      if (global_var(GVAR_NCR_POWERPLANT) == PP_ACCEPT or global_var(GVAR_NCR_POWERPLANT) == PP_REFUSED) then begin
+         set_global_var(GVAR_NCR_POWERPLANT, PP_DEFUSED);
+      end
+      i_jack_obj := -1;
+      kill_critter(self_obj, ANIM_exploded_to_nothing_sf);
+   end else if (fixed_param == TIMER_EXPLOSION) then begin
+      explosion(self_tile, 0, JACK_EXPLOSIVE_DAMAGE);
+   end
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD);
+   if (is_loading_game == FALSE) then
+      call checkLoadPos;
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+   if (jack_state == JACK_CRAZY) then
+      call goCrazy;
+
+   if (global_var(GVAR_NCR_POWERPLANT) == PP_DAMAGED) then begin
+      if (i_jack_obj != -1) then begin
+         call KillJack;
+      end
+   end
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_VERY_INTOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION6;
+
+   CheckKarma;
+
+   GetReaction;
+
+   if (jack_state == JACK_SURRENDER) then begin
+      call Node017;
+   end else if (jack_state == JACK_COUNTDOWN or forceCountDown == 1) then begin
+      if (forceCountDown == 1) then
+         forceCountDown := 0;
+      call Node002;
+   end else if (jack_state == JACK_ALARM) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node004;
+       gSay_End;
+       end_dialogue;
+   end else if (target_tile == POS_POLICE) then begin
+       call Node001;
+   end else if (target_tile == POS_POWER) then begin
+      call Node003;
+   end
+   if (doTalkProc) then begin
+      doTalkProc := 0;
+      call talk_p_proc;
+   end
+   if (warpJack) then begin
+      warpJack := 0;
+      call warp_proc;
+   end
+end
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+   i_jack_obj := -1;
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+   if (global_var(GVAR_NCR_MIRA_STATE) == MJOBTAKEN) then begin
+      set_global_var(GVAR_NCR_MIRA_STATE, MJOBJACKEDWHACKED);
+      give_exp_points(EXP_MIRA_JACK_DEAD);
+      display_msg(mstr(161) + EXP_MIRA_JACK_DEAD + mstr(162));
+   end else begin
+      set_global_var(GVAR_NCR_MIRA_STATE, MJACKDEAD);
+   end
+
+   if (global_var(GVAR_NCR_POWERPLANT) == PP_ACCEPT or global_var(GVAR_NCR_POWERPLANT) == PP_REFUSED) then begin
+      set_global_var(GVAR_NCR_POWERPLANT, PP_DEFUSED);
+      add_obj_to_inven(self_obj, create_object(PID_PLASTIC_EXPLOSIVES, 0, 0));
+   end
+
+   debug_msg("SCOFJACK: in jacks death 2: " + global_var(GVAR_NCR_MIRA_STATE));
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Herebefore) == 0) then
+      display_msg(mstr(100));
+   else
+      display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   float_msg(self_obj, mstr(103 + Node1Rep), FLOAT_MSG_NORMAL);
+   Node1Rep += 1;
+   if (Node1Rep  >= 5) then Node1Rep := 0;
+end
+
+procedure Node002 begin
+   float_msg(self_obj, mstr(109 + Node2Rep), FLOAT_MSG_NORMAL);
+   Node2Rep += 1;
+   if (Node2Rep > 5) then begin
+      if (local_var(LVAR_Jack_Dieing) == 0) then
+         call doExplode;
+   end
+end
+
+procedure Node003 begin
+   float_msg(self_obj, mstr(115 + Random(0, 2)), FLOAT_MSG_NORMAL);
+end
+
+procedure Node002a999 begin
+   set_jack_state(JACK_COUNTDOWN);
+   doTalkProc := 1;
+   call Node999;
+end
+
+procedure Node004 begin
+   Reply(118);
+   if ((has_skill(dude_obj, SKILL_CONVERSANT) > 79) or has_trait(TRAIT_PERK,dude_obj,PERK_speaker)) then
+      NOption(119, Node005, 4);
+   BOption(120, Node002a999, 1);
+end
+
+procedure Node005 begin
+   Reply(121);
+   BOption(122, Node002a999, 4);
+   NOption(123, Node006, 4);
+end
+
+procedure Node006 begin
+   Reply(124);
+   NOption(125, Node007, 4);
+   BOption(126, Node002a999, 4);
+end
+
+procedure Node007 begin
+   Reply(127);
+   NOption(128, Node009, 4);
+   if (global_var(GVAR_NCR_MIRA_STATE) == MJOBTAKEN) then
+      BOption(129, Node008, 4);
+   NOption(130, Node010, 4);
+end
+
+procedure Node008 begin
+   Reply(131);
+   ENDHOSTILE;
+end
+
+procedure Node009 begin
+   Reply(132);
+   BOption(133, Node002a999, 4);
+   NOption(134, Node011, 4);
+end
+
+procedure Node010 begin
+   Reply(135);
+   NOption(136, Node012, 4);
+   BOption(137, Node002a999, 4);
+end
+
+procedure Node011 begin
+   Reply(138);
+   BOption(139, Node002a999, 4);
+   NOption(140, Node013, 4);
+end
+
+procedure Node012 begin
+   Reply(141);
+   BOption(142, Node002a999, 4);
+   NOption(143, Node013, 4);
+end
+
+procedure Node013 begin
+   Reply(144);
+   NOption(145, Node014, 4);
+   BOption(146, Node002a999, 4);
+end
+
+procedure Node014 begin
+   Reply(147);
+   BOption(148, Node015, 4);
+   NOption(149, Node016, 4);
+end
+
+procedure Node015 begin
+   Reply(150);
+   BOption(ENDSTRING, Node002a999, 1);
+end
+
+procedure Node016 begin
+   set_jack_state(JACK_SURRENDER);
+   inc_general_rep(REP_BONUS_NCR_JACK_TALK_OUT);
+   give_xp(1000); // reduced by phobos2077 (was 6000)
+   inc_ncr_rep(REP_HERO_NCR_TALKED_JACK);
+   warpJack := 1;
+   Reply(151);
+   ENDOPTION;
+end
+
+procedure Node017 begin
+   float_msg(self_obj, mstr(152 + Random(0, 2)), FLOAT_MSG_NORMAL);
+end
+
+procedure doExplode begin
+   set_jack_state(JACK_COUNTDOWN);
+   set_global_var(GVAR_NCR_POWERPLANT, PP_DAMAGED);
+   call KillJack;
+end
+
+procedure warp_proc begin
+   fadeout(1);
+   if (tile_contains_pid_obj(14485, 0, PID_LOCKER_CLEAN_LEFT)) then //was 14085 and PID_LOCKER_RUSTY_RIGHT - killap
+      move_obj_inven_to_obj(self_obj, tile_contains_pid_obj(14485, 0, PID_LOCKER_CLEAN_LEFT)); //was 14085 and PID_LOCKER_RUSTY_RIGHT - killap
+   move_to(self_obj, JACK_JAIL_TILE, 0);
+   fadein(1);
+end
+
+procedure putDownExplosive begin
+   variable obj;
+   if (self_tile != JACK_CRAZY_TILE) then begin
+      move_to(self_obj, JACK_CRAZY_TILE, 0);
+      reg_anim_clear(self_obj);
+      reg_anim_begin();
+      animate_rotation(2);
+      reg_anim_end();
+      if (obj_is_carrying_obj_pid(self_obj, PID_DESERT_EAGLE)) then begin
+         wield_obj(obj_carrying_pid_obj(self_obj, PID_DESERT_EAGLE));
+      end
+   end
+//   obj := create_object(PID_PLASTIC_EXPLOSIVES, self_tile, 0);
+end
+
+procedure checkLoadPos begin
+   if (jack_state == 0) then begin
+      target_tile := getTimeTile;
+      move_to(self_obj, target_tile, 0);
+      add_timer_event(self_obj, game_ticks(60), TIMER_MOVE);
+   end else if (jack_state == JACK_SURRENDER) then begin
+      move_to(self_obj, JACK_JAIL_TILE, 0);
+   end
+end
+
+procedure getTimeTile begin
+   variable bittime;
+   variable Ttime;
+
+   bittime := getTimeBit;
+
+   Ttime := POWER_PLANT_TIME;
+
+   if (bittime bwand Ttime) then begin
+      debug_msg("SCOFJACK: returning pos power for jack");
+      return POS_POWER;
+   end else begin
+      debug_msg("SCOFJACK: return pos police for Jack");
+      return POS_POLICE;
+   end
+end
+
+procedure animateToTarget begin
+   if (walking == 0 and self_tile != target_tile) then begin
+      walking := 1;
+      reg_anim_clear(self_obj);
+      reg_anim_begin();
+      animate_move_to_tile(POS_INTER);
+      reg_anim_end();
+   end else if (walking == 1) then begin
+      if (self_tile == POS_INTER) then begin
+         walking := 2;
+         reg_anim_clear(self_obj);
+         reg_anim_begin();
+         animate_move_to_tile(target_tile);
+         reg_anim_end();
+      end else if (not anim_busy(self_obj) and self_tile != target_tile) then begin
+         reg_anim_clear(self_obj);
+         reg_anim_begin();
+         animate_move_to_tile(POS_INTER);
+         reg_anim_end();
+         debug_msg("SCOFJACK: told to walk again.");
+      end
+   end else if (walking == 2) then begin
+      if (self_tile == target_tile) then begin
+         walking := 0;
+      end
+   end else if (walking == 0 and self_tile == target_tile) then begin
+      animate_rotation(3);
+   end
+end
+
+procedure getTimeBit begin
+   variable time := 0;
+
+   time := game_time_hour;
+   if (time >= 100 and time <= 159) then return bit_1;
+   if (time >= 200 and time <= 259) then return bit_2;
+   if (time >= 300 and time <= 359) then return bit_3;
+   if (time >= 400 and time <= 459) then return bit_4;
+   if (time >= 500 and time <= 559) then return bit_5;
+   if (time >= 600 and time <= 659) then return bit_6;
+   if (time >= 700 and time <= 759) then return bit_7;
+   if (time >= 800 and time <= 859) then return bit_8;
+   if (time >= 900 and time <= 959) then return bit_9;
+   if (time >= 1000 and time <= 1059) then return bit_10;
+   if (time >= 1100 and time <= 1159) then return bit_11;
+   if (time >= 1200 and time <= 1259) then return bit_12;
+   if (time >= 1300 and time <= 1359) then return bit_13;
+   if (time >= 1400 and time <= 1459) then return bit_14;
+   if (time >= 1500 and time <= 1559) then return bit_15;
+   if (time >= 1600 and time <= 1659) then return bit_16;
+   if (time >= 1700 and time <= 1759) then return bit_17;
+   if (time >= 1800 and time <= 1859) then return bit_18;
+   if (time >= 1900 and time <= 1959) then return bit_19;
+   if (time >= 2000 and time <= 2059) then return bit_20;
+   if (time >= 2100 and time <= 2159) then return bit_21;
+   if (time >= 2200 and time <= 2259) then return bit_22;
+   if (time >= 2300 and time <= 2359) then return bit_23;
+   if (time >= 0000 and time <=  100) then return bit_24;
+   return -1;
+end
+
+procedure goCrazy begin
+   move_to(self_obj, JACK_CRAZY_TILE, 0);
+   animate_rotation(3); // Seraph's Fix: animate_rotation always affects self_obj and only takes 1 arg. Thanks Rob!
+   set_jack_state(JACK_ALARM);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR_CRAZY_JACK);
+   add_timer_event(self_obj, 0, CHECK_STATE);
+end
+
+procedure KillJack begin
+   variable sound;
+   sound := sfx_build_char_name(self_obj, ANIM_exploded_to_nothing, snd_die);
+   reg_anim_clear(self_obj);
+   reg_anim_begin();
+   reg_anim_animate(self_obj, ANIM_exploded_to_nothing, -1);
+   reg_anim_play_sfx(self_obj, sound, 0);
+   reg_anim_end();
+   set_local_var(LVAR_Jack_Dieing, 1);
+   add_timer_event(self_obj, game_ticks(2), TIMER_DESTROY_ME);
+end
+
+
+//xxxxxxxxxxxxxxxxxxxx

@@ -1,0 +1,247 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/* Random Encounter scripts. These will be filled in more once they
+   have been designed.
+*/
+
+#include "..\headers\define.h"
+#include "..\headers\bhrnddst.h"
+
+#define NAME                    SCRIPT_ECROBBER
+
+#include "..\headers\command.h"
+
+// by phobos2077:
+#define _BOUNTY_ECROBBER
+#include "..\_pbs_main\quests_bounty.h"
+// end;
+
+procedure start;
+procedure critter_p_proc;
+procedure map_enter_p_proc;
+procedure destroy_p_proc;
+procedure timed_event_p_proc;
+
+variable starttile;
+
+variable wep_pid;
+variable ammo_pid;
+variable ammo_qty;
+variable val;
+variable val1;
+variable do_once := 0; //added by killap
+
+#define TIMER_WIELD 1
+
+//added by killap
+procedure combat_p_proc begin
+   if ((dude_elevation == 1) and ((cur_map_index == MAP_RND_CAVERN1) or (cur_map_index == MAP_RND_CAVERN2) or (cur_map_index == MAP_RND_CAVERN3) or (cur_map_index == MAP_RND_CAVERN4) or (cur_map_index == MAP_RND_CAVERN5))) then begin 
+      if (do_once == 0) then begin
+         //if (self_item(wep_pid)) then begin
+            do_once := 1;
+            if (wep_pid != PID_BRASS_KNUCKLES and 
+                wep_pid != PID_PLATED_BOXING_GLOVES and
+                wep_pid != PID_POWER_FIST and
+                wep_pid != PID_MEGA_POWER_FIST) then begin
+               inven_unwield(self_obj);
+            end
+         //end
+      end
+   end
+end
+//end added
+
+procedure timed_event_p_proc begin
+   if (fixed_param == TIMER_WIELD) then begin
+      if (self_item(wep_pid)) then begin
+         wield_obj(self_item(wep_pid));
+      end
+   end
+end
+
+procedure map_enter_p_proc begin
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RND_ROBBER);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD);
+
+   starttile := self_tile;
+
+   if ((elevation(self_obj) != 0) and (not(is_loading_game))) then begin
+      item_caps_adjust(self_obj, Random(5, 15) * dude_luck);
+      add_mult_objs_to_inven(self_obj, create_object(PID_STIMPAK, self_tile, 0), 1);
+
+      val := Random(1, 5);
+
+      if (dude_level < 6) then begin
+         if (val == 1) then begin
+            wep_pid := PID_10MM_PISTOL;
+            ammo_pid := PID_10MM_JHP;
+            ammo_qty := 2;
+         end else if (val == 2) then begin
+            wep_pid := PID_10MM_SMG;
+            ammo_pid := PID_10MM_JHP;
+            ammo_qty := 2;
+         end else if (val == 3) then begin
+            wep_pid := PID_SPEAR;
+         end else if (val == 4) then begin
+            wep_pid := PID_COMBAT_KNIFE;
+         end else if (val == 5) then begin
+            wep_pid := PID_BRASS_KNUCKLES;
+         end
+      end else if (dude_level < 11) then begin
+         if (val == 1) then begin
+            wep_pid := PID_10MM_SMG;
+            ammo_pid := PID_10MM_AP;
+            ammo_qty := Random(1,2);
+         end else if (val == 2) then begin
+            val1 := Random(1, 4);
+            if (val1 == 1) then begin
+               wep_pid := PID_DESERT_EAGLE;
+               ammo_pid := PID_44_MAGNUM_JHP;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 2) then begin
+               wep_pid := PID_SHOTGUN;
+               ammo_pid := PID_SHOTGUN_SHELLS;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 3) then begin
+               wep_pid := PID_SCOPED_HUNTING_RIFLE;
+               ammo_pid := PID_223_FMJ;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 4) then begin
+               wep_pid := PID_44_MAGNUM_REVOLVER;
+               ammo_pid := PID_44_FMJ_MAGNUM;
+               ammo_qty := Random(1, 2);
+            end
+         end else if (val == 3) then begin
+            wep_pid := PID_COMBAT_KNIFE;
+         end else if (val == 4) then begin
+            wep_pid := PID_SLEDGEHAMMER;
+         end else if (val == 5) then begin
+            wep_pid := PID_PLATED_BOXING_GLOVES;
+         end
+      end else if (dude_level < 15) then begin
+         if (val == 1) then begin
+            wep_pid := PID_223_PISTOL;
+            ammo_pid := PID_223_FMJ;
+            ammo_qty := Random(1, 2);
+         end else if (val == 2) then begin
+            val1 := Random(1, 4);
+            if (val1 == 1) then begin
+               wep_pid  := PID_223_PISTOL;
+               ammo_pid := PID_223_FMJ;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 2) then begin
+               wep_pid  := PID_MINIGUN;
+               ammo_pid := PID_5MM_AP;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 3) then begin
+               wep_pid  := PID_SAWED_OFF_SHOTGUN;
+               ammo_pid := PID_SHOTGUN_SHELLS;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 4) then begin
+               wep_pid  := PID_HK_P90C;
+               //ammo_pid := PID_9MM_AMMO;
+               ammo_pid := PID_10MM_JHP; //edit by killap
+               ammo_qty := Random(1, 2);
+            end
+         end else if (val == 3) then begin
+            wep_pid  := PID_RIPPER;
+            ammo_pid := PID_SMALL_ENERGY_CELL;
+            ammo_qty := Random(1, 2);
+         end else if (val == 4) then begin
+            wep_pid  := PID_SUPER_CATTLE_PROD;
+            ammo_pid := PID_SMALL_ENERGY_CELL;
+            ammo_qty := Random(1,2);
+         end else if (val == 5) then begin
+            wep_pid  := PID_POWER_FIST;
+            ammo_pid := PID_SMALL_ENERGY_CELL;
+            ammo_qty := Random(1, 2);
+         end
+      end else begin
+         if (val == 1) then begin
+            wep_pid  := PID_TURBO_PLASMA_RIFLE;
+            ammo_pid := PID_MICRO_FUSION_CELL;
+            ammo_qty := Random(1, 2);
+         end else if (val == 2) then begin
+            val1 := Random(1, 4);
+            if (val1 == 1) then begin
+               wep_pid  := PID_GREASE_GUN;
+               ammo_pid := PID_45_CALIBER_AMMO;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 2) then begin
+               wep_pid  := PID_HK_CAWS;
+               ammo_pid := PID_SHOTGUN_SHELLS;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 3) then begin
+               wep_pid  := PID_M72_GAUSS_RIFLE;
+               ammo_pid := PID_2MM_EC_AMMO;
+               ammo_qty := Random(1, 2);
+            end else if (val1 == 4) then begin
+               wep_pid  := PID_FN_FAL;
+               ammo_pid := PID_7_62MM_AMMO;
+               ammo_qty := Random(1, 2);
+            end
+         end else if (val == 3) then begin
+            wep_pid  := PID_HK_G11E;
+            ammo_pid := PID_4_7MM_CASELESS;
+            ammo_qty := Random(0, 2);
+         end else if (val == 4) then begin
+            wep_pid  := PID_YK42B_PULSE_RIFLE;
+            ammo_pid := PID_MICRO_FUSION_CELL;
+            ammo_qty := Random(1,2);
+         end else if (val == 5) then begin
+            wep_pid  := PID_MEGA_POWER_FIST;
+            ammo_pid := PID_SMALL_ENERGY_CELL;
+            ammo_qty := Random(1, 2);
+         end
+      end
+   end
+
+   stock_weapon_obj(self_obj, wep_pid, 1, ammo_pid, ammo_qty)
+
+   //add_timer_event(self_obj, 1, TIMER_WIELD); - comment out by killap
+
+   reg_anim_clear(self_obj);
+   reg_anim_begin();
+   animate_rotation(Random(0, 5));
+   reg_anim_end();
+end
+
+procedure start begin
+end
+
+procedure critter_p_proc begin
+   variable val;
+
+   if (obj_can_see_obj(self_obj, dude_obj)) then begin
+      attack(dude_obj);
+   end
+
+   if (not anim_busy(self_obj)) then begin
+      val := Random(1, 10);
+      if (val == 10) then begin
+         reg_anim_clear(self_obj);
+         reg_anim_begin();
+         animate_move_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
+         reg_anim_end();
+      end else if (val == 9) then begin
+         reg_anim_clear(self_obj);
+         reg_anim_begin();
+         animate_rotation(Random(0, 5));
+         reg_anim_end();
+      end
+   end
+end
+
+procedure destroy_p_proc begin
+   call bounty_hook_destroy; // by phobos2077
+/* Increment the aligned critter counter*/
+   inc_evil_critter
+
+   if (cur_map_index == MAP_BH_RND_DESERT) then begin
+       dec_map_var(MVAR_Hostile_Total);
+   end
+
+/* Set global_variable for Enemy status*/
+end

@@ -1,0 +1,1264 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Val, Valerie, Whatever
+        Location: Vault City Downtown
+        Description: Vic's Daughter running the Gun shop
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+//#include "..\headers\VCtyDwtn.h"
+
+#define NAME                    SCRIPT_VCMAINWK
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node034a;
+procedure Node034b;
+procedure Node034c;
+procedure Node034d;
+procedure Node035;
+procedure Node035a;
+procedure Node035b;
+procedure Node035c;
+procedure Node035d;
+procedure Node036;
+procedure Node036a;
+procedure Node036b;
+procedure Node037;
+procedure Node038;
+procedure Node039;
+procedure Node039a;
+procedure Node040;
+procedure Node041;
+procedure Node042;
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+#define float_vic(x)              float_msg(Vic_Ptr, message_str(NAME,x), FLOAT_MSG_GREEN)
+#define float_dude(x)             float_msg(dude_obj, message_str(NAME,x), FLOAT_MSG_BLUE)
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Vic_Relationship           (7)
+#define LVAR_Super_Tool_Kit             (8)
+#define LVAR_Time_Given_Tools           (9)
+#define LVAR_Told_About_Stock           (10)
+#define LVAR_Prevent_Floats             (11)
+
+#define RELATION_UNKNOWN                (0)
+#define RELATION_KNOWN                  (1)
+#define RELATION_GOOD                   (2)
+
+#define TOOLKIT_UNKNOWN                 (0)
+#define TOOLKIT_NOTGIVEN                (1)
+#define TOOLKIT_GIVEN                   (2)
+
+#define STOCK_NOTTOLD                   (0)
+#define STOCK_TOLD                      (1)
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+import variable Val_Ptr;
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable Barter_Succeeds:=0;
+variable Floated_With_Vic := 0;
+variable Basic_Float_Stage := 0;
+variable Complex_Float_Stage := 0;
+variable From_26:=0;
+variable From_41:=0;
+
+// by phobos2077: crafting
+#define _LEARN_CRAFT_VAL
+#include "learn_craft.h"
+
+procedure start begin
+   Val_Ptr := self_obj;
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Val_Ptr := self_obj;
+   Only_Once:=0;
+   Barter_Succeeds:=0;
+   Floated_With_Vic := 0;
+   Basic_Float_Stage := 0;
+   Complex_Float_Stage := 0;
+   From_26 := 0;
+   From_41 := 0;
+
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_VAULT_CITIZENS);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_CITIZEN);
+
+   if( not( is_loading_game ) ) then begin
+      if( ( game_time_hour > 200 ) and ( game_time_hour < 700 ) ) then begin
+         if( self_visible ) then
+            set_obj_visibility(self_obj, true);
+      end
+      else begin
+         if( not( self_visible ) ) then begin
+            set_obj_visibility(self_obj, false);
+            add_timer_event( self_obj, game_ticks(random(30,40)), 1 );
+         end
+      end
+   end
+end
+
+procedure map_update_p_proc begin
+   Val_Ptr := self_obj;
+end
+
+procedure timed_event_p_proc begin
+   // Timer Values:
+   // 1 - Standard Float text
+   // 2 - Vic/Val spatial script floats (See Node002 and Node003)
+   // 3 - Complex dialog cut-scene between Vic and Val
+
+   // Standard float output
+   if( ( fixed_param == 1 ) and ( local_var( LVAR_Prevent_Floats ) == 0 ) ) then begin
+      if( not( combat_is_initialized ) ) then begin
+         if( ( day ) and (Marcus_Ptr != 0 and not(Fallout2_enclave_destroyed)) ) then //added by killap - not(Fallout2_enclave_destroyed)
+            call Node004;
+         else if( ( day ) and (Lenny_Ptr != 0 and not(Fallout2_enclave_destroyed)) ) then //added by killap - not(Fallout2_enclave_destroyed)
+            call Node005;
+         else if( day ) then
+            call Node006;
+      end
+      add_timer_event( self_obj, game_ticks(random(30, 40)), 1 );
+   end
+   // Basic Vic/Val float conversation
+   else if( fixed_param == 2 ) then begin
+      if( local_var(LVAR_Vic_Relationship) == RELATION_KNOWN ) then begin
+         if( Basic_Float_Stage == 0 ) then begin
+            floater(104);
+            Basic_Float_Stage := 1;
+            add_timer_event( self_obj, game_ticks(1), 2 );
+         end
+         else if( Basic_Float_Stage == 1 ) then begin
+            float_msg(Vic_Ptr, message_str(NAME,106), FLOAT_COLOR_NORMAL);
+            Basic_Float_Stage := 0;
+         end
+      end
+      else if( local_var(LVAR_Vic_Relationship) == RELATION_GOOD ) then begin
+         if( Basic_Float_Stage == 0 ) then begin
+            floater(107);
+            Basic_Float_Stage := 1;
+            add_timer_event( self_obj, game_ticks(1), 2 );
+         end
+         else if( Basic_Float_Stage == 1 ) then begin
+            float_msg(Vic_Ptr, message_str(NAME,109), FLOAT_COLOR_NORMAL);
+            Basic_Float_Stage := 0;
+         end
+      end
+   end
+   // Complex Vic/Val float conversation
+   else if( fixed_param == 3 ) then begin
+      call Node040;
+   end
+end
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ( ( (local_var(LVAR_Hostile) == 2) or ( global_var( GVAR_ENEMY_VAULT_CITY ) == 1 ) ) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+
+   if( Vic_Ptr != 0 ) then begin
+      if ( (tile_distance_objs( self_obj, Vic_Ptr ) <= 4 ) and (Floated_With_Vic == 0) and (self_visible) ) then begin //added (self_visible); decreased distance from 5 to 4 - by killap
+         Floated_With_Vic := 1;
+
+         // Make Vic and Val face each other
+         Face_Critter( self_obj, Vic_Ptr );
+         Face_Critter( Vic_Ptr, self_obj );
+
+         //added by killap
+         Face_Critter( dude_obj, self_obj );
+         //end added
+
+         if( local_var(LVAR_Vic_Relationship) == RELATION_KNOWN ) then
+            call Node002;
+         else if( local_var(LVAR_Vic_Relationship) == RELATION_GOOD ) then
+            call Node003;
+      end
+   end
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+      set_local_var(LVAR_Personal_Enemy,1);
+      set_global_var( GVAR_ENEMY_VAULT_CITY, 1 );
+      set_global_var( GVAR_VAULT_CITIZEN, CITIZEN_KICKED_OUT );
+      set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_KICKED_OUT ) );
+      set_global_var( GVAR_VAULT_CITIZENSHIP, 0 );
+
+      // If Vic is in party, alert him that the player attacked his daughter.
+      if ( Vic_Ptr != 0 ) then
+         add_timer_event( Vic_Ptr, 0, 666 );
+   end
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION2;
+
+   CheckKarma;
+
+   GetReaction;
+
+   Barter_Succeeds:=0;
+   From_26 := 0;
+   From_41 := 0;
+
+   if( (Vic_Ptr != 0) and (local_var(LVAR_Vic_Relationship) == RELATION_UNKNOWN) ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+         call Node039;
+       gSay_End;
+       end_dialogue;
+   end
+   else if ( night ) then
+      call Node007;
+   // If you've given Valerie to tools, and more than a day has passed, jump to Super-Tool node.
+   else if( ( local_var(LVAR_Time_Given_Tools) != 0 ) and ( ( game_time - local_var(LVAR_Time_Given_Tools) ) < ONE_GAME_DAY ) and
+            ( local_var(LVAR_Super_Tool_Kit) == TOOLKIT_NOTGIVEN ) ) then
+      call Node008;
+   else if( ( local_var(LVAR_Time_Given_Tools) != 0 ) and ( ( game_time - local_var(LVAR_Time_Given_Tools) ) >= ONE_GAME_DAY ) and
+            ( local_var(LVAR_Super_Tool_Kit) == TOOLKIT_NOTGIVEN ) ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node025;
+       gSay_End;
+       end_dialogue;
+   end
+   else if( (local_var(LVAR_Super_Tool_Kit) == TOOLKIT_GIVEN) and (Fallout2_enclave_destroyed) ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node041;
+       gSay_End;
+       end_dialogue;
+   end
+   else if( local_var(LVAR_Super_Tool_Kit) == TOOLKIT_GIVEN ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node027;
+       gSay_End;
+       end_dialogue;
+   end
+   else begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node009;
+       gSay_End;
+       end_dialogue;
+   end
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   display_msg(mstr(100));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(101));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+end
+
+procedure Node002 begin
+   add_timer_event( self_obj, game_ticks(1), 2 );
+end
+
+procedure Node003 begin
+   add_timer_event( self_obj, game_ticks(1), 2 );
+end
+
+procedure Node004 begin
+   floater(110);
+end
+
+procedure Node005 begin
+   floater(111);
+end
+
+procedure Node006 begin
+   floater( random(112, 118) );
+end
+
+procedure Node007 begin
+   floater( random(119, 120) );
+end
+
+procedure Node008 begin
+   floater( random(121, 122) );
+end
+
+procedure Node009 begin
+   if( Vic_Ptr != 0 ) then
+      Reply( mstr(123) + " " + mstr(125) );
+   else
+      Reply( mstr(124) + " " + mstr(125) );
+
+   BLowOption(126, Node011);
+   NLowOption(127, Node999);
+   if( ( obj_is_carrying_obj_pid( dude_obj, PID_WRENCH ) > 0 ) and
+       ( obj_is_carrying_obj_pid( dude_obj, PID_MULTI_TOOL ) > 0 ) and
+       ( global_var( GVAR_VAULT_VAL_TOOLS ) == VAL_TOOLS_ASSIGNED ) ) then
+      NOption(359, Node022, 004);
+   NOption(128, Node013, 004);
+   BOption(129, Node012, 004);
+   if( Fallout2_vault13_looking ) then
+      NOption(130, Node010, 004);
+   NOption(131, Node999, 004);
+end
+
+procedure Node010 begin
+   Reply(132);
+
+   NOption(133, Node013, 004);
+   BOption(134, Node012, 004);
+   NOption(135, Node999, 004);
+end
+
+procedure Node011 begin
+   Reply(136);
+
+   NLowOption(137, Node999);
+   NLowOption(138, Node999);
+end
+
+procedure Node012 begin
+   Reply(139);
+
+   BOption(140, Node998, 004);
+   NOption(141, Node999, 004);
+end
+
+procedure Node013 begin
+   Reply(142);
+
+   NOption(143, Node014, 004);
+   NOption(144, Node999, 004);
+end
+
+procedure Node014 begin
+   Reply(145);
+
+   NOption(146, Node015, 004);
+   ASK_CRAFT_INJECTION(502) // pbs
+   BOption(147, Node012, 004);
+   NOption(148, Node999, 004);
+end
+
+procedure Node015 begin
+   Reply(149);
+
+   NOption(150, Node016, 004);
+   NOption(151, Node999, 004);
+end
+
+procedure Node016 begin
+   Reply(152);
+
+   NOption(153, Node017, 004);
+   NOption(154, Node018, 004);
+   NOption(155, Node999, 004);
+end
+
+procedure Node017 begin
+   Reply(156);
+
+   if( ( obj_is_carrying_obj_pid( dude_obj, PID_WRENCH ) > 0 ) and ( obj_is_carrying_obj_pid( dude_obj, PID_MULTI_TOOL ) > 0 ) ) then
+      NOption(157, Node022, 004);
+   NOption(158, Node020, 004);
+   NOption(159, Node018, 004);
+   NOption(160, Node999, 004);
+end
+
+procedure Node018 begin
+   Reply(161);
+
+   NOption(162, Node019, 004);
+   NOption(163, Node019, 004);
+end
+
+procedure Node019 begin
+   Reply(164);
+
+   NOption(165, Node017, 004);
+   NOption(166, Node999, 004);
+end
+
+procedure Node020 begin
+   Reply(167);
+
+   if( ( obj_is_carrying_obj_pid( dude_obj, PID_WRENCH ) > 0 ) and ( obj_is_carrying_obj_pid( dude_obj, PID_MULTI_TOOL ) > 0 ) ) then
+      NOption(168, Node022, 004);
+   NOption(169, Node021, 004);
+   NOption(170, Node018, 004);
+   NOption(171, Node999, 004);
+end
+
+procedure Node021 begin
+   set_global_var( GVAR_VAULT_VAL_TOOLS, VAL_TOOLS_ASSIGNED );
+   Reply(172);
+
+   NOption(173, Node999, 004);
+end
+
+procedure Node022 begin
+   Reply(174);
+
+   NOption(175, Node023, 004);
+   NOption(354, Node999, 004);
+end
+
+procedure Node023 begin
+   variable tool;
+
+   // Remove Wrench from player
+   tool := obj_carrying_pid_obj( dude_obj, PID_WRENCH );
+   rm_obj_from_inven( dude_obj, tool );
+   destroy_object( tool );
+
+   // Remove MULTI-TOOL from player
+   tool := obj_carrying_pid_obj( dude_obj, PID_MULTI_TOOL );
+   rm_obj_from_inven( dude_obj, tool );
+   destroy_object( tool );
+
+   set_global_var( GVAR_VAULT_VAL_TOOLS, VAL_TOOLS_DONE );
+
+   // Reward player
+   item_caps_adjust( dude_obj, 50 );
+   display_msg( mstr(355) );
+   give_xp( EXP_GAVE_TOOLS_TO_VAL );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_VALERIE_TOOLS ) );
+
+   Reply(176);
+
+   NOption(177, Node024, 004);
+   BOption(178, Node024, 004);
+   NOption(179, Node024, 004);
+end
+
+procedure Node024 begin
+   set_local_var( LVAR_Super_Tool_Kit, TOOLKIT_NOTGIVEN );
+   set_local_var( LVAR_Time_Given_Tools, game_time );
+
+   Reply(180);
+
+   NOption(181, Node999, 004);
+   NOption(182, Node999, 004);
+end
+
+procedure Node025 begin
+   Reply(183);
+
+   NOption(184, Node026, 004);
+end
+
+procedure Node026 begin
+   variable tool1;
+   variable tool2;
+
+   From_26 := 1;
+
+   // Give the player 1 Super-Tool-Kit
+   set_local_var( LVAR_Super_Tool_Kit, TOOLKIT_GIVEN );
+   tool1 := create_object( PID_SUPER_TOOL_KIT, 0, 0 );
+   add_obj_to_inven( dude_obj, tool1 );
+   // Give Valerie 4 Super-Tool kits
+   tool2 := create_object( PID_SUPER_TOOL_KIT, 0, 0 );
+   add_mult_objs_to_inven( self_obj, tool2, 4 );
+
+   Reply(185);
+
+   NOption(186, Node027, 004);
+   NOption(187, Node999, 004);
+end
+
+procedure Node027 begin
+   if( From_41 == 1 ) then begin
+      From_41 := 0;
+      Reply(188);
+   end
+   else if( From_26 == 1 ) then begin
+      From_26 := 0;
+      Reply(189);
+   end
+   else
+      Reply(190);
+
+   NOption(191, Node033, 004);
+   NOption(192, Node032, 004);
+   if( local_var( LVAR_Vic_Relationship ) == RELATION_KNOWN ) then
+      NOption(193, Node028, 004);
+   ASK_CRAFT_INJECTION(501) // pbs
+   NOption(194, Node999, 004);
+end
+
+procedure Node028 begin
+   Reply(195);
+
+   NOption(196, Node029, 004);
+   NOption(197, Node027, 004);
+   NOption(198, Node999, 004);
+end
+
+procedure Node029 begin
+   Reply(199);
+
+   NOption(200, Node030, 004);
+   NOption(201, Node027, 004);
+   NOption(202, Node999, 004);
+end
+
+procedure Node030 begin
+   Reply(203);
+
+   if( ( dude_charisma > 7 ) or ( has_skill( dude_obj, SKILL_CONVERSANT ) >= 75 ) ) then
+      NOption(204, Node031, 004);
+   NOption(205, Node027, 004);
+   NOption(206, Node999, 004);
+end
+
+procedure Node031 begin
+   set_local_var( LVAR_Vic_Relationship, RELATION_GOOD );
+   display_msg( mstr(356) );
+   give_xp( EXP_RECONCILED_VIC_AND_VAL );
+   inc_general_rep( REP_BONUS_RECONCILED_VIC_AND_VAL );
+
+   if( Vic_Ptr != 0 ) then
+      Reply( mstr(207) + " " + mstr(208) );
+   else
+      Reply(207);
+
+   if( Vic_Ptr != 0 ) then begin
+      NOption(210, Node027, 004);
+      NOption(212, Node999, 004);
+   end
+   else begin
+      NOption(209, Node027, 004);
+      NOption(211, Node999, 004);
+   end
+end
+
+procedure Node032 begin
+   if( local_var( LVAR_Told_About_Stock ) == STOCK_NOTTOLD ) then begin
+      set_local_var( LVAR_Told_About_Stock, STOCK_TOLD );
+      Reply(213);
+   end
+   else
+      Reply(214);
+
+   if( local_var( LVAR_Told_About_Stock ) == STOCK_NOTTOLD ) then
+      NOption(215, Node033, 004);
+   else
+      NOption(216, Node033, 004);
+   NOption(217, Node999, 004);
+end
+
+procedure Node033 begin
+   if( ( obj_is_carrying_obj_pid( dude_obj, PID_44_MAGNUM_REVOLVER) > 0 ) or ( obj_is_carrying_obj_pid( dude_obj, PID_DESERT_EAGLE) > 0 ) or
+       ( obj_is_carrying_obj_pid( dude_obj, PID_ASSAULT_RIFLE) > 0 ) or ( obj_is_carrying_obj_pid( dude_obj, PID_FN_FAL) > 0 ) or
+       ( obj_is_carrying_obj_pid( dude_obj, PID_CATTLE_PROD ) > 0 ) ) then
+      Reply(218);
+   else
+      Reply(360);
+
+   if( ( obj_is_carrying_obj_pid( dude_obj, PID_44_MAGNUM_REVOLVER) > 0 ) or ( obj_is_carrying_obj_pid( dude_obj, PID_DESERT_EAGLE) > 0 ) ) then
+      NOption(219, Node034, 004);
+   if( ( obj_is_carrying_obj_pid( dude_obj, PID_ASSAULT_RIFLE) > 0 ) or ( obj_is_carrying_obj_pid( dude_obj, PID_FN_FAL) > 0 ) ) then
+      NOption(220, Node035, 004);
+   if( obj_is_carrying_obj_pid( dude_obj, PID_CATTLE_PROD ) > 0 ) then
+      NOption(221, Node036, 004);
+   NOption(222, Node027, 004);
+   NOption(223, Node999, 004);
+end
+
+procedure Node034 begin
+   if( ( obj_is_carrying_obj_pid( dude_obj, PID_44_MAGNUM_REVOLVER) > 0 ) and ( obj_is_carrying_obj_pid( dude_obj, PID_DESERT_EAGLE) > 0 ) ) then
+      Reply( mstr(224) + " " + mstr(225) );
+   else if( obj_is_carrying_obj_pid( dude_obj, PID_44_MAGNUM_REVOLVER) > 0 ) then
+      Reply(224);
+   else if( obj_is_carrying_obj_pid( dude_obj, PID_DESERT_EAGLE) ) then
+      Reply(225);
+
+   if( (obj_is_carrying_obj_pid( dude_obj, PID_44_MAGNUM_REVOLVER) > 0) and ( item_caps_total( dude_obj ) >= 800 ) ) then
+      NOption(226, Node034a, 004);
+   if( (obj_is_carrying_obj_pid( dude_obj, PID_44_MAGNUM_REVOLVER) > 0) and ( item_caps_total( dude_obj ) >= 650 ) and
+       ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
+      NOption(227, Node034b, 004);
+   if( (obj_is_carrying_obj_pid( dude_obj, PID_DESERT_EAGLE) > 0) and ( item_caps_total( dude_obj ) >= 1000 ) ) then
+      NOption(228, Node034c, 004);
+   if( (obj_is_carrying_obj_pid( dude_obj, PID_DESERT_EAGLE) > 0) and ( item_caps_total( dude_obj ) >= 850 ) and
+       ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
+      NOption(229, Node034d, 004);
+   NOption(230, Node033, 004);
+   NOption(231, Node027, 004);
+   NOption(232, Node999, 004);
+   NOption(233, Node999, 004);
+end
+
+procedure Node034a begin
+   variable weapon;
+
+   item_caps_adjust( dude_obj, -800 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_44_MAGNUM_REVOLVER );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_44_MAGNUM_SPEEDLOADER, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node034b begin
+   variable weapon;
+
+   Barter_Succeeds := 1;
+   item_caps_adjust( dude_obj, -650 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_44_MAGNUM_REVOLVER );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_44_MAGNUM_SPEEDLOADER, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node034c begin
+   variable weapon;
+
+   item_caps_adjust( dude_obj, -1000 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_DESERT_EAGLE );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_DESERT_EAGLE_EXT_MAG, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node034d begin
+   variable weapon;
+
+   Barter_Succeeds := 1;
+   item_caps_adjust( dude_obj, -850 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_DESERT_EAGLE );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_DESERT_EAGLE_EXT_MAG, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node035 begin
+   if( ( obj_is_carrying_obj_pid( dude_obj, PID_ASSAULT_RIFLE ) > 0 ) and ( obj_is_carrying_obj_pid( dude_obj, PID_FN_FAL ) > 0 ) ) then
+      Reply( mstr(234) + " " + mstr(235) );
+   else if( obj_is_carrying_obj_pid( dude_obj, PID_ASSAULT_RIFLE ) > 0 ) then
+      Reply(234);
+   else if( obj_is_carrying_obj_pid( dude_obj, PID_FN_FAL ) ) then
+      Reply(235);
+
+   if( (obj_is_carrying_obj_pid( dude_obj, PID_ASSAULT_RIFLE ) > 0) and ( item_caps_total( dude_obj ) >= 1500 ) ) then
+      NOption(236, Node035a, 004);
+   if( (obj_is_carrying_obj_pid( dude_obj, PID_ASSAULT_RIFLE ) > 0) and ( item_caps_total( dude_obj ) >= 1350 ) and
+        ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
+      NOption(237, Node035b, 004);
+   if( (obj_is_carrying_obj_pid( dude_obj, PID_FN_FAL ) > 0) and ( item_caps_total( dude_obj ) >= 3500 ) ) then
+      NOption(238, Node035c, 004);
+   if( (obj_is_carrying_obj_pid( dude_obj, PID_FN_FAL ) > 0) and ( item_caps_total( dude_obj ) >= 3100 ) and
+        ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
+      NOption(239, Node035d, 004);
+   NOption(240, Node033, 004);
+   NOption(241, Node027, 004);
+   NOption(242, Node999, 004);
+   NOption(243, Node999, 004);
+end
+
+procedure Node035a begin
+   variable weapon;
+
+   item_caps_adjust( dude_obj, -1500 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_ASSAULT_RIFLE );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_ASSAULT_RIFLE_EXT_MAG, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node035b begin
+   variable weapon;
+
+   Barter_Succeeds := 1;
+   item_caps_adjust( dude_obj, -1350 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_ASSAULT_RIFLE );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_ASSAULT_RIFLE_EXT_MAG, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node035c begin
+   variable weapon;
+
+   item_caps_adjust( dude_obj, -3500 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_FN_FAL );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_FN_FAL_NIGHT_SCOPE, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node035d begin
+   variable weapon;
+
+   Barter_Succeeds := 1;
+   item_caps_adjust( dude_obj, -3100 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_FN_FAL );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_FN_FAL_NIGHT_SCOPE, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node036 begin
+   Reply(244);
+
+   if( item_caps_total( dude_obj ) >= 750 ) then
+      NOption(245, Node036a, 004);
+   if( ( item_caps_total( dude_obj ) >= 650 ) and ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
+      NOption(246, Node036b, 004);
+   NOption(247, Node033, 004);
+   NOption(248, Node027, 004);
+   NOption(249, Node999, 004);
+   NOption(250, Node999, 004);
+end
+
+procedure Node036a begin
+   variable weapon;
+
+   item_caps_adjust( dude_obj, -750 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_CATTLE_PROD );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+   weapon := create_object( PID_SUPER_CATTLE_PROD, 0, 0 );
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node036b begin
+   variable weapon;
+
+   Barter_Succeeds := 1;
+   item_caps_adjust( dude_obj, -650 );
+
+   // Remove old weapon, add new.
+   weapon := obj_carrying_pid_obj( dude_obj, PID_CATTLE_PROD );
+   rm_obj_from_inven( dude_obj, weapon );
+   destroy_object( weapon );
+//   weapon := create_object( PID_CATTLE_PROD, 0, 0 );
+   weapon := create_object( PID_SUPER_CATTLE_PROD, 0, 0 );  //added by killap
+   add_obj_to_inven( dude_obj, weapon );
+
+   call Node037;
+end
+
+procedure Node037 begin
+   if( ( Barter_Succeeds == 1 ) and ( Vic_Ptr != 0 ) ) then begin
+      Barter_Succeeds := 0;
+      Reply(251);
+   end
+   else if( ( Barter_Succeeds == 1 ) and ( Vic_Ptr == 0 ) ) then begin
+      Barter_Succeeds := 0;
+      Reply(252);
+   end
+   else
+      Reply(253);
+
+   NOption(254, Node038, 004);
+end
+
+procedure Node038 begin
+   gfade_out(600);
+   game_time_advance( ONE_GAME_HOUR );
+   gfade_in(600);
+
+   Reply(255);
+
+   NOption(256, Node027, 004);
+   NOption(257, Node033, 004);
+   NOption(258, Node999, 004);
+end
+
+procedure Node039 begin
+   set_local_var( LVAR_Prevent_Floats, 1 );
+   Reply(259);
+
+   if( dude_is_female ) then
+      NOption(260, Node039a, 004);
+   else
+      NOption(261, Node039a, 004);
+end
+
+procedure Node039a begin
+   // Begin the Scripted sequence with Val and Vic with a timer message
+   gfade_out(600);
+   party_no_follow_on;
+   reg_anim_clear( Vic_Ptr );
+   //set_obj_visibility( Vic_Ptr, true );
+   //set_obj_visibility( dude_obj, true );
+   // These are 3 options for Vic placement.
+   move_to( Vic_Ptr, 20696, 0 );
+   critter_attempt_placement( Vic_Ptr, 20696, 0 );
+   move_to( dude_obj, 20697, 0 );
+   critter_attempt_placement( dude_obj, 20697, 0 );
+   //critter_attempt_placement( Vic_Ptr, 20495, 0 );
+   //critter_attempt_placement( Vic_Ptr, 20295, 0 );
+   Face_Critter( self_obj, Vic_Ptr );
+   Face_Critter( Vic_Ptr, self_obj );
+   
+   //added by killap
+   Face_Critter( dude_obj, self_obj );
+   //end added
+   
+   //set_obj_visibility( Vic_Ptr, false );
+   //set_obj_visibility( dude_obj, false );
+   add_timer_event( self_obj, game_ticks(1), 3);
+end
+
+procedure Node040 begin
+   // Clear out any previous floaters so they don't overlap
+   float_msg(self_obj, " ", FLOAT_COLOR_NORMAL);
+   float_msg(dude_obj, " ", FLOAT_COLOR_NORMAL);
+   float_msg(Vic_Ptr, " ", FLOAT_COLOR_NORMAL);
+   float_msg_clear(self_obj);
+   float_msg_clear(dude_obj);
+   float_msg_clear(Vic_Ptr);
+
+   if( Complex_Float_Stage == 0 ) then begin
+      game_ui_disable;
+      gfade_in(600);
+      floater(262);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 1 ) then begin
+      float_vic(264);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 2 ) then begin
+      floater(266);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(6), 3);
+   end
+   else if( Complex_Float_Stage == 3 ) then begin
+      float_vic(268);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(6), 3);
+   end
+   else if( Complex_Float_Stage == 4 ) then begin
+      floater(270);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(6), 3);
+   end
+   else if( Complex_Float_Stage == 5 ) then begin
+      float_vic(272);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 6 ) then begin
+      gfade_out(600);
+      gfade_in(600);
+      float_vic(274);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 7 ) then begin
+      floater(276);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 8 ) then begin
+      float_vic(278);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 9 ) then begin
+      floater(280);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 10 ) then begin
+      float_vic(282);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 11 ) then begin
+      floater(284);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 12 ) then begin
+      float_vic(286);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 13 ) then begin
+      floater(288);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 14 ) then begin
+      float_vic(290);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 15 ) then begin
+      floater(292);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(6), 3);
+   end
+   else if( Complex_Float_Stage == 16 ) then begin
+      float_vic(294);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 17 ) then begin
+      floater(296);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(6), 3);
+   end
+   else if( Complex_Float_Stage == 18 ) then begin
+      float_vic(298);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 19 ) then begin
+      floater(300);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 20 ) then begin
+      float_vic(302);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 21 ) then begin
+      floater(304);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 22 ) then begin
+      float_vic(306);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 23 ) then begin
+      floater(308);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 24 ) then begin
+      float_vic(310);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(6), 3);
+   end
+   else if( Complex_Float_Stage == 25 ) then begin
+      floater(312);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(4), 3);
+   end
+   else if( Complex_Float_Stage == 26 ) then begin
+      float_vic(314);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 27 ) then begin
+      floater(316);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 28 ) then begin
+      if( dude_iq > 3 ) then
+         float_dude(318);
+      else
+         float_dude(319);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 29 ) then begin
+      if( dude_iq > 3 ) then
+         floater(321);
+      else
+         floater(322);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 30 ) then begin
+      if( dude_iq > 3 ) then
+         float_dude(324);
+      else
+         float_dude(325);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 31 ) then begin
+      if( dude_iq > 3 ) then
+         floater(327);
+      else
+         floater(328);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 32 ) then begin
+      float_vic(330);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 33 ) then begin
+      floater(332);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 34 ) then begin
+      float_vic(334);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 35 ) then begin
+      if( dude_iq > 3 ) then
+         float_dude(336);
+      else
+         float_dude(337);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(5), 3);
+   end
+   else if( Complex_Float_Stage == 36 ) then begin
+      float_vic(339);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 37 ) then begin
+      floater(341);
+      Complex_Float_Stage += 1;
+      add_timer_event( self_obj, game_ticks(3), 3);
+   end
+   else if( Complex_Float_Stage == 38 ) then begin
+      gfade_out(600);
+      gfade_in(600);
+      Complex_Float_Stage := 0;
+      set_local_var( LVAR_Vic_Relationship, RELATION_KNOWN );
+      party_no_follow_off;
+      set_local_var( LVAR_Prevent_Floats, 1 );
+      game_ui_enable;
+   end
+end
+
+procedure Node041 begin
+   From_41 := 1;
+
+   if( dude_is_male ) then
+      Reply( mstr(344) + " " + mstr(345) );
+   else
+      Reply( mstr(344) + " " + mstr(346) );
+
+   NLowOption(347, Node042);
+   NLowOption(348, Node999);
+   NOption(349, Node027, 004);
+   NOption(350, Node999, 004);
+end
+
+procedure Node042 begin
+   Reply(351);
+
+   NLowOption(352, Node999);
+   NLowOption(353, Node999);
+end
+
+//xxxxxxxxxxxxxxxxxxxx

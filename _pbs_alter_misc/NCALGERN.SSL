@@ -1,0 +1,362 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location: New Reno
+        Description:
+
+        Log:
+
+           Created: May 6, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+#define NAME                    SCRIPT_NCALGERN
+#define TOWN_REP_VAR            GVAR_TOWN_REP_NEW_RENO
+#include "..\headers\command.h"
+#include "..\headers\NewReno.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure timed_event_p_proc;
+procedure push_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combatprocedure Node999;                                      // This Node is Always Ending
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Flags                    (0)
+#define LVAR_Rest_Time                (1)  // by phobos2077
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+
+
+procedure start begin
+end
+
+procedure push_p_proc begin
+end
+
+procedure timed_event_p_proc begin
+   if (algernon_dead == false) then begin
+      if (fixed_param == float_param) then begin
+         call Node001;
+         nr_add_timer_event_rand(self_obj, 5, 10, float_param);
+      end else if (fixed_param == wander_param) then begin
+         animate_move_to_tile(tile_num_in_direction(self_tile, random(0, 5), random(3, 10)));
+         nr_add_timer_event_rand(self_obj, 5, 15, wander_param);
+      end
+   end
+end
+
+procedure map_enter_p_proc begin
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NEW_RENO_ELDRIDGE);
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_ALGERNON);
+      end
+      nr_add_timer_event_rand(self_obj, 5, 10, float_param);
+      nr_add_timer_event_rand(self_obj, 3, 5, wander_param);
+   end
+end
+
+procedure critter_p_proc begin
+   if ((hostile) and (self_can_see_dude)) then begin
+      self_attack_dude;
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   if (algernon_dead == false) then begin
+      // by phobos2077: upgrade weapons only after rest
+      if (local_var(LVAR_Rest_Time) > game_time) then begin
+         display_mstr(500);
+      end else begin
+         start_dialog_at_node(Node002);
+         set_herebefore;
+         if (algernon_dead) then begin
+            dude_floater(400);
+            kill_critter(self_obj, ANIM_bad_landing);
+         end else begin
+            nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+         end
+      end
+   end
+end
+
+procedure destroy_p_proc begin
+   inc_good_critter
+   set_algernon_dead;
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100 + herebefore);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(150 + herebefore);
+   set_examined;
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node998 begin
+   if (hostile == false) then begin
+      set_hostile;
+   end
+end
+procedure Node999 begin
+end
+
+// by phobos2077: upgrade weapons but don't reload them with fresh ammo
+// begin changes
+procedure _upgrade_weapon(variable pid, variable new_pid)
+begin
+	variable ammo := 0;
+    restock_obj := obj_carrying_pid_obj(dude_obj, pid);
+    if (restock_obj) then begin
+        ammo := get_weapon_ammo_count(restock_obj);
+        if ((critter_inven_obj(dude_obj, INVEN_TYPE_LEFT_HAND) == restock_obj) or (critter_inven_obj(dude_obj, INVEN_TYPE_RIGHT_HAND) == restock_obj)) then begin
+            inven_unwield(dude_obj);
+        end
+        restock_amt := rm_mult_objs_from_inven(dude_obj, restock_obj, removed_qty);
+        destroy_object(restock_obj);
+    end
+    restock_amt := 0;
+    restock_obj := create_object_sid(new_pid, 0, 0, -1);
+    set_weapon_ammo_count(restock_obj, ammo);
+    add_mult_objs_to_inven(dude_obj, restock_obj, 1);
+end
+
+procedure Node990 begin
+   call _upgrade_weapon(PID_44_MAGNUM_REVOLVER, PID_44_MAGNUM_SPEEDLOADER);
+   call Node008;
+end
+procedure Node989 begin
+   call _upgrade_weapon(PID_DESERT_EAGLE, PID_DESERT_EAGLE_EXT_MAG);
+   call Node008;
+end
+procedure Node988 begin
+   call _upgrade_weapon(PID_LASER_PISTOL, PID_MAGNETO_LASER_PISTOL);
+   call Node008;
+end
+procedure Node987 begin
+   call _upgrade_weapon(PID_PLASMA_PISTOL, PID_PLASMA_PISTOL_EXT_CART);
+   call Node008;
+end
+procedure Node986 begin
+   call _upgrade_weapon(PID_HUNTING_RIFLE, PID_SCOPED_HUNTING_RIFLE);
+   call Node008;
+end
+procedure Node985 begin
+   call _upgrade_weapon(PID_ASSAULT_RIFLE, PID_ASSAULT_RIFLE_EXT_MAG);
+   call Node008;
+end
+procedure Node984 begin
+   call _upgrade_weapon(PID_FN_FAL, PID_FN_FAL_NIGHT_SCOPE);
+   call Node008;
+end
+procedure Node983 begin
+   call _upgrade_weapon(PID_LASER_RIFLE, PID_LASER_RIFLE_EXT_CAP);
+   call Node008;
+end
+procedure Node982 begin
+   call _upgrade_weapon(PID_FLAMER, PID_IMPROVED_FLAMETHROWER);
+   call Node008;
+end
+procedure Node981 begin
+   call _upgrade_weapon(PID_PLASMA_RIFLE, PID_TURBO_PLASMA_RIFLE);
+   call Node008;
+end
+procedure Node980 begin
+   call _upgrade_weapon(PID_FLAMETHROWER_FUEL, PID_FLAMETHROWER_FUEL_MK_II);
+   call Node008;
+end
+procedure Node979 begin
+   call _upgrade_weapon(PID_CATTLE_PROD, PID_SUPER_CATTLE_PROD);
+   call Node008;
+end
+procedure Node978 begin
+   call _upgrade_weapon(PID_POWER_FIST, PID_MEGA_POWER_FIST);
+   call Node008;
+end
+// end of upgrade changes
+
+procedure Node001 begin
+   floater_rand(200, 214);
+end
+procedure Node002 begin
+   if (know_algernon_weapons) then begin
+      Reply(220 + (know_algernon == false));
+      NOption(226, Node007, 004);
+   end else begin
+      Reply(mstr(220 + (know_algernon == false)) + mstr(222));
+      NOption(225, Node007, 004);
+   end
+   set_know_algernon;
+   GOption(223, Node003, -003);
+   NOption(224, Node999, -003);
+   NOption(227, Node999, 004);
+end
+procedure Node003 begin
+   Reply(230);
+   NOption(231, Node004, -003);
+   NOption(232, Node999, -003);
+end
+procedure Node004 begin
+   set_algernon_dead;
+   set_know_algernon_fake_death;
+   Reply(235);
+   NOption(236, Node005, -003);
+   NOption(237, Node999, -003);
+end
+procedure Node005 begin
+   Reply(240);
+   NOption(241, Node006, -003);
+   NOption(237, Node999, -003);
+end
+procedure Node006 begin
+   Reply(245);
+   NOption(237, Node999, -003);
+end
+procedure Node007 begin
+   Reply(250);
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_44_MAGNUM_REVOLVER) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_DESERT_EAGLE) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_LASER_PISTOL) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_PLASMA_PISTOL) > 0)) then begin
+      NOption(251, Node009, 004);
+   end
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_HUNTING_RIFLE) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_LASER_RIFLE) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_ASSAULT_RIFLE) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_PLASMA_RIFLE) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_FN_FAL) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_FLAMER) > 0)) then begin
+      NOption(252, Node010, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_FLAMETHROWER_FUEL) > 0) then begin
+      NOption(253, Node011, 004);
+   end
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_POWER_FIST) > 0) or
+       (obj_is_carrying_obj_pid(dude_obj, PID_CATTLE_PROD) > 0)) then begin
+      NOption(254, Node012, 004);
+   end
+   NOption(255 + (check_general_rep < 0), Node999, 004);
+end
+procedure Node008 begin
+   gfade_out(ONE_GAME_MINUTE);
+      game_time_advance(ONE_GAME_HOUR);
+      set_know_algernon_weapons;
+   gfade_in(ONE_GAME_MINUTE);
+   Reply(260);
+   set_local_var(LVAR_Rest_Time, game_time + (random(12,24) * ONE_GAME_HOUR)); // 12 to 24 hours resting time
+   //NOption(261, Node007, 004);
+   NOption(262, Node999, 004);
+end
+procedure Node009 begin
+   Reply(265);
+   if (obj_is_carrying_obj_pid(dude_obj, PID_44_MAGNUM_REVOLVER) > 0) then begin
+      NOption(266, Node990, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_DESERT_EAGLE) > 0) then begin
+      NOption(267, Node989, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_LASER_PISTOL) > 0) then begin
+      NOption(268, Node988, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_PLASMA_PISTOL) > 0) then begin
+      NOption(269, Node987, 004);
+   end
+   NOption(270, Node007, 004);
+   NOption(271 + (check_general_rep < 0), Node999, 004);
+end
+procedure Node010 begin
+   Reply(265);
+   if (obj_is_carrying_obj_pid(dude_obj, PID_HUNTING_RIFLE) > 0) then begin
+      NOption(276, Node986, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_ASSAULT_RIFLE) > 0) then begin
+      NOption(277, Node985, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_FN_FAL) > 0) then begin
+      NOption(278, Node984, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_LASER_RIFLE) > 0) then begin
+      NOption(279, Node983, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_FLAMER) > 0) then begin
+      NOption(280, Node982, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_PLASMA_RIFLE) > 0) then begin
+      NOption(281, Node981, 004);
+   end
+   NOption(270, Node007, 004);
+   NOption(271 + (check_general_rep < 0), Node999, 004);
+end
+procedure Node011 begin
+   Reply(265);
+   if (obj_is_carrying_obj_pid(dude_obj, PID_FLAMETHROWER_FUEL) > 0) then begin
+      NOption(291 + (check_general_rep >= 0), Node980, 004);
+   end
+   NOption(270, Node007, 004);
+   NOption(271 + (check_general_rep < 0), Node999, 004);
+end
+procedure Node012 begin
+   Reply(265);
+   if (obj_is_carrying_obj_pid(dude_obj, PID_CATTLE_PROD) > 0) then begin
+      NOption(301, Node979, 004);
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_POWER_FIST) > 0) then begin
+      NOption(302, Node978, 004);
+   end
+   NOption(270, Node007, 004);
+   NOption(271 + (check_general_rep < 0), Node999, 004);
+end

@@ -1,0 +1,703 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Mynoc (The Bridge Guard)
+        Location: Arroyo
+        Description:
+
+        Log: The defines for VAULT_KNOWN, VISITED_OTHER_TOWN, & VISITED_TOWN_MULTIPLE_TIMES need to be changed
+             when the functionality is available to fit the designer's script.
+
+
+           Created: December 01, 1997
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+//#include "..\headers\<TownName.h>"
+
+#define NAME                    SCRIPT_ACMYNOC
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_ARROYO)
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+
+#define VAULT_KNOWN             vault_13_visible_on_map
+// change both when we have the ability to get the number of times players have visited other towns
+#define VISITED_OTHER_TOWN              ((den_visit) or (klamath_visit))
+#define VISITED_TOWN_MULTIPLE_TIMES     ((den_visit) and (klamath_visit))
+
+// added by phobos2077
+#include "learn_craft.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node995;                                      // this checks the charisma level and sets the critter reaction accordingly
+procedure Node996;                                      // this Node sets the critter reaction to bad and Ends dialog
+procedure Node997;                                      // this Node handles the basic START CONDITIONS
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+procedure Node000;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node037;
+
+//added by killap - expansion
+procedure Node038;
+procedure Node039;
+procedure Node040;
+procedure Node041;
+procedure Node041b;
+procedure Node042;
+procedure Node043;
+procedure Node044;
+procedure Node045;
+procedure Node046;
+procedure Node047;
+procedure Node048;
+procedure Node049;
+procedure Node050;
+procedure Node051;
+//end added
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_HereBefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+
+procedure start begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_ARROYO);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_ARROYO_WARRIOR);
+end
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+   if ((local_var(LVAR_Hostile) == 2)and(obj_can_see_obj(self_obj,dude_obj))) then begin
+      set_local_var(LVAR_Hostile,1);
+      attack(dude_obj);
+   end
+
+   if ( (REP_ENEMY_ARROYO) and (obj_can_see_obj(self_obj,dude_obj)) ) then begin //added and (obj_can_see_obj(self_obj,dude_obj)) by killap
+       attack(dude_obj);
+   end
+
+   else if ((global_var(GVAR_TALKED_TO_ELDER) == 0) and (obj_can_see_obj(self_obj,dude_obj)) and (tile_is_visible(tile_num(self_obj)))) then begin
+       set_global_var(GVAR_TALKED_TO_ELDER,1);
+       floater(500);
+   end
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_local_var(LVAR_Personal_Enemy,1);
+      set_global_var(GVAR_ENEMY_ARROYO,1);
+   end
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   GetReaction;
+   ReactToLevel; //added by killap
+   
+//   if ((REP_ENEMY_ARROYO) or (local_var(LVAR_Personal_Enemy) == 1) or (local_var(LVAR_Hostile)>0)) then begin
+//      call Node009;
+//   end else begin
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+         call Node000;
+      gSay_End;
+      end_dialogue;
+      inc_local_var(LVAR_HereBefore);
+//   end
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+/* Increment the aligned critter counter*/
+   inc_good_critter
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   // if the player has spoken to Mynoc, it will add his name to his description
+   if (local_var(LVAR_HereBefore) == 1) then begin
+       display_msg(mstr(101));
+   end else begin
+       display_msg(mstr(100));
+   end
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(150));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+// nodes
+procedure Node000 begin
+   call Node997;
+end
+
+procedure Node001 begin
+   Reply(152);
+   NOption(153,Node002,004);
+   NOption(154,Node003,004);
+   NOption(155,Node004,004);
+   if ((global_var(GVAR_ARROYO_SPEAR) == QUEST_NONE) and (dude_perception > 5)) then
+       NOption(314,Node020,004);
+end
+
+procedure Node002 begin
+   Reply(156);
+   NOption(157,Node999,004);
+end
+
+procedure Node003 begin
+   Reply(158);
+   NOption(159,Node005,004);
+   //added by killap - expansion
+   if (global_var(GVAR_RND_KAGA_STATE) < 1) then
+      NOption(600,Node038,004); 
+   if (kaga_met and not(kaga_bg)) then
+      NOption(640,Node041b,004);
+   //end added by killap - expansion
+   if (obj_is_carrying_obj_pid(dude_obj,PID_VIC_WATER_FLASK)) then //added by killap
+      NOption(160,Node006,004);
+   NOption(161,Node999,004);
+end
+
+procedure Node004 begin
+   Reply(162);
+   NOption(163,Node007,004);
+   NOption(164,Node008,004);
+   NOption(165,Node999,004);
+end
+
+procedure Node005 begin
+   mark_klamath_on_map
+
+   Reply(166);
+   NOption(167,Node999,004);
+   if (obj_is_carrying_obj_pid(dude_obj,PID_VIC_WATER_FLASK)) then
+       NOption(168,Node006,004);
+end
+
+procedure Node006 begin
+   Reply(169);
+   NOption(170,Node009,004);
+   NOption(171,Node999,004);
+end
+
+procedure Node007 begin
+   Reply(172);
+   NOption(173,Node996,004);
+   NOption(174,Node999,004);
+end
+
+procedure Node008 begin
+   Reply(175);
+   NOption(176,Node999,004);
+   NOption(177,Node996,004);
+end
+
+procedure Node009 begin
+   Reply(178);
+   NOption(179,Node999,004);
+end
+
+procedure Node010 begin
+   Reply(180);
+   NOption(181,Node999,004);
+   NOption(182,Node999,004);
+   NOption(183,Node996,004);
+   NOption(184,Node003,004);
+   if ((global_var(GVAR_ARROYO_SPEAR) == QUEST_NONE) and (dude_perception > 5)) then
+       NOption(314,Node020,004);
+   //added by killap - expansion
+   if (kaga_met and not(kaga_bg)) then
+      NOption(640,Node041b,004);
+   //end added
+end
+
+procedure Node011 begin
+   Reply(185);
+   if (VAULT_KNOWN) then NOption(186,Node012,004);
+   NOption(187,Node013,004);
+end
+
+procedure Node012 begin
+   Reply(188);
+   NOption(189,Node013,004); //edit by killap - was Node014
+   NOption(190,Node014,004);
+   NOption(191,Node999,004);
+end
+
+procedure Node013 begin
+   Reply(192);
+   NOption(193,Node999,004);
+   NOption(194,Node996,004);
+end
+
+procedure Node014 begin
+   Reply(195);
+   NOption(196,Node999,004);
+   NOption(197,Node996,004); //edit by killap - was Node999
+end
+
+procedure Node015 begin
+   Reply(198);
+   if (VAULT_KNOWN) then  //added by killap
+      NOption(199,Node012,004);
+   NOption(200,Node013,004);
+end
+
+procedure Node016 begin
+   Reply(201);
+   NOption(202,Node999,004);
+   NOption(203,Node999,004);
+   NOption(204,Node017,004);
+end
+
+procedure Node017 begin
+   Reply(205);
+   NOption(206,Node996,004);
+   NOption(207,Node995,004);
+   NOption(208,Node996,004);
+end
+
+procedure Node018 begin
+   Reply(209);
+   NLowOption(210,Node999);
+end
+
+procedure Node019 begin
+   floater(random(211,215));
+end
+
+procedure Node020 begin
+   Reply(300);
+
+   NOption(301,Node021,004);
+end
+
+procedure Node021 begin
+   set_global_var(GVAR_ARROYO_SPEAR,SPEAR_GET_FLINT);
+
+   Reply(302);
+
+   NOption(303,Node999,004);
+end
+
+procedure Node022 begin
+   Reply(304);
+
+   if (obj_is_carrying_obj_pid(dude_obj,PID_FLINT)) then
+       NOption(305,Node023,004);
+   else
+       NOption(306,Node999,004);
+end
+
+procedure Node023 begin
+   Reply(307);
+
+   if (obj_is_carrying_obj_pid(dude_obj,PID_SPEAR)) then
+       NOption(308,Node024,004);
+   else
+       NOption(309,Node025,004);
+end
+
+procedure Node024 begin
+/*   variable item;
+   variable JunkIt;
+
+   item:=obj_carrying_pid_obj(dude_obj,PID_SPEAR);
+   JunkIt:=rm_mult_objs_from_inven(dude_obj,item,1);
+   destroy_object(item);
+
+   item:=obj_carrying_pid_obj(dude_obj,PID_FLINT);
+   JunkIt:=rm_mult_objs_from_inven(dude_obj,item,1);
+   destroy_object(item);
+
+   item:=create_object(PID_SHARP_SPEAR,0,0);
+   add_mult_objs_to_inven(dude_obj,item,1);
+
+   set_global_var(GVAR_ARROYO_SPEAR,SPEAR_FINISHED);
+
+   gfade_out(600);
+   gfade_in(600);
+*/
+   //Reply(mstr(310)); //edit by killap
+   Reply(310);
+
+   NOption(g_mstr(209),Node026,004);
+end
+
+procedure Node025 begin
+   Reply(311);
+
+   NOption(g_mstr(209),Node026,004);
+end
+
+procedure Node026 begin
+   variable item;
+   variable item1;
+   variable item2;
+   variable JunkIt;
+
+   if (obj_is_carrying_obj_pid(dude_obj,PID_SPEAR)) then begin
+       item:=obj_carrying_pid_obj(dude_obj,PID_SPEAR);
+       inven_unwield(dude_obj);
+       JunkIt:=rm_mult_objs_from_inven(dude_obj,item,1);
+       destroy_object(item);
+       debug_msg("Destroy Spear");
+   end
+
+	// by phobos2077: don't remove flint
+   /*if (obj_is_carrying_obj_pid(dude_obj,PID_FLINT)) then begin //added check by killap
+      item1:=obj_carrying_pid_obj(dude_obj,PID_FLINT);
+      JunkIt:=rm_mult_objs_from_inven(dude_obj,item1,1);
+      destroy_object(item1);
+      debug_msg("Destroy Flint");
+   end*/
+   
+   item2:=create_object(PID_SHARP_SPEAR,0,0);
+   add_mult_objs_to_inven(dude_obj,item2,1);
+   debug_msg("Give Sharp Spear");
+
+   game_time_advance(30*ONE_GAME_MINUTE);
+
+   set_global_var(GVAR_ARROYO_SPEAR,SPEAR_FINISHED);
+
+   gfade_out(600);
+   // by phobos2077: add blades schematics
+   set_sfall_global(SGVAR_CRAFT_BLADES, 1);
+   display_msg(fixit_mstr(87));
+   gfade_in(600);
+
+   Reply(312);
+
+   NOption(313,Node999,004);
+end
+
+procedure Node027 begin
+   Reply(400);
+
+   NLowOption(401,Node028);
+   NOption(402,Node028,004);
+   BOption(403,Node999,004);
+end
+
+procedure Node028 begin
+   Reply(404);
+
+   NLowOption(405,Node029);
+   NLowOption(406,Node030);
+   NOption(407,Node029,004);
+   NOption(408,Node030,004);
+end
+
+procedure Node029 begin
+   Reply(409);
+
+   NLowOption(410,Node030);
+   NOption(411,Node030,004);
+end
+
+procedure Node030 begin
+   NMessage(412);
+end
+
+procedure Node031 begin
+   Reply(413);
+
+   NLowOption(414,Node032);
+   NOption(415,Node032,004);
+   BOption(416,Node999,004);
+end
+
+procedure Node032 begin
+   NMessage(417);
+end
+
+procedure Node033 begin
+   Reply(418);
+
+   NLowOption(419,Node034);
+   NOption(420,Node034,004);
+   NOption(421,Node035,004);
+end
+
+procedure Node034 begin
+   NMessage(422);
+end
+
+procedure Node035 begin
+   Reply(423);
+
+   NLowOption(424,Node999);
+   NOption(425,Node999,004);
+end
+
+procedure Node036 begin
+   Reply(426);
+
+   NLowOption(427,Node037);
+   NOption(428,Node037,004);
+   BOption(429,Node999,004);
+end
+
+procedure Node037 begin
+   NMessage(430);
+end
+
+//added by killap - expansion
+procedure Node038 begin
+   Reply(601);
+
+   NOption(602,Node039,004);
+end
+
+procedure Node039 begin
+   Reply(603);
+
+   NOption(604,Node040,004);
+end
+
+procedure Node040 begin
+   Reply(605);
+  
+   NOption(606,Node999,004);
+   NOption(607,Node041,004);
+end
+
+procedure Node041 begin
+   Reply(608);
+   NOption(609,Node999,004);
+   NOption(610,Node042,004);
+end
+
+procedure Node041b begin
+   Reply(641);
+   NOption(642,Node042,004);
+   NOption(643,Node999,004);
+end
+
+procedure Node042 begin
+   //display_msg("kaga var before: " + global_var(399));
+   set_kaga_bg;
+   //display_msg("kaga var after: " + global_var(399));
+   Reply(611);
+   NOption((g_mstr(353)),Node043,004);
+end
+
+procedure Node043 begin
+   Reply(612);
+   NOption(613,Node044,004);
+   NOption(614,Node044,004);
+end
+
+procedure Node044 begin
+   Reply(615);
+   NOption(616,Node045,004);
+   NOption(617,Node999,004);
+end
+
+procedure Node045 begin
+   Reply(618);
+   NOption(619,Node047,004);
+   NOption(620,Node046,004);
+end
+
+procedure Node046 begin
+   Reply(621);
+   NOption(622,Node047,004);
+   NOption(623,Node999,004);
+end
+
+procedure Node047 begin
+   Reply(624);
+   NOption((g_mstr(353)),Node048,004);
+end
+
+procedure Node048 begin
+   Reply(625);
+   NOption(626,Node049,004);
+   NOption(627,Node050,004);
+end
+
+procedure Node049 begin
+   Reply(628);
+   
+   if (kaga_met) and not(kaga_dead) then begin
+      NOption(650,Node050,004);
+   end else if (kaga_dead) then begin
+      NOption(651,Node051,004);
+   end else begin
+      NOption(629,Node050,004);
+      NOption(630,Node050,004);
+   end
+   
+end
+
+procedure Node050 begin
+   Reply(631);
+   NOption(632,Node999,004);
+   NOption(633,Node999,004);
+end
+
+procedure Node051 begin
+   Reply(660);
+   NOption(661,Node999,004);
+   BOption(662,Node999,004);
+end
+//end
+
+procedure Node995 begin
+   if (dude_charisma>=7) then begin
+      TopReact;
+   end
+end
+
+procedure Node996 begin
+   if (bad_critter_reaction == false) then BottomReact;
+end
+
+procedure Node997 begin
+   if (get_critter_stat(dude_obj,STAT_iq) <= (0-LOW_IQ)) then begin
+      call Node018;
+   end
+   else if (reached_tl_4) then begin
+       call Node036;
+   end
+   else if (reached_tl_3) then begin
+       call Node033;
+   end
+   else if (reached_tl_2) then begin
+       call Node031;
+   end
+   else if (reached_tl_1) then begin
+       call Node027;
+   end
+   else if (bad_critter_reaction) then begin
+      call Node016;
+   end
+   else if (VISITED_TOWN_MULTIPLE_TIMES) then begin
+      call Node015;
+   end
+   else if (VISITED_OTHER_TOWN) then begin
+      call Node011;
+   end
+   else if (local_var(LVAR_HereBefore) == 0) then begin
+      call Node001;
+   end
+   else if ((global_var(GVAR_ARROYO_SPEAR) == SPEAR_GET_POWDER) or
+            (global_var(GVAR_ARROYO_SPEAR) == SPEAR_GET_FLINT)) then begin
+       call Node022;
+   end
+   else begin
+      call Node010;
+   end
+end
+
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end

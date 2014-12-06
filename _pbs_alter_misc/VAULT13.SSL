@@ -1,0 +1,91 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Vault13 map
+        Location: Vault13
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: Jun 1, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+#include "..\headers\vault13.h"
+#include "..\headers\updatmap.h"
+
+#define NAME                    SCRIPT_VAULT13
+
+#include "..\headers\command.h"
+
+#define EXP_FOUND_V13  (1000) // pbs: lowered from 2000
+
+export variable i_matt_obj;
+export variable i_geck_obj;
+export variable i_ariel_obj;
+export variable i_gruthar_obj;
+export variable i_thearn_obj;
+
+procedure start;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+
+procedure Initial_Inven;
+
+variable do_times := 3; // added by killap - expansion
+
+procedure start begin
+   i_matt_obj := -1;
+   i_geck_obj := -1;
+   i_ariel_obj := -1;
+   i_gruthar_obj := -1;
+   i_thearn_obj := -1;
+end
+
+procedure map_enter_p_proc begin
+   set_f2(f2_state_v13_entered);
+
+   if (map_var(MVAR_Gave_V13_Xp) == 0) then begin
+      set_map_var(MVAR_Gave_V13_Xp, 1);
+      display_msg(mstr(101) + EXP_FOUND_V13 + mstr(102));
+      give_exp_points(EXP_FOUND_V13);
+   end
+   if (VAULT13_SEQ) then begin
+      display_mstr(100);
+   end
+
+   if (fixed_param == 1) then begin
+   end
+   if (map_first_run) then begin
+   end
+   Full_Light;
+end
+
+procedure map_update_p_proc begin
+   // added by killap (expansion) - On game load this runs once and fails. Need to run it again.
+   if (VAULT13_SEQ and do_times > 0) then begin
+      kill_critter_type(PID_DEATHCLAW_EGG,KILL_LEAVE_BODY);
+      do_times := do_times - 1;
+   end
+   // end added
+   Full_Light;
+end
+
+
+procedure Initial_Inven begin
+end

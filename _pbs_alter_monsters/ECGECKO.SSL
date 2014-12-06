@@ -1,0 +1,98 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/* Random Encounter scripts. These will be filled in more once they
+   have been designed.
+*/
+
+#include "..\headers\define.h"
+#include "..\headers\bhrnddst.h"
+
+#define NAME                    SCRIPT_ECGECKO
+
+#include "..\headers\command.h"
+
+
+// by phobos2077: gecko eat food
+#include "gecko_hunger.h"
+variable food:=0;
+#define FOOD_DETECT_RADIUS    (15)
+
+procedure start;
+procedure destroy_p_proc;
+procedure critter_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+
+variable starttile := 0;
+
+procedure map_enter_p_proc begin
+   starttile := self_tile;
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RND_SILVER_GECKO);
+   reg_anim_clear(self_obj);
+   reg_anim_begin();
+   animate_rotation(Random(0, 5));
+   reg_anim_end();
+end
+
+procedure start begin
+end
+
+procedure critter_p_proc begin
+   if (obj_can_see_obj(self_obj, dude_obj)) then begin
+      attack(dude_obj);
+   end
+
+   if (not anim_busy(self_obj)) then begin
+      reg_anim_clear(self_obj);
+      reg_anim_begin();
+      animate_move_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
+      reg_anim_end();
+   end
+   // by phobos2077:
+   if (not(combat_is_initialized)) then begin
+      if (random(0, 50) == 1 and not(food)) then begin
+         food := getNearestFoodForGecko(FOOD_DETECT_RADIUS);
+         if (food) then
+            call anim_go_to(food);
+      end else if (food) then if (should_delete_food(food)) then begin
+         use_obj(food);
+         destroy_object(food);
+         food := 0;
+      end
+   end
+   // ;
+end
+
+procedure combat_p_proc begin
+   food := 0;
+end
+
+procedure destroy_p_proc begin
+   variable tail:=0;
+
+   //if ((obj_pid(self_obj) == PID_GECKO_SMALL) or (obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL)) then
+   //     item := create_object(PID_GECKO_PELT,0,0);
+   //else
+   //     item := create_object(PID_GOLDEN_GECKO_PELT,0,0);
+   
+   //added by killap
+   if (cur_map_index == MAP_BH_RND_DESERT) then begin
+       dec_map_var(MVAR_Hostile_Total);
+   end
+   //end added by killap
+   
+   if (has_trait(TRAIT_PERK,dude_obj,PERK_gecko_skinning_perk)) then begin
+       if ((obj_pid(self_obj) == PID_GECKO_SMALL) or (obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL)) then
+            tail := create_object(PID_GECKO_PELT,0,0);
+       // Begin Seraph's Code
+       else if ((obj_pid(self_obj) == PID_FIRE_GECKO) or (obj_pid(self_obj) == PID_TOUGH_FIRE_GECKO)) then
+            tail := create_object(PID_FIRE_GECKO_PELT,0,0);
+       // End Seraph's Code
+       else if ((obj_pid(self_obj) == PID_GOLDEN_GECKO ) or (obj_pid(self_obj) == PID_TOUGH_GOLDEN_GECKO)) then
+            tail := create_object(PID_GOLDEN_GECKO_PELT,0,0);
+
+      add_obj_to_inven(self_obj,tail);
+   end
+end

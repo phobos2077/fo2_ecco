@@ -1,0 +1,93 @@
+/*
+	Script from spatial templete.
+*/
+
+
+/* Include Files */
+#include "..\headers\define.h"
+#include "..\headers\depolva.h"
+
+#define NAME                    SCRIPT_WSTRPWR2
+
+#include "..\headers\command.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure spatial_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+
+
+/*****************************************************************
+   Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_
+*****************************************************************/
+
+/*******************************************************************
+   Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_)
+*******************************************************************/
+
+/*******************************************************************
+   Local variables which do not need to be saved between map changes.
+*******************************************************************/
+
+
+/*******************************************************************
+*******                         PROCEDURES                   *******
+*******************************************************************/
+
+
+/*******************************************************************
+   The start procedure is the first procedure called when the map is
+   first entered. Any initial information that needs to be set up
+   should be placed in here.
+*******************************************************************/
+
+procedure start
+begin
+end
+
+
+/***************************************************************************************
+   Whenever the map is first entered, this procedure will be called.
+***************************************************************************************/
+
+procedure map_enter_p_proc
+begin
+end
+
+
+/**************************************************************************************
+   This procedure gets called roughly every 30 seconds of real time.
+**************************************************************************************/
+
+procedure map_update_p_proc
+begin
+end
+
+
+/**************************************************************************************
+   This procedure gets called when player is near.
+**************************************************************************************/
+
+procedure spatial_p_proc begin
+   // by phobos2077 begin:
+   if (cur_map_index == MAP_SIERRA_123 and self_elevation == 0) then begin
+      if (map_var(MVAR_Security_Level_1) == 0) then begin
+         set_map_var(MVAR_Security_Level_1,1);
+         set_global_var(GVAR_SIERRA_BASE_SECURITY,SIERRA_SECURITY_ON);
+      end
+   end else
+   // end;
+   if (map_var(MVAR_Wire_Tripped) == 0) then begin
+      if (source_obj == dude_obj) then
+         display_msg(mstr(100));
+      else
+         display_msg(obj_name(source_obj) + "" + mstr(101));
+      set_map_var(MVAR_Wire_Tripped,1);
+      set_global_var(GVAR_SIERRA_BASE_SECURITY,SIERRA_SECURITY_ON);
+      set_map_var(MVAR_Security_Level_2,1);
+   end
+end

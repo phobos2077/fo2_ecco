@@ -1,0 +1,183 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: NORMAL GECKO
+        Location: Random Encounters
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+//#include "..\headers\<TownName.h>"
+
+#define NAME                    SCRIPT_ZCLGECKO
+
+#include "..\headers\command.h"
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure destroy_p_proc;
+procedure use_skill_on_p_proc;
+procedure map_enter_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+
+// by phobos2077: gecko eat food
+#include "gecko_hunger.h"
+variable food:=0;
+#define FOOD_DETECT_RADIUS    (15)
+
+procedure start begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_GECKO);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_GECKO);
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+   
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if (obj_can_see_obj(self_obj,dude_obj)) then begin
+       attack(dude_obj);
+   end
+   
+   //Normal Geckos are less active/aggressive
+   if (random(0,2000) == 1) then begin
+       animate_move_to_tile(tile_num_in_direction(tile_num(self_obj),random(0,5),random(3,7)));
+   end 
+   // by phobos2077: geckos lured by food outside of combat
+   else if (random(0, 50) == 1 and not(food)) then begin
+      food := getNearestFoodForGecko(FOOD_DETECT_RADIUS);
+      if (food) then begin
+         call anim_go_to(food);
+      end
+   end else if (food) then if (should_delete_food(food)) then begin
+      use_obj(food);
+      destroy_object(food);
+      food := 0;
+   end
+   // end;
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   attack(source_obj);
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   attack(source_obj);
+end
+
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+   variable tail :=0;
+
+   if (has_trait(TRAIT_PERK,dude_obj,PERK_gecko_skinning_perk)) then begin
+       if ((obj_pid(self_obj) == PID_GECKO_SMALL) or (obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL)) then
+            tail := create_object(PID_GECKO_PELT,0,0);
+       // Begin Seraph's Code
+       else if ((obj_pid(self_obj) == PID_FIRE_GECKO) or (obj_pid(self_obj) == PID_TOUGH_FIRE_GECKO)) then
+            tail := create_object(PID_FIRE_GECKO_PELT,0,0);
+       // End Seraph's Code
+       else if ((obj_pid(self_obj) == PID_GOLDEN_GECKO ) or (obj_pid(self_obj) == PID_TOUGH_GOLDEN_GECKO)) then
+            tail := create_object(PID_GOLDEN_GECKO_PELT,0,0);
+
+      add_obj_to_inven(self_obj,tail);
+   end
+end
+
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+end
+
+//xxxxxxxxxxxxxxxxxxxx

@@ -1,0 +1,63 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Raiders Map 2
+        Location: Raiders
+        Description: East Side
+
+        Log:
+
+           Created: July 28, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+#include "..\headers\Raiders2.h"
+#include "..\headers\updatmap.h"
+
+#define NAME                    SCRIPT_RAIDERS2
+
+#include "..\headers\command.h"
+#include "..\headers\Raiders.h"
+
+procedure start;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+
+procedure start begin
+end
+
+procedure map_enter_p_proc begin
+   set_map_exit_tiles(0,0);
+   set_global_var( GVAR_COMING_FROM_INSIDE_RAIDERS, 1 );
+
+   Cavern_Lighting;
+end
+
+procedure map_update_p_proc begin
+   if( ( dude_elevation == 0 ) and ( map_var( MVAR_Been_Here_1 ) == 0 ) ) then begin
+      set_map_var( MVAR_Been_Here_1, 1 );
+      display_msg( mstr(100) );
+   end
+   else if( ( dude_elevation == 1 ) and ( map_var( MVAR_Been_Here_2 ) == 0 ) ) then begin
+      set_map_var( MVAR_Been_Here_2, 1 );
+      display_msg( mstr(101) );
+   end
+   else if( ( dude_elevation == 2 ) and ( map_var( MVAR_Been_Here_3 ) == 0 ) ) then begin
+      set_map_var( MVAR_Been_Here_3, 1 );
+      display_msg( mstr(102) );
+   end
+
+   if (dude_elevation == 2) then begin
+      if (global_var(GVAR_VAULT_RAIDERS) < RAIDERS_FOUND) then begin
+         set_global_var(GVAR_VAULT_RAIDERS, RAIDERS_FOUND);
+         display_msg( mstr(103) );
+         give_xp( EXP_RAIDERS_FOUND );
+      end
+   end
+   Cavern_Lighting;
+end

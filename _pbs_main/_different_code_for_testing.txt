@@ -1,0 +1,60 @@
+// TEST loot reduction:
+
+obj := create_object(16777246, tile_num_in_direction(tile_num(dude_obj), 0, 5), elevation(dude_obj));
+call set_item_count(obj, PID_10MM_SMG, 1, 1);
+call set_item_count(obj, PID_STIMPAK, 2, 0);
+call set_item_count(obj, PID_10MM_JHP, 10, 0);
+call set_item_count(obj, PID_7_62MM_AMMO, 1, 0);
+call set_item_count(obj, PID_ROPE, 1, 0);
+call set_item_count(obj, PID_POCKET_LINT, 3, 0);
+critter_add_trait(obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RAT);
+critter_add_trait(obj,TRAIT_OBJECT,OBJECT_AI_PACKET,24);
+call set_item_count(dude_obj, PID_SOLAR_SCORCHER, 1, 1);
+critter_mod_skill(dude_obj, SKILL_ENERGY_WEAPONS, 100);
+
+
+
+
+// array blocks tests
+
+ar := temp_array(0, 4);
+call add_array_block(ar, 4);
+call copy_array(temp_list3(7, 5, 2), 0, ar, 1, 3);
+call add_array_block(ar, 4);
+call remove_array_block(ar, 4, 0);
+display_msg(debug_array_str(ar));
+
+
+
+
+// Mimick hard-coded explosions
+
+item := create_object_sid(PID_EXPLOSION_1, tile_num_in_direction(tile_under_cursor, i, 1), elevation(dude_obj), -1);
+          foreach i: obj in objs begin
+             objs[i] := create_object_sid(PID_EXPLOSION_1, 0, 0, -1);
+             //set_obj_visibility(objs[i], 1);
+             obj_set_light_level(objs[i], 0, 0);
+             move_to(objs[i], tile_num_in_direction(tile_under_cursor, i, 1), elevation(dude_obj));
+          end
+          display_msg(debug_array_str(objs));
+          //anim(obj, 0, 0);
+          //destroy_object(obj);
+          
+          //reg_anim_animate(obj, 0, -1);
+          //anim(obj, ANIMATE_SET_FRAME, 5);
+          //reg_anim_combat_check(0);
+          
+          reg_anim_begin();
+          
+          reg_anim_animate_and_hide(item, 0, 0);
+          foreach i: obj in objs begin
+             //reg_anim_change_fid(obj, 1, 0);
+             reg_anim_light(obj, 0xFFFF0008, 0);
+             reg_anim_animate_and_hide(obj, 0, 0);
+          end
+          reg_anim_destroy(item);
+          foreach i: obj in objs begin
+            reg_anim_destroy(obj);
+          end
+          
+          reg_anim_end();

@@ -1,0 +1,150 @@
+/*
+        Name: abdeathc
+        Location: Abbey
+        Description: Deathclaw haunting the caves beneath the church
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: killap - 7/03/2006
+
+           Updated:
+*/
+
+
+
+
+/* Include Files */
+#include "..\headers\define.h"
+
+#define NAME                    SCRIPT_ABDEATHC
+
+#include "..\headers\command.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+
+variable starttile;
+/*****************************************************************
+   Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_
+*****************************************************************/
+
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+
+/*******************************************************************
+   Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_)
+*******************************************************************/
+
+/*******************************************************************
+   Local variables which do not need to be saved between map changes.
+*******************************************************************/
+
+
+/*******************************************************************
+*******                         PROCEDURES                   *******
+*******************************************************************/
+
+
+/*******************************************************************
+   The start procedure is the first procedure called when the map is
+   first entered. Any initial information that needs to be set up
+   should be placed in here.
+*******************************************************************/
+
+procedure start begin
+end
+
+
+procedure destroy_p_proc begin
+   inc_evil_critter
+   give_exp_points(500);
+   display_msg(mstr(102));
+   set_global_var(GVAR_ABBEY_BEAST,2);
+end
+
+
+procedure critter_p_proc begin
+   if (self_can_see_dude and (tile_distance_objs(self_obj,dude_obj) <= 7)) then begin
+      attack(dude_obj);
+   end
+
+   if (not anim_busy(self_obj)) then begin
+      reg_anim_clear(self_obj);
+      reg_anim_begin();
+      animate_move_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
+      reg_anim_end();
+   end
+end
+
+
+procedure timed_event_p_proc begin
+end
+
+/********************************************************************
+********************************************************************/
+
+procedure use_p_proc begin
+end
+
+/***************************************************************************
+   This is cursory glance description that the player will receive should
+   he just pass the Action Cursor over. Examines which give more information
+   need to be in the description_p_proc procedure.
+***************************************************************************/
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_msg(mstr(100));
+
+end
+
+
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(101));
+end
+
+
+procedure use_obj_on_p_proc begin
+end
+
+
+/******************************************************************************************
+   IF it gets damaged
+******************************************************************************************/
+
+procedure damage_p_proc begin
+end
+
+/**************************************************************************************
+   This procedure gets called roughly every 30 seconds of real time.
+**************************************************************************************/
+
+procedure map_update_p_proc begin
+end
+
+
+procedure use_skill_on_p_proc begin
+   if (action_being_used == SKILL_STEAL) then
+      script_overrides;
+end
+
+procedure map_enter_p_proc begin
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_DEATHCLAW);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_GENERIC_DEATH_CLAW);
+   starttile := self_tile;
+end

@@ -1,0 +1,426 @@
+variable ProtoOfItemGiven;
+variable ValueOfRollCheck := 1;
+variable Scenery_Creation;
+variable Scenery_Creation_Hex;
+variable Scenery_Creation_Count;
+variable Temp_Scenery_Creation_Hex;
+variable Scenery_Creation_Ptr;
+variable How_Many_Party_Members_Are_Injured;
+variable How_Many_Party_Members_Armed;
+variable PartyHealingItem;
+
+procedure checkPartyMembersNearDoor;
+
+variable tmp_gen_rep;
+variable global_temp;
+variable dest_tile;
+variable step_tile;
+variable in_dialog;
+variable forced_node;
+variable restock_amt;
+variable restock_obj;
+variable restock_trash;
+variable removed_qty;
+
+procedure start;
+procedure spatial_p_proc;
+procedure use_skill_on_p_proc;
+procedure Check_Active(variable arg0);
+procedure Trap_Detection;
+
+
+procedure checkPartyMembersNearDoor
+begin
+    if (party_member_obj(16777278) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777278)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777376)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777377)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777305)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777313)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777323)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777352)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777378)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777368)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777379)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777380)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777295)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777381) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777381)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777407) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777407)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777411) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777411)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777412) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777412)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777413) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777413)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777481) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777481)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777558)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777600) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777600)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777718)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777719)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777720)) <= 5) then begin
+            return 1;
+        end
+    end
+    return 0;
+end
+
+procedure start
+begin
+end
+
+procedure spatial_p_proc
+begin
+    variable LVar0 := 0;
+    call Trap_Detection;
+    if (tile_distance_objs(self_obj, source_obj) == 0) then begin
+        if (tile_num(self_obj) == 16278) then begin
+            LVar0 := 1;
+        end
+        else begin
+            if (tile_num(self_obj) == 17279) then begin
+                LVar0 := 2;
+            end
+            else begin
+                if (tile_num(self_obj) == 17479) then begin
+                    LVar0 := 3;
+                end
+                else begin
+                    if (tile_num(self_obj) == 17679) then begin
+                        LVar0 := 4;
+                    end
+                    else begin
+                        if (tile_num(self_obj) == 17732) then begin
+                            LVar0 := 5;
+                        end
+                        else begin
+                            if (tile_num(self_obj) == 17934) then begin
+                                LVar0 := 6;
+                            end
+                            else begin
+                                if (tile_num(self_obj) == 17736) then begin
+                                    LVar0 := 7;
+                                end
+                                else begin
+                                    if (tile_num(self_obj) == 8) then begin
+                                        LVar0 := 8;
+                                    end
+                                    else begin
+                                        if (tile_num(self_obj) == 9) then begin
+                                            LVar0 := 9;
+                                        end
+                                        else begin
+                                            if (tile_num(self_obj) == 10) then begin
+                                                LVar0 := 10;
+                                            end
+                                            else begin
+                                                if (tile_num(self_obj) == 11) then begin
+                                                    LVar0 := 11;
+                                                end
+                                                else begin
+                                                    if (tile_num(self_obj) == 12) then begin
+                                                        LVar0 := 12;
+                                                    end
+                                                    else begin
+                                                        if (tile_num(self_obj) == 13) then begin
+                                                            LVar0 := 13;
+                                                        end
+                                                        else begin
+                                                            if (tile_num(self_obj) == 14) then begin
+                                                                LVar0 := 14;
+                                                            end
+                                                            else begin
+                                                                if (tile_num(self_obj) == 15) then begin
+                                                                    LVar0 := 15;
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        call Check_Active(LVar0);
+    end
+end
+
+procedure use_skill_on_p_proc
+begin
+    variable LVar0 := 0;
+    variable LVar1 := 0;
+    variable LVar2 := 0;
+    if (action_being_used == 11) then begin
+        if (tile_num(self_obj) == 16278) then begin
+            LVar2 := 1;
+        end
+        else begin
+            if (tile_num(self_obj) == 17279) then begin
+                LVar2 := 2;
+            end
+            else begin
+                if (tile_num(self_obj) == 17479) then begin
+                    LVar2 := 3;
+                end
+                else begin
+                    if (tile_num(self_obj) == 17679) then begin
+                        LVar2 := 4;
+                    end
+                    else begin
+                        if (tile_num(self_obj) == 17732) then begin
+                            LVar2 := 5;
+                        end
+                        else begin
+                            if (tile_num(self_obj) == 17934) then begin
+                                LVar2 := 6;
+                            end
+                            else begin
+                                if (tile_num(self_obj) == 17736) then begin
+                                    LVar2 := 7;
+                                end
+                                else begin
+                                    if (tile_num(self_obj) == 8) then begin
+                                        LVar2 := 8;
+                                    end
+                                    else begin
+                                        if (tile_num(self_obj) == 9) then begin
+                                            LVar2 := 9;
+                                        end
+                                        else begin
+                                            if (tile_num(self_obj) == 10) then begin
+                                                LVar2 := 10;
+                                            end
+                                            else begin
+                                                if (tile_num(self_obj) == 11) then begin
+                                                    LVar2 := 11;
+                                                end
+                                                else begin
+                                                    if (tile_num(self_obj) == 12) then begin
+                                                        LVar2 := 12;
+                                                    end
+                                                    else begin
+                                                        if (tile_num(self_obj) == 13) then begin
+                                                            LVar2 := 13;
+                                                        end
+                                                        else begin
+                                                            if (tile_num(self_obj) == 14) then begin
+                                                                LVar2 := 14;
+                                                            end
+                                                            else begin
+                                                                if (tile_num(self_obj) == 15) then begin
+                                                                    LVar2 := 15;
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        if (map_var(LVar2) == 0) then begin
+            script_overrides;
+            LVar0 := roll_vs_skill(source_obj, 11, -30);
+            if (is_success(LVar0)) then begin
+                LVar1 := create_object_sid(33555384, tile_num(self_obj), elevation(self_obj), -1);
+                set_map_var(LVar2, 1);
+                if (source_obj == dude_obj) then begin
+                    display_msg(message_str(14, 102));
+                end
+                else begin
+                    display_msg(obj_name(source_obj) + message_str(14, 105));
+                end
+                if (local_var(2) == 0) then begin
+                    set_local_var(2, 1);
+                    give_exp_points(55);
+                    display_msg(message_str(14, 100) + 55 + message_str(14, 101));
+                end
+            end
+            else begin
+                if (is_critical(LVar0)) then begin
+                    set_map_var(LVar2, 2);
+                    if (source_obj == dude_obj) then begin
+                        display_msg(message_str(14, 104));
+                    end
+                    else begin
+                        display_msg(obj_name(source_obj) + message_str(14, 107));
+                    end
+                    LVar1 := create_object_sid(33555385, tile_num(self_obj), elevation(self_obj), -1);
+                    explosion(tile_num(self_obj), elevation(self_obj), random(40, 60));
+                end
+                else begin
+                    if (source_obj == dude_obj) then begin
+                        display_msg(message_str(14, 103));
+                    end
+                    else begin
+                        display_msg(obj_name(source_obj) + message_str(14, 106));
+                    end
+                end
+            end
+        end
+    end
+end
+
+procedure Check_Active(variable arg0)
+begin
+    variable LVar1 := 0;
+    if (map_var(arg0) == 0) then begin
+        if (tile_contains_obj_pid(tile_num(self_obj), elevation(self_obj), 33555383)) then begin
+            debug_msg("Destroying Visible Trap");
+            destroy_object(tile_contains_pid_obj(tile_num(self_obj), elevation(self_obj), 33555383));
+            debug_msg("Destroyed Visible Trap");
+        end
+        LVar1 := create_object_sid(33555385, tile_num(self_obj), elevation(self_obj), -1);
+        if ((source_obj == dude_obj) and has_trait(0, dude_obj, 96) and (random(0, 1) == 1)) then begin
+            debug_msg("Used Light Step.");
+        end
+        else begin
+        	if (combat_is_initialized) then begin
+        		critter_dmg(source_obj, random(40, 60), 6);
+        	end else begin
+            	explosion(tile_num(self_obj), elevation(self_obj), random(40, 60));
+            end
+        end
+        set_map_var(arg0, 2);
+    end
+end
+
+procedure Trap_Detection
+begin
+    variable LVar0 := 0;
+    variable LVar1 := 0;
+    variable LVar2 := 0;
+    variable LVar3 := 0;
+    if (obj_type(source_obj) == 1) then begin
+        LVar0 := get_critter_stat(source_obj, 1) + -4;
+        LVar1 := LVar0 - (tile_distance_objs(self_obj, source_obj) * 2);
+        if ((tile_distance_objs(self_obj, source_obj) <= LVar0) and (local_var(0) == 0) and (local_var(1) == 0)) then begin
+            if (LVar1 > -4) then begin
+                LVar1 := -4;
+            end
+            LVar2 := do_check(source_obj, 1, LVar1);
+            if (is_success(LVar2)) then begin
+                set_local_var(0, 1);
+                reg_anim_func(2, source_obj);
+                LVar3 := create_object_sid(33555383, tile_num(self_obj), elevation(self_obj), 1277);
+                if (is_critical(LVar2)) then begin
+                    if (source_obj == dude_obj) then begin
+                        display_msg(message_str(30, 100));
+                    end
+                    else begin
+                        if ((proto_data(obj_pid(source_obj), 11) == 0) and obj_can_see_obj(source_obj, dude_obj)) then begin
+                            display_msg(obj_name(source_obj) + message_str(30, 101));
+                        end
+                    end
+                end
+                else begin
+                    if (source_obj == dude_obj) then begin
+                        display_msg(message_str(30, 102));
+                    end
+                    else begin
+                        if ((proto_data(obj_pid(source_obj), 11) == 0) and obj_can_see_obj(source_obj, dude_obj)) then begin
+                            display_msg(obj_name(source_obj) + message_str(30, 103));
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+

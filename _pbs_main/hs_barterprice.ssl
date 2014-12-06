@@ -1,0 +1,397 @@
+procedure start;
+
+//#include "Perk_Inc.h"
+#include "define_lite.h"
+#include "lib.arrays.h"
+#include "lib.misc.h"
+#include "mod.h"
+
+procedure get_town_rep;
+procedure remember_town_demand;
+procedure remember_item_prices;
+procedure modify_selling_prices(variable mod);
+procedure load_npc_list;
+procedure get_highest_barter_in_party;
+
+
+//#define PRODATA_COST	(120)
+
+#define BARTERMOD_VERSION	(5)
+
+/*
+   Changelog:
+   
+   version 5:
+   - arrays no longer stored in savegames (was using sfall globals barter_0, barter_1, barter_2)
+*/
+
+variable begin
+	//MaxPID;
+	MaxTown;
+	Sell_Bias;
+	Sell_DudeSkillCoef;
+	Sell_MerchantSkillCoef;
+	Sell_DudeCharismaCoef;
+	Sell_TownRepCoef;
+	Sell_PerkCoef;
+	Sell_BarterModCoef;
+	Sell_MaxPriceCoef;
+	Sell_UsePartySkill;
+	
+	Buy_Formula;
+	Buy_Bias;
+	Buy_DudeSkillCoef;
+	Buy_MerchantSkillCoef;
+	Buy_DudeCharismaCoef;
+	Buy_TownRepCoef;
+	Buy_PerkCoef;
+	Buy_BarterModCoef;
+	Buy_MinPriceCoef;
+	Buy_ArctanCoef;
+	Buy_UsePartySkill;
+
+   // map pid => original price
+	price_list := 0;
+	// map TownId => (map pid => modifier)
+	town_demand_list := 0;
+	// array
+	npc_pid_list := 0;
+	selling_prices_last_modified := 0;
+	last_sell_mult := 1.0;
+end
+
+/*
+	hs_barterprice.int
+	
+	Runs whenever the value of goods being purchased is calculated
+	
+	critter arg1 - the critter doing the bartering (either dude_obj or inven_dude)
+	critter arg2 - the critter being bartered with
+	int     arg3 - the default value of the goods
+	critter arg4 - the barter critter (has all of the goods being traded in its inventory)
+	int     arg5 - the amount of actual caps in the barter stack (as opposed to goods)
+	int     arg6 - the value of all goods being traded before skill modifications
+	
+	int     ret1 - the modified value of all of the goods
+*/
+
+
+
+procedure start begin
+	variable begin
+		dude;
+		merchant;
+		vanilla_price;
+		vanilla_price_goods;
+		box_with_items;
+		item_caps;
+		base_price := 0.0;
+		base_price_goods;
+		final_price_goods;
+		dude_barter;
+		dude_charisma;
+		master_trader;
+		merchant_barter;
+		barter_mod;
+		temp, i;
+		version;
+		town_rep := 0;
+		selling_price_mod := 1;
+	end
+	if (init_hook) then begin
+		/*MaxPID := get_ini_setting("barter.ini|GENERAL|MaxPID");
+		if (MaxPID == 0) then MaxPID := 600;*/
+		MaxTown := get_ini_setting("barter.ini|GENERAL|MaxTown");
+		if (MaxTown == 0) then MaxTown := 25;
+	
+		Sell_Bias := atof(get_ini_string("barter.ini|SELL|Bias"));
+		Sell_DudeSkillCoef := atof(get_ini_string("barter.ini|SELL|DudeSkillCoef"));
+		Sell_MerchantSkillCoef := atof(get_ini_string("barter.ini|SELL|MerchantSkillCoef"));
+		Sell_DudeCharismaCoef := atof(get_ini_string("barter.ini|SELL|DudeCharismaCoef"));
+		Sell_TownRepCoef := atof(get_ini_string("barter.ini|SELL|TownRepCoef"));
+		Sell_PerkCoef := atof(get_ini_string("barter.ini|SELL|PerkCoef"));
+		Sell_BarterModCoef := atof(get_ini_string("barter.ini|SELL|BarterModCoef"));
+		Sell_MaxPriceCoef := abs(atof(get_ini_string("barter.ini|SELL|MaxPriceCoef")));
+		//Sell_UsePartySkill := get_ini_setting("barter.ini|SELL|UsePartySkill");
+		
+		Buy_Formula := get_ini_setting("barter.ini|BUY|Formula");
+		Buy_Bias := atof(get_ini_string("barter.ini|BUY|Bias"));
+		Buy_DudeSkillCoef := atof(get_ini_string("barter.ini|BUY|DudeSkillCoef"));
+		Buy_MerchantSkillCoef := atof(get_ini_string("barter.ini|BUY|MerchantSkillCoef"));
+		Buy_DudeCharismaCoef := atof(get_ini_string("barter.ini|BUY|DudeCharismaCoef"));
+		Buy_TownRepCoef := atof(get_ini_string("barter.ini|BUY|TownRepCoef"));
+		Buy_PerkCoef := atof(get_ini_string("barter.ini|BUY|PerkCoef"));
+		Buy_BarterModCoef := atof(get_ini_string("barter.ini|BUY|BarterModCoef"));
+		Buy_MinPriceCoef := abs(atof(get_ini_string("barter.ini|BUY|MinPriceCoef")));
+		Buy_ArctanCoef := atof(get_ini_string("barter.ini|BUY|ArctanCoef"));
+		//Buy_UsePartySkill := get_ini_setting("barter.ini|BUY|UsePartySkill");
+		
+		version := get_sfall_global_int("barter_v");
+		if (version > BARTERMOD_VERSION or version < 4) then begin
+			// clear bartermod variables from previous versions 
+			for (i := 0; i <= 7; i++) begin
+				set_sfall_global("barter_" + i, 0);
+			end
+		end else if (version < 5) then begin // migrate from version 4
+		   for (i := 0; i <= 2; i++) begin // remove arrays previously stored in savegame
+		      free_array(get_sfall_global_int("barter_" + i)); // delete array
+		      set_sfall_global("barter_" + i, 0); // clear global
+		   end
+		end
+		set_sfall_global("barter_v", BARTERMOD_VERSION);
+		
+		call remember_town_demand;
+		call remember_item_prices;
+		call load_npc_list;
+	end else begin
+		dude := get_sfall_arg;
+		merchant := get_sfall_arg;
+		vanilla_price := get_sfall_arg;
+		box_with_items := get_sfall_arg;
+		item_caps := get_sfall_arg;
+		base_price := get_sfall_arg;
+		
+		if (party_member_obj(obj_pid(merchant)) == 0) then begin
+			vanilla_price_goods := vanilla_price - item_caps;
+			base_price_goods := base_price - item_caps;
+		
+			if (Sell_TownRepCoef != 0 or Buy_TownRepCoef != 0) then begin
+				town_rep := get_town_rep;
+				if (town_rep < -30) then
+					town_rep := -30;
+				else if (town_rep > 30) then
+					town_rep := 30;
+				//debug_msg("town_rep " + town_rep);
+			end
+			
+			//display_msg("gdialog_get_barter_mod "+gdialog_get_barter_mod);
+			
+			//display_msg("vanilla_price= " + vanilla_price_goods + "; base_price= " + base_price_goods);
+			dude_barter := get_highest_barter_in_party; //has_skill(dude_obj, SKILL_BARTER);
+			dude_charisma := get_critter_stat(dude_obj, STAT_ch);
+			master_trader := has_trait(TRAIT_PERK, dude_obj, PERK_master_trader);
+			
+			merchant_barter := has_skill(merchant, SKILL_BARTER);
+			barter_mod := itof_safe(gdialog_get_barter_mod);
+			
+			//display_msg("dude_barter " + dude_barter + "; merchant_barter " + merchant_barter + "; perk " + master_trader);
+			
+			// cap values
+			if (merchant_barter > 300) then
+				merchant_barter := 300;
+			else if (merchant_barter < 0) then 
+				merchant_barter := 0;
+			if (dude_barter > 300) then 
+				dude_barter := 300;
+			else if (dude_barter < 0) then 
+				dude_barter := 0;
+				
+			
+			// MODIFY SELL PRICES (if any coefficient is set)
+			if (Sell_Bias != 1
+					or Sell_DudeSkillCoef != 0
+					or Sell_MerchantSkillCoef != 0
+					or Sell_DudeCharismaCoef != 0
+					or Sell_TownRepCoef != 0
+					or Sell_PerkCoef != 0
+					or Sell_BarterModCoef != 0) then begin
+				selling_price_mod := Sell_Bias
+					* (1 + dude_barter*Sell_DudeSkillCoef)
+					* (1 + merchant_barter*Sell_MerchantSkillCoef)
+					* (1 + dude_charisma*Sell_DudeCharismaCoef)
+					* (1 + town_rep*Sell_TownRepCoef)
+					* (1 + master_trader*Sell_PerkCoef)
+					* (1 + barter_mod*Sell_BarterModCoef);
+				// cap multiplier
+				if (selling_price_mod > Sell_MaxPriceCoef) then selling_price_mod := Sell_MaxPriceCoef;
+				else if (selling_price_mod < 0) then selling_price_mod := 0;
+				call modify_selling_prices(selling_price_mod);
+			end else begin
+				selling_price_mod := 1;
+			end
+			
+			if (base_price != 0) then begin
+				// modify buy prices
+				if (Buy_Formula == 0 or Buy_Formula == 1) then begin
+					// VANILLA FORMULA (1 was deprecated and merged into 0)
+					final_price_goods := vanilla_price_goods * Buy_Bias;
+				end else if (Buy_Formula == 2) then begin
+					final_price_goods := vanilla_price_goods * Buy_Bias * (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
+				end else begin
+					// override price (formula 3 or 4)
+					// these two differ only in calculating dude_barter coefficient:
+					if (Buy_Formula == 3) then
+						temp := (1 + dude_barter*Buy_DudeSkillCoef);
+					else
+						temp := (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
+						
+					final_price_goods := base_price_goods * Buy_Bias
+						* temp
+						* (1 + merchant_barter*Buy_MerchantSkillCoef)
+						* (1 + dude_charisma*Buy_DudeCharismaCoef)
+						* (1 + town_rep*Buy_TownRepCoef)
+						* (1 + master_trader*Buy_PerkCoef)
+						* (1 + barter_mod*Buy_BarterModCoef);
+				end
+				
+				// TESTING
+				//critter_mod_skill(dude_obj, SKILL_BARTER, 50);
+	
+				// apply inverse selling price mod, this way buying prices are independent from selling prices
+				final_price_goods := final_price_goods / selling_price_mod;
+				
+				// cap value against MinPriceCoef
+				if (final_price_goods < base_price_goods*Buy_MinPriceCoef) then begin
+					final_price_goods := base_price_goods*Buy_MinPriceCoef;
+				end
+				
+				set_sfall_return(round(final_price_goods) + item_caps); 
+			end
+		end
+	end
+end
+
+procedure remember_town_demand begin
+	variable i := 0;
+	variable j;
+	variable temp;
+	variable pairs;
+	variable pair;
+	town_demand_list := create_array(MaxTown + 1, 255);
+	set_sfall_global("barter_1", town_demand_list);
+	i := 0;
+	while (i <= MaxTown) do begin
+		temp := get_ini_string("barter.ini|TOWNDEMAND|" + i);
+		if (temp != "") then begin
+			pairs := string_split(temp, "|");
+			if (len_array(pairs) > 0) then temp := create_assoc_array;
+			else temp := 0;
+			j := 0;
+			while (j < len_array(pairs)) do begin
+				pair := string_split(pairs[j], "*");
+				if (len_array(pair) == 2 and atoi(pair[0]) != 0 and atof(pair[1]) != 0) then begin
+					call set_assoc_array(temp, atoi(pair[0]), atof(pair[1]));
+				end
+				j++;
+			end
+			town_demand_list[i] := temp;
+		end
+		i++;
+	end
+end
+
+procedure load_npc_list begin
+	variable i := 0;
+	npc_pid_list := get_sfall_global_array("barter_2", 200, 4);
+	#define _GET_SETTING	get_ini_setting("barter.ini|NPC|"+i)
+	while (_GET_SETTING != -1 and i < 200) do begin 
+		npc_pid_list[i] := _GET_SETTING;
+		i += 1;
+	end
+	#undef _GET_SETTING
+	resize_array(npc_pid_list, i);
+end
+
+
+procedure remember_item_prices begin
+	variable i := 1;
+	variable temp;
+	// memory safeguard
+	price_list := get_sfall_global_int("barter_0");
+	if (price_list != 0) then free_array(price_list);
+	price_list := create_array(2000, 4); // should be enough for any mod
+	set_sfall_global("barter_0", price_list);
+	temp := get_proto_data(i, PRODATA_IT_COST);
+	while (temp != -1) do begin
+		if (i != 41) then begin
+			price_list[i] := temp;
+		end
+		i++;
+		temp := get_proto_data(i, PRODATA_IT_COST);
+	end
+	resize_array(price_list, i);
+end
+
+procedure modify_selling_prices(variable mod) begin
+	// VERY SLOW procedure, so we'll do it only when next barter session is started
+	variable demand;
+	variable pid_mod;
+	variable maxPid;
+	variable i := 1;
+	if (game_time != selling_prices_last_modified) then begin
+		// assoc array of PIDs and their modifiers
+		demand := town_demand_list[cur_town];
+		maxPid := len_array(price_list) - 1;
+		i := 1;
+		while (i <= maxPid) do begin
+			if (price_list[i] != 0) then begin
+				pid_mod := get_assoc_array(demand, i);
+				if (pid_mod == 0) then pid_mod := 1;
+				else begin
+					debug_msg("PID mod: " + i +  " * " + pid_mod);
+				end
+				set_proto_data(i, PRODATA_IT_COST, round(price_list[i] * mod * pid_mod));
+			end
+			i++;
+		end
+		debug_msg("sell mod: " + mod);
+		selling_prices_last_modified := game_time;
+	end
+end
+
+procedure get_town_rep begin
+   if (cur_town == AREA_ARROYO) then
+     return global_var(GVAR_TOWN_REP_ARROYO);
+   else if (cur_town == AREA_KLAMATH) then
+     return global_var(GVAR_TOWN_REP_KLAMATH);
+   else if (cur_town == AREA_DEN) then
+     return global_var(GVAR_TOWN_REP_THE_DEN);
+   else if (cur_town == AREA_VAULT_CITY) then
+     return global_var(GVAR_TOWN_REP_VAULT_CITY);
+   else if (cur_town == AREA_GECKO) then
+     return global_var(GVAR_TOWN_REP_GECKO);
+   else if (cur_town == AREA_MODOC) then
+     return global_var(GVAR_TOWN_REP_MODOC);
+   else if (cur_town == AREA_BROKEN_HILLS) then
+     return global_var(GVAR_TOWN_REP_BROKEN_HILLS);
+   else if (cur_town == AREA_NEW_RENO) then
+     return global_var(GVAR_TOWN_REP_NEW_RENO);
+   else if (cur_town == AREA_REDDING) then
+     return global_var(GVAR_TOWN_REP_REDDING);
+   else if (cur_town == AREA_NCR) then
+     return global_var(GVAR_TOWN_REP_NCR);
+   else if (cur_town == AREA_VAULT_13) then
+     return global_var(GVAR_TOWN_REP_VAULT_13);
+   else if (cur_town == AREA_SAN_FRANCISCO) then
+     return global_var(GVAR_TOWN_REP_SAN_FRANCISCO);
+   else if (cur_town == AREA_ABBEY) then
+     return global_var(GVAR_TOWN_REP_ABBEY);
+   else if (cur_town == AREA_EPA) then
+     return global_var(GVAR_TOWN_REP_EPA);
+   else if (cur_town == AREA_PRIMITIVE_TRIBE) then
+     return global_var(GVAR_TOWN_REP_PRIMITIVE_TRIBE);
+   else if (cur_town == AREA_VAULT_15) then
+     return global_var(GVAR_TOWN_REP_VAULT_15);
+   else
+     return 0;
+end
+
+procedure get_highest_barter_in_party begin
+	variable i := 0;
+	variable obj;
+	variable max;
+	max := has_skill(dude_obj, SKILL_BARTER);
+	
+	while (i < len_array(npc_pid_list)) do begin
+		obj := party_member_obj(npc_pid_list[i]);
+		if (obj) then begin
+			#define _SK		has_skill(obj, SKILL_BARTER)
+			if (_SK > max) then begin
+				max := _SK;
+			end
+			#undef _SK
+		end
+		i++;
+	end
+	return max;
+end

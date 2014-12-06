@@ -1,0 +1,335 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location: Den
+        Description:
+
+        Log:
+
+           Created: August 22, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+#define NAME                    SCRIPT_DCFLICK
+#define TOWN_REPUTATION         GVAR_TOWN_REP_THE_DEN
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+#include "..\headers\Den.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+
+//added by killap - expansion
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+//end
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Flags                        (4)
+#define LVAR_Told_Arrangement             (5) //added by killap - expansion
+#define LVAR_Told_Angry                   (6) //added by killap - expansion
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+
+import variable den_flick_box_obj;
+import variable generic_temp_box;
+import variable flick_obj;
+
+procedure start begin
+   flick_obj := self_obj;
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == timed_event_float) then begin
+      if (combat_is_initialized == false) then begin
+      end
+   end
+end
+
+procedure map_enter_p_proc begin
+   flick_obj := self_obj;
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_THE_DEN);
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_MERCHANT);
+      end
+   end
+end
+
+procedure critter_p_proc begin
+   if (self_can_see_dude) then begin
+      if (hostile) then begin
+         self_attack_dude;
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   if (dude_is_stupid) then begin
+      call Node001;
+   end else begin
+      //added by killap - expansion
+      if (global_var(GVAR_DEN_ORPHANAGE) == 7) then begin
+         move_obj_inven_to_obj(self_obj,generic_temp_box);
+         move_obj_inven_to_obj(den_flick_box_obj,self_obj);
+         if (local_var(LVAR_Told_Angry) == 0) then begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node014;
+            gSay_End;
+            end_dialogue;
+         end else begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node020;
+            gSay_End;
+            end_dialogue;
+         end
+      move_obj_inven_to_obj(self_obj,den_flick_box_obj);
+      move_obj_inven_to_obj(generic_temp_box,self_obj);
+      //end
+      end else begin
+         move_obj_inven_to_obj(self_obj,generic_temp_box);
+         move_obj_inven_to_obj(den_flick_box_obj,self_obj);
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node002;
+            gSay_End;
+            end_dialogue;
+         move_obj_inven_to_obj(self_obj,den_flick_box_obj);
+         move_obj_inven_to_obj(generic_temp_box,self_obj);
+      end
+   end
+end
+
+procedure destroy_p_proc begin
+   flick_obj := 0;
+   set_flick_dead;
+   // reduce loot: all armors and all weapons except shotgun
+   restock_amt := 0;
+   while (inven_ptr(den_flick_box_obj, restock_amt) != 0) do begin
+      restock_obj := inven_ptr(den_flick_box_obj, restock_amt);
+      if (obj_item_subtype(restock_obj) == item_type_armor or (obj_item_subtype(restock_obj) == item_type_weapon and obj_pid(restock_obj) != PID_SHOTGUN)) then begin
+      	rm_obj_from_inven(den_flick_box_obj, restock_obj);
+      	destroy_object(restock_obj);
+      end else
+      	restock_amt += 1;
+   end
+   move_obj_inven_to_obj(den_flick_box_obj,self_obj);
+   inc_evil_critter
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(150 + herebefore);
+   set_examined;
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node998 begin
+   set_hostile;
+end
+procedure Node999 begin
+end
+
+procedure Node990 begin
+   gdialog_mod_barter(0);
+   // added by killap - expansion
+   if (global_var(GVAR_DEN_ORPHANAGE) == 7) then
+      call Node021;
+   else
+      call Node003;
+end
+
+procedure Node001 begin
+   floater_rand(200,204);
+end
+procedure Node002 begin
+   Reply(220 + herebefore);
+   set_herebefore;
+   BOption(222, Node010, 004);
+   NOption(223, Node004, 004);
+   if (vic_known(state_vic_known_name)) then begin
+      NOption(224, Node011, 004);
+   end
+   GOption(225, Node990, 004);
+end
+procedure Node003 begin
+   Reply(240);
+   GOption(241, Node990, 004);
+   NOption(242, Node002, 004);
+   NOption(243, Node999, 004);
+end
+procedure Node004 begin
+   Reply(260);
+   NOption(261, Node005, 004);
+   NOption(262, Node002, 004);
+   NOption(263, Node999, 004);
+end
+procedure Node005 begin
+   Reply(280);
+   NOption(281, Node006, 004);
+end
+procedure Node006 begin
+   Reply(290);
+   NOption(291, Node007, 004);
+   NOption(292, Node002, 004);
+end
+procedure Node007 begin
+   Reply(300);
+   BOption(301, Node008, 004);
+   GOption(302, Node002, 004);
+   NOption(303, Node999, 004);
+end
+procedure Node008 begin
+   Reply(315);
+   NOption(316, Node009, 004);
+end
+procedure Node009 begin
+   //added by killap - expansion
+   set_local_var(LVAR_Told_Arrangement,1);
+   Reply(325);
+   GOption(326, Node002, 004);
+   GOption(327, Node990, 004);
+   NOption(328, Node999, 004);
+end
+procedure Node010 begin
+   Reply(340);
+   NOption(341, Node002, 004);
+   BOption(342, Node998, 004);
+   GOption(343, Node999, 004);
+end
+procedure Node011 begin
+   if (vic_is_dude_companion) then begin
+      Reply(361);
+   end else begin
+      Reply(360);
+      NOption(362, Node013, 004);
+   end
+   GOption(363, Node012, 004);
+   NOption(364, Node002, 004);
+   NOption(365, Node999, 004);
+end
+procedure Node012 begin
+   Reply(380);
+   if (vic_is_dude_companion == false) then begin
+      NOption(381, Node013, 004);
+   end
+   NOption(382, Node002, 004);
+   NOption(383, Node999, 004);
+end
+procedure Node013 begin
+   set_metzger_known;
+   Reply(400 + (metzger_dead == false));
+   GOption(402, Node012, 004);
+   NOption(403, Node002, 004);
+   NOption(404, Node999, 004);
+end
+//added by killap - expansion
+procedure Node014 begin
+   Reply(410 + dude_is_female);
+   if not(local_var(LVAR_Told_Arrangement)) then
+      NOption(412, Node017, 004);
+   else
+      NOption(413, Node015, 004);
+end
+procedure Node015 begin
+   Reply(420);
+   NOption(421, Node018, 004);
+   NOption(422, Node016, 004);
+end
+procedure Node016 begin
+   Reply(430);
+   NOption(431, Node019, 004);
+   BOption(432, Node998, 004);
+end
+procedure Node017 begin
+   Reply(440);
+   NOption(441, Node018, 004);
+end
+procedure Node018 begin
+   Reply(450);
+   NOption(451, Node019, 004);
+end
+procedure Node019 begin
+   set_local_var(LVAR_Told_Angry,1);
+   Reply(460);
+   NOption(461, Node990, 004);
+   NOption(462, Node999, 004);
+   BOption(463, Node998, 004);
+end
+procedure Node020 begin
+   Reply(470);
+   NOption(471, Node990, 004);
+   NOption(472, Node999, 004);
+end
+procedure Node021 begin
+   Reply(480);
+   GOption(481, Node990, 004);
+   NOption(482, Node999, 004);
+end
+//end

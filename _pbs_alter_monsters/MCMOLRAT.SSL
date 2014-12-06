@@ -1,0 +1,132 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Slag Cave Rats
+        Location: Ghost Farm
+        Description:
+
+        Log:
+
+           Created: December 02, 1997
+
+           Updated:
+*/
+
+/* Include Files */
+
+#include "..\headers\define.h"
+#include "..\headers\ModGard.h"
+
+#define NAME                    SCRIPT_MCMOLRAT
+
+#include "..\headers\command.h"
+#include "..\headers\Modoc.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure timed_event_p_proc;
+procedure combat_p_proc;
+procedure damage_p_proc;
+procedure use_skill_on_p_proc;
+procedure map_enter_p_proc;
+
+#define POISON_MIN               (1)
+#define POISON_MAX               (6)
+#define RAD_MIN                  (2)
+#define RAD_MAX                  (10)
+
+#define is_slag_mole_rat         (cur_map_index ==  MAP_GHOST_CAVERN)
+
+#define LVAR_Home_Tile           (0)
+
+#define is_mutated_rat           ((self_pid >= PID_MUTATED_RAT) and (self_pid <= PID_MUTATED_PIG_RAT))
+
+/* Local variables which do not need to be saved between map changes. */
+
+// by phobos2077: rats eat poofs
+#include "gecko_hunger.h"
+variable food:=0;
+#define FOOD_DETECT_RADIUS    (15)
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+variable the_tile;
+   if (is_slag_mole_rat) then begin
+      if (not(food) and (combat_is_initialized == false) and ((critter_state(self_obj) bwand DAM_KNOCKED_OUT) == FALSE)) then begin
+         the_tile := tile_num_in_direction(tile_num(self_obj),random(0,5),random(1,3));
+         if (obj_in_mole_rat_cage(the_tile)) then begin
+            animate_move_to_tile(the_tile);
+         end
+      end
+      mod_add_timer_event_rand(self_obj, 5, 25, 1);
+   end
+end
+
+procedure critter_p_proc begin
+   if (self_can_see_dude) then begin
+      if (is_slag_mole_rat == false) then begin
+         self_attack_dude;
+      end
+   end
+   
+   // by phobos2077:
+   if (not(combat_is_initialized)) then begin
+      if (random(0, 50) == 1 and not(food)) then begin
+         food := getNearestFoodForRat(FOOD_DETECT_RADIUS);
+         if (food) then
+            call anim_go_eat_food(food);
+      end else if (food) then if (should_delete_food(food)) then begin
+         destroy_object(food);
+         food := 0;
+      end
+   end
+   // ;
+end
+
+procedure combat_p_proc begin
+   food := 0;
+   if (is_mutated_rat) then begin
+      if (fixed_param == COMBAT_SUBTYPE_HIT_SUCCEEDED) then begin
+         if (target_obj == dude_obj) then begin
+            poison(target_obj,random(POISON_MIN,POISON_MAX));
+            radiation_inc(target_obj,random(RAD_MIN,RAD_MAX));
+         end
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (combat_is_initialized == false) then begin
+      self_attack_dude;
+   end
+end
+
+procedure use_skill_on_p_proc begin
+   if (action_being_used == SKILL_STEAL) then
+      script_overrides;
+end
+
+procedure map_enter_p_proc begin
+
+   if (is_loading_game == false) then begin
+      mod_add_timer_event_rand(self_obj, 5, 25, 1);
+      if (map_first_run) then begin
+         set_local_var(LVAR_Home_Tile, self_tile);
+         if (is_slag_mole_rat) then begin
+            critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_SLAG);
+         end else begin
+            critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RAT);
+         end
+         if (is_mutated_rat) then begin
+            critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_MUTATED_RAT);
+         end else begin
+            critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_GENERIC_RAT);
+         end
+      end
+      critter_attempt_placement(self_obj, local_var(LVAR_Home_Tile), self_elevation);
+   end
+end

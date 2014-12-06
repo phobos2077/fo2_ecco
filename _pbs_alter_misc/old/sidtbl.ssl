@@ -1,0 +1,1728 @@
+variable ProtoOfItemGiven;
+variable ValueOfRollCheck := 1;
+variable Scenery_Creation;
+variable Scenery_Creation_Hex;
+variable Scenery_Creation_Count;
+variable Temp_Scenery_Creation_Hex;
+variable Scenery_Creation_Ptr;
+variable How_Many_Party_Members_Are_Injured;
+variable How_Many_Party_Members_Armed;
+variable PartyHealingItem;
+
+procedure checkPartyMembersNearDoor;
+
+variable tmp_gen_rep;
+variable global_temp;
+variable dest_tile;
+variable step_tile;
+variable in_dialog;
+variable forced_node;
+variable restock_amt;
+variable restock_obj;
+variable restock_trash;
+variable removed_qty;
+
+#include "stock.h"
+
+procedure start;
+procedure use_p_proc;
+procedure pickup_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure use_obj_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure Look_Traps_And_Locks;
+procedure Look_Traps;
+procedure Look_Locks;
+procedure Skill_Disarm_Traps;
+procedure Disarm_Traps;
+procedure Unlock_Lock;
+procedure Lockpick_Lock;
+procedure Lockpick_Door;
+procedure Lock_Door;
+procedure Set_Lock;
+procedure Set_Lockpick_Lock;
+procedure Set_Trap;
+procedure Pry_Door;
+procedure Damage_Critter;
+procedure Super_Lockpick_Lock;
+procedure Super_Set_Lockpick_Lock;
+
+import variable i_duppo_table;
+import variable i_duppo_talk;
+import variable i_duppo_obj;
+
+variable Locks_Roll;
+variable Traps_Roll;
+
+
+procedure checkPartyMembersNearDoor
+begin
+	if (party_member_obj(16777278) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777278)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777376) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777376)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777377) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777377)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777305) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777305)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777313) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777313)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777323) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777323)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777352) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777352)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777378) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777378)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777368) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777368)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777379) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777379)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777380) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777380)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777295) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777295)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777381) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777381)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777407) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777407)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777411) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777411)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777412) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777412)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777413) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777413)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777481) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777481)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777558) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777558)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777600) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777600)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777718) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777718)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777719) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777719)) <= 5) then begin
+			return 1;
+		end
+	end
+	if (party_member_obj(16777720) != 0) then begin
+		if (tile_distance_objs(self_obj, party_member_obj(16777720)) <= 5) then begin
+			return 1;
+		end
+	end
+	return 0;
+end
+
+procedure start
+begin
+	i_duppo_table := self_obj;
+end
+
+procedure use_p_proc
+begin
+	if (i_duppo_obj != -1) then begin
+		script_overrides;
+		i_duppo_table := self_obj;
+		i_duppo_talk := 1;
+		debug_msg("SIDTBL: duppo should talk");
+	end
+	else begin
+		debug_msg("SIDTBL: duppo is -1");
+		Traps_Roll := roll_vs_skill(source_obj, 11, 0);
+		if (local_var(1) == 0) then begin
+			if (is_success(Traps_Roll)) then begin
+				script_overrides;
+				set_local_var(2, 1);
+				reg_anim_func(2, source_obj);
+				if (source_obj == dude_obj) then begin
+					display_msg(message_str(16, 204));
+				end
+				else begin
+					display_msg(message_str(16, 205));
+				end
+			end
+			else begin
+				if (obj_is_locked(self_obj)) then begin
+					script_overrides;
+					display_msg(message_str(16, 203));
+					call Damage_Critter;
+				end
+				else begin
+					call Damage_Critter;
+				end
+			end
+		end
+		else begin
+			if (obj_is_locked(self_obj)) then begin
+				script_overrides;
+				display_msg(message_str(16, 203));
+			end
+		end
+	end
+end
+
+procedure pickup_p_proc
+begin
+	call use_p_proc;
+end
+
+procedure look_at_p_proc
+begin
+end
+
+procedure description_p_proc
+begin
+end
+
+procedure use_skill_on_p_proc
+begin
+	variable LVar0 := 0;
+	LVar0 := action_being_used;
+	if (LVar0 == 9) then begin
+		script_overrides;
+		if (local_var(0) == 0) then begin
+			call Unlock_Lock;
+		end
+		else begin
+			call Set_Lock;
+		end
+	end
+	else begin
+		if (LVar0 == 11) then begin
+			script_overrides;
+			if (local_var(1) == 0) then begin
+				call Skill_Disarm_Traps;
+			end
+			else begin
+				if (source_obj == dude_obj) then begin
+					display_msg(message_str(16, 195));
+				end
+				else begin
+					display_msg(obj_name(source_obj) + message_str(16, 200));
+				end
+			end
+		end
+	end
+end
+
+procedure use_obj_on_p_proc
+begin
+	variable LVar0 := 0;
+	LVar0 := obj_pid(obj_being_used_with);
+	if (0 == 0) then begin
+		script_overrides;
+		if (LVar0 == 84) then begin
+			if (local_var(0) == 0) then begin
+				call Lockpick_Lock;
+			end
+			else begin
+				call Set_Lockpick_Lock;
+			end
+		end
+		else begin
+			if (LVar0 == 410) then begin
+				script_overrides;
+				if (local_var(0) == 0) then begin
+					call Super_Lockpick_Lock;
+				end
+				else begin
+					call Super_Set_Lockpick_Lock;
+				end
+			end
+		end
+	end
+	else begin
+		if (0 == 1) then begin
+			if (LVar0 == 77) then begin
+				script_overrides;
+				if (local_var(0) == 0) then begin
+					call Lockpick_Lock;
+				end
+				else begin
+					call Set_Lockpick_Lock;
+				end
+			end
+			else begin
+				if (LVar0 == 411) then begin
+					script_overrides;
+					if (local_var(0) == 0) then begin
+						call Super_Lockpick_Lock;
+					end
+					else begin
+						call Super_Set_Lockpick_Lock;
+					end
+				end
+			end
+		end
+		else begin
+			if (LVar0 == 20) then begin
+				script_overrides;
+				call Pry_Door;
+			end
+			else begin
+				if ((LVar0 == 51) or (LVar0 == 85)) then begin
+					script_overrides;
+					call Set_Trap;
+				end
+			end
+		end
+	end
+end
+
+procedure damage_p_proc
+begin
+	variable LVar0 := 0;
+	if (metarule(49, target_obj) == 6) then begin
+		if (3 == 0) then begin
+			if (local_var(1) == 0) then begin
+				set_local_var(1, 1);
+				set_local_var(0, 1);
+				LVar0 := random(10, 20);
+				explosion(tile_num(self_obj), elevation(self_obj), LVar0);
+				destroy_object(self_obj);
+			end
+			else begin
+				set_local_var(1, 1);
+				set_local_var(0, 1);
+				destroy_object(self_obj);
+			end
+		end
+		else begin
+			if ((3 == 1) or (3 == 2)) then begin
+				set_local_var(4, local_var(4) + 1);
+				if (local_var(1) == 0) then begin
+					set_local_var(0, 1);
+					LVar0 := random(10, 20);
+					explosion(tile_num(self_obj), elevation(self_obj), LVar0);
+				end
+				else begin
+					if (local_var(4) > 1) then begin
+						set_local_var(1, 1);
+						set_local_var(0, 1);
+						destroy_object(self_obj);
+					end
+				end
+			end
+		end
+	end
+	else begin
+		display_msg(message_str(16, 193));
+	end
+end
+
+procedure map_enter_p_proc
+begin
+	variable LVar0 := 0;
+	variable LVar1 := 0;
+	if (local_var(3) == 0) then begin
+		set_local_var(3, 1);
+		set_local_var(0, 1);
+		set_local_var(1, 1);
+	end
+	if (local_var(0) == 0) then begin
+		obj_lock(self_obj);
+	end
+	else begin
+		obj_unlock(self_obj);
+	end
+	debug_msg("SIDTBL: I_duppo_obj " + i_duppo_obj);
+	if (i_duppo_obj != -1) then begin
+		if ((game_time < 0) and (local_var(8) == 0)) then begin
+			set_local_var(7, game_time - 1);
+			set_local_var(8, 1);
+		end
+		if (local_var(7) < game_time) then begin
+			if (tile_num(self_obj) == 17327) then begin
+				LVar0 := create_object_sid(128, 5, 0, -1);
+				if (obj_is_carrying_obj_pid(self_obj, 479) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 479);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 479) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 479);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 356) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 356);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 377) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 377);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 366) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 366);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 446) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 446);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 492) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 492);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 288) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 288);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 253) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 253);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 254) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 254);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 266) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 266);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 267) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 267);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 258) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 258);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 255) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 255);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 256) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 256);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 257) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 257);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 96) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 96);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 97) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 97);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 99) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 99);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 223) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 223);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 252) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 252);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 298) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 298);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 302) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 302);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 303) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 303);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 305) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 305);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 306) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 306);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 307) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 307);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 335) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 335);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 336) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 336);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 337) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 337);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 338) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 338);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 339) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 339);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 340) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 340);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 341) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 341);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 414) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 414);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 422) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 422);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 431) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 431);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 431) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 431);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 432) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 432);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 431) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 431);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 447) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 447);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 448) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 448);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 449) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 449);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 456) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 456);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 468) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 468);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 471) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 471);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 476) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 476);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 488) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 488);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 495) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 495);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				global_temp := create_object_sid(128, 0, 0, -1);
+				move_obj_inven_to_obj(self_obj, global_temp);
+				destroy_object(global_temp);
+				check_restock_item(PID_DESERT_EAGLE, 1, 3, 100)
+				check_restock_item(PID_HUNTING_RIFLE, 1, 3, 100)
+				check_restock_item(PID_SHOTGUN, 1, 3, 100)
+				check_restock_item(PID_ASSAULT_RIFLE, 1, 1, 50)
+				check_restock_item(PID_HK_CAWS, 1, 1, 50)
+				check_restock_item(PID_COMBAT_SHOTGUN, 1, 1, 50)
+				check_restock_item(PID_44_MAGNUM_REVOLVER, 1, 1, 40)
+				check_restock_item(PID_10MM_AP, 10, 20, 100)
+				check_restock_item(PID_5MM_AP, 5, 10, 100)
+				
+				check_restock_item(PID_ROPE, 1, 4, 100)
+				check_restock_item(PID_CROWBAR, 1, 3, 100)
+				check_restock_item(PID_FLARE, 5, 7, 100)
+				check_restock_item(PID_DECK_OF_TRAGIC_CARDS, 1, 1, 10)
+				check_restock_item(PID_GEIGER_COUNTER, 1, 2, 50)
+				check_restock_item(PID_MICRO_FUSION_CELL, 3, 3, 30)
+				check_restock_item(PID_STIMPAK, 3 , 7, 50)
+				check_restock_item(PID_SUPER_STIMPAK, 1, 4, 25)
+				check_restock_item(PID_METAL_ARMOR_MK_II, 1, 3, 50)
+				move_obj_inven_to_obj(LVar0, self_obj);
+				destroy_object(LVar0);
+			end
+			if (tile_num(self_obj) == 17724) then begin
+				LVar0 := create_object_sid(128, 5, 0, -1);
+				if (obj_is_carrying_obj_pid(self_obj, 479) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 479);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 479) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 479);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 356) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 356);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 377) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 377);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 366) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 366);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 446) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 446);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 492) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 492);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 288) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 288);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 253) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 253);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 254) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 254);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 266) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 266);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 267) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 267);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 258) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 258);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 255) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 255);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 256) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 256);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 257) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 257);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 96) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 96);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 97) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 97);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 99) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 99);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 223) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 223);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 252) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 252);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 298) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 298);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 302) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 302);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 303) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 303);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 305) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 305);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 306) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 306);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 307) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 307);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 335) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 335);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 336) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 336);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 337) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 337);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 338) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 338);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 339) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 339);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 340) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 340);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 341) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 341);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 414) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 414);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 422) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 422);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 431) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 431);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 431) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 431);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 432) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 432);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 431) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 431);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 447) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 447);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 448) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 448);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 449) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 449);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 456) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 456);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 468) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 468);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 471) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 471);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 476) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 476);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 488) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 488);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				if (obj_is_carrying_obj_pid(self_obj, 495) > 0) then begin
+					LVar1 := obj_carrying_pid_obj(self_obj, 495);
+					rm_obj_from_inven(self_obj, LVar1);
+					add_obj_to_inven(LVar0, LVar1);
+				end
+				global_temp := create_object_sid(128, 0, 0, -1);
+				move_obj_inven_to_obj(self_obj, global_temp);
+				destroy_object(global_temp);
+				check_restock_item(PID_9MM_AMMO, 1, 5, 100)
+				check_restock_item(PID_BBS, 10, 20, 100)
+				check_restock_item(PID_5MM_JHP, 5, 10, 100)
+				check_restock_item(PID_44_MAGNUM_JHP, 1, 5, 100)
+				check_restock_item(PID_223_FMJ, 5, 15, 100)
+				check_restock_item(PID_14MM_AP, 1, 10, 100)
+				check_restock_item(PID_SHOTGUN_SHELLS, 20, 20, 100)
+				check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 2, 45) // new
+				check_restock_item(PID_7_62MM_AMMO, 10, 10, 100)
+				check_restock_item(PID_FN_FAL_HPFA, 1, 3, 100)
+				check_restock_item(PID_HK_P90C, 1, 2, 100)
+				check_restock_item(PID_SNIPER_RIFLE, 1, 1, 100) // new
+				check_restock_item(PID_POWER_FIST, 0, 2, 100)
+				check_restock_item(PID_10MM_AP, 5, 10, 100)
+				
+				check_restock_item(PID_FRAG_GRENADE, 1, 7, 60)
+				check_restock_item(PID_THROWING_KNIFE, 7, 10, 45)
+				check_restock_item(PID_PBS_THROWING_AXE, 1, 4, 45) // new
+				check_restock_item(PID_SPIKED_KNUCKLES, 2, 4, 50)
+				check_restock_item(PID_COMBAT_KNIFE, 2, 4, 50)
+				check_restock_item(PID_BOXING_GLOVES, 1, 1, 25)
+				check_restock_item(PID_COMBAT_ARMOR, 1, 1, 25)
+				
+				move_obj_inven_to_obj(LVar0, self_obj);
+				destroy_object(LVar0);
+			end
+			set_local_var(7, (random(1, 6) * (24 * (60 * (60 * 10)))) + game_time);
+		end
+	end
+end
+
+procedure map_update_p_proc
+begin
+	if (local_var(0) == 0) then begin
+		obj_lock(self_obj);
+	end
+	else begin
+		obj_unlock(self_obj);
+	end
+end
+
+procedure Look_Traps_And_Locks
+begin
+	variable LVar0 := 0;
+	variable LVar1 := 0;
+	variable LVar2 := 0;
+	LVar0 := do_check(dude_obj, 1, 0);
+	LVar1 := roll_vs_skill(dude_obj, 11, 0);
+	LVar2 := roll_vs_skill(dude_obj, 9, 0);
+	if (is_success(LVar0)) then begin
+		if (is_critical(LVar0)) then begin
+			if (is_success(LVar1)) then begin
+				set_local_var(2, 1);
+				if (is_critical(LVar1)) then begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 102));
+						end
+						else begin
+							display_msg(message_str(16, 103));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 104));
+						end
+						else begin
+							display_msg(message_str(16, 105));
+						end
+					end
+				end
+				else begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 106));
+						end
+						else begin
+							display_msg(message_str(16, 107));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 108));
+						end
+						else begin
+							display_msg(message_str(16, 109));
+						end
+					end
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 110));
+						end
+						else begin
+							display_msg(message_str(16, 111));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 112));
+						end
+						else begin
+							display_msg(message_str(16, 113));
+						end
+					end
+				end
+				else begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 114));
+						end
+						else begin
+							display_msg(message_str(16, 115));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 116));
+						end
+						else begin
+							display_msg(message_str(16, 117));
+						end
+					end
+				end
+			end
+		end
+		else begin
+			if (is_success(LVar1)) then begin
+				set_local_var(2, 1);
+				if (is_critical(LVar1)) then begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 118));
+						end
+						else begin
+							display_msg(message_str(16, 119));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 120));
+						end
+						else begin
+							display_msg(message_str(16, 121));
+						end
+					end
+				end
+				else begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 122));
+						end
+						else begin
+							display_msg(message_str(16, 123));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 124));
+						end
+						else begin
+							display_msg(message_str(16, 125));
+						end
+					end
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 126));
+						end
+						else begin
+							display_msg(message_str(16, 127));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 128));
+						end
+						else begin
+							display_msg(message_str(16, 129));
+						end
+					end
+				end
+				else begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 130));
+						end
+						else begin
+							display_msg(message_str(16, 131));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 132));
+						end
+						else begin
+							display_msg(message_str(16, 133));
+						end
+					end
+				end
+			end
+		end
+	end
+	else begin
+		if (is_critical(LVar0)) then begin
+			if (is_success(LVar1)) then begin
+				set_local_var(2, 1);
+				if (is_critical(LVar1)) then begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 134));
+						end
+						else begin
+							display_msg(message_str(16, 135));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 136));
+						end
+						else begin
+							display_msg(message_str(16, 137));
+						end
+					end
+				end
+				else begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 138));
+						end
+						else begin
+							display_msg(message_str(16, 139));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 140));
+						end
+						else begin
+							display_msg(message_str(16, 141));
+						end
+					end
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 142));
+						end
+						else begin
+							display_msg(message_str(16, 143));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 144));
+						end
+						else begin
+							display_msg(message_str(16, 145));
+						end
+					end
+				end
+				else begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 146));
+						end
+						else begin
+							display_msg(message_str(16, 147));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 148));
+						end
+						else begin
+							display_msg(message_str(16, 149));
+						end
+					end
+				end
+			end
+		end
+		else begin
+			if (is_success(LVar1)) then begin
+				set_local_var(2, 1);
+				if (is_critical(LVar1)) then begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 150));
+						end
+						else begin
+							display_msg(message_str(16, 151));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 152));
+						end
+						else begin
+							display_msg(message_str(16, 153));
+						end
+					end
+				end
+				else begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 154));
+						end
+						else begin
+							display_msg(message_str(16, 155));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 156));
+						end
+						else begin
+							display_msg(message_str(16, 157));
+						end
+					end
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 158));
+						end
+						else begin
+							display_msg(message_str(16, 159));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 160));
+						end
+						else begin
+							display_msg(message_str(16, 161));
+						end
+					end
+				end
+				else begin
+					if (is_success(LVar2)) then begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 162));
+						end
+						else begin
+							display_msg(message_str(16, 163));
+						end
+					end
+					else begin
+						if (is_critical(LVar2)) then begin
+							display_msg(message_str(16, 164));
+						end
+						else begin
+							display_msg(message_str(16, 165));
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+procedure Look_Traps
+begin
+	variable LVar0 := 0;
+	variable LVar1 := 0;
+	LVar0 := do_check(dude_obj, 1, 0);
+	LVar1 := roll_vs_skill(dude_obj, 11, 0);
+	if (is_success(LVar0)) then begin
+		if (is_critical(LVar0)) then begin
+			if (is_success(LVar1)) then begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 104));
+				end
+				else begin
+					display_msg(message_str(16, 108));
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 112));
+				end
+				else begin
+					display_msg(message_str(16, 116));
+				end
+			end
+		end
+		else begin
+			if (is_success(LVar1)) then begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 120));
+				end
+				else begin
+					display_msg(message_str(16, 124));
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 128));
+				end
+				else begin
+					display_msg(message_str(16, 132));
+				end
+			end
+		end
+	end
+	else begin
+		if (is_critical(LVar0)) then begin
+			if (is_success(LVar1)) then begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 136));
+				end
+				else begin
+					display_msg(message_str(16, 140));
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 144));
+				end
+				else begin
+					display_msg(message_str(16, 148));
+				end
+			end
+		end
+		else begin
+			if (is_success(LVar1)) then begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 152));
+				end
+				else begin
+					display_msg(message_str(16, 156));
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 160));
+				end
+				else begin
+					display_msg(message_str(16, 164));
+				end
+			end
+		end
+	end
+end
+
+procedure Look_Locks
+begin
+	variable LVar0 := 0;
+	variable LVar1 := 0;
+	LVar0 := do_check(dude_obj, 1, 0);
+	LVar1 := roll_vs_skill(dude_obj, 9, 0);
+	if (is_success(LVar0)) then begin
+		if (is_critical(LVar0)) then begin
+			if (is_success(LVar1)) then begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 114));
+				end
+				else begin
+					display_msg(message_str(16, 115));
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 116));
+				end
+				else begin
+					display_msg(message_str(16, 117));
+				end
+			end
+		end
+		else begin
+			if (is_success(LVar1)) then begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 130));
+				end
+				else begin
+					display_msg(message_str(16, 131));
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 132));
+				end
+				else begin
+					display_msg(message_str(16, 133));
+				end
+			end
+		end
+	end
+	else begin
+		if (is_critical(LVar0)) then begin
+			if (is_success(LVar1)) then begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 146));
+				end
+				else begin
+					display_msg(message_str(16, 147));
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 148));
+				end
+				else begin
+					display_msg(message_str(16, 149));
+				end
+			end
+		end
+		else begin
+			if (is_success(LVar1)) then begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 162));
+				end
+				else begin
+					display_msg(message_str(16, 163));
+				end
+			end
+			else begin
+				if (is_critical(LVar1)) then begin
+					display_msg(message_str(16, 164));
+				end
+				else begin
+					display_msg(message_str(16, 165));
+				end
+			end
+		end
+	end
+end
+
+procedure Skill_Disarm_Traps
+begin
+	Traps_Roll := roll_vs_skill(source_obj, 11, 0);
+	call Disarm_Traps;
+end
+
+procedure Disarm_Traps
+begin
+	if (is_success(Traps_Roll)) then begin
+		if (local_var(2) == 0) then begin
+			set_local_var(2, 1);
+			if (source_obj == dude_obj) then begin
+				display_msg(message_str(16, 194));
+			end
+			else begin
+				display_msg(message_str(16, 199));
+			end
+			if (local_var(6) == 0) then begin
+				set_local_var(6, 1);
+				give_exp_points(25);
+				display_msg(message_str(14, 100) + 25 + message_str(14, 101));
+			end
+		end
+		else begin
+			set_local_var(1, 1);
+			if (source_obj == dude_obj) then begin
+				display_msg(message_str(16, 196));
+			end
+			else begin
+				display_msg(obj_name(source_obj) + message_str(16, 201));
+			end
+		end
+	end
+	else begin
+		if (is_critical(Traps_Roll)) then begin
+			call Damage_Critter;
+		end
+		else begin
+			if (local_var(2) == 0) then begin
+				if (source_obj == dude_obj) then begin
+					display_msg(message_str(16, 195));
+				end
+				else begin
+					display_msg(obj_name(source_obj) + message_str(16, 200));
+				end
+			end
+			else begin
+				display_msg(obj_name(source_obj) + message_str(16, 202));
+			end
+		end
+	end
+end
+
+procedure Unlock_Lock
+begin
+	Locks_Roll := roll_vs_skill(source_obj, 9, -20);
+	call Lockpick_Door;
+end
+
+procedure Lockpick_Lock
+begin
+	Locks_Roll := roll_vs_skill(source_obj, 9, 0);
+	call Lockpick_Door;
+end
+
+procedure Lockpick_Door
+begin
+	if (is_success(Locks_Roll)) then begin
+		set_local_var(0, 1);
+		obj_unlock(self_obj);
+		if (source_obj == dude_obj) then begin
+			display_msg(message_str(16, 170));
+		end
+		else begin
+			display_msg(obj_name(source_obj) + message_str(16, 173));
+		end
+		if (local_var(5) == 0) then begin
+			set_local_var(5, 1);
+			give_exp_points(25);
+			display_msg(message_str(14, 100) + 25 + message_str(14, 101));
+		end
+	end
+	else begin
+		if (is_critical(Locks_Roll)) then begin
+			jam_lock(self_obj);
+			if (source_obj == dude_obj) then begin
+				display_msg(message_str(16, 171));
+			end
+			else begin
+				display_msg(obj_name(source_obj) + message_str(16, 174));
+			end
+		end
+		else begin
+			if (source_obj == dude_obj) then begin
+				display_msg(message_str(16, 172));
+			end
+			else begin
+				display_msg(obj_name(source_obj) + message_str(16, 175));
+			end
+		end
+	end
+end
+
+procedure Lock_Door
+begin
+	if (is_success(Locks_Roll)) then begin
+		set_local_var(0, 0);
+		obj_lock(self_obj);
+		if (source_obj == dude_obj) then begin
+			display_msg(message_str(16, 189));
+		end
+		else begin
+			display_msg(obj_name(source_obj) + message_str(16, 191));
+		end
+		if (local_var(5) == 0) then begin
+			set_local_var(5, 1);
+			give_exp_points(25);
+			display_msg(message_str(14, 100) + 25 + message_str(14, 101));
+		end
+	end
+	else begin
+		if (source_obj == dude_obj) then begin
+			display_msg(message_str(16, 190));
+		end
+		else begin
+			display_msg(obj_name(source_obj) + message_str(16, 192));
+		end
+	end
+end
+
+procedure Set_Lock
+begin
+	Locks_Roll := roll_vs_skill(source_obj, 9, -20);
+	call Lock_Door;
+end
+
+procedure Set_Lockpick_Lock
+begin
+	Locks_Roll := roll_vs_skill(source_obj, 9, 0);
+	call Lock_Door;
+end
+
+procedure Set_Trap
+begin
+	variable LVar0 := 0;
+	variable LVar1 := 0;
+	Traps_Roll := roll_vs_skill(source_obj, 11, -10);
+	LVar0 := obj_being_used_with;
+	if (obj_is_open(self_obj)) then begin
+		script_overrides;
+		if (source_obj == dude_obj) then begin
+			display_msg(message_str(16, 206));
+		end
+		else begin
+			display_msg(obj_name(source_obj) + message_str(16, 207));
+		end
+	end
+	else begin
+		script_overrides;
+		LVar1 := rm_mult_objs_from_inven(source_obj, LVar0, 1);
+		if (is_success(Traps_Roll)) then begin
+			set_local_var(1, 0);
+			if (source_obj == dude_obj) then begin
+				display_msg(message_str(16, 208));
+			end
+			else begin
+				display_msg(obj_name(source_obj) + message_str(16, 210));
+			end
+		end
+		else begin
+			if (is_critical(Traps_Roll)) then begin
+				call Damage_Critter;
+			end
+			else begin
+				if (source_obj == dude_obj) then begin
+					display_msg(message_str(16, 209));
+				end
+				else begin
+					display_msg(obj_name(source_obj) + message_str(16, 211));
+				end
+			end
+		end
+	end
+end
+
+procedure Pry_Door
+begin
+	variable LVar0 := 0;
+	LVar0 := do_check(source_obj, 0, 0);
+	if (is_success(LVar0)) then begin
+		set_local_var(0, 1);
+		obj_unlock(self_obj);
+		if (source_obj == dude_obj) then begin
+			display_msg(message_str(16, 176));
+		end
+		else begin
+			display_msg(message_str(16, 181));
+		end
+	end
+	else begin
+		if (is_critical(LVar0)) then begin
+			critter_dmg(source_obj, 2, 0 bwor 256);
+			if (source_obj == dude_obj) then begin
+				if (2 == 1) then begin
+					display_msg(message_str(16, 177));
+				end
+				else begin
+					display_msg(message_str(16, 178) + 2 + message_str(16, 179));
+				end
+			end
+			else begin
+				if (get_critter_stat(source_obj, 34) == 0) then begin
+					if (2 == 1) then begin
+						display_msg(message_str(16, 182));
+					end
+					else begin
+						display_msg(message_str(16, 183) + 2 + message_str(16, 184));
+					end
+				end
+				else begin
+					if (2 == 1) then begin
+						display_msg(message_str(16, 186));
+					end
+					else begin
+						display_msg(message_str(16, 187) + 2 + message_str(16, 188));
+					end
+				end
+			end
+		end
+		else begin
+			if (source_obj == dude_obj) then begin
+				display_msg(message_str(16, 180));
+			end
+			else begin
+				display_msg(message_str(16, 185));
+			end
+		end
+	end
+end
+
+procedure Damage_Critter
+begin
+	variable LVar0 := 0;
+	LVar0 := random(10, 20);
+	if (source_obj == dude_obj) then begin
+		critter_dmg(dude_obj, LVar0, 6 bwor 256);
+		display_msg(message_str(16, 166) + LVar0 + message_str(16, 167));
+	end
+	else begin
+		critter_dmg(source_obj, LVar0, 6 bwor 256);
+		display_msg(obj_name(source_obj) + message_str(16, 168) + LVar0 + message_str(16, 169));
+	end
+	set_local_var(1, 1);
+end
+
+procedure Super_Lockpick_Lock
+begin
+	Locks_Roll := roll_vs_skill(source_obj, 9, 20);
+	call Lockpick_Door;
+end
+
+procedure Super_Set_Lockpick_Lock
+begin
+	Locks_Roll := roll_vs_skill(source_obj, 9, 20);
+	call Lock_Door;
+end
+

@@ -1,0 +1,47 @@
+procedure start;
+
+/**
+ Helper global script for stealth aspect
+*/
+
+#include "sfall.h"
+#include "define_lite.h"
+#include "lib.arrays.h"
+#include "mod.h"
+
+#define obj_in_party(x)                     (party_member_obj(obj_pid(x)) != 0)
+
+
+variable in_combat := false;
+variable set_who_see_dude;
+
+procedure start begin
+	variable crit;
+	variable b;
+	variable c;
+  if game_loaded then begin
+	//set_global_script_type(0);
+	set_global_script_repeat(100);
+	//display_msg("INIT yo ");
+
+	set_who_see_dude := get_sfall_global_array_new(SGVAR_CRITTERS_SEE_DUDE, ARRAY_SET_BLOCK_SIZE, 4);
+  end else begin
+  
+	if (combat_is_initialized and not(in_combat)) then begin
+		in_combat := true;
+		foreach crit in list_as_array(LIST_CRITTERS) if crit then begin
+			if (crit != dude_obj and obj_can_see_obj(crit, dude_obj)) then begin 
+				//display_msg(proto_data(obj_pid(crit),cr_name) + " see.");
+				call add_array_set(set_who_see_dude, crit);
+			end
+		end
+	end else if (not(combat_is_initialized) and in_combat) then begin
+		// display_msg("Combat end yo ");
+		in_combat := false;
+		// clean set
+		resize_array(set_who_see_dude, 0);
+	end
+	
+  end
+end
+

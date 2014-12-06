@@ -1,0 +1,351 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Tubby
+        Location: Den
+        Description:
+
+        Log:
+
+           Created: January 6, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+#include "..\headers\den.h"
+
+#define NAME                        SCRIPT_DCTUBBY
+#define TOWN_REP_VAR                GVAR_TOWN_REP_THE_DEN
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+#include "..\headers\denbus1.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+
+// dialog nodes
+procedure Node000;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+
+procedure Node998;                                      // This Node is Always Combat
+
+#define LVAR_Flags                        (4)
+#define LVAR_Here_Before                  (5)
+#define LVAR_Drug_Info                    (6)
+#define LVAR_Home_Tile                    (7)
+#define LVAR_Home_Rotation                (8)
+#define LVAR_Penalty                      (9)
+
+import variable den_tubby_box_obj;
+import variable generic_temp_box;
+import variable tubby_obj;
+
+procedure start begin
+   tubby_obj := self_obj;
+end
+
+//procedure timed_event_p_proc begin
+//   if ((obj_on_screen(self_obj)) and (is_fleeing == false)) then begin
+//   end
+//   add_timer_event(self_obj,game_ticks(random(1,7)),1);
+//end
+
+procedure map_enter_p_proc begin
+   tubby_obj := self_obj;
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_DEN_TUBBYS);
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_STORE_OWNER);
+         set_local_var(LVAR_Home_Tile, self_tile);
+         set_local_var(LVAR_Home_Rotation, self_cur_rot);
+      end
+   end
+end
+
+procedure critter_p_proc begin
+   if (self_can_see_dude) then begin
+      if (hostile) then begin
+         self_attack_dude;
+      end
+   end else if (self_tile != local_var(LVAR_Home_Tile)) then begin
+      animate_move_to_tile(local_var(LVAR_Home_Tile));
+   end else if (self_cur_rot != local_var(LVAR_Home_Rotation)) then begin
+      animate_rotation(local_var(LVAR_Home_Rotation));
+   end
+   /*
+   set_map_var(MVAR_Den_Tubby_Tile_Num,self_tile);
+   if ((obj_can_see_obj(self_obj,dude_obj)) and (local_var(LVAR_Hostile) == 2)) then begin
+      set_local_var(LVAR_Hostile,1);
+      self_attack_dude;
+   end else if (petey_said_help) then begin
+      if (game_time >= map_var(MVAR_Petey_Next_Message_Time)) then begin
+         petey_and_dealer_talk(random(500,502));
+      end
+   end else if (petey_said_purchase) then begin
+      if (game_time >= map_var(MVAR_Petey_Next_Message_Time)) then begin
+         petey_and_dealer_talk(random(510,512));
+      end
+   end else if (critter_is_fleeing(self_obj)) then begin
+      Flee_From_Dude
+   end else if (self_tile != local_var(LVAR_Home_Tile)) then begin
+      animate_move_to_tile(local_var(LVAR_Home_Tile));
+   end else if (self_cur_rot != local_var(LVAR_Home_Rotation)) then begin
+      animate_rotation(local_var(LVAR_Home_Rotation));
+   end
+   */
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   script_overrides;
+   
+   if (local_var(LVAR_Penalty) > 0) then //added by killap
+      gdialog_set_barter_mod(30);
+                                 
+                                 
+   move_obj_inven_to_obj(self_obj,generic_temp_box);
+   move_obj_inven_to_obj(den_tubby_box_obj,self_obj);
+   GetReaction;
+   ReactToLevel; //added by killap
+   start_gdialog(NAME,self_obj,4,-1,-1);
+   gSay_Start;
+      if (dude_is_stupid) then begin
+         call Node007;
+      end else if ((hostile) or (REP_ENEMY_DEN) or (mom_attacked) or (mom_dead)) then begin
+         call Node001;
+      end else if (herebefore) then begin
+         if (bad_critter_reaction) then begin
+            call Node001;
+         end else begin
+            call Node002;
+         end
+      end else begin
+         call Node000;
+      end
+   gSay_End;
+   end_dialogue;
+   move_obj_inven_to_obj(self_obj,den_tubby_box_obj);
+   move_obj_inven_to_obj(generic_temp_box,self_obj);
+   set_herebefore;
+end
+
+procedure combat_p_proc begin
+   if (self_is_armed == false) then begin
+   end
+end
+
+procedure destroy_p_proc begin
+   tubby_obj := 0;
+   set_tubby_dead;
+   // reduce loot: 50% of items
+   restock_amt := 0;
+   while (inven_ptr(den_tubby_box_obj, restock_amt) != 0) do begin
+      restock_obj := inven_ptr(den_tubby_box_obj, restock_amt);
+      if (random(0,99) < 50) then begin
+      	rm_obj_from_inven(den_tubby_box_obj, restock_obj);
+      	destroy_object(restock_obj);
+      end else
+      	restock_amt += 1;
+   end
+   move_obj_inven_to_obj(den_tubby_box_obj,self_obj);
+   set_map_var(MVAR_Den_Tubby_Tile_Num, -1);
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100 + herebefore);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(150 + herebefore);
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node999 begin
+   // to exit dialogs
+end
+procedure Node998 begin
+   // sets up combat
+   set_hostile;
+end
+
+#define do_tubby_barter    begin                                                                \
+                              if (local_var(LVAR_Penalty) > 0) then                             \
+                                 gdialog_mod_barter(30);                                        \
+                              else                                                              \
+                                 gdialog_barter;                                                \
+                              Reply(520);                                                       \
+                              NOption(179,Node999,-003);                                        \
+                              if (local_var(LVAR_Penalty) > 0) then NOption(170,Node999,004);   \
+                              else NOption(168,Node999,004);                                    \
+                           end
+procedure Node996 begin
+   // go to bartering with a big penalty
+   do_tubby_barter
+end
+procedure Node995 begin
+   // go to bartering
+   do_tubby_barter
+end
+procedure Node994 begin
+   // goto first male/female dialog
+   if (dude_is_male) then begin
+      call Node003;
+   end else begin
+      call Node004;
+   end
+end
+procedure Node993 begin
+   // offer $100 for drug info
+   if (dude_caps >= 100) then begin
+      item_caps_adjust(self_obj,100);
+      item_caps_adjust(dude_obj,-100);
+      call Node009;
+   end else begin
+      Reply(192);
+      NOption(191,Node006,004);
+      NOption(193,Node999,004);
+   end
+end
+procedure Node992 begin
+   // offer $50 for drug info
+   if (dude_caps < 50) then begin
+      Reply(192);
+      NOption(191,Node006,004);
+      NOption(193,Node999,004);
+   end else begin
+      if (is_success(roll_vs_skill(dude_obj,SKILL_CONVERSANT,0))) then begin
+         item_caps_adjust(self_obj,50);
+         item_caps_adjust(dude_obj,-50);
+         call Node009;
+      end else begin
+         Reply(194);
+         NOption(191,Node006,004);
+         NOption(190,Node999,004);
+      end
+   end
+end
+procedure Node991 begin
+   // threaten for drug info
+   if ((dude_presence) or (dude_strength >=8)) then begin
+      DownReact;
+      call Node009;
+   end else begin
+      BottomReact;
+      call Node005;
+   end
+end
+
+procedure Node000 begin
+   call Node994;
+end
+procedure Node001 begin
+   set_local_var(LVAR_Penalty, 1);
+   //gdialog_set_barter_mod(30); //killap's fix: was -30
+   Reply(153);
+   NOption(154,Node996,005);
+   NOption(155,Node005,004);
+   NOption(156,Node999,004);
+end
+procedure Node002 begin
+   Reply(157);
+   NOption(158,Node995,004);
+   NOption(159,Node006,004);
+   NOption(160,Node999,004);
+end
+procedure Node003 begin
+   Reply(161);
+   NOption(162,Node995,004);
+   NOption(163,Node006,004);
+   NOption(164,Node999,004);
+end
+procedure Node004 begin
+   Reply(165);
+   NOption(166,Node995,004);
+   NOption(167,Node006,004);
+   NOption(168,Node999,004);
+end
+procedure Node005 begin
+   Reply(169);
+   NOption(170,Node999,004);
+end
+
+procedure Node006b begin
+   if (local_var(LVAR_Drug_Info)) then begin
+      call Node009;
+   end else begin
+      Reply(186);
+      NOption(187,Node993,004);
+      NOption(188,Node992,004);
+      NOption(189,Node991,004);
+      NOption(191,Node006,004);
+      NOption(190,Node999,004);
+   end
+end
+procedure Node006 begin
+   Reply(171);
+   NOption(172,Node008,004);
+   NOption(173,Node006b,004);
+   if (vault_13_visible_on_map == false) then begin
+      NOption(174,Node010,004);
+   end
+   NOption(175,Node995,004);
+   NOption(176,Node999,004);
+end
+procedure Node007 begin
+   Reply(177);
+   NOption(178,Node995,-003);
+   NOption(179,Node999,-003);
+end
+procedure Node008 begin
+   Reply(180);
+   NOption(181,Node006,004);
+end
+procedure Node009 begin
+   set_local_var(LVAR_Drug_Info,true);
+   mark_redding_on_map
+   Reply(182);
+   NOption(183,Node006,004);
+end
+procedure Node010 begin
+   Reply(184);
+   NOption(185,Node006,004);
+end

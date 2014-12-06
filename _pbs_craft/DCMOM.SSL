@@ -1,0 +1,489 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location: Den
+        Description:
+
+        Log:
+
+           Created: August 22, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+#define NAME                    SCRIPT_DCMOM
+#define TOWN_REPUTATION         GVAR_TOWN_REP_THE_DEN
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+#include "..\headers\Den.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+
+//added by killap - expansion pack
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node991;
+procedure Node992;
+//end added
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Flags                        (4)
+#define LVAR_ATE_AT_MOMS                  (5)
+#define LVAR_Said_Failed_Delivery_Message (6) //added by killap
+
+#define node_4_bit                        bit_10
+
+#define node_4                            lvar_bit(LVAR_Flags, node_4_bit)
+#define set_node_4                        set_lvar_bit_on(LVAR_Flags, node_4_bit)
+
+#define ate_at_moms_today                 ((game_time >= local_var(LVAR_ATE_AT_MOMS)) and (local_var(LVAR_ATE_AT_MOMS) != 0))
+#define set_ate_at_moms                   set_local_var(LVAR_ATE_AT_MOMS, game_time + ONE_GAME_DAY)
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+
+import variable den_mom_box_obj;
+import variable generic_temp_box;
+
+#define _LEARN_CRAFT_MOM
+#include "learn_craft.h"
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == timed_event_float) then begin
+      if (combat_is_initialized == false) then begin
+      end
+   end
+end
+
+procedure map_enter_p_proc begin
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_THE_DEN);
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_PEASANT);
+      end
+   end
+end
+
+procedure critter_p_proc begin
+   if (self_can_see_dude) then begin
+      if (hostile) then begin
+         self_attack_dude;
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_mom_attacked;
+      set_personal_enemy;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   if ((smitty_deliver(state_smitty_deliver_in_progress)) and (smitty_deliver_time_up == false)) then begin
+      call Node019;
+   end else begin
+      move_obj_inven_to_obj(self_obj,generic_temp_box);
+      move_obj_inven_to_obj(den_mom_box_obj,self_obj);
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            if (dude_is_stupid) then begin
+               call Node001;
+            end else if (smitty_deliver(state_smitty_deliver_finished)) then begin
+               call Node020;
+            end else begin
+               call Node013;
+            end
+         gSay_End;
+         end_dialogue;
+      move_obj_inven_to_obj(self_obj,den_mom_box_obj);
+      move_obj_inven_to_obj(generic_temp_box,self_obj);
+      //set_herebefore;
+   end
+end
+
+procedure destroy_p_proc begin
+   set_mom_dead;
+   move_obj_inven_to_obj(den_mom_box_obj,self_obj);
+   inc_good_critter
+   if (smitty_deliver(state_smitty_deliver_in_progress)) then
+      set_smitty_deliver(state_smitty_deliver_failed);
+   //end added by killap
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(151 - herebefore);
+   set_examined;
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node998 begin
+   set_hostile;
+end
+procedure Node999 begin
+end
+
+procedure Node990 begin
+   if (dude_caps > 10) then begin
+      item_caps_adjust(dude_obj, -5);
+   end else if (dude_caps > 0) then begin
+      item_caps_adjust(dude_obj, -1);
+   end
+   call Node010;
+end
+procedure Node989 begin
+   set_ate_at_moms;
+   dude_eat_food(large_meal);
+   gfade_out(ONE_GAME_SECOND);
+      game_time_advance(random(5, 20) * ONE_GAME_MINUTE);
+      critter_heal(dude_obj, random(2, 8));
+   gfade_in(ONE_GAME_SECOND);
+   if (dude_is_stupid) then begin
+      call Node011;
+   end else begin
+      item_caps_adjust(dude_obj, -10);
+      call Node007;
+   end
+end
+procedure Node987 begin
+   set_ate_at_moms;
+   dude_eat_food(huge_meal);
+   gfade_out(ONE_GAME_SECOND);
+      game_time_advance(random(15, 45) * ONE_GAME_MINUTE);
+      critter_heal(dude_obj, random(5, 20));
+      set_smitty_deliver(state_smitty_deliver_reward_given);
+   gfade_in(ONE_GAME_SECOND);
+   call Node007;
+end
+
+procedure Node001 begin
+   Reply(200 + herebefore);
+   NOption(mstr(202) + dude_name + ".", Node002, 001); //added . - killap
+   NOption(203, Node999, 001);
+   
+   set_herebefore; //added by killap
+end
+
+procedure Node002 begin
+   if (ate_at_moms_today) then begin
+      Reply(220);
+      GOption(223, Node999, 001);
+   end else begin
+      Reply(mstr(221) + dude_name + "," + mstr(222)); //added ,  -killap
+      NOption(224, Node003, 001);
+   end
+   NOption(225, Node999, 001);
+end
+
+procedure Node003 begin
+   Reply(240);
+   GOption(241, Node990, 001);
+   NOption(242, Node999, 001);
+end
+
+procedure Node004 begin
+   Reply(250 + node_4);
+   set_node_4;
+   NOption(252, Node005, 004);
+   NOption(253, Node006, 004);
+   NOption(254, Node006, 004);
+end
+
+procedure Node005 begin
+   Reply(270);
+   NOption(271, Node006, 004);
+end
+
+procedure Node006 begin
+   Reply(280);
+   if (dude_caps < 10) then begin
+      NOption(281, Node013, 004);
+   end else begin
+      GOption(282, Node989, 004);
+      NOption(283, Node989, 004);
+   end
+   NOption(284, Node013, 004);
+   NOption(285, Node999, 004);
+end
+
+procedure Node007 begin
+   Reply(300);
+   GOption(301, Node006, 004); //edit by killap - was Node004
+   GOption(302, Node013, 004);
+   GOption(303, Node999, 004);
+end
+
+procedure Node008 begin
+   Reply(320);
+   GOption(321, Node012, 004);
+   NOption(322, Node013, 004);
+   BOption(323, Node999, 004);
+end
+
+procedure Node009 begin
+   Reply(random(340, 358));
+   GOption(360, Node004, 001);
+end
+
+procedure Node010 begin
+   Reply(375);
+   GOption(376, Node989, 001);
+end
+
+procedure Node011 begin
+   Reply(385);
+   GOption(386, Node999, 001);
+end
+
+procedure Node012 begin
+   set_smitty_deliver(state_smitty_deliver_in_progress);
+   give_pid_qty(dude_obj, PID_SMITTY_MEAL, 1)
+   Reply(395);
+   GOption(396, Node999, 004);
+end
+
+procedure Node013 begin
+   if ( (smitty_deliver_failed) and (local_var(LVAR_Said_Failed_Delivery_Message) == 0) ) then begin //added local var check - killap
+      //set_smitty_deliver(state_smitty_deliver_failed);
+      set_local_var(LVAR_Said_Failed_Delivery_Message,1); //added - killap
+      Reply(405);
+   end else begin
+      Reply(406 + herebefore + ((global_var(GVAR_DEN_ORPHANAGE) >= 6) * 10)); // edit by killap - expansion
+   end
+   NOption(408, Node014, 004);
+   if (get_anna_locket_pip(anna_locket_pip_done) == false) then begin
+      if ((anna_spoken) and (gave_anna_locket == false)) then begin
+         NOption(600, Node021, 004);
+      end
+   end
+   if ((vic_known(state_vic_known_name)) and (vic_dead == false) and (vic_talk == false) and (vic_free == false)) then begin
+      NOption(409, Node016, 004);
+   end
+   if ((smitty_dead == false) and (smitty_deliver(state_smitty_deliver_none))) then begin
+      NOption(410, Node008, 004);
+   end
+   NOption(411, Node009, 004);
+   
+   //added by killap - expansion pack
+   if (global_var(GVAR_DEN_ORPHANAGE) == 1) then
+      NOption(800, Node026, 004);
+   else if (global_var(GVAR_DEN_ORPHANAGE) == 3) then
+      NOption(820, Node030, 004);
+   else if (global_var(GVAR_DEN_ORPHANAGE) == 4) then
+      NOption(1821, Node030, 004);
+   else if (global_var(GVAR_DEN_ORPHANAGE) == 5) then
+      NOption(821, Node030, 004);
+   //end added - expansion
+   
+   //added by phobos2077 - craft
+   if (get_sfall_global_int(SGVAR_CRAFT_FOOD) == 0) then
+      NOption(2001, NodeCraft1, 004);
+   
+   NOption(g_mstr(376),Node999,004); //edit by killap
+
+   set_herebefore; //added by killap
+end
+
+procedure Node014 begin
+   Reply(425);
+   NOption(426, Node015, 004);
+end
+
+procedure Node015 begin
+   Reply(435);
+   NOption(436, Node013, 004);
+   NOption(437, Node999, 004);
+end
+
+procedure Node016 begin
+   mark_vault_city_on_map
+   Reply(445);
+   NOption(446, Node017, 004);
+   NOption(447, Node999, 004);
+end
+
+procedure Node017 begin
+   Reply(455);
+   NOption(456, Node018, 004);
+   GOption(457, Node999, 004);
+end
+
+procedure Node018 begin
+   Reply(465 + metzger_dead);
+   NOption(467, Node013, 004);
+   NOption(468, Node999, 004);
+end
+
+procedure Node019 begin
+   floater_rand(475, 479);
+end
+
+procedure Node020 begin
+   Reply(485);
+   GOption(486, Node987, 004);
+   BOption(487, Node999, 004);
+end
+
+procedure Node021 begin
+   Reply(500);
+   NOption(501, Node022, 005);
+   NOption(502, Node023, 004);
+   NOption(503, Node999, 004);
+end
+procedure Node022 begin
+   Reply(520);
+   NOption(521, Node023, 004);
+   NOption(522, Node999, 004);
+end
+procedure Node023 begin
+   Reply(540);
+   NOption(541, Node024, 004);
+   NOption(542, Node999, 004);
+end
+procedure Node024 begin
+   set_mom_fingered_joey;
+   Reply(560);
+   NOption(561, Node025, 004);
+   NOption(562, Node025, 004);
+   NOption(563, Node013, 004);
+   NOption(564, Node999, 004);
+end
+procedure Node025 begin
+   Reply(580);
+   NOption(581, Node013, 004);
+   NOption(582, Node999, 004);
+end
+
+//added by killap - expansion pack
+procedure Node026 begin
+   Reply(801);
+   NOption(802, Node027, 004);
+   BOption(811, Node999, 004);
+   NOption(805, Node999, 004);
+end
+
+procedure Node027 begin
+   Reply(803);
+   NOption(804, Node028, 004);
+end
+
+procedure Node028 begin
+   Reply(806);
+   NOption(807, Node991, 004); //accept
+   NOption(808, Node029, 004);
+end
+
+procedure Node029 begin
+   Reply(809);
+   NOption(563, Node013, 004);
+   NOption(810, Node999, 004);
+end
+
+procedure Node030 begin
+   if (global_var(GVAR_DEN_ORPHANAGE) == 3) then
+      Reply(822);
+   else if (global_var(GVAR_DEN_ORPHANAGE) == 4) then
+      Reply(1822);
+   else
+      Reply(823);
+      
+   NOption(824, Node992, 004);
+end
+
+procedure Node991 begin
+   set_global_var(GVAR_DEN_ORPHANAGE,2);
+end
+
+procedure Node992 begin
+   display_msg(mstr(850));
+      
+   if (global_var(GVAR_DEN_ORPHANAGE) == 3) then begin
+      give_xp(500);
+   end else if (global_var(GVAR_DEN_ORPHANAGE) == 4) then begin
+      give_xp(750);
+   end else begin
+      give_xp(1000);
+   end
+      
+   set_global_var(GVAR_DEN_ORPHANAGE,6);
+   set_ate_at_moms;
+   dude_eat_food(large_meal);
+   gfade_out(ONE_GAME_SECOND);
+      game_time_advance(random(5, 20) * ONE_GAME_MINUTE);
+      critter_heal(dude_obj, random(2, 8));
+   gfade_in(ONE_GAME_SECOND);
+   inc_global_var_amt(GVAR_TOWN_REP_THE_DEN,5);
+   set_global_var(GVAR_DEN_ORPHANAGE_BUILD_TIME,game_time); 
+end
+
+//end added by killap - expansion pack

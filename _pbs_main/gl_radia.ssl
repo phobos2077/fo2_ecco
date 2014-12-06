@@ -1,0 +1,122 @@
+procedure start;
+
+/**
+
+	
+	Should be of type 0 (local map)
+
+	@author phobos2077
+	
+*/
+
+
+#include "sfall.h"
+#include "..\headers\define.h"
+#include "lib.arrays.h"
+
+#define RADIATE_GECKO      (10)
+#define RADIATE_TIMEOUT   (600)
+
+procedure radiate_party(variable amt);
+
+variable last_radiated;
+variable last_map := -1;
+
+procedure start begin
+   variable arr, i, rads, mod;
+   
+   if game_loaded then begin
+      display_msg("gl_radia init: "+cur_map_index);
+      set_global_script_type(3);
+      set_global_script_repeat(10);
+      
+   end else begin
+      rads := 0;
+      mod := 0;
+      if (get_game_mode bwand WORLDMAP) then begin
+         last_map := -1;
+         display_msg("on worldmap");
+      end else if (last_map == -1) then begin
+         last_radiated := game_time;
+         last_map := cur_map_index;
+      end
+      if (game_time - last_radiated >= RADIATE_TIMEOUT and cur_map_index == last_map) then begin
+         if (cur_town == AREA_GECKO) then begin
+            if not(is_in_array(global_var(GVAR_VAULT_GECKO_PLANT), temp_list2(PLANT_REPAIRED,PLANT_OPTIMIZED))) then
+               rads := RADIATE_GECKO;
+         end
+         if (rads) then begin
+            rads := floor(rads * (game_time - last_radiated) / RADIATE_TIMEOUT);
+            call radiate_party(rads);
+            last_radiated := game_time;
+            last_map := cur_map_index;
+         end
+      end
+   end
+end
+
+
+procedure radiate_party(variable amt) begin
+   //IF ANYONE IS IN THIS AREA HE/SHE TAKES RADIATION AND HEAT DAMAGE
+   //POWER ARMOR WILL NOT PROTECT!
+   //GHOULS ARE IMMUNE
+   display_msg("radiate "+amt);
+   //radiation_inc(dude_obj, amt);
+   
+   #define _rad(who)  \
+   if who##_In_Party then begin \
+      radiation_inc(who##_Ptr, amt); \
+   end
+   _rad(Vic)
+   _rad(Myron)
+   _rad(Marcus)
+   _rad(MacRae)
+   _rad(Sulik)
+   // _rad(Lenny) - is a ghul
+   _rad(Cyberdog)
+   _rad(Goris)
+   _rad(Davin)
+   _rad(Miria)
+   _rad(Robobrain)
+   _rad(Dogmeat)
+   _rad(K9)
+   _rad(Laddie)
+   _rad(Bess)
+   _rad(Chicken)
+   _rad(Karl)
+   _rad(Jonny)
+   _rad(Lloyd)
+   _rad(Kitsune)
+   _rad(Dex)
+   _rad(Cat_Jules)
+   //display_msg("end radiate proc");
+end
+
+/*
+procedure radiate begin
+   //display_msg("...called check_em");
+   uh_oh_chernobl:=0;
+   my_tile:=tile_num(glow_obj);
+   if (obj_in_loc(glow_obj, 12491, 12461, 18261, 18291, MAP_GECKO_POWER_PLANT, PWPL_ELEV) ) then begin
+      //debug_msg("In the Hot Area.");
+      uh_oh_chernobl:=1;
+   end
+   
+   if (tile_distance(my_tile,19488)) < 5 then begin
+      uh_oh_chernobl:=1;
+   end
+   if (tile_distance(my_tile,18888)) < 5 then begin
+      uh_oh_chernobl:=1;
+   end
+   if (uh_oh_chernobl == 1) then begin
+      if (global_var(GVAR_GECKO_MELTDOWN) > 0) then
+         k:=15;
+      else
+         k:=10;
+      radiation_inc(glow_obj,k);
+      if ( (get_critter_stat(glow_obj,STAT_current_hp)) < 11 ) then
+         critter_dmg(glow_obj,50,DMG_plasma BWOR DMG_BYPASS_ARMOR); //make sure they melt
+      else
+         critter_dmg(glow_obj,k,DMG_plasma BWOR DMG_BYPASS_ARMOR);
+   end
+end*/

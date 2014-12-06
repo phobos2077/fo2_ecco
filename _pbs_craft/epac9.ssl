@@ -1,0 +1,749 @@
+/*
+  ***   Script conwerted to Interplay format by Fallout Script Edytor (by Jargo)  ***
+*/
+
+#include "..\HEADERS\define.h"
+#include "..\HEADERS\EPAMAIN.h"
+
+#define NAME                    SCRIPT_EPAC9          //Script name from scripts.h
+#define TOWN_REP_VAR            GVAR_TOWN_REP_           //Global variable name for this Town
+
+#include "..\HEADERS\command.h"
+
+
+#include "..\_pbs_main\lib.inven.h"
+
+#define dude_has(pid)   (obj_is_carrying_obj_pid(dude_obj, pid))
+
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+
+#define LVAR_Created_Heart_Pills        (7)
+#define LVAR_Created_ERSI               (8)
+
+#define PICKUP_HEX                  (18065)
+
+procedure start;
+procedure use_p_proc;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure timed_event_p_proc;
+procedure Node998;
+procedure Node999;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node004a;
+procedure Node005a;
+procedure Node006a;
+procedure Node003a;
+procedure Node007a;
+procedure Node008a;
+procedure Node009a;
+procedure Node010a;
+procedure Node011a;
+procedure Node012a;
+procedure Node013a;
+procedure Node014a;
+procedure Node015a;
+procedure Node016a;
+procedure Node017a;
+procedure Node019a;
+procedure Node020;
+procedure Node020a;
+
+procedure Node021;
+procedure Node021a;
+
+variable Only_Once := 0;
+
+procedure start
+begin
+end
+
+procedure use_p_proc
+begin
+  if (combat_is_initialized == 0) then begin
+     if (local_var(LVAR_Herebefore) == 1) then
+     begin
+       start_gdialog(NAME, self_obj, 4, -1, -1);
+       gsay_start;
+       call Node003;
+       gsay_end;
+       end_dialogue;
+     end
+     else
+     begin
+       start_gdialog(NAME, self_obj, 4, -1, -1);
+       gsay_start;
+       call Node001;
+       gsay_end;
+       end_dialogue;
+     end
+  end
+end
+
+procedure critter_p_proc
+begin
+  if ((local_var(LVAR_Hostile) != 0) and obj_can_see_obj(self_obj, dude_obj)) then
+  begin
+    set_local_var(LVAR_Hostile, 1);
+    if (critter_is_fleeing(self_obj)) then
+    begin
+      if (anim_busy(self_obj) == 0) then
+      begin
+        if ((tile_distance_objs(self_obj, dude_obj) < 8) or obj_can_see_obj(self_obj, dude_obj)) then
+        begin
+          if (anim_busy(self_obj) == 0) then
+          begin
+            global_temp := rotation_to_tile(tile_num(dude_obj), tile_num(self_obj));
+            animate_move_obj_to_tile(self_obj, tile_num_in_direction(tile_num(self_obj), global_temp, random(3, 10)), 1);
+            global_temp := (global_temp + 1) % 6;
+            while ((anim_busy(self_obj) == 0) and (global_temp != rotation_to_tile(tile_num(dude_obj), tile_num(self_obj)))) do
+            begin
+              debug_msg("flee loop: rot == " + global_temp);
+              animate_move_obj_to_tile(self_obj, tile_num_in_direction(tile_num(self_obj), global_temp, random(3, 10)), 1);
+              global_temp := (global_temp + 1) % 6;
+            end
+          end
+        end
+      end
+    end
+    else
+      attack(dude_obj);
+  end
+end
+
+procedure pickup_p_proc
+begin
+  if (source_obj == dude_obj) then
+    set_local_var(LVAR_Hostile, 2);
+end
+
+procedure talk_p_proc
+begin
+end
+
+procedure destroy_p_proc
+begin
+  if (source_obj == dude_obj) then
+  begin
+    set_global_var(GVAR_GOOD_MONSTER, global_var(GVAR_GOOD_MONSTER) + 1);
+    if (metarule(51, self_obj) == 2) then
+    begin
+      if (source_obj == dude_obj) then
+      begin
+        set_global_var(GVAR_CHAMPION_REPUTATION, 0);
+        set_global_var(GVAR_CHILDKILLER_REPUTATION, global_var(GVAR_CHILDKILLER_REPUTATION) + 1);
+        set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) - -15);
+        set_global_var(GVAR_KARMA_HOLY_WARRIOR, 0);
+        set_global_var(GVAR_KARMA_GUARDIAN_OF_THE_WASTES, 0);
+        set_global_var(GVAR_KARMA_SHIELD_OF_HOPE, 0);
+        set_global_var(GVAR_KARMA_DEFENDER, 0);
+        set_global_var(GVAR_KARMA_WANDERER, 0);
+        set_global_var(GVAR_KARMA_BETRAYER, 0);
+        set_global_var(GVAR_KARMA_SWORD_OF_DESPAIR, 0);
+        set_global_var(GVAR_KARMA_SCOURGE_OF_THE_WASTES, 0);
+        set_global_var(GVAR_KARMA_DEMON_SPAWN, 0);
+        if (global_var(GVAR_PLAYER_REPUTATION) >= 1000) then
+          set_global_var(GVAR_KARMA_HOLY_WARRIOR, 1);
+        else if (global_var(GVAR_PLAYER_REPUTATION) >= 750) then
+          set_global_var(GVAR_KARMA_GUARDIAN_OF_THE_WASTES, 1);
+        else if (global_var(GVAR_PLAYER_REPUTATION) >= 500) then
+          set_global_var(GVAR_KARMA_SHIELD_OF_HOPE, 1);
+        else if (global_var(GVAR_PLAYER_REPUTATION) >= 250) then
+          set_global_var(GVAR_KARMA_DEFENDER, 1);
+        else if (global_var(GVAR_PLAYER_REPUTATION) > -250) then
+          set_global_var(GVAR_KARMA_WANDERER, 1);
+        else if (global_var(GVAR_PLAYER_REPUTATION) > -500) then
+          set_global_var(GVAR_KARMA_BETRAYER, 1);
+        else if (global_var(GVAR_PLAYER_REPUTATION) > -750) then
+          set_global_var(GVAR_KARMA_SWORD_OF_DESPAIR, 1);
+        else if (global_var(GVAR_PLAYER_REPUTATION) > -1000) then
+          set_global_var(GVAR_KARMA_SCOURGE_OF_THE_WASTES, 1);
+        else
+          set_global_var(GVAR_KARMA_DEMON_SPAWN, 1);
+      end
+    end
+    if (((global_var(GVAR_BAD_MONSTER) + global_var(GVAR_GOOD_MONSTER)) >= 25) and ((global_var(GVAR_BAD_MONSTER) > (3 * global_var(GVAR_GOOD_MONSTER))) or (global_var(GVAR_CHAMPION_REPUTATION) == 1)) and (global_var(GVAR_CHILDKILLER_REPUTATION) == 0)) then
+    begin
+      set_global_var(GVAR_CHAMPION_REPUTATION, 1);
+      set_global_var(GVAR_BERSERKER_REPUTATION, 0);
+    end
+    if (((global_var(GVAR_BAD_MONSTER) + global_var(GVAR_GOOD_MONSTER)) >= 25) and ((global_var(GVAR_GOOD_MONSTER) > (2 * global_var(GVAR_BAD_MONSTER))) or (global_var(GVAR_BERSERKER_REPUTATION) == 1))) then
+    begin
+      set_global_var(GVAR_BERSERKER_REPUTATION, 1);
+      set_global_var(GVAR_CHAMPION_REPUTATION, 0);
+    end
+    set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + -10);
+    debug_msg("Player gains " + -10 + " Karma Points.");
+    set_global_var(GVAR_KARMA_HOLY_WARRIOR, 0);
+    set_global_var(GVAR_KARMA_GUARDIAN_OF_THE_WASTES, 0);
+    set_global_var(GVAR_KARMA_SHIELD_OF_HOPE, 0);
+    set_global_var(GVAR_KARMA_DEFENDER, 0);
+    set_global_var(GVAR_KARMA_WANDERER, 0);
+    set_global_var(GVAR_KARMA_BETRAYER, 0);
+    set_global_var(GVAR_KARMA_SWORD_OF_DESPAIR, 0);
+    set_global_var(GVAR_KARMA_SCOURGE_OF_THE_WASTES, 0);
+    set_global_var(GVAR_KARMA_DEMON_SPAWN, 0);
+    if (global_var(GVAR_PLAYER_REPUTATION) >= 1000) then
+      set_global_var(GVAR_KARMA_HOLY_WARRIOR, 1);
+    else if (global_var(GVAR_PLAYER_REPUTATION) >= 750) then
+      set_global_var(GVAR_KARMA_GUARDIAN_OF_THE_WASTES, 1);
+    else if (global_var(GVAR_PLAYER_REPUTATION) >= 500) then
+      set_global_var(GVAR_KARMA_SHIELD_OF_HOPE, 1);
+    else if (global_var(GVAR_PLAYER_REPUTATION) >= 250) then
+      set_global_var(GVAR_KARMA_DEFENDER, 1);
+    else if (global_var(GVAR_PLAYER_REPUTATION) > -250) then
+      set_global_var(GVAR_KARMA_WANDERER, 1);
+    else if (global_var(GVAR_PLAYER_REPUTATION) > -500) then
+      set_global_var(GVAR_KARMA_BETRAYER, 1);
+    else if (global_var(GVAR_PLAYER_REPUTATION) > -750) then
+      set_global_var(GVAR_KARMA_SWORD_OF_DESPAIR, 1);
+    else if (global_var(GVAR_PLAYER_REPUTATION) > -1000) then
+      set_global_var(GVAR_KARMA_SCOURGE_OF_THE_WASTES, 1);
+    else
+      set_global_var(GVAR_KARMA_DEMON_SPAWN, 1);
+  end
+end
+
+procedure look_at_p_proc
+begin
+  script_overrides;
+  if (local_var(LVAR_Herebefore) == 0) then
+    display_msg(message_str(NAME, 100));
+  else
+    display_msg(message_str(NAME, 101));
+end
+
+procedure description_p_proc
+begin
+  script_overrides;
+  display_msg(message_str(NAME, 102));
+end
+
+procedure use_skill_on_p_proc
+begin
+end
+
+procedure damage_p_proc
+begin
+  if (party_member_obj(obj_pid(source_obj)) != 0) then
+    set_local_var(LVAR_Personal_Enemy, 1);
+end
+
+procedure map_enter_p_proc
+begin
+  Only_Once := 0;
+end
+
+procedure timed_event_p_proc
+begin
+end
+
+procedure Node998
+begin
+  set_local_var(LVAR_Hostile, 2);
+end
+
+procedure Node999
+begin
+  debug_msg("LVAR_Herebefore == " + local_var(LVAR_Herebefore));
+  if (local_var(LVAR_Herebefore) == 0) then
+    set_local_var(LVAR_Herebefore, 1);
+end
+
+procedure Node001
+begin
+  gsay_reply(NAME, 200);
+  giq_option(4, NAME, 201, Node002, 50);
+end
+
+procedure Node002
+begin
+  gsay_reply(NAME, 210);
+  giq_option(4, NAME, 211, Node003, 50);
+  giq_option(4, NAME, 212, Node999, 50);
+end
+
+procedure Node003
+begin
+  gsay_reply(NAME, 220);
+  giq_option(4, NAME, 221, Node004, 50);
+  giq_option(4, NAME, 222, Node005, 50);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 40) then
+    giq_option(4, NAME, 223, Node010, 50);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 45) then
+    giq_option(4, NAME, 224, Node014, 50);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 55) then
+    giq_option(4, NAME, 225, Node009, 50);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 60) then
+    giq_option(4, NAME, 226, Node008, 50);
+  giq_option(4, NAME, 371, Node003a, 50);
+  giq_option(4, NAME, 383, Node999, 50);
+end
+
+procedure Node004
+begin
+  gsay_reply(NAME, 230);
+  if ((dude_has(PID_BROC_FLOWER) >= 1) and (dude_has(PID_XANDER_ROOT) >= 1) and (dude_has(PID_HYPODERMIC_NEEDLE) >= 1)) then
+    giq_option(4, NAME, 231, Node004a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node005
+begin
+  gsay_reply(NAME, 240);
+  if ((dude_has(PID_STIMPAK) >= 2) and (dude_has(PID_MUTATED_FRUIT) >= 1) and (dude_has(PID_NUKA_COLA) >= 1)) then
+    giq_option(4, NAME, 241, Node005a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node006
+begin
+  gsay_reply(NAME, 250);
+  if ((dude_has(PID_BOOZE) >= 1) and (dude_has(PID_BUFFOUT) >= 1) and (dude_has(PID_MUTATED_FRUIT) >= 2) and (dude_has(PID_SUPER_STIMPAK) >= 1)) then
+    giq_option(4, NAME, 251, Node006a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node007
+begin
+  gsay_reply(NAME, 260);
+  if ((dude_has(PID_FIRST_AID_KIT) >= 1) and (dude_has(PID_MUTATED_FRUIT) >= 1) and (dude_has(PID_BOOZE) >= 1)) then
+    giq_option(4, NAME, 262, Node007a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node008
+begin
+  gsay_reply(NAME, 270);
+  if ((dude_has(PID_FIRST_AID_KIT) >= 1) and (dude_has(PID_STIMPAK) >= 1) and (dude_has(PID_HYPODERMIC_NEEDLE) >= 1) and (dude_has(PID_ANTIDOTE) >= 1)) then
+    giq_option(4, NAME, 272, Node008a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node009
+begin
+  gsay_reply(NAME, 280);
+  if ((dude_has(PID_STIMPAK) >= 1) and (dude_has(PID_RADAWAY) >= 1) and (dude_has(PID_ANTIDOTE) >= 1) and (dude_has(PID_HYPODERMIC_NEEDLE) >= 1)) then
+    giq_option(4, NAME, 282, Node009a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node010
+begin
+  gsay_reply(NAME, 290);
+  if ((dude_has(PID_HYPODERMIC_NEEDLE) >= 1) and (dude_has(PID_NUKA_COLA) >= 1) and ((dude_has(PID_SCORPION_TAIL) >= 1) or (dude_has(PID_SMALL_SCORPION_TAIL) >= 1))) then
+    giq_option(4, NAME, 292, Node010a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node011
+begin
+  gsay_reply(NAME, 300);
+  if ((dude_has(PID_BEER) >= 1) and (dude_has(PID_NUKA_COLA) >= 1) and (dude_has(PID_FIRST_AID_KIT) >= 1)) then
+    giq_option(4, NAME, 302, Node011a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node012
+begin
+  gsay_reply(NAME, 310);
+  if ((dude_has(PID_NUKA_COLA) >= 1) and (dude_has(PID_FIRST_AID_KIT) >= 1)) then
+    giq_option(4, NAME, 312, Node012a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node013
+begin
+  gsay_reply(NAME, 320);
+  if ((dude_has(PID_STIMPAK) >= 1) and (dude_has(PID_NUKA_COLA) >= 1) and (dude_has(PID_HYPODERMIC_NEEDLE) >= 1)) then
+    giq_option(4, NAME, 322, Node013a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node014
+begin
+  gsay_reply(NAME, 330);
+  if ((dude_has(PID_BOOZE) >= 1) and ((dude_has(PID_SCORPION_TAIL) >= 1) or (dude_has(PID_SMALL_SCORPION_TAIL) >= 1))) then
+    giq_option(4, NAME, 331, Node014a, 50);
+  giq_option(4, NAME, 232, Node999, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node015
+begin
+  gsay_reply(NAME, 340);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 100) then begin
+   giq_option(4, NAME, 341, Node015a, 50);
+   //giq_option(4, NAME, 342, Node017a, 50); --this is the doctor's chemicals. Crashes if you from inventory, not if holding in hands. Need to figure something different out.
+   if ( (party_member_obj(16777305) != 0) and (local_var(LVAR_Created_Heart_Pills) == 0) ) then
+    giq_option(4, NAME, 343, Node020, 50);
+  end
+   if ( (global_var(GVAR_NEED_ERSI) == 1) and (local_var(LVAR_Created_ERSI) == 0) ) then
+    giq_option(4, NAME, 344, Node021, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node016
+begin
+  gsay_reply(NAME, 350);
+  giq_option(4, NAME, 351, Node016a, 50);
+  giq_option(4, NAME, 352, Node003, 50);
+end
+
+procedure Node017
+begin
+  gsay_reply(NAME, 360);
+  giq_option(4, NAME, 352, Node003, 50);
+end
+
+procedure Node018
+begin
+  gsay_reply(NAME, 370);
+  giq_option(4, NAME, 233, Node003, 50);
+  giq_option(4, NAME, 392, Node999, 50);
+
+end
+
+procedure Node019
+begin
+  gsay_reply(NAME, 350);
+  giq_option(4, NAME, 351, Node019a, 50);
+  giq_option(4, NAME, 352, Node003, 50);
+end
+
+procedure Node004a
+begin
+   call remove_item_pid(dude_obj, PID_BROC_FLOWER);
+   call remove_item_pid(dude_obj, PID_XANDER_ROOT);
+   call remove_item_pid(dude_obj, PID_HYPODERMIC_NEEDLE);
+   create_object_sid(PID_STIMPAK, PICKUP_HEX, 1, -1);
+   call Node018;
+end
+
+procedure Node005a
+begin
+   call remove_items_pid(dude_obj, PID_STIMPAK, 2);
+   call remove_item_pid(dude_obj, PID_MUTATED_FRUIT);
+   call remove_item_pid(dude_obj, PID_NUKA_COLA);
+  
+   create_object_sid(PID_SUPER_STIMPAK, PICKUP_HEX, 1, -1);
+   call Node018;
+end
+
+procedure Node006a
+begin
+   call remove_item_pid(dude_obj, PID_BUFFOUT);
+   call remove_items_pid(dude_obj, PID_MUTATED_FRUIT, 2);
+   call remove_item_pid(dude_obj, PID_BOOZE);
+   call remove_item_pid(dude_obj, PID_SUPER_STIMPAK);
+
+   create_object_sid(PID_PSYCHO, PICKUP_HEX, 1, -1);
+   call Node018;
+end
+
+procedure Node003a
+begin
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 70) then
+    giq_option(4, NAME, 227, Node011, 50);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 80) then
+    giq_option(4, NAME, 228, Node007, 50);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 85) then
+    giq_option(4, NAME, 229, Node006, 50);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 85) then
+    giq_option(4, NAME, 380, Node012, 50);
+  if (has_skill(dude_obj, SKILL_SCIENCE) > 90) then
+    giq_option(4, NAME, 381, Node013, 50);
+  if ((has_skill(dude_obj, SKILL_SCIENCE) > 100) or 
+     ( (global_var(GVAR_NEED_ERSI) == 1) and (local_var(LVAR_Created_ERSI) == 0) )) then
+    giq_option(4, NAME, 382, Node015, 50);
+  giq_option(4, NAME, 383, Node999, 50);
+end
+
+procedure Node007a
+begin
+  variable LVar1 := 0;
+  variable LVar2 := 0;
+  variable LVar3 := 0;
+
+  LVar1 := obj_carrying_pid_obj(dude_obj, PID_FIRST_AID_KIT);
+  LVar2 := obj_carrying_pid_obj(dude_obj, PID_MUTATED_FRUIT);
+  LVar3 := obj_carrying_pid_obj(dude_obj, PID_BOOZE);
+  if ((dude_has(PID_FIRST_AID_KIT) >= 1) and (dude_has(PID_MUTATED_FRUIT) >= 1) and (dude_has(PID_BOOZE) >= 1)) then
+  begin
+    rm_obj_from_inven(dude_obj, LVar1);
+    destroy_object(LVar1);
+    rm_obj_from_inven(dude_obj, LVar2);
+    destroy_object(LVar2);
+    rm_obj_from_inven(dude_obj, LVar3);
+    destroy_object(LVar3);
+    create_object_sid(PID_MENTATS, PICKUP_HEX, 1, -1);
+  end
+  call Node018;
+end
+
+procedure Node008a
+begin
+  variable LVar1 := 0;
+  variable LVar2 := 0;
+  variable LVar3 := 0;
+  variable LVar4 := 0;
+
+  LVar1 := obj_carrying_pid_obj(dude_obj, PID_FIRST_AID_KIT);
+  LVar2 := obj_carrying_pid_obj(dude_obj, PID_STIMPAK);
+  LVar3 := obj_carrying_pid_obj(dude_obj, PID_HYPODERMIC_NEEDLE);
+  LVar4 := obj_carrying_pid_obj(dude_obj, PID_ANTIDOTE);
+  if ((dude_has(PID_FIRST_AID_KIT) >= 1) and (dude_has(PID_STIMPAK) >= 1) and (dude_has(PID_HYPODERMIC_NEEDLE) >= 1) and (dude_has(PID_ANTIDOTE) >= 1)) then
+  begin
+    rm_obj_from_inven(dude_obj, LVar1);
+    destroy_object(LVar1);
+    rm_obj_from_inven(dude_obj, LVar2);
+    destroy_object(LVar2);
+    rm_obj_from_inven(dude_obj, LVar3);
+    destroy_object(LVar3);
+    rm_obj_from_inven(dude_obj, LVar4);
+    destroy_object(LVar4);
+    create_object_sid(PID_DOCTORS_BAG, PICKUP_HEX, 1, -1);
+  end
+  call Node018;
+end
+
+procedure Node009a
+begin
+  variable LVar1 := 0;
+  variable LVar2 := 0;
+  variable LVar3 := 0;
+  variable LVar4 := 0;
+
+  LVar1 := obj_carrying_pid_obj(dude_obj, PID_STIMPAK);
+  LVar2 := obj_carrying_pid_obj(dude_obj, PID_ANTIDOTE);
+  LVar3 := obj_carrying_pid_obj(dude_obj, PID_HYPODERMIC_NEEDLE);
+  LVar4 := obj_carrying_pid_obj(dude_obj, PID_RADAWAY);
+  if ((dude_has(PID_STIMPAK) >= 1) and (dude_has(PID_RADAWAY) >= 1) and (dude_has(PID_ANTIDOTE) >= 1) and (dude_has(PID_HYPODERMIC_NEEDLE) >= 1)) then
+  begin
+    rm_obj_from_inven(dude_obj, LVar1);
+    destroy_object(LVar1);
+    rm_obj_from_inven(dude_obj, LVar2);
+    destroy_object(LVar2);
+    rm_obj_from_inven(dude_obj, LVar3);
+    destroy_object(LVar3);
+    rm_obj_from_inven(dude_obj, LVar4);
+    destroy_object(LVar4);
+    create_object_sid(PID_FIRST_AID_KIT, PICKUP_HEX, 1, -1);
+  end
+  call Node018;
+end
+
+procedure Node010a
+begin
+  variable LVar1 := 0;
+  variable LVar2 := 0;
+  variable LVar3 := 0;
+
+  LVar1 := obj_carrying_pid_obj(dude_obj, PID_SCORPION_TAIL);
+  LVar2 := obj_carrying_pid_obj(dude_obj, PID_NUKA_COLA);
+  LVar3 := obj_carrying_pid_obj(dude_obj, PID_HYPODERMIC_NEEDLE);
+  if ((dude_has(PID_HYPODERMIC_NEEDLE) >= 1) and (dude_has(PID_NUKA_COLA) >= 1) and ((dude_has(PID_SCORPION_TAIL) >= 1) or (dude_has(PID_SMALL_SCORPION_TAIL) >= 1))) then
+  begin
+    if (dude_has(PID_SCORPION_TAIL) >= 1) then begin
+      // do nothing since this is already set above
+    end else begin
+      LVar1 := obj_carrying_pid_obj(dude_obj, PID_SMALL_SCORPION_TAIL);
+    end  
+    rm_obj_from_inven(dude_obj, LVar1);
+    destroy_object(LVar1);
+    rm_obj_from_inven(dude_obj, LVar2);
+    destroy_object(LVar2);
+    rm_obj_from_inven(dude_obj, LVar3);
+    destroy_object(LVar3);
+    create_object_sid(PID_HYPO_POISON, PICKUP_HEX, 1, -1);
+  end
+  call Node018;
+end
+
+procedure Node011a
+begin
+  variable LVar1 := 0;
+  variable LVar2 := 0;
+  variable LVar3 := 0;
+
+  LVar1 := obj_carrying_pid_obj(dude_obj, PID_BEER);
+  LVar2 := obj_carrying_pid_obj(dude_obj, PID_NUKA_COLA);
+  LVar3 := obj_carrying_pid_obj(dude_obj, PID_FIRST_AID_KIT);
+  if ((dude_has(PID_BEER) >= 1) and (dude_has(PID_NUKA_COLA) >= 1) and (dude_has(PID_FIRST_AID_KIT) >= 1)) then
+  begin
+    rm_obj_from_inven(dude_obj, LVar1);
+    destroy_object(LVar1);
+    rm_obj_from_inven(dude_obj, LVar2);
+    destroy_object(LVar2);
+    rm_obj_from_inven(dude_obj, LVar3);
+    destroy_object(LVar3);
+    create_object_sid(PID_BUFFOUT, PICKUP_HEX, 1, -1);
+  end
+  call Node018;
+end
+
+procedure Node012a
+begin
+  variable LVar1 := 0;
+  variable LVar2 := 0;
+
+  LVar1 := obj_carrying_pid_obj(dude_obj, PID_NUKA_COLA);
+  LVar2 := obj_carrying_pid_obj(dude_obj, PID_FIRST_AID_KIT);
+  if ((dude_has(PID_NUKA_COLA) >= 1) and (dude_has(PID_FIRST_AID_KIT) >= 1)) then
+  begin
+    rm_obj_from_inven(dude_obj, LVar1);
+    destroy_object(LVar1);
+    rm_obj_from_inven(dude_obj, LVar2);
+    destroy_object(LVar2);
+    create_object_sid(PID_RAD_X, PICKUP_HEX, 1, -1);
+  end
+  call Node018;
+end
+
+procedure Node013a
+begin
+  variable LVar1 := 0;
+  variable LVar2 := 0;
+  variable LVar3 := 0;
+
+  LVar1 := obj_carrying_pid_obj(dude_obj, PID_NUKA_COLA);
+  LVar2 := obj_carrying_pid_obj(dude_obj, PID_HYPODERMIC_NEEDLE);
+  LVar3 := obj_carrying_pid_obj(dude_obj, PID_STIMPAK);
+  if ((dude_has(PID_STIMPAK) >= 1) and (dude_has(PID_NUKA_COLA) >= 1) and (dude_has(PID_HYPODERMIC_NEEDLE) >= 1)) then
+  begin
+    rm_obj_from_inven(dude_obj, LVar1);
+    destroy_object(LVar1);
+    rm_obj_from_inven(dude_obj, LVar2);
+    destroy_object(LVar2);
+    rm_obj_from_inven(dude_obj, LVar3);
+    destroy_object(LVar3);
+    create_object_sid(PID_RADAWAY, PICKUP_HEX, 1, -1);
+  end
+  call Node018;
+end
+
+procedure Node014a
+begin
+  variable LVar1 := 0;
+  variable LVar2 := 0;
+
+  LVar1 := obj_carrying_pid_obj(dude_obj, PID_SCORPION_TAIL);
+  LVar2 := obj_carrying_pid_obj(dude_obj, PID_BOOZE);
+  if ((dude_has(PID_BOOZE) >= 1) and ((dude_has(PID_SCORPION_TAIL) >= 1) or (dude_has(PID_SMALL_SCORPION_TAIL) >= 1))) then
+  begin
+    if (dude_has(PID_SCORPION_TAIL) >= 1) then begin
+      // do nothing since this is already set above
+    end else begin
+      LVar1 := obj_carrying_pid_obj(dude_obj, PID_SMALL_SCORPION_TAIL);
+    end
+    rm_obj_from_inven(dude_obj, LVar1);
+    destroy_object(LVar1);    
+    rm_obj_from_inven(dude_obj, LVar2);
+    destroy_object(LVar2);
+    create_object_sid(PID_ANTIDOTE, PICKUP_HEX, 1, -1);
+  end
+  call Node018;
+end
+
+procedure Node015a
+begin
+  if (global_var(GVAR_MADE_DRUGS) == 4) then
+    call Node017;
+  else
+    call Node016;
+end
+
+procedure Node016a
+begin
+  inc_global_var(GVAR_MADE_DRUGS);
+
+  if (global_var(GVAR_MADE_DRUGS) <= 4) then
+    create_object_sid(PID_DRUGS, PICKUP_HEX, 1, -1);
+  call Node018;
+end
+
+procedure Node017a
+begin
+  if (global_var(GVAR_MADE_DRUGS) == 4) then
+    call Node017;
+  else
+    call Node019;
+end
+
+procedure Node019a
+begin
+
+  inc_global_var(GVAR_MADE_DRUGS);
+  
+  if (global_var(GVAR_MADE_DRUGS) <= 4) then
+    create_object_sid(PID_RANDOM_CHEMICALS, PICKUP_HEX, 1, -1);
+  call Node018;
+end
+
+procedure Node020
+begin
+  gsay_reply(NAME, 375);
+  giq_option(4, NAME, 351, Node020a, 50);
+  giq_option(4, NAME, 352, Node003, 50);
+end
+
+procedure Node020a
+begin
+
+  set_local_var(LVAR_Created_Heart_Pills,1);
+  create_object_sid(PID_HEART_PILLS, PICKUP_HEX, 1, -1);
+  call Node018;
+end
+
+procedure Node021
+begin
+  gsay_reply(NAME, 390);
+  giq_option(4, NAME, 391, Node021a, 50);
+  giq_option(4, NAME, 233, Node003, 50);
+end
+
+procedure Node021a
+begin
+
+  set_global_var(GVAR_NEED_ERSI,1);
+  set_local_var(LVAR_Created_ERSI,1);
+  create_object_sid(PID_ERSI, PICKUP_HEX, 1, -1);
+  call Node018;
+end

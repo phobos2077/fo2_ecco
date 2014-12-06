@@ -1,0 +1,115 @@
+procedure start;
+#include "define_lite.h"
+#include "mod.h"
+#include "sfall.h"
+
+
+//Runs when retriving the damage rating of the players used weapon. (Which may be their fists.)
+
+//int     arg1 - The default min damage
+//int     arg2 - The default max damage
+//Item    arg3 - The weapin used. (0 if unarmed)
+//Critter arg4 - The critter doing the attacking
+//int     arg5 - The type of attack
+//int     arg6 - non zero if this is an attack using a melee weapon
+
+//int     ret1 - Either the damage to be used, if ret2 isn't given, or the new minimum damage if it is
+//int     ret2 - The new maximum damage
+
+
+variable ini_damage_bonus;
+variable ini_damage_bonus_skill_mult;
+
+
+procedure start begin
+	variable dmgMin;
+	variable dmgMax;
+	variable weapon;
+	variable attacker;
+	variable attackType;
+	variable isMelee;
+	variable res;
+	
+	variable weaponPid, projectilePid;
+	variable skill;
+	variable agility;
+	variable attackModes_8;
+	variable attackModes;
+	variable attackMode;
+	variable damageType;
+	variable bonusDamage;
+	variable target;
+	if (init_hook) then begin
+		ini_damage_bonus := atoi(get_ini_string("combat.ini|THROWING|damage_bonus"));
+		ini_damage_bonus_skill_mult := atof(get_ini_string("combat.ini|THROWING|damage_bonus_skill_mult"));
+	end else
+      begin
+         dmgMin := get_sfall_arg;
+         dmgMax := get_sfall_arg;
+         weapon := get_sfall_arg;
+         attacker := get_sfall_arg;
+         attackType := get_sfall_arg; 
+         isMelee := get_sfall_arg;
+         
+         if (weapon) then begin
+	         weaponPid := obj_pid(weapon);
+	         damageType := get_proto_data(weaponPid, 48);
+	         debug_msg("itemdamage: "+dmgMin+"-"+dmgMax+", wpn: "+weaponPid+", type: "+attackType+", dmg typ: "+damageType);
+	         if (weaponPid == PID_MOLOTOV_COCKTAIL) then begin
+	            res := set_attack_is_explosion_fire;
+	         end
+	         
+	         if not(is_in_array(get_proto_data(weaponPid, PROTO_WP_PROJ_PID), ([PID_PROJ_ROCKET, PID_PROJ_ROBOT_ROCKET]))) then begin
+	            set_attack_explosion_pattern(1, 0);
+	         end
+	         //display_msg("t:"+get_last_target(attacker)+", isMelee:"+isMelee);
+	         /*if ((weaponPid == PID_MOLOTOV_COCKTAIL or get_weapon_ammo_pid(weapon) == PID_PBS_40MM_IC)
+	               and get_proto_data(weaponPid, 48) == DMG_fire) then
+	         begin
+	         	set_weapon_knockback(weapon, 0, 0);
+	         	set_proto_data(weaponPid, 48, DMG_explosion);
+	         end*/
+	         if (get_proto_data(weaponPid, PROTO_WP_CALIBER) == CALIBER_40MM_GRENADE) then begin
+	            res := set_attack_explosion_radius(2);
+	         end
+	         
+	         if (ini_damage_bonus) then begin
+		         if (damageType == DMG_normal_dam) then begin 
+		         	 //target := get_last_target(attacker);
+			         if (attackType >= 0 and attackType <= 3) then
+			         begin
+						// get attack types bits from proto
+						attackModes_8 := get_proto_data(weaponPid, 24) bwand 0x000000FF;
+						//display_msg("byte: "+attackModes_8);
+						attackModes := temp_array(2, 1);
+						attackModes[0] := attackModes_8 bwand 0x0F;
+						attackModes[1] := (attackModes_8 bwand 0xF0) / 16;
+						// actual weapon attack type
+						attackMode := attackModes[attackType % 2];
+						//display_msg("0: "+attackModes[0]+", 1: "+attackModes[1]);
+						//display_msg("attack type: "+attackType);
+						if (attackMode == ATTACK_MODE_THROW) then 
+						begin
+							skill := has_skill(attacker, SKILL_THROWING);
+							if (skill < 0) then skill := 0;
+							//agility := get_critter_stat(attacker, STAT_ag) - 5;
+							//if (agility < 0) then agility := 0;
+							// orig. method (skill only):
+							dmgMax := floor(dmgMax * (1 + skill * ini_damage_bonus_skill_mult / 100.0));
+							// method 1:
+							// dmgMax := floor(dmgMax * (1 + (agility / 5) + (skill / 100.0)));
+							// method 2: (me not like it)
+						 	// dmgMax := dmgMax + agility + (skill / 20);
+						 	// method 3 (combined):
+							//dmgMax := dmgMax + agility + floor(dmgMax * (skill / 100.0));
+						 	//display_msg("bump throw dmg (sk:"+skill+"): "+dmgMin+"-"+dmgMax);
+						end
+			         end
+			     end
+		     end
+	     end
+	         
+         set_sfall_return(dmgMin);
+         set_sfall_return(dmgMax);
+      end
+end

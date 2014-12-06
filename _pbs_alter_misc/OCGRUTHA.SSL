@@ -1,0 +1,824 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Gruthar
+        Location: Vault 13
+        Description: The leader of the Deathclaws.
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: April 09 1998
+
+           Updated:
+           
+           phobos2077: lowered XP reward for fixing computer
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define NPC_REACTION_TYPE       REACTION_TG
+#define NPC_REACTION_VAR        18 /* same as thief variable */
+
+#include "..\headers\define.h"
+#include "..\headers\vault13.h"
+
+#define NAME                    SCRIPT_OCGRUTHA
+#define TOWN_REP_VAR            GVAR_TOWN_REP_VAULT_13
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+
+#include "..\headers\v13.h"
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure push_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+
+procedure checkGeck;
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Talked_Gruthar             (7)
+#define LVAR_DClaw_Talk                 (8)
+#define LVAR_KickAss_DClaw              (9)
+#define LVAR_People                     (10)
+#define LVAR_Asked_Geck                 (11)
+#define LVAR_Playing_Dumb               (12)
+#define LVAR_Asked_About_Geck           (13)
+#define LVAR_Deal                       (14)
+#define LVAR_Give_Geck                  (15)
+#define LVAR_Complete                   (16)
+#define LVAR_Teleport                   (17)
+#define LVAR_Caught_Thief               (18)
+#define LVAR_Matt_Death_Speech          (19)
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+import variable i_matt_obj;
+import variable i_gruthar_obj;
+
+#define GRUTHAR_NO_LIKE_YOU    \
+   ( (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) and ( (bad_critter_reaction) or ( check_general_rep < 0 ) or (global_var(TOWN_REP_VAR) < 0) or (has_rep_childkiller) or ( has_rep_berserker ) ) ) //edit by killap - added (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality)))
+
+#define STARTTILE 14695
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable checkCounter := 0;
+variable checkThresh := 50;
+variable nice;
+variable starttile;
+variable doMattTalk := 0;
+variable geck_container;
+variable geck_obj;
+
+#define GECK_LOCKER 20501
+#define GECK_LOCKER_ELE 2
+
+procedure push_p_proc begin
+   script_overrides;
+end
+
+#define GRUTHAR_DEATH 22713
+#define GRUTHAR_D_ELE 2
+
+procedure start begin
+   if (VAULT13_SEQ) then begin
+      set_v13_status(FLG_GRUTHAR_DEAD);
+      destroy_object(self_obj);
+//      move_to(self_obj, GRUTHAR_DEATH, GRUTHAR_D_ELE);
+//      DO_KILL_SELF
+   end else begin
+      i_gruthar_obj := self_obj;
+   end
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == TIMER_DUDE_SEE) then begin
+      set_obj_visibility(self_obj, OBJ_VIS);
+   end
+end
+
+procedure combat_p_proc begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_VAULT13);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_VAULT_DEATHCLAW);
+   if (map_var(MVAR_Dude_See) == 0) then
+      set_obj_visibility(self_obj, OBJ_INVIS);
+
+   //set_local_var(LVAR_Last_Matt_Obj, i_matt_obj);
+
+   geck_container := tile_contains_pid_obj(GECK_LOCKER, GECK_LOCKER_ELE, PID_LOCKER_CLEAN_LEFT);
+   debug_msg("OCGRUTHA: checkgeck: " + checkGeck);
+end
+
+
+procedure checkFunction begin
+   variable retval := 0;
+   variable rollRes;
+   checkCounter += 1;
+
+   if (dude_is_sneaking) then begin
+      if (checkCounter >= checkThresh) then begin
+         rollRes := roll_vs_skill(dude_obj, SKILL_SNEAK, -30);
+         debug_msg("Roll Res : " + rollRes);
+         if (is_success(rollRes)) then begin
+            debug_msg("SUCCESS");
+            checkCounter := 0;
+            if (is_critical(rollRes)) then begin
+               debug_msg("CRITICAL SUCCESS");
+               checkThresh += 10;
+            end
+            retval := 0;
+         end else retval := 1;
+     end else retval := 0;
+  end else retval := 1;
+  debug_msg("RETVAL " + retval);
+  return retval;
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+   variable doTalking;
+   variable dstatus;
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if (((local_var(LVAR_Hostile) != 0) or map_var(MVAR_Vault13_Enemy)) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+       set_local_var(LVAR_Hostile,1);
+       set_map_var(MVAR_Vault13_Enemy, 1);
+       self_attack_dude;
+   end
+
+
+   dstatus := GETDSTATUS;
+   if (dstatus == GDREFUSE or dstatus == GDIDIOT or dstatus == 0) then begin
+      if (local_var(LVAR_Talked_Gruthar) == 0) then begin
+         if (obj_can_see_obj(self_obj, dude_obj)) then begin
+            if (tile_distance_objs(self_obj, dude_obj) < 9) then
+               doTalking := 1;
+         end
+      end else begin
+         if (obj_can_see_obj(self_obj, dude_obj)) then
+            doTalking := checkFunction;
+      end
+
+      if (doTalking == 1) then
+         dialogue_system_enter;
+   end
+
+   checkMattAttack
+   //Macro to attack Matt if he is visible and on the first level
+
+   if (self_tile != STARTTILE) then begin
+      if (not anim_busy(self_obj)) then begin
+         reg_anim_clear(self_obj);
+         reg_anim_begin();
+         animate_move_to_tile(STARTTILE);
+         reg_anim_end();
+      end
+   end
+
+   if ( (local_var(LVAR_Matt_Death_Speech) == 0) and (local_var(LVAR_Hostile) == 0) and (local_var(LVAR_Personal_Enemy) == 0) ) then begin
+      //if (is_critter_dead(local_var(LVAR_Last_Matt_Obj))) then begin
+      if (i_matt_obj == -1) then begin //added by killap
+         set_local_var(LVAR_Matt_Death_Speech, 1);
+         doMattTalk := 1;
+         dialogue_system_enter;
+      end
+   end
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+       set_map_var(MVAR_Vault13_Enemy, 1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION1;
+
+   CheckKarma;
+
+   GetReaction;
+
+   ReactToLevel; //added by killap
+
+
+   if (doMattTalk == 1) then begin
+      doMattTalk := 0;
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+         call Node034;
+      gSay_End;
+      end_dialogue;
+   end else if (local_var(LVAR_Talked_Gruthar) == 0) then begin
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+         call Node001;
+      gSay_End;
+      end_dialogue;
+   end else if (local_var(LVAR_Talked_Gruthar) == 1) then begin
+      if (local_var(LVAR_Personal_Enemy)) then begin
+         if (obj_can_see_obj(self_obj,dude_obj)) then begin
+            floater(202);
+            set_local_var(LVAR_Hostile,2);
+         end
+      end else begin
+         if (GETDSTATUS == GDPART) then begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node015;
+            gSay_End;
+            end_dialogue;
+         end else if (GETDSTATUS == GDLOOK) then begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node017;
+            gSay_End;
+            end_dialogue;
+         end else if (GETDSTATUS == GDFIXED) then begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node018;
+            gSay_End;
+            end_dialogue;
+         end else if (GETDSTATUS == GDIDIOT) then begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node020;
+            gSay_End;
+            end_dialogue;
+         end else if (GETDSTATUS == GDREFUSE) then begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node021;
+            gSay_End;
+            end_dialogue;
+         end else if (GETDSTATUS == GDACCEPT) then begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node022;
+            gSay_End;
+            end_dialogue;
+         end else if (GETDSTATUS == GDCOMPLETE) then begin
+            call Node023; //Floater
+         end else if (GETDSTATUS == GDTRUEIDIOT) then begin
+            call Node033; // Float
+         end else begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node001;
+            gSay_End;
+            end_dialogue;
+         end
+      end
+   end
+
+   if (local_var(LVAR_Teleport) == 1) then begin
+      debug_msg("Should be TELEPORTING YEAH");
+      set_local_var(LVAR_Teleport, 0);
+      load_map(MAPSTR_V13ENT, 5);
+      //MAP_VAULT_13_ENTRANCE
+   end
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+   i_gruthar_obj := -1;
+   set_v13_status(FLG_GRUTHAR_DEAD);
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Talked_Gruthar) == 0) then
+      display_msg(mstr(100));
+   else
+      display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+//   if (local_var(LVAR_Personal_Enemy) == 0) then  //both lines commented out by killap - odd to set enemy here.
+//      set_local_var(LVAR_Personal_Enemy,1);
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Personal_Enemy, 1);
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure NodeTeleport begin
+   set_local_var(LVAR_Teleport, 1);
+   call Node999;
+end
+
+procedure Node025a begin
+   set_local_var(LVAR_KickAss_DClaw, 1);
+   call Node025;
+end
+
+procedure Node003a begin
+   set_local_var(LVAR_DClaw_Talk, 1);
+   call Node003;
+end
+
+procedure Node005a begin
+   set_local_var(LVAR_People, 1);
+   call Node005;
+end
+
+procedure Node006a begin
+   set_local_var(LVAR_Asked_Geck, 1);
+   call Node006;
+end
+
+procedure Node001 begin
+   if (local_var(LVAR_Talked_Gruthar) == 0) then begin
+      set_local_var(LVAR_Talked_Gruthar, 1);
+      Reply(103);
+   end else begin
+      Reply(104);
+   end
+
+   if (GETDSTATUS != GDIDIOT) then
+      NLowOption(105, Node002);
+   if (local_var(LVAR_KickAss_DClaw) == 0) then
+      NOption(106, Node025a, 4);
+   if (local_var(LVAR_DClaw_Talk) == 0) then
+      NOption(107, Node003a, 4);
+   if (local_var(LVAR_People) == 0) then
+      NOption(108, Node005a, 4);
+   NOption(109, Node006a, 4);
+   if (global_var(GVAR_NCR_DEATHCLAW_DEN)) then
+      NOption(110, Node011, 4);
+   if (global_var(GVAR_NCR_BRAHMIN_PROTECT) and global_var(GVAR_NCR_DEATHCLAW_DEN) == 0) then
+      NOption(111, Node013, 4);
+   NOption(112, Node031, 4);
+end
+
+procedure Node002 begin
+   if (dude_iq > 3 and local_var(LVAR_Playing_Dumb) == 0) then begin
+      Reply(113);
+      set_local_var(LVAR_Playing_Dumb, 1);
+      NOption(MORESTRING, Node001, 0);
+   end else if (dude_iq > 3 and local_var(LVAR_Playing_Dumb) == 1) then begin
+      Reply(114);
+      SETDSTATUS(GDIDIOT);
+      NOption(MORESTRING, Node030, 0);
+   end else begin
+      SETDSTATUS(GDTRUEIDIOT);
+      Reply(115);
+      NLowOption(234, Node999);
+   end
+end
+
+procedure Node003 begin
+   Reply(116);
+
+   NOption(117, Node001, 4);
+   NOption(118, Node004, 4);
+   BOption(119, Node026, 4);
+end
+
+procedure Node004 begin
+   SET_TALKED_ABOUT_GORIS;
+   set_global_var(GVAR_V13_GORIS_QST, 1);
+   Reply(120);
+
+   GOption(121, Node001, 4);
+   BOption(122, Node030, 4);
+   NOption(123, Node001, 4);
+end
+
+procedure Node005 begin
+   Reply(124);
+
+   BOption(125, Node025, 4);
+   GOption(126, Node001, 4);
+   NOption(127, Node001, 4);
+end
+
+procedure Node007a begin
+   nice := 1;
+   call Node007;
+end
+
+procedure Node006 begin
+   variable geck;
+
+   if (local_var(LVAR_Asked_About_Geck) == 0) then begin
+      set_local_var(LVAR_Asked_About_Geck, 1);
+      Reply(128);
+      geck := 1;
+   end else begin
+      Reply(129);
+   end
+
+   NOption(130, Node007, 4);
+   if (geck == 1) then
+      BOption(131, Node027, 4);
+   BOption(132, Node030, 4);
+   GOption(133, Node007a, 4);
+end
+
+procedure Node008a begin
+   set_local_var(LVAR_Deal, 1);
+   call Node008;
+end
+
+procedure Node007 begin
+   //Note look at the note on Node006
+   set_local_var(LVAR_Give_Geck, 1);
+   if (nice) then
+      Reply(134);
+   else
+      Reply(135);
+   //135
+   BOption(136, Node028, 4);
+   NOption(137, Node001, 4);
+   GOption(138, Node008a, 4);
+end
+
+procedure Node008 begin
+   if not GRUTHAR_NO_LIKE_YOU then begin
+      Reply(139);
+   end else begin
+      Reply(140);
+   end
+   if not GRUTHAR_NO_LIKE_YOU then
+      NOption(141, Node009, 4);
+   else begin
+      BOption(142, Node998, 4);
+      NOption(143, Node001, 4);
+      GOption(144, Node030, 4);
+   end
+end
+
+procedure Node014a begin
+   SETDSTATUS(GDREFUSE);
+   call Node014;
+end
+procedure Node010a begin
+   SETDSTATUS(GDACCEPT);
+   set_global_var(GVAR_V13_COMP_QST, 1);
+   call Node010;
+end
+procedure Node031a begin
+   SETDSTATUS(GDREFUSE);
+   call Node030;
+end
+
+procedure Node009 begin
+   Reply(145);
+
+   if (has_skill(dude_obj, SKILL_REPAIR) < 40) then
+      NOption(146, Node014a, 4);
+   if (has_skill(dude_obj, SKILL_REPAIR) > 39 and has_skill(dude_obj, SKILL_REPAIR) < 60) then
+      NOption(147, Node010a, 4);
+   if (has_skill(dude_obj, SKILL_REPAIR) > 59) then
+      NOption(148, Node010a, 4);
+   NOption(149, Node031a, 4);
+   NOption(150, Node010a, 4);
+   NOption(151, Node014a, 4);
+end
+
+procedure Node010 begin
+   Reply(152);
+
+   GOption(153, Node999, 4);
+   NOption(154, Node999, 4);
+   BOption(155, Node999, 4);
+end
+
+procedure Node011 begin
+   Reply(156);
+   NOption(157, Node001, 4);
+   BOption(158, Node012, 4);
+   GOption(159, Node001, 4);
+end
+
+procedure Node012 begin
+   Reply(160);
+   BOption(161, Node998, 4);
+   GOption(162, Node001, 4);
+   NOption(163, Node001, 4);
+end
+
+procedure Node013 begin
+   Reply(164);
+   BOption(165, Node998, 4);
+   GOption(166, Node008, 4);
+   NOption(167, Node031, 4);
+   NOption(168, Node001, 4);
+end
+
+procedure Node014 begin
+   Reply(169);
+   NOption(170, Node031, 4);
+end
+
+procedure Node016a begin
+   SETDSTATUS(GDLOOK);
+   call Node016;
+end
+
+procedure Node015 begin
+   Reply(USEDUDENAME(171, 231));
+   NOption(172, Node999, 4);
+   NOption(173, Node016a, 4);
+end
+
+procedure Node016 begin
+   Reply(USEDUDENAME(174, 232));
+   NOption(175, Node999, 4);
+   GOption(176, Node999, 4);
+end
+
+procedure Node017 begin
+   Reply(USEDUDENAME(177, 233));
+   NOption(178, Node999, 4);
+   if (obj_is_carrying_obj_pid(dude_obj, VOICEREPAIROBJ) > 0) then
+      GOption(179, Node029, 4);
+end
+
+#define TIMER_INIT_V13_SEQUENCE    (4)
+
+procedure Node018 begin
+   SETDSTATUS(GDCOMPLETE);
+   add_timer_event(dude_obj, 0, TIMER_INIT_V13_SEQUENCE);
+   set_global_var(GVAR_V13_COMP_QST, 2);   // Seraph - unlocked by killap
+   inc_general_rep(REP_BONUS_V13_FIX_COMPUTER);
+   inc_vault13_rep(REP_HERO_V13_FIX_COMPUTER);
+   give_xp(3000); // pbs: lowered from 5000
+
+   Reply(181);
+   if (local_var(LVAR_Give_Geck) == 1) then
+      NOption(182, Node019, 4);
+   else
+      NOption(183, Node019, 4);
+   if (checkGeck == 0) then
+      NOption(184, Node999, 4);
+end
+
+procedure Node999a begin
+//Give the player the Geck
+   variable obj;
+
+   set_map_var(MVAR_Player_Has_Geck, 1);
+   set_global_var(GVAR_VAULT13_FOUND_GECK, 3);
+
+   obj := checkGeck;
+   rm_obj_from_inven(geck_container, obj);
+   add_obj_to_inven(dude_obj, obj);
+end
+
+procedure Node019 begin
+   if (checkGeck) then
+      Reply(185);
+   else begin
+      Reply(186);
+   end
+   NOption(187, Node999a, 4);
+   if (checkGeck == 0) then
+      NOption(188, Node999, 4);
+end
+
+procedure Node020 begin
+   Reply(189);
+   GOption(190, Node001, 4);
+   NOption(191, Node031, 4);
+   NLowOption(192, Node032);
+end
+
+procedure Node021 begin
+   Reply(193);
+   BOption(194, Node030, 4);
+   NOption(195, Node030, 4);
+   GOption(196, Node010a, 4);
+end
+
+procedure Node022 begin
+   Reply(197);
+   NOption(198, Node999, 4);
+end
+
+procedure Node023 begin
+   float_msg(self_obj, mstr(199), FLOAT_MSG_GREEN);
+end
+
+//A bunch of lines got skipped.
+
+procedure Node024 begin
+   floater(202);
+end
+
+//Skip more lines
+
+procedure Node025 begin
+   Reply(205);
+   NOption(206, Node001, 4);
+   BOption(207, Node998, 4);
+   GOption(208, Node001, 4);
+   NOption(209, Node030, 4);
+end
+
+procedure Node026 begin
+   Reply(210);
+   BOption(211, Node998, 4);
+   NOption(212, NodeTeleport, 4);
+   BOption(213, Node001, 4);
+end
+
+procedure Node027 begin
+   Reply(214);
+   NOption(215, Node001, 4);
+   GOption(216, Node001, 4);
+   BOption(217, Node001, 4);
+end
+
+procedure Node028 begin
+    Reply(218);
+    GOption(219, Node001, 4);
+    BOption(220, Node998, 4);
+    NOption(221, Node030, 4);
+end
+
+procedure Node029 begin
+   Reply(222);
+   NOption(223, Node999, 4);
+end
+
+procedure Node030 begin
+   Reply(225);
+   NOption(ENDSTRING, NodeTeleport, 0);
+end
+
+procedure Node031 begin
+   Reply(226);
+   NOption(227, NodeTeleport, 0);
+end
+
+procedure Node032 begin
+   Reply(229);
+   NOption(230, NodeTeleport, 0);
+end
+
+procedure Node033 begin
+   float_msg(self_obj, mstr(235), FLOAT_MSG_NORMAL);
+end
+
+procedure Node034 begin
+   Reply(236);
+   BOption(220, Node998, 4);
+   BLowOption(237, Node998);
+   GOption(238, Node999, 4);
+   GLowOption(239, Node999);
+end
+
+procedure checkGeck begin
+   if (geck_container) then begin
+      return obj_carrying_pid_obj(geck_container, GECKOBJ);
+   end
+   return 0;
+end
+
+//xxxxxxxxxxxxxxxxxxxx

@@ -1,0 +1,2783 @@
+variable ProtoOfItemGiven;
+variable ValueOfRollCheck := 1;
+variable Scenery_Creation;
+variable Scenery_Creation_Hex;
+variable Scenery_Creation_Count;
+variable Temp_Scenery_Creation_Hex;
+variable Scenery_Creation_Ptr;
+variable How_Many_Party_Members_Are_Injured;
+variable How_Many_Party_Members_Armed;
+variable PartyHealingItem;
+
+procedure checkPartyMembersNearDoor;
+
+variable tmp_gen_rep;
+variable global_temp;
+variable dest_tile;
+variable step_tile;
+variable in_dialog;
+variable forced_node;
+variable restock_amt;
+variable restock_obj;
+variable restock_trash;
+variable removed_qty;
+variable Static_Reaction;
+variable Evil_Critter;
+variable Slavery_Tolerant := 2;
+variable Karma_Perception;
+variable reaction_bonus_town_rep;
+variable reaction_bonus_karma;
+variable last_timed_obj;
+variable last_timed_param;
+variable check_still_kill;
+variable stored_msg;
+variable stored_node;
+variable top_msg;
+variable var_num;
+
+procedure ChooseFromList;
+procedure CLICK_PREV;
+procedure CLICK_0;
+procedure CLICK_1;
+procedure CLICK_2;
+procedure CLICK_3;
+procedure CLICK_4;
+procedure CLICK_MORE;
+
+variable floater_patch_msg;
+variable hs_temp;
+
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure timed_event_p_proc;
+procedure Node998;
+procedure Node999;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node037;
+procedure Node038;
+procedure Node039;
+procedure Node040;
+procedure Node041;
+procedure Node042;
+procedure Node043;
+procedure Node044;
+procedure Node045;
+procedure Node046;
+procedure Node047;
+procedure Node048;
+procedure Node049;
+procedure Node050;
+procedure Node051;
+procedure Node052;
+procedure Node053;
+procedure Node054;
+procedure Node055;
+procedure Node056;
+procedure Node057;
+procedure Node058;
+procedure Node059;
+procedure Node060;
+procedure Node061;
+procedure Node062;
+procedure Node063;
+procedure Node064;
+procedure Node065;
+procedure Node1000;
+procedure Node005a;
+procedure Node010a;
+procedure Node015a;
+procedure Node016a;
+procedure Node017a;
+procedure Node017b;
+procedure Node017c;
+procedure Node039a;
+procedure Node039b;
+procedure Node044a;
+procedure Node054a;
+procedure Node063a;
+
+
+#define _LEARN_CRAFT_DRTROY
+#include "learn_craft.h"
+
+variable Only_Once;
+variable From_10;
+variable From_15;
+variable From_44;
+variable From_WTG;
+variable Insta_Kill_Player;
+variable From_29;
+variable unhealthy_members;
+
+
+procedure checkPartyMembersNearDoor
+begin
+    if (party_member_obj(16777278) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777278)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777376)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777377)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777305)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777313)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777323)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777352)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777378)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777368)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777379)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777380)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777295)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777381) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777381)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777407) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777407)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777411) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777411)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777412) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777412)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777413) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777413)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777481) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777481)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777558)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777600) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777600)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777718)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777719)) <= 5) then begin
+            return 1;
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if (tile_distance_objs(self_obj, party_member_obj(16777720)) <= 5) then begin
+            return 1;
+        end
+    end
+    return 0;
+end
+
+procedure ChooseFromList
+begin
+    variable LVar0 := 0;
+    gsay_reply(95, stored_msg);
+    if (message_str(353, top_msg - 1) != "") then begin
+        giq_option(1, 95, message_str(353, 150), CLICK_PREV, 50);
+    end
+    if (LVar0 == 0) then begin
+        if (message_str(353, top_msg + 0) != "") then begin
+            giq_option(1, 95, message_str(353, top_msg + 0), CLICK_0, 50);
+        end
+        else begin
+            LVar0 := 1;
+        end
+    end
+    if (LVar0 == 0) then begin
+        if (message_str(353, top_msg + 1) != "") then begin
+            giq_option(1, 95, message_str(353, top_msg + 1), CLICK_1, 50);
+        end
+        else begin
+            LVar0 := 1;
+        end
+    end
+    if (LVar0 == 0) then begin
+        if (message_str(353, top_msg + 2) != "") then begin
+            giq_option(1, 95, message_str(353, top_msg + 2), CLICK_2, 50);
+        end
+        else begin
+            LVar0 := 1;
+        end
+    end
+    if (LVar0 == 0) then begin
+        if (message_str(353, top_msg + 3) != "") then begin
+            giq_option(1, 95, message_str(353, top_msg + 3), CLICK_3, 50);
+        end
+        else begin
+            LVar0 := 1;
+        end
+    end
+    if (LVar0 == 0) then begin
+        if (message_str(353, top_msg + 4) != "") then begin
+            giq_option(1, 95, message_str(353, top_msg + 4), CLICK_4, 50);
+        end
+        else begin
+            LVar0 := 1;
+        end
+    end
+    if (LVar0 == 0) then begin
+        if (message_str(353, top_msg + 5) != "") then begin
+            giq_option(1, 95, message_str(353, 151), CLICK_MORE, 50);
+        end
+    end
+end
+
+procedure CLICK_PREV
+begin
+    top_msg := top_msg - 5;
+    call ChooseFromList;
+end
+
+procedure CLICK_0
+begin
+    set_global_var(var_num, (global_var(var_num) / 100 * 100) + (top_msg % 100));
+    call stored_node;
+end
+
+procedure CLICK_1
+begin
+    set_global_var(var_num, (global_var(var_num) / 100 * 100) + ((top_msg + 1) % 100));
+    call stored_node;
+end
+
+procedure CLICK_2
+begin
+    set_global_var(var_num, (global_var(var_num) / 100 * 100) + ((top_msg + 2) % 100));
+    call stored_node;
+end
+
+procedure CLICK_3
+begin
+    set_global_var(var_num, (global_var(var_num) / 100 * 100) + ((top_msg + 3) % 100));
+    call stored_node;
+end
+
+procedure CLICK_4
+begin
+    set_global_var(var_num, (global_var(var_num) / 100 * 100) + ((top_msg + 4) % 100));
+    call stored_node;
+end
+
+procedure CLICK_MORE
+begin
+    top_msg := top_msg + 5;
+    call ChooseFromList;
+end
+
+procedure start
+begin
+end
+
+procedure critter_p_proc
+begin
+    if (((local_var(4) bwand 2) != 0) or (global_var(137) == 1) and obj_can_see_obj(self_obj, dude_obj)) then begin
+        attack_complex(dude_obj, 0, 1, 0, 0, 30000, 0, 0);
+    end
+end
+
+procedure pickup_p_proc
+begin
+    if (source_obj == dude_obj) then begin
+        set_local_var(4, local_var(4) bwor 2);
+    end
+end
+
+procedure talk_p_proc
+begin
+    Evil_Critter := 0;
+    Slavery_Tolerant := 2;
+    Karma_Perception := 10;
+    set_global_var(37, 0);
+    set_global_var(38, 0);
+    set_global_var(39, 0);
+    set_global_var(40, 0);
+    set_global_var(41, 0);
+    set_global_var(42, 0);
+    set_global_var(43, 0);
+    set_global_var(44, 0);
+    set_global_var(45, 0);
+    tmp_gen_rep := global_var(0);
+    if (has_trait(0, dude_obj, 95)) then begin
+        tmp_gen_rep := global_var(0) * 2;
+    end
+    if (tmp_gen_rep >= 1000) then begin
+        set_global_var(37, 1);
+    end
+    else begin
+        if (tmp_gen_rep >= 750) then begin
+            set_global_var(38, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 500) then begin
+                set_global_var(39, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 250) then begin
+                    set_global_var(40, 1);
+                end
+                else begin
+                    if (tmp_gen_rep > -250) then begin
+                        set_global_var(41, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -500) then begin
+                            set_global_var(42, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -750) then begin
+                                set_global_var(43, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -1000) then begin
+                                    set_global_var(44, 1);
+                                end
+                                else begin
+                                    set_global_var(45, 1);
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if (local_var(2) == 0) then begin
+        set_local_var(2, 1);
+        set_local_var(3, (get_critter_stat(dude_obj, 3) - get_critter_stat(self_obj, 3)) * 5);
+        debug_msg("Base Reaction == " + local_var(3));
+    end
+    Static_Reaction := 0;
+    set_local_var(0, 0);
+    debug_msg("Start Reaction == " + local_var(0));
+    if (reaction_bonus_karma >= 0) then begin
+        reaction_bonus_karma := reaction_bonus_karma / 1000;
+    end
+    else begin
+        reaction_bonus_karma := -1 * (-1 * reaction_bonus_karma / 1000);
+    end
+    if (global_var(50) >= 0) then begin
+        reaction_bonus_town_rep := global_var(50) / 2;
+    end
+    else begin
+        reaction_bonus_town_rep := -1 * (-1 * global_var(50) / 2);
+    end
+    if (has_trait(2, dude_obj, 13)) then begin
+        if (get_critter_stat(dude_obj, 34) == get_critter_stat(self_obj, 34)) then begin
+            Static_Reaction := Static_Reaction + -20;
+        end
+        else begin
+            Static_Reaction := Static_Reaction + 20;
+        end
+        debug_msg("Sex Appeal Bonus == " + Static_Reaction);
+    end
+    else begin
+        debug_msg("Sex Appeal Bonus == 0");
+    end
+    if (Evil_Critter == 1) then begin
+        if (reaction_bonus_karma >= 0) then begin
+            Static_Reaction := Static_Reaction - reaction_bonus_karma;
+        end
+        else begin
+            Static_Reaction := Static_Reaction + reaction_bonus_karma;
+        end
+        debug_msg("Karma Reaction Bonus == " + Static_Reaction);
+        if (reaction_bonus_town_rep >= 0) then begin
+            Static_Reaction := Static_Reaction - reaction_bonus_town_rep;
+        end
+        else begin
+            Static_Reaction := Static_Reaction + reaction_bonus_town_rep;
+        end
+        debug_msg("Town Rep Bonus == " + Static_Reaction);
+        set_global_var(37, 0);
+        set_global_var(38, 0);
+        set_global_var(39, 0);
+        set_global_var(40, 0);
+        set_global_var(41, 0);
+        set_global_var(42, 0);
+        set_global_var(43, 0);
+        set_global_var(44, 0);
+        set_global_var(45, 0);
+        tmp_gen_rep := global_var(0);
+        if (has_trait(0, dude_obj, 95)) then begin
+            tmp_gen_rep := global_var(0) * 2;
+        end
+        if (tmp_gen_rep >= 1000) then begin
+            set_global_var(37, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 750) then begin
+                set_global_var(38, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 500) then begin
+                    set_global_var(39, 1);
+                end
+                else begin
+                    if (tmp_gen_rep >= 250) then begin
+                        set_global_var(40, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -250) then begin
+                            set_global_var(41, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -500) then begin
+                                set_global_var(42, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -750) then begin
+                                    set_global_var(43, 1);
+                                end
+                                else begin
+                                    if (tmp_gen_rep > -1000) then begin
+                                        set_global_var(44, 1);
+                                    end
+                                    else begin
+                                        set_global_var(45, 1);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        if (global_var(37) == 1) then begin
+            Static_Reaction := Static_Reaction - 20;
+        end
+        else begin
+            if (global_var(38) == 1) then begin
+                Static_Reaction := Static_Reaction - 15;
+            end
+            else begin
+                if (global_var(39) == 1) then begin
+                    Static_Reaction := Static_Reaction - 10;
+                end
+                else begin
+                    if (global_var(40) == 1) then begin
+                        Static_Reaction := Static_Reaction - 5;
+                    end
+                    else begin
+                        if (global_var(41) == 1) then begin
+                            Static_Reaction := Static_Reaction - 0;
+                        end
+                        else begin
+                            if (global_var(42) == 1) then begin
+                                Static_Reaction := Static_Reaction + -5;
+                            end
+                            else begin
+                                if (global_var(43) == 1) then begin
+                                    Static_Reaction := Static_Reaction + -10;
+                                end
+                                else begin
+                                    if (global_var(44) == 1) then begin
+                                        Static_Reaction := Static_Reaction + -15;
+                                    end
+                                    else begin
+                                        Static_Reaction := Static_Reaction + -20;
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        debug_msg("Bad Person Reaction Bonus == " + Static_Reaction);
+    end
+    else begin
+        Static_Reaction := Static_Reaction + reaction_bonus_karma;
+        debug_msg("Karma Reaction Bonus == " + Static_Reaction);
+        Static_Reaction := Static_Reaction + reaction_bonus_town_rep;
+        debug_msg("Town Rep Bonus == " + Static_Reaction);
+        set_global_var(37, 0);
+        set_global_var(38, 0);
+        set_global_var(39, 0);
+        set_global_var(40, 0);
+        set_global_var(41, 0);
+        set_global_var(42, 0);
+        set_global_var(43, 0);
+        set_global_var(44, 0);
+        set_global_var(45, 0);
+        tmp_gen_rep := global_var(0);
+        if (has_trait(0, dude_obj, 95)) then begin
+            tmp_gen_rep := global_var(0) * 2;
+        end
+        if (tmp_gen_rep >= 1000) then begin
+            set_global_var(37, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 750) then begin
+                set_global_var(38, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 500) then begin
+                    set_global_var(39, 1);
+                end
+                else begin
+                    if (tmp_gen_rep >= 250) then begin
+                        set_global_var(40, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -250) then begin
+                            set_global_var(41, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -500) then begin
+                                set_global_var(42, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -750) then begin
+                                    set_global_var(43, 1);
+                                end
+                                else begin
+                                    if (tmp_gen_rep > -1000) then begin
+                                        set_global_var(44, 1);
+                                    end
+                                    else begin
+                                        set_global_var(45, 1);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        if (global_var(37) == 1) then begin
+            Static_Reaction := Static_Reaction + 20;
+        end
+        else begin
+            if (global_var(38) == 1) then begin
+                Static_Reaction := Static_Reaction + 15;
+            end
+            else begin
+                if (global_var(39) == 1) then begin
+                    Static_Reaction := Static_Reaction + 10;
+                end
+                else begin
+                    if (global_var(40) == 1) then begin
+                        Static_Reaction := Static_Reaction + 5;
+                    end
+                    else begin
+                        if (global_var(41) == 1) then begin
+                            Static_Reaction := Static_Reaction + 0;
+                        end
+                        else begin
+                            if (global_var(42) == 1) then begin
+                                Static_Reaction := Static_Reaction + -5;
+                            end
+                            else begin
+                                if (global_var(43) == 1) then begin
+                                    Static_Reaction := Static_Reaction + -10;
+                                end
+                                else begin
+                                    if (global_var(44) == 1) then begin
+                                        Static_Reaction := Static_Reaction + -15;
+                                    end
+                                    else begin
+                                        Static_Reaction := Static_Reaction + -20;
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        debug_msg("Good Person Reaction Bonus == " + Static_Reaction);
+    end
+    if (Slavery_Tolerant == 0) then begin
+        if (global_var(11) == 1) then begin
+            Static_Reaction := Static_Reaction + (2 * -25);
+        end
+    end
+    else begin
+        if (Slavery_Tolerant == 1) then begin
+            if (global_var(11) == 1) then begin
+                Static_Reaction := Static_Reaction + -25;
+            end
+        end
+        else begin
+            if (Slavery_Tolerant == 3) then begin
+                if (global_var(11) == 1) then begin
+                    Static_Reaction := Static_Reaction - -25;
+                end
+            end
+        end
+    end
+    debug_msg("Slaver + Aligned Reaction == " + Static_Reaction);
+    Static_Reaction := Static_Reaction + (10 * has_trait(0, dude_obj, 10));
+    debug_msg("Presence Reaction == " + Static_Reaction);
+    if (global_var(1) >= 2) then begin
+        Static_Reaction := Static_Reaction + -30;
+    end
+    debug_msg("Childkiller Reaction == " + Static_Reaction);
+    if (has_trait(0, dude_obj, 39)) then begin
+        if (Evil_Critter == 1) then begin
+            if (Static_Reaction > 0) then begin
+                Static_Reaction := Static_Reaction * -1;
+            end
+        end
+        else begin
+            if (Static_Reaction < 0) then begin
+                Static_Reaction := Static_Reaction * -1;
+            end
+        end
+    end
+    set_local_var(0, local_var(3) + Static_Reaction);
+    debug_msg("Initial Reaction == " + local_var(0));
+    if ((game_time_hour > 200) and (game_time_hour < 700)) then begin
+        float_msg(self_obj, message_str(95, 398), 8);
+    end
+    else begin
+        if ((party_member_obj(16777377) != 0) and (not(global_var(494) == 8) and (global_var(79) != 5))) then begin
+            call Node003;
+        end
+        else begin
+            if ((party_member_obj(16777323) != 0) and (not(global_var(494) == 8) and (global_var(79) != 5))) then begin
+                call Node004;
+            end
+            else begin
+                if (global_var(85) == 5) then begin
+                    start_gdialog(95, self_obj, 4, -1, -1);
+                    gsay_start;
+                    call Node049;
+                    gsay_end;
+                    end_dialogue;
+                end
+                else begin
+                    if ((global_var(85) < 4) and (local_var(7) != 0) and ((game_time - local_var(7)) >= (90 * (24 * (60 * (60 * 10)))))) then begin
+                        From_WTG := 1;
+                        start_gdialog(95, self_obj, 4, -1, -1);
+                        gsay_start;
+                        call Node055;
+                        gsay_end;
+                        end_dialogue;
+                    end
+                    else begin
+                        if (not((local_var(4) bwand 1) != 0)) then begin
+                            set_local_var(4, local_var(4) bwor 1);
+                            start_gdialog(95, self_obj, 4, -1, -1);
+                            gsay_start;
+                            call Node005;
+                            gsay_end;
+                            end_dialogue;
+                        end
+                        else begin
+                            From_WTG := 1;
+                            start_gdialog(95, self_obj, 4, -1, -1);
+                            gsay_start;
+                            call Node044;
+                            gsay_end;
+                            end_dialogue;
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if (Insta_Kill_Player) then begin
+        critter_dmg(dude_obj, 10000, 0);
+        display_msg(message_str(14, 400));
+    end
+end
+
+procedure destroy_p_proc
+begin
+    if (source_obj == dude_obj) then begin
+        set_global_var(5, global_var(5) + 1);
+        if (((global_var(4) + global_var(5)) >= 25) and ((global_var(4) > (3 * global_var(5))) or (global_var(2) == 1)) and (global_var(1) == 0)) then begin
+            set_global_var(2, 1);
+            set_global_var(3, 0);
+        end
+        if (metarule(51, self_obj) == 2) then begin
+            if (source_obj == dude_obj) then begin
+                set_global_var(2, 0);
+                set_global_var(1, global_var(1) + 1);
+                set_global_var(0, global_var(0) + -15);
+                debug_msg("Player gains " + -15 + " Karma Points.");
+                set_global_var(37, 0);
+                set_global_var(38, 0);
+                set_global_var(39, 0);
+                set_global_var(40, 0);
+                set_global_var(41, 0);
+                set_global_var(42, 0);
+                set_global_var(43, 0);
+                set_global_var(44, 0);
+                set_global_var(45, 0);
+                tmp_gen_rep := global_var(0);
+                if (has_trait(0, dude_obj, 95)) then begin
+                    tmp_gen_rep := global_var(0) * 2;
+                end
+                if (tmp_gen_rep >= 1000) then begin
+                    set_global_var(37, 1);
+                end
+                else begin
+                    if (tmp_gen_rep >= 750) then begin
+                        set_global_var(38, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep >= 500) then begin
+                            set_global_var(39, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep >= 250) then begin
+                                set_global_var(40, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -250) then begin
+                                    set_global_var(41, 1);
+                                end
+                                else begin
+                                    if (tmp_gen_rep > -500) then begin
+                                        set_global_var(42, 1);
+                                    end
+                                    else begin
+                                        if (tmp_gen_rep > -750) then begin
+                                            set_global_var(43, 1);
+                                        end
+                                        else begin
+                                            if (tmp_gen_rep > -1000) then begin
+                                                set_global_var(44, 1);
+                                            end
+                                            else begin
+                                                set_global_var(45, 1);
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+                set_global_var(50, global_var(50) + -8);
+                debug_msg("Added " + -8 + " to Town Rep");
+            end
+        end
+        if (((global_var(4) + global_var(5)) >= 25) and ((global_var(5) > (2 * global_var(4))) or (global_var(3) == 1))) then begin
+            set_global_var(3, 1);
+            set_global_var(2, 0);
+        end
+        set_global_var(0, global_var(0) + -10);
+        debug_msg("Player gains " + -10 + " Karma Points.");
+        set_global_var(37, 0);
+        set_global_var(38, 0);
+        set_global_var(39, 0);
+        set_global_var(40, 0);
+        set_global_var(41, 0);
+        set_global_var(42, 0);
+        set_global_var(43, 0);
+        set_global_var(44, 0);
+        set_global_var(45, 0);
+        tmp_gen_rep := global_var(0);
+        if (has_trait(0, dude_obj, 95)) then begin
+            tmp_gen_rep := global_var(0) * 2;
+        end
+        if (tmp_gen_rep >= 1000) then begin
+            set_global_var(37, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 750) then begin
+                set_global_var(38, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 500) then begin
+                    set_global_var(39, 1);
+                end
+                else begin
+                    if (tmp_gen_rep >= 250) then begin
+                        set_global_var(40, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -250) then begin
+                            set_global_var(41, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -500) then begin
+                                set_global_var(42, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -750) then begin
+                                    set_global_var(43, 1);
+                                end
+                                else begin
+                                    if (tmp_gen_rep > -1000) then begin
+                                        set_global_var(44, 1);
+                                    end
+                                    else begin
+                                        set_global_var(45, 1);
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        set_global_var(50, global_var(50) + -5);
+        debug_msg("Added " + -5 + " to Town Rep");
+    end
+    set_global_var(428, 2);
+end
+
+procedure look_at_p_proc
+begin
+    script_overrides;
+    if (local_var(5) == 0) then begin
+        set_local_var(5, local_var(5) + 1);
+        display_msg(message_str(95, 100));
+    end
+    else begin
+        display_msg(message_str(95, 101));
+    end
+end
+
+procedure description_p_proc
+begin
+    script_overrides;
+    display_msg(message_str(95, 102));
+end
+
+procedure use_skill_on_p_proc
+begin
+end
+
+procedure damage_p_proc
+begin
+    if (source_obj == dude_obj) then begin
+        set_local_var(4, local_var(4) bwor 8);
+        set_local_var(4, local_var(4) bwor 2);
+        set_global_var(137, 1);
+        set_global_var(79, 6);
+        set_global_var(50, global_var(50) + -30);
+        set_global_var(81, 0);
+    end
+end
+
+procedure map_enter_p_proc
+begin
+    Only_Once := 0;
+    critter_add_trait(self_obj, 1, 6, 26);
+    critter_add_trait(self_obj, 1, 5, 18);
+    if (not(metarule(22, 0))) then begin
+        if (global_var(428) == 1) then begin
+            if (has_trait(1, self_obj, 666)) then begin
+                set_obj_visibility(self_obj, 1);
+            end
+        end
+        else begin
+            if ((game_time_hour > 200) and (game_time_hour < 700)) then begin
+                move_to(self_obj, 24886, 1);
+                critter_attempt_placement(self_obj, 24886, 1);
+                anim(self_obj, 1000, 3);
+                rm_timer_event(self_obj);
+                add_timer_event(self_obj, game_ticks(random(10, 20)), 1);
+            end
+            else begin
+                move_to(self_obj, 13284, 0);
+                critter_attempt_placement(self_obj, 13284, 0);
+                anim(self_obj, 1000, 2);
+                rm_timer_event(self_obj);
+                add_timer_event(self_obj, game_ticks(random(10, 20)), 1);
+            end
+        end
+    end
+end
+
+procedure timed_event_p_proc
+begin
+    if (fixed_param == 1) then begin
+        if (not(combat_is_initialized)) then begin
+            if ((game_time_hour > 200) and (game_time_hour < 700)) then begin
+                float_msg(self_obj, message_str(95, 398), 8);
+            end
+            else begin
+                if ((party_member_obj(16777377) != 0) and (global_var(79) != 5)) then begin
+                    call Node003;
+                end
+                else begin
+                    if ((party_member_obj(16777323) != 0) and (global_var(79) != 5)) then begin
+                        call Node004;
+                    end
+                    else begin
+                        call Node002;
+                    end
+                end
+            end
+        end
+        add_timer_event(self_obj, game_ticks(random(20, 40)), 1);
+    end
+end
+
+procedure Node998
+begin
+    set_local_var(4, local_var(4) bwor 2);
+end
+
+procedure Node999
+begin
+end
+
+procedure Node001
+begin
+end
+
+procedure Node002
+begin
+    float_msg(self_obj, message_str(95, random(103, 114)), 8);
+end
+
+procedure Node003
+begin
+    float_msg(self_obj, message_str(95, 115), 8);
+    call Node998;
+end
+
+procedure Node004
+begin
+    float_msg(self_obj, message_str(95, 116), 8);
+    call Node998;
+end
+
+procedure Node005
+begin
+    gsay_reply(95, 117);
+    if (get_critter_stat(dude_obj, 35) < get_critter_stat(dude_obj, 7)) then begin
+        giq_option(-3, 95, 118, Node054, 50);
+    end
+    giq_option(-3, 95, 119, Node054, 50);
+    giq_option(-3, 95, 120, Node999, 50);
+    giq_option(4, 95, 121, Node008, 50);
+    giq_option(4, 95, 122, Node009, 50);
+    ASK_CRAFT_INJECTION_FAIL
+    giq_option(4, 95, 123, Node005a, 50);
+end
+
+procedure Node006
+begin
+    gsay_reply(95, 124);
+    giq_option(4, 95, 125, Node007, 50);
+    giq_option(4, 95, 126, Node044, 50);
+    giq_option(4, 95, 127, Node005a, 50);
+end
+
+procedure Node007
+begin
+    set_local_var(6, 1);
+    game_time_advance(60 * (60 * 10));
+    critter_add_trait(dude_obj, 0, 107, 1);
+    gsay_message(95, 128, 50);
+    gfade_out(600);
+    gfade_in(600);
+    gsay_reply(95, 130);
+    giq_option(4, 95, 131, Node044, 50);
+    giq_option(4, 95, 132, Node005a, 50);
+end
+
+procedure Node008
+begin
+    gsay_reply(95, 133);
+    giq_option(4, 95, 134, Node009, 50);
+    giq_option(4, 95, 135, Node005a, 50);
+end
+
+procedure Node009
+begin
+    gsay_reply(95, 136);
+    giq_option(4, 95, 137, Node008, 50);
+    ASK_CRAFT_INJECTION_FAIL
+    giq_option(4, 95, 138, Node005a, 50);
+end
+
+procedure Node010
+begin
+    gsay_reply(95, 139);
+    if (global_var(79) == 4) then begin
+        giq_option(4, 95, 140, Node010a, 50);
+    end
+    if (global_var(79) == 5) then begin
+        giq_option(4, 95, message_str(95, 141) + obj_name(dude_obj) + message_str(95, 142), Node011, 50);
+    end
+    giq_option(4, 95, 143, Node010a, 50);
+    giq_option(4, 95, 144, Node015, 50);
+end
+
+procedure Node011
+begin
+    gsay_reply(95, message_str(95, 145) + obj_name(dude_obj) + message_str(95, 146));
+    giq_option(4, 95, 147, Node999, 50);
+end
+
+procedure Node012
+begin
+    if (From_10) then begin
+        gsay_reply(95, 148);
+    end
+    else begin
+        gsay_reply(95, 149);
+    end
+    giq_option(4, 95, 150, Node013, 50);
+    giq_option(4, 95, 151, Node014, 50);
+    giq_option(4, 95, 152, Node014, 50);
+    giq_option(4, 95, 153, Node014, 50);
+end
+
+procedure Node013
+begin
+    gsay_reply(95, 154);
+    giq_option(4, 95, 155, Node016, 50);
+    giq_option(4, 95, 156, Node016, 50);
+end
+
+procedure Node014
+begin
+    gsay_reply(95, 157);
+    giq_option(4, 95, 158, Node016, 50);
+    giq_option(4, 95, 159, Node016, 50);
+end
+
+procedure Node015
+begin
+    gsay_reply(95, 160);
+    giq_option(4, 95, 161, Node015a, 50);
+end
+
+procedure Node016
+begin
+    gsay_reply(95, 163);
+    giq_option(4, 95, 164, Node017, 50);
+    giq_option(4, 95, 165, Node016a, 50);
+end
+
+procedure Node017
+begin
+    if (From_44) then begin
+        gsay_reply(95, 166);
+    end
+    else begin
+        gsay_reply(95, 167);
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 259)) then begin
+        giq_option(4, 95, 168, Node017a, 50);
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 259) and (has_skill(dude_obj, 15) >= 75)) then begin
+        giq_option(4, 95, 169, Node017b, 50);
+    end
+    if (obj_is_carrying_obj_pid(dude_obj, 259) and (has_skill(dude_obj, 15) >= 95)) then begin
+        giq_option(4, 95, 170, Node017c, 50);
+    end
+    giq_option(4, 95, 171, Node034, 50);
+    giq_option(4, 95, 172, Node035, 50);
+    giq_option(4, 95, 173, Node016a, 50);
+end
+
+procedure Node018
+begin
+end
+
+procedure Node019
+begin
+    set_global_var(85, 1);
+    gsay_reply(95, 174);
+    giq_option(4, 95, 175, Node044, 50);
+    if (get_critter_stat(dude_obj, 4) == 4) then begin
+        giq_option(4, 95, 176, Node999, 50);
+    end
+    else begin
+        giq_option(5, 95, 177, Node999, 50);
+    end
+end
+
+procedure Node020
+begin
+    gsay_reply(95, 178);
+    giq_option(4, 95, 179, Node044, 50);
+    if (global_var(370) > 0) then begin
+        giq_option(4, 95, 180, Node022, 50);
+    end
+    if (has_trait(2, dude_obj, 11) or metarule(18, dude_obj)) then begin
+        giq_option(4, 95, 181, Node021, 50);
+    end
+    giq_option(4, 95, 182, Node999, 50);
+end
+
+procedure Node021
+begin
+    gsay_reply(95, 183);
+    giq_option(4, 95, 184, Node044, 50);
+    if (global_var(370) > 0) then begin
+        giq_option(4, 95, 185, Node022, 50);
+    end
+    giq_option(4, 95, 186, Node999, 50);
+end
+
+procedure Node022
+begin
+    gsay_reply(95, 187);
+    giq_option(4, 95, 188, Node044, 50);
+    if (party_member_obj(16777376) == 0) then begin
+        if (global_var(370) == 1) then begin
+            giq_option(4, 95, 189, Node023, 50);
+        end
+        if (global_var(370) == 2) then begin
+            giq_option(4, 95, 190, Node023, 50);
+        end
+        if (global_var(370) == 3) then begin
+            giq_option(4, 95, 191, Node026, 50);
+        end
+    end
+    else begin
+        if (global_var(370) == 1) then begin
+            giq_option(4, 95, 192, Node030, 50);
+        end
+        if (global_var(370) == 2) then begin
+            giq_option(4, 95, 193, Node030, 50);
+        end
+        if (global_var(370) == 3) then begin
+            giq_option(4, 95, 194, Node026, 50);
+        end
+    end
+    giq_option(4, 95, 195, Node999, 50);
+end
+
+procedure Node023
+begin
+    gsay_reply(95, 196);
+    giq_option(4, 95, 197, Node044, 50);
+    if (global_var(370) == 1) then begin
+        giq_option(4, 95, 198, Node024, 50);
+    end
+    if (global_var(370) == 2) then begin
+        giq_option(4, 95, 199, Node025, 50);
+    end
+    giq_option(4, 95, 200, Node999, 50);
+end
+
+procedure Node024
+begin
+    display_msg(message_str(95, 399));
+    give_exp_points(500);
+    display_msg(message_str(14, 100) + 500 + message_str(14, 101));
+    set_local_var(7, game_time - (30 * (24 * (60 * (60 * 10)))));
+    gsay_reply(95, 201);
+    if (get_critter_stat(dude_obj, 4) == 4) then begin
+        giq_option(4, 95, 202, Node999, 50);
+    end
+    else begin
+        giq_option(4, 95, 203, Node999, 50);
+    end
+    giq_option(5, 95, 204, Node999, 50);
+end
+
+procedure Node025
+begin
+    display_msg(message_str(95, 399));
+    give_exp_points(750);
+    display_msg(message_str(14, 100) + 750 + message_str(14, 101));
+    set_local_var(7, game_time - (60 * (24 * (60 * (60 * 10)))));
+    gsay_reply(95, 205);
+    giq_option(4, 95, 206, Node999, 50);
+    giq_option(4, 95, 207, Node999, 50);
+end
+
+procedure Node026
+begin
+    gsay_reply(95, 208);
+    giq_option(4, 95, 209, Node027, 50);
+    giq_option(4, 95, 210, Node044, 50);
+    giq_option(4, 95, 211, Node999, 50);
+end
+
+procedure Node027
+begin
+    gsay_reply(95, 212);
+    giq_option(4, 95, 213, Node028, 50);
+end
+
+procedure Node028
+begin
+    gfade_out(600);
+    gfade_in(600);
+    gsay_reply(95, 215);
+    giq_option(4, 95, 216, Node029, 50);
+end
+
+procedure Node029
+begin
+    display_msg(message_str(14, 1010));
+    give_exp_points(2000);
+    display_msg(message_str(14, 100) + 2000 + message_str(14, 101));
+    set_global_var(50, global_var(50) + 3);
+    set_global_var(0, global_var(0) + 10);
+    debug_msg("Player gains " + 10 + " Karma Points.");
+    set_global_var(37, 0);
+    set_global_var(38, 0);
+    set_global_var(39, 0);
+    set_global_var(40, 0);
+    set_global_var(41, 0);
+    set_global_var(42, 0);
+    set_global_var(43, 0);
+    set_global_var(44, 0);
+    set_global_var(45, 0);
+    tmp_gen_rep := global_var(0);
+    if (has_trait(0, dude_obj, 95)) then begin
+        tmp_gen_rep := global_var(0) * 2;
+    end
+    if (tmp_gen_rep >= 1000) then begin
+        set_global_var(37, 1);
+    end
+    else begin
+        if (tmp_gen_rep >= 750) then begin
+            set_global_var(38, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 500) then begin
+                set_global_var(39, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 250) then begin
+                    set_global_var(40, 1);
+                end
+                else begin
+                    if (tmp_gen_rep > -250) then begin
+                        set_global_var(41, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -500) then begin
+                            set_global_var(42, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -750) then begin
+                                set_global_var(43, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -1000) then begin
+                                    set_global_var(44, 1);
+                                end
+                                else begin
+                                    set_global_var(45, 1);
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    From_29 := 1;
+    if (global_var(85) > 0) then begin
+        gsay_reply(95, message_str(95, 217) + " " + message_str(95, 219));
+    end
+    else begin
+        gsay_reply(95, message_str(95, 218) + " " + message_str(95, 219));
+    end
+    giq_option(4, 95, 220, Node055, 50);
+end
+
+procedure Node030
+begin
+    gsay_reply(95, 221);
+    giq_option(4, 95, 222, Node031, 50);
+    giq_option(4, 95, 223, Node031, 50);
+    giq_option(4, 95, 224, Node031, 50);
+end
+
+procedure Node031
+begin
+    gsay_reply(95, 225);
+    giq_option(4, 95, 226, Node032, 50);
+    giq_option(4, 95, 227, Node032, 50);
+    giq_option(4, 95, 228, Node032, 50);
+end
+
+procedure Node032
+begin
+    display_msg(message_str(95, 399));
+    give_exp_points(750);
+    display_msg(message_str(14, 100) + 750 + message_str(14, 101));
+    set_local_var(7, game_time - (60 * (24 * (60 * (60 * 10)))));
+    gfade_out(600);
+    gfade_in(600);
+    gsay_reply(95, 229);
+    giq_option(4, 95, 230, Node033, 50);
+    giq_option(4, 95, 231, Node033, 50);
+end
+
+procedure Node033
+begin
+    gsay_reply(95, 232);
+    giq_option(4, 95, 233, Node999, 50);
+    giq_option(4, 95, 234, Node999, 50);
+    giq_option(4, 95, 235, Node999, 50);
+end
+
+procedure Node034
+begin
+    gsay_reply(95, 236);
+    if (obj_is_carrying_obj_pid(dude_obj, 259)) then begin
+        giq_option(4, 95, 237, Node043, 50);
+    end
+    giq_option(4, 95, 238, Node037, 50);
+    giq_option(4, 95, 239, Node057, 50);
+    giq_option(4, 95, 240, Node019, 50);
+end
+
+procedure Node035
+begin
+    gsay_reply(95, 241);
+    giq_option(4, 95, 242, Node036, 50);
+    giq_option(5, 95, 243, Node038, 51);
+    if (obj_is_carrying_obj_pid(dude_obj, 259)) then begin
+        giq_option(5, 95, 244, Node043, 50);
+    end
+    giq_option(5, 95, 245, Node037, 50);
+    giq_option(5, 95, 246, Node057, 50);
+    giq_option(5, 95, 247, Node019, 50);
+end
+
+procedure Node036
+begin
+    gsay_reply(95, 248);
+    if (obj_is_carrying_obj_pid(dude_obj, 259)) then begin
+        giq_option(4, 95, 249, Node043, 50);
+    end
+    giq_option(4, 95, 250, Node037, 50);
+    giq_option(4, 95, 251, Node038, 51);
+    giq_option(4, 95, 252, Node057, 50);
+    giq_option(4, 95, 253, Node019, 50);
+end
+
+procedure Node037
+begin
+    gsay_reply(95, 254);
+    if (obj_is_carrying_obj_pid(dude_obj, 259)) then begin
+        giq_option(4, 95, 255, Node043, 50);
+    end
+    giq_option(4, 95, 256, Node038, 51);
+    giq_option(4, 95, 257, Node057, 50);
+    giq_option(4, 95, 258, Node019, 50);
+end
+
+procedure Node038
+begin
+    gsay_reply(95, 259);
+    giq_option(4, 95, 260, Node042, 50);
+    giq_option(4, 95, 261, Node039, 51);
+end
+
+procedure Node039
+begin
+    set_global_var(0, global_var(0) + -3);
+    debug_msg("Player gains " + -3 + " Karma Points.");
+    set_global_var(37, 0);
+    set_global_var(38, 0);
+    set_global_var(39, 0);
+    set_global_var(40, 0);
+    set_global_var(41, 0);
+    set_global_var(42, 0);
+    set_global_var(43, 0);
+    set_global_var(44, 0);
+    set_global_var(45, 0);
+    tmp_gen_rep := global_var(0);
+    if (has_trait(0, dude_obj, 95)) then begin
+        tmp_gen_rep := global_var(0) * 2;
+    end
+    if (tmp_gen_rep >= 1000) then begin
+        set_global_var(37, 1);
+    end
+    else begin
+        if (tmp_gen_rep >= 750) then begin
+            set_global_var(38, 1);
+        end
+        else begin
+            if (tmp_gen_rep >= 500) then begin
+                set_global_var(39, 1);
+            end
+            else begin
+                if (tmp_gen_rep >= 250) then begin
+                    set_global_var(40, 1);
+                end
+                else begin
+                    if (tmp_gen_rep > -250) then begin
+                        set_global_var(41, 1);
+                    end
+                    else begin
+                        if (tmp_gen_rep > -500) then begin
+                            set_global_var(42, 1);
+                        end
+                        else begin
+                            if (tmp_gen_rep > -750) then begin
+                                set_global_var(43, 1);
+                            end
+                            else begin
+                                if (tmp_gen_rep > -1000) then begin
+                                    set_global_var(44, 1);
+                                end
+                                else begin
+                                    set_global_var(45, 1);
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    set_global_var(50, global_var(50) + -3);
+    gsay_reply(95, 262);
+    giq_option(4, 95, 263, Node039a, 50);
+    giq_option(4, 95, 264, Node039b, 50);
+    giq_option(4, 95, 265, Node040, 51);
+end
+
+procedure Node040
+begin
+    gsay_reply(95, 266);
+    giq_option(4, 95, 267, Node039a, 50);
+    giq_option(4, 95, 268, Node1000, 51);
+end
+
+procedure Node041
+begin
+    set_global_var(85, 5);
+    gsay_reply(95, 269);
+    giq_option(4, 95, 270, Node999, 51);
+    giq_option(4, 95, 271, Node999, 51);
+end
+
+procedure Node042
+begin
+    gsay_reply(95, 272);
+    if (obj_is_carrying_obj_pid(dude_obj, 259)) then begin
+        giq_option(4, 95, 273, Node043, 50);
+    end
+    giq_option(4, 95, 274, Node038, 50);
+    giq_option(4, 95, 275, Node057, 50);
+    giq_option(4, 95, 276, Node019, 50);
+end
+
+procedure Node043
+begin
+    variable LVar0 := 0;
+    LVar0 := obj_carrying_pid_obj(dude_obj, 259);
+    rm_obj_from_inven(dude_obj, LVar0);
+    destroy_object(LVar0);
+    if (((local_var(4) bwand 512) != 0) == 0) then begin
+        if (item_caps_total(self_obj) >= 1000) then begin
+            item_caps_adjust(self_obj, -1000);
+        end
+        else begin
+            if (item_caps_total(self_obj) > 0) then begin
+                item_caps_adjust(self_obj, -item_caps_total(self_obj));
+            end
+        end
+        item_caps_adjust(dude_obj, 1000);
+    end
+    set_local_var(4, local_var(4) bwor 512);
+    set_local_var(7, game_time);
+    set_global_var(85, 3);
+    if (not(From_44)) then begin
+        gsay_reply(95, message_str(95, 277) + " " + message_str(95, 278));
+    end
+    else begin
+        gsay_reply(95, 278);
+    end
+    giq_option(4, 95, 279, Node044, 50);
+    if (global_var(370) > 0) then begin
+        giq_option(4, 95, 280, Node022, 50);
+    end
+    giq_option(4, 95, 281, Node999, 50);
+end
+
+procedure Node044
+begin
+    if (From_WTG) then begin
+        From_WTG := 0;
+        if (global_var(79) == 5) then begin
+            gsay_reply(95, 282);
+        end
+        else begin
+            if (global_var(79) == 4) then begin
+                gsay_reply(95, 283);
+            end
+            else begin
+                gsay_reply(95, 284);
+            end
+        end
+    end
+    else begin
+        gsay_reply(95, 285);
+    end
+    if ((get_critter_stat(dude_obj, 35) < get_critter_stat(dude_obj, 7)) or ((critter_state(dude_obj) bwand 4) or (critter_state(dude_obj) bwand 8) or (critter_state(dude_obj) bwand 16) or (critter_state(dude_obj) bwand 32))) then begin
+        giq_option(-3, 95, 286, Node054, 50);
+    end
+    giq_option(-3, 95, 287, Node054, 50);
+    giq_option(-3, 95, 288, Node999, 50);
+    unhealthy_members := 0;
+    if (party_member_obj(16777278) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777278), 35) < get_critter_stat(party_member_obj(16777278), 7)) or (get_poison(party_member_obj(16777278)) > 0) or get_critter_stat(party_member_obj(16777278), 37) or (critter_state(party_member_obj(16777278)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777376), 35) < get_critter_stat(party_member_obj(16777376), 7)) or (get_poison(party_member_obj(16777376)) > 0) or get_critter_stat(party_member_obj(16777376), 37) or (critter_state(party_member_obj(16777376)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777377), 35) < get_critter_stat(party_member_obj(16777377), 7)) or (get_poison(party_member_obj(16777377)) > 0) or get_critter_stat(party_member_obj(16777377), 37) or (critter_state(party_member_obj(16777377)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777305), 35) < get_critter_stat(party_member_obj(16777305), 7)) or (get_poison(party_member_obj(16777305)) > 0) or get_critter_stat(party_member_obj(16777305), 37) or (critter_state(party_member_obj(16777305)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777313), 35) < get_critter_stat(party_member_obj(16777313), 7)) or (get_poison(party_member_obj(16777313)) > 0) or get_critter_stat(party_member_obj(16777313), 37) or (critter_state(party_member_obj(16777313)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777323), 35) < get_critter_stat(party_member_obj(16777323), 7)) or (get_poison(party_member_obj(16777323)) > 0) or get_critter_stat(party_member_obj(16777323), 37) or (critter_state(party_member_obj(16777323)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777352), 35) < get_critter_stat(party_member_obj(16777352), 7)) or (get_poison(party_member_obj(16777352)) > 0) or get_critter_stat(party_member_obj(16777352), 37) or (critter_state(party_member_obj(16777352)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777378), 35) < get_critter_stat(party_member_obj(16777378), 7)) or (get_poison(party_member_obj(16777378)) > 0) or get_critter_stat(party_member_obj(16777378), 37) or (critter_state(party_member_obj(16777378)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777368), 35) < get_critter_stat(party_member_obj(16777368), 7)) or (get_poison(party_member_obj(16777368)) > 0) or get_critter_stat(party_member_obj(16777368), 37) or (critter_state(party_member_obj(16777368)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777379), 35) < get_critter_stat(party_member_obj(16777379), 7)) or (get_poison(party_member_obj(16777379)) > 0) or get_critter_stat(party_member_obj(16777379), 37) or (critter_state(party_member_obj(16777379)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777380), 35) < get_critter_stat(party_member_obj(16777380), 7)) or (get_poison(party_member_obj(16777380)) > 0) or get_critter_stat(party_member_obj(16777380), 37) or (critter_state(party_member_obj(16777380)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777381) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777381), 35) < get_critter_stat(party_member_obj(16777381), 7)) or (get_poison(party_member_obj(16777381)) > 0) or get_critter_stat(party_member_obj(16777381), 37) or (critter_state(party_member_obj(16777381)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777295), 35) < get_critter_stat(party_member_obj(16777295), 7)) or (get_poison(party_member_obj(16777295)) > 0) or get_critter_stat(party_member_obj(16777295), 37) or (critter_state(party_member_obj(16777295)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777407) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777407), 35) < get_critter_stat(party_member_obj(16777407), 7)) or (get_poison(party_member_obj(16777407)) > 0) or get_critter_stat(party_member_obj(16777407), 37) or (critter_state(party_member_obj(16777407)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777558), 35) < get_critter_stat(party_member_obj(16777558), 7)) or (get_poison(party_member_obj(16777558)) > 0) or get_critter_stat(party_member_obj(16777558), 37) or (critter_state(party_member_obj(16777558)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777687) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777687), 35) < get_critter_stat(party_member_obj(16777687), 7)) or (get_poison(party_member_obj(16777687)) > 0) or get_critter_stat(party_member_obj(16777687), 37) or (critter_state(party_member_obj(16777687)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777718), 35) < get_critter_stat(party_member_obj(16777718), 7)) or (get_poison(party_member_obj(16777718)) > 0) or get_critter_stat(party_member_obj(16777718), 37) or (critter_state(party_member_obj(16777718)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777719), 35) < get_critter_stat(party_member_obj(16777719), 7)) or (get_poison(party_member_obj(16777719)) > 0) or get_critter_stat(party_member_obj(16777719), 37) or (critter_state(party_member_obj(16777719)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777720), 35) < get_critter_stat(party_member_obj(16777720), 7)) or (get_poison(party_member_obj(16777720)) > 0) or get_critter_stat(party_member_obj(16777720), 37) or (critter_state(party_member_obj(16777720)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (unhealthy_members > 0) then begin
+        giq_option(4, 95, 289, Node063, 50);
+    end
+    else begin
+        if ((get_critter_stat(dude_obj, 35) < get_critter_stat(dude_obj, 7)) or get_poison(dude_obj) or get_critter_stat(dude_obj, 37) or ((critter_state(dude_obj) bwand 4) or (critter_state(dude_obj) bwand 8) or (critter_state(dude_obj) bwand 16) or (critter_state(dude_obj) bwand 32))) then begin
+            giq_option(4, 95, 289, Node063, 50);
+        end
+    end
+    if ((local_var(6) == 0) and (has_skill(dude_obj, 7) >= 75)) then begin
+        giq_option(4, 95, 290, Node006, 50);
+    end
+    if ((global_var(85) < 4) and (global_var(370) == 3)) then begin
+        giq_option(4, 95, 291, Node026, 50);
+    end
+    if ((global_var(85) == 2) and obj_is_carrying_obj_pid(dude_obj, 259)) then begin
+        giq_option(4, 95, 292, Node044a, 50);
+    end
+    if (global_var(85) == 1) then begin
+        giq_option(4, 95, 293, Node017, 50);
+    end
+    if ((global_var(85) == 1) or (global_var(85) == 2)) then begin
+        giq_option(4, 95, 294, Node038, 50);
+    end
+    ASK_CRAFT_INJECTION
+    giq_option(4, 95, 295, Node005a, 50);
+end
+
+procedure Node045
+begin
+end
+
+procedure Node046
+begin
+end
+
+procedure Node047
+begin
+    gsay_reply(95, 296);
+    giq_option(4, 95, 297, Node048, 50);
+end
+
+procedure Node048
+begin
+    gfade_out(600);
+    gfade_in(600);
+    critter_add_trait(dude_obj, 0, 78, 1);
+    set_local_var(6, 2);
+    gsay_reply(95, 298);
+    giq_option(4, 95, 299, Node044, 50);
+    giq_option(4, 95, 300, Node999, 50);
+end
+
+procedure Node049
+begin
+    gsay_reply(95, 301);
+    if ((get_critter_stat(dude_obj, 35) < get_critter_stat(dude_obj, 7)) or ((critter_state(dude_obj) bwand 4) or (critter_state(dude_obj) bwand 8) or (critter_state(dude_obj) bwand 16) or (critter_state(dude_obj) bwand 32))) then begin
+        giq_option(4, 95, 302, Node052, 50);
+    end
+    if (get_poison(dude_obj)) then begin
+        giq_option(4, 95, 303, Node052, 50);
+    end
+    if (get_critter_stat(dude_obj, 37)) then begin
+        giq_option(4, 95, 304, Node052, 50);
+    end
+    if (local_var(10) != get_month) then begin
+        giq_option(4, 95, 305, Node050, 50);
+    end
+    if ((local_var(10) == get_month) and (local_var(9) == 1)) then begin
+        giq_option(4, 95, 306, Node051, 50);
+    end
+    giq_option(4, 95, 307, Node999, 50);
+end
+
+procedure Node050
+begin
+    set_local_var(9, 1);
+    set_local_var(10, get_month);
+    if (local_var(8) == 500) then begin
+        item_caps_adjust(dude_obj, 500);
+    end
+    else begin
+        item_caps_adjust(dude_obj, 1000);
+    end
+    gsay_reply(95, 308);
+    if ((get_critter_stat(dude_obj, 35) < get_critter_stat(dude_obj, 7)) or ((critter_state(dude_obj) bwand 4) or (critter_state(dude_obj) bwand 8) or (critter_state(dude_obj) bwand 16) or (critter_state(dude_obj) bwand 32))) then begin
+        giq_option(4, 95, 309, Node052, 50);
+    end
+    if (get_poison(dude_obj)) then begin
+        giq_option(4, 95, 310, Node052, 50);
+    end
+    if (get_critter_stat(dude_obj, 37)) then begin
+        giq_option(4, 95, 311, Node052, 50);
+    end
+    giq_option(4, 95, 312, Node999, 50);
+end
+
+procedure Node051
+begin
+    gsay_reply(95, 313);
+    if ((get_critter_stat(dude_obj, 35) < get_critter_stat(dude_obj, 7)) or ((critter_state(dude_obj) bwand 4) or (critter_state(dude_obj) bwand 8) or (critter_state(dude_obj) bwand 16) or (critter_state(dude_obj) bwand 32))) then begin
+        giq_option(4, 95, 314, Node052, 50);
+    end
+    if (get_poison(dude_obj)) then begin
+        giq_option(4, 95, 315, Node052, 50);
+    end
+    if (get_critter_stat(dude_obj, 37)) then begin
+        giq_option(4, 95, 316, Node052, 50);
+    end
+    giq_option(4, 95, 317, Node999, 50);
+end
+
+procedure Node052
+begin
+    gsay_message(95, 318, 50);
+    gfade_out(600);
+    gfade_in(600);
+    gsay_reply(95, 320);
+    giq_option(4, 95, 321, Node053, 50);
+end
+
+procedure Node053
+begin
+    Insta_Kill_Player := 1;
+    gsay_reply(95, 322);
+    giq_option(4, 95, 323, Node999, 50);
+    giq_option(9, 95, 324, Node999, 50);
+    giq_option(4, 95, 325, Node999, 50);
+end
+
+procedure Node054
+begin
+    gsay_reply(95, 326);
+    giq_option(-3, 95, 327, Node1000, 51);
+    giq_option(-3, 95, 328, Node054a, 50);
+end
+
+procedure Node055
+begin
+    if (not(From_WTG)) then begin
+        gfade_out(600);
+        gfade_in(600);
+    end
+    set_global_var(370, 4);
+    set_global_var(85, 4);
+    if (From_WTG) then begin
+        From_WTG := 0;
+        gsay_reply(95, message_str(95, 329) + " " + message_str(95, 331));
+    end
+    else begin
+        gsay_reply(95, message_str(95, 330) + " " + message_str(95, 331));
+    end
+    giq_option(4, 95, 332, Node056, 50);
+    if (global_var(84) == 2) then begin
+        giq_option(4, 95, 333, Node056, 50);
+    end
+end
+
+procedure Node056
+begin
+    variable LVar0 := 0;
+    LVar0 := create_object_sid(260, 0, 0, -1);
+    add_mult_objs_to_inven(dude_obj, LVar0, 2);
+    if (global_var(84) == 2) then begin
+        gsay_reply(95, 334);
+    end
+    else begin
+        gsay_reply(95, 335);
+    end
+    giq_option(4, 95, 336, Node044, 50);
+    giq_option(4, 95, 337, Node999, 50);
+end
+
+procedure Node057
+begin
+    set_global_var(85, 2);
+    gsay_reply(95, 338);
+    giq_option(4, 95, 339, Node044, 50);
+    giq_option(4, 95, 340, Node999, 50);
+end
+
+procedure Node058
+begin
+    if (local_var(11) == 0) then begin
+        set_local_var(11, local_var(11) + 1);
+        gsay_reply(95, 341);
+        giq_option(4, 95, 343, Node059, 50);
+        giq_option(4, 95, 344, Node059, 50);
+    end
+    else begin
+        gsay_reply(95, 342);
+        giq_option(4, 95, 345, Node044, 50);
+        giq_option(4, 95, 346, Node999, 50);
+        giq_option(4, 95, 347, Node999, 50);
+    end
+end
+
+procedure Node059
+begin
+    gsay_reply(95, 348);
+    giq_option(4, 95, 349, Node060, 50);
+end
+
+procedure Node060
+begin
+    gsay_reply(95, 350);
+    giq_option(5, 95, 351, Node044, 50);
+    if (get_critter_stat(dude_obj, 4) < 7) then begin
+        giq_option(4, 95, 352, Node999, 50);
+    end
+    giq_option(7, 95, 353, Node999, 50);
+end
+
+procedure Node061
+begin
+    gsay_reply(95, 354);
+    giq_option(4, 95, 355, Node044, 50);
+    giq_option(4, 95, 356, Node999, 50);
+end
+
+procedure Node062
+begin
+    variable LVar0 := 0;
+    if (metarule(16, 0) > 2) then begin
+        gsay_reply(95, 357);
+    end
+    else begin
+        if (metarule(16, 0) == 2) then begin
+            gsay_reply(95, 358);
+        end
+        else begin
+            gsay_reply(95, 359);
+        end
+    end
+    gfade_out(600);
+    gfade_in(600);
+    if ((party_member_obj(16777377) != 0) and (get_critter_stat(party_member_obj(16777377), 35) < get_critter_stat(party_member_obj(16777377), 7)) and (local_var(12) == 0)) then begin
+        set_local_var(12, local_var(12) + 1);
+        LVar0 := create_object_sid(34, 0, 0, -1);
+        add_mult_objs_to_inven(dude_obj, LVar0, 1);
+        LVar0 := create_object_sid(111, 0, 0, -1);
+        add_mult_objs_to_inven(dude_obj, LVar0, 2);
+        LVar0 := create_object_sid(31, 0, 0, -1);
+        add_mult_objs_to_inven(dude_obj, LVar0, 2);
+        LVar0 := create_object_sid(357, 0, 0, -1);
+        add_mult_objs_to_inven(dude_obj, LVar0, 1);
+        LVar0 := create_object_sid(29, 0, 0, -1);
+        add_mult_objs_to_inven(dude_obj, LVar0, 1);
+        LVar0 := create_object_sid(121, 0, 0, -1);
+        add_mult_objs_to_inven(dude_obj, LVar0, 1);
+        LVar0 := create_object_sid(35, 0, 0, -1);
+        add_mult_objs_to_inven(dude_obj, LVar0, 1);
+        LVar0 := create_object_sid(363, 0, 0, -1);
+        add_mult_objs_to_inven(dude_obj, LVar0, 1);
+        gsay_reply(95, 361);
+    end
+    else begin
+        gsay_reply(95, 362);
+    end
+    if (party_member_obj(16777278) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777278), 35) < get_critter_stat(party_member_obj(16777278), 7)) or (critter_state(party_member_obj(16777278)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777278), get_critter_stat(party_member_obj(16777278), 7) - get_critter_stat(party_member_obj(16777278), 35));
+            poison(party_member_obj(16777278), -get_poison(party_member_obj(16777278)));
+            radiation_dec(party_member_obj(16777278), get_critter_stat(party_member_obj(16777278), 37));
+            critter_injure(party_member_obj(16777278), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777376), 35) < get_critter_stat(party_member_obj(16777376), 7)) or (critter_state(party_member_obj(16777376)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777376), get_critter_stat(party_member_obj(16777376), 7) - get_critter_stat(party_member_obj(16777376), 35));
+            poison(party_member_obj(16777376), -get_poison(party_member_obj(16777376)));
+            radiation_dec(party_member_obj(16777376), get_critter_stat(party_member_obj(16777376), 37));
+            critter_injure(party_member_obj(16777376), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777377), 35) < get_critter_stat(party_member_obj(16777377), 7)) or (critter_state(party_member_obj(16777377)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777377), get_critter_stat(party_member_obj(16777377), 7) - get_critter_stat(party_member_obj(16777377), 35));
+            poison(party_member_obj(16777377), -get_poison(party_member_obj(16777377)));
+            radiation_dec(party_member_obj(16777377), get_critter_stat(party_member_obj(16777377), 37));
+            critter_injure(party_member_obj(16777377), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777305), 35) < get_critter_stat(party_member_obj(16777305), 7)) or (critter_state(party_member_obj(16777305)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777305), get_critter_stat(party_member_obj(16777305), 7) - get_critter_stat(party_member_obj(16777305), 35));
+            poison(party_member_obj(16777305), -get_poison(party_member_obj(16777305)));
+            radiation_dec(party_member_obj(16777305), get_critter_stat(party_member_obj(16777305), 37));
+            critter_injure(party_member_obj(16777305), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777313), 35) < get_critter_stat(party_member_obj(16777313), 7)) or (critter_state(party_member_obj(16777313)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777313), get_critter_stat(party_member_obj(16777313), 7) - get_critter_stat(party_member_obj(16777313), 35));
+            poison(party_member_obj(16777313), -get_poison(party_member_obj(16777313)));
+            radiation_dec(party_member_obj(16777313), get_critter_stat(party_member_obj(16777313), 37));
+            critter_injure(party_member_obj(16777313), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777323), 35) < get_critter_stat(party_member_obj(16777323), 7)) or (critter_state(party_member_obj(16777323)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777323), get_critter_stat(party_member_obj(16777323), 7) - get_critter_stat(party_member_obj(16777323), 35));
+            poison(party_member_obj(16777323), -get_poison(party_member_obj(16777323)));
+            radiation_dec(party_member_obj(16777323), get_critter_stat(party_member_obj(16777323), 37));
+            critter_injure(party_member_obj(16777323), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777352), 35) < get_critter_stat(party_member_obj(16777352), 7)) or (critter_state(party_member_obj(16777352)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777352), get_critter_stat(party_member_obj(16777352), 7) - get_critter_stat(party_member_obj(16777352), 35));
+            poison(party_member_obj(16777352), -get_poison(party_member_obj(16777352)));
+            radiation_dec(party_member_obj(16777352), get_critter_stat(party_member_obj(16777352), 37));
+            critter_injure(party_member_obj(16777352), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777378), 35) < get_critter_stat(party_member_obj(16777378), 7)) or (critter_state(party_member_obj(16777378)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777378), get_critter_stat(party_member_obj(16777378), 7) - get_critter_stat(party_member_obj(16777378), 35));
+            poison(party_member_obj(16777378), -get_poison(party_member_obj(16777378)));
+            radiation_dec(party_member_obj(16777378), get_critter_stat(party_member_obj(16777378), 37));
+            critter_injure(party_member_obj(16777378), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777368), 35) < get_critter_stat(party_member_obj(16777368), 7)) or (critter_state(party_member_obj(16777368)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777368), get_critter_stat(party_member_obj(16777368), 7) - get_critter_stat(party_member_obj(16777368), 35));
+            poison(party_member_obj(16777368), -get_poison(party_member_obj(16777368)));
+            radiation_dec(party_member_obj(16777368), get_critter_stat(party_member_obj(16777368), 37));
+            critter_injure(party_member_obj(16777368), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777379), 35) < get_critter_stat(party_member_obj(16777379), 7)) or (critter_state(party_member_obj(16777379)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777379), get_critter_stat(party_member_obj(16777379), 7) - get_critter_stat(party_member_obj(16777379), 35));
+            poison(party_member_obj(16777379), -get_poison(party_member_obj(16777379)));
+            radiation_dec(party_member_obj(16777379), get_critter_stat(party_member_obj(16777379), 37));
+            critter_injure(party_member_obj(16777379), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777380), 35) < get_critter_stat(party_member_obj(16777380), 7)) or (critter_state(party_member_obj(16777380)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777380), get_critter_stat(party_member_obj(16777380), 7) - get_critter_stat(party_member_obj(16777380), 35));
+            poison(party_member_obj(16777380), -get_poison(party_member_obj(16777380)));
+            radiation_dec(party_member_obj(16777380), get_critter_stat(party_member_obj(16777380), 37));
+            critter_injure(party_member_obj(16777380), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777295), 35) < get_critter_stat(party_member_obj(16777295), 7)) or (critter_state(party_member_obj(16777295)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777295), get_critter_stat(party_member_obj(16777295), 7) - get_critter_stat(party_member_obj(16777295), 35));
+            poison(party_member_obj(16777295), -get_poison(party_member_obj(16777295)));
+            radiation_dec(party_member_obj(16777295), get_critter_stat(party_member_obj(16777295), 37));
+            critter_injure(party_member_obj(16777295), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777558), 35) < get_critter_stat(party_member_obj(16777558), 7)) or (critter_state(party_member_obj(16777558)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777558), get_critter_stat(party_member_obj(16777558), 7) - get_critter_stat(party_member_obj(16777558), 35));
+            poison(party_member_obj(16777558), -get_poison(party_member_obj(16777558)));
+            radiation_dec(party_member_obj(16777558), get_critter_stat(party_member_obj(16777558), 37));
+            critter_injure(party_member_obj(16777558), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777687) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777687), 35) < get_critter_stat(party_member_obj(16777687), 7)) or (critter_state(party_member_obj(16777687)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777687), get_critter_stat(party_member_obj(16777687), 7) - get_critter_stat(party_member_obj(16777687), 35));
+            poison(party_member_obj(16777687), -get_poison(party_member_obj(16777687)));
+            radiation_dec(party_member_obj(16777687), get_critter_stat(party_member_obj(16777687), 37));
+            critter_injure(party_member_obj(16777687), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777718), 35) < get_critter_stat(party_member_obj(16777718), 7)) or (critter_state(party_member_obj(16777718)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777718), get_critter_stat(party_member_obj(16777718), 7) - get_critter_stat(party_member_obj(16777718), 35));
+            poison(party_member_obj(16777718), -get_poison(party_member_obj(16777718)));
+            radiation_dec(party_member_obj(16777718), get_critter_stat(party_member_obj(16777718), 37));
+            critter_injure(party_member_obj(16777718), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777719), 35) < get_critter_stat(party_member_obj(16777719), 7)) or (critter_state(party_member_obj(16777719)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777719), get_critter_stat(party_member_obj(16777719), 7) - get_critter_stat(party_member_obj(16777719), 35));
+            poison(party_member_obj(16777719), -get_poison(party_member_obj(16777719)));
+            radiation_dec(party_member_obj(16777719), get_critter_stat(party_member_obj(16777719), 37));
+            critter_injure(party_member_obj(16777719), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777720), 35) < get_critter_stat(party_member_obj(16777720), 7)) or (critter_state(party_member_obj(16777720)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            critter_heal(party_member_obj(16777720), get_critter_stat(party_member_obj(16777720), 7) - get_critter_stat(party_member_obj(16777720), 35));
+            poison(party_member_obj(16777720), -get_poison(party_member_obj(16777720)));
+            radiation_dec(party_member_obj(16777720), get_critter_stat(party_member_obj(16777720), 37));
+            critter_injure(party_member_obj(16777720), 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+        end
+    end
+    if ((get_critter_stat(dude_obj, 35) < get_critter_stat(dude_obj, 7)) or ((critter_state(dude_obj) bwand 4) or (critter_state(dude_obj) bwand 8) or (critter_state(dude_obj) bwand 16) or (critter_state(dude_obj) bwand 32))) then begin
+        giq_option(4, 95, 363, Node064, 50);
+    end
+    if (get_poison(dude_obj)) then begin
+        giq_option(4, 95, 365, Node065, 50);
+    end
+    if (get_critter_stat(dude_obj, 37)) then begin
+        giq_option(4, 95, 364, Node065, 50);
+    end
+    unhealthy_members := 0;
+    if (party_member_obj(16777278) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777278), 35) < get_critter_stat(party_member_obj(16777278), 7)) or (get_poison(party_member_obj(16777278)) > 0) or get_critter_stat(party_member_obj(16777278), 37) or (critter_state(party_member_obj(16777278)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777376), 35) < get_critter_stat(party_member_obj(16777376), 7)) or (get_poison(party_member_obj(16777376)) > 0) or get_critter_stat(party_member_obj(16777376), 37) or (critter_state(party_member_obj(16777376)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777377), 35) < get_critter_stat(party_member_obj(16777377), 7)) or (get_poison(party_member_obj(16777377)) > 0) or get_critter_stat(party_member_obj(16777377), 37) or (critter_state(party_member_obj(16777377)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777305), 35) < get_critter_stat(party_member_obj(16777305), 7)) or (get_poison(party_member_obj(16777305)) > 0) or get_critter_stat(party_member_obj(16777305), 37) or (critter_state(party_member_obj(16777305)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777313), 35) < get_critter_stat(party_member_obj(16777313), 7)) or (get_poison(party_member_obj(16777313)) > 0) or get_critter_stat(party_member_obj(16777313), 37) or (critter_state(party_member_obj(16777313)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777323), 35) < get_critter_stat(party_member_obj(16777323), 7)) or (get_poison(party_member_obj(16777323)) > 0) or get_critter_stat(party_member_obj(16777323), 37) or (critter_state(party_member_obj(16777323)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777352), 35) < get_critter_stat(party_member_obj(16777352), 7)) or (get_poison(party_member_obj(16777352)) > 0) or get_critter_stat(party_member_obj(16777352), 37) or (critter_state(party_member_obj(16777352)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777378), 35) < get_critter_stat(party_member_obj(16777378), 7)) or (get_poison(party_member_obj(16777378)) > 0) or get_critter_stat(party_member_obj(16777378), 37) or (critter_state(party_member_obj(16777378)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777368), 35) < get_critter_stat(party_member_obj(16777368), 7)) or (get_poison(party_member_obj(16777368)) > 0) or get_critter_stat(party_member_obj(16777368), 37) or (critter_state(party_member_obj(16777368)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777379), 35) < get_critter_stat(party_member_obj(16777379), 7)) or (get_poison(party_member_obj(16777379)) > 0) or get_critter_stat(party_member_obj(16777379), 37) or (critter_state(party_member_obj(16777379)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777380), 35) < get_critter_stat(party_member_obj(16777380), 7)) or (get_poison(party_member_obj(16777380)) > 0) or get_critter_stat(party_member_obj(16777380), 37) or (critter_state(party_member_obj(16777380)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777381) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777381), 35) < get_critter_stat(party_member_obj(16777381), 7)) or (get_poison(party_member_obj(16777381)) > 0) or get_critter_stat(party_member_obj(16777381), 37) or (critter_state(party_member_obj(16777381)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777295), 35) < get_critter_stat(party_member_obj(16777295), 7)) or (get_poison(party_member_obj(16777295)) > 0) or get_critter_stat(party_member_obj(16777295), 37) or (critter_state(party_member_obj(16777295)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777407) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777407), 35) < get_critter_stat(party_member_obj(16777407), 7)) or (get_poison(party_member_obj(16777407)) > 0) or get_critter_stat(party_member_obj(16777407), 37) or (critter_state(party_member_obj(16777407)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777558), 35) < get_critter_stat(party_member_obj(16777558), 7)) or (get_poison(party_member_obj(16777558)) > 0) or get_critter_stat(party_member_obj(16777558), 37) or (critter_state(party_member_obj(16777558)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777687) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777687), 35) < get_critter_stat(party_member_obj(16777687), 7)) or (get_poison(party_member_obj(16777687)) > 0) or get_critter_stat(party_member_obj(16777687), 37) or (critter_state(party_member_obj(16777687)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777718), 35) < get_critter_stat(party_member_obj(16777718), 7)) or (get_poison(party_member_obj(16777718)) > 0) or get_critter_stat(party_member_obj(16777718), 37) or (critter_state(party_member_obj(16777718)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777719), 35) < get_critter_stat(party_member_obj(16777719), 7)) or (get_poison(party_member_obj(16777719)) > 0) or get_critter_stat(party_member_obj(16777719), 37) or (critter_state(party_member_obj(16777719)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777720), 35) < get_critter_stat(party_member_obj(16777720), 7)) or (get_poison(party_member_obj(16777720)) > 0) or get_critter_stat(party_member_obj(16777720), 37) or (critter_state(party_member_obj(16777720)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (unhealthy_members > 0) then begin
+        if (metarule(16, 0) == 2) then begin
+            giq_option(4, 95, 375, Node063a, 50);
+        end
+        else begin
+            giq_option(4, 95, 376, Node063a, 50);
+        end
+    end
+    if (global_var(384) == 1) then begin
+        giq_option(4, 95, 366, Node058, 50);
+    end
+    giq_option(4, 95, 367, Node044, 50);
+    giq_option(4, 95, 368, Node999, 50);
+end
+
+procedure Node063
+begin
+    if (global_var(79) == 4) then begin
+        gsay_reply(95, 369);
+    end
+    else begin
+        if (global_var(79) == 5) then begin
+            gsay_reply(95, 370);
+        end
+        else begin
+            gsay_reply(95, 371);
+        end
+    end
+    if ((get_critter_stat(dude_obj, 35) < get_critter_stat(dude_obj, 7)) or ((critter_state(dude_obj) bwand 4) or (critter_state(dude_obj) bwand 8) or (critter_state(dude_obj) bwand 16) or (critter_state(dude_obj) bwand 32))) then begin
+        giq_option(4, 95, 372, Node064, 50);
+    end
+    if (get_poison(dude_obj)) then begin
+        giq_option(4, 95, 374, Node065, 50);
+    end
+    if (get_critter_stat(dude_obj, 37)) then begin
+        giq_option(4, 95, 373, Node065, 50);
+    end
+    unhealthy_members := 0;
+    if (party_member_obj(16777278) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777278), 35) < get_critter_stat(party_member_obj(16777278), 7)) or (get_poison(party_member_obj(16777278)) > 0) or get_critter_stat(party_member_obj(16777278), 37) or (critter_state(party_member_obj(16777278)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777376), 35) < get_critter_stat(party_member_obj(16777376), 7)) or (get_poison(party_member_obj(16777376)) > 0) or get_critter_stat(party_member_obj(16777376), 37) or (critter_state(party_member_obj(16777376)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777377), 35) < get_critter_stat(party_member_obj(16777377), 7)) or (get_poison(party_member_obj(16777377)) > 0) or get_critter_stat(party_member_obj(16777377), 37) or (critter_state(party_member_obj(16777377)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777305), 35) < get_critter_stat(party_member_obj(16777305), 7)) or (get_poison(party_member_obj(16777305)) > 0) or get_critter_stat(party_member_obj(16777305), 37) or (critter_state(party_member_obj(16777305)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777313), 35) < get_critter_stat(party_member_obj(16777313), 7)) or (get_poison(party_member_obj(16777313)) > 0) or get_critter_stat(party_member_obj(16777313), 37) or (critter_state(party_member_obj(16777313)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777323), 35) < get_critter_stat(party_member_obj(16777323), 7)) or (get_poison(party_member_obj(16777323)) > 0) or get_critter_stat(party_member_obj(16777323), 37) or (critter_state(party_member_obj(16777323)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777352), 35) < get_critter_stat(party_member_obj(16777352), 7)) or (get_poison(party_member_obj(16777352)) > 0) or get_critter_stat(party_member_obj(16777352), 37) or (critter_state(party_member_obj(16777352)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777378), 35) < get_critter_stat(party_member_obj(16777378), 7)) or (get_poison(party_member_obj(16777378)) > 0) or get_critter_stat(party_member_obj(16777378), 37) or (critter_state(party_member_obj(16777378)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777368), 35) < get_critter_stat(party_member_obj(16777368), 7)) or (get_poison(party_member_obj(16777368)) > 0) or get_critter_stat(party_member_obj(16777368), 37) or (critter_state(party_member_obj(16777368)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777379), 35) < get_critter_stat(party_member_obj(16777379), 7)) or (get_poison(party_member_obj(16777379)) > 0) or get_critter_stat(party_member_obj(16777379), 37) or (critter_state(party_member_obj(16777379)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777380), 35) < get_critter_stat(party_member_obj(16777380), 7)) or (get_poison(party_member_obj(16777380)) > 0) or get_critter_stat(party_member_obj(16777380), 37) or (critter_state(party_member_obj(16777380)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777381) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777381), 35) < get_critter_stat(party_member_obj(16777381), 7)) or (get_poison(party_member_obj(16777381)) > 0) or get_critter_stat(party_member_obj(16777381), 37) or (critter_state(party_member_obj(16777381)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777295), 35) < get_critter_stat(party_member_obj(16777295), 7)) or (get_poison(party_member_obj(16777295)) > 0) or get_critter_stat(party_member_obj(16777295), 37) or (critter_state(party_member_obj(16777295)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777407) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777407), 35) < get_critter_stat(party_member_obj(16777407), 7)) or (get_poison(party_member_obj(16777407)) > 0) or get_critter_stat(party_member_obj(16777407), 37) or (critter_state(party_member_obj(16777407)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777558), 35) < get_critter_stat(party_member_obj(16777558), 7)) or (get_poison(party_member_obj(16777558)) > 0) or get_critter_stat(party_member_obj(16777558), 37) or (critter_state(party_member_obj(16777558)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777687) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777687), 35) < get_critter_stat(party_member_obj(16777687), 7)) or (get_poison(party_member_obj(16777687)) > 0) or get_critter_stat(party_member_obj(16777687), 37) or (critter_state(party_member_obj(16777687)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777718), 35) < get_critter_stat(party_member_obj(16777718), 7)) or (get_poison(party_member_obj(16777718)) > 0) or get_critter_stat(party_member_obj(16777718), 37) or (critter_state(party_member_obj(16777718)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777719), 35) < get_critter_stat(party_member_obj(16777719), 7)) or (get_poison(party_member_obj(16777719)) > 0) or get_critter_stat(party_member_obj(16777719), 37) or (critter_state(party_member_obj(16777719)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777720), 35) < get_critter_stat(party_member_obj(16777720), 7)) or (get_poison(party_member_obj(16777720)) > 0) or get_critter_stat(party_member_obj(16777720), 37) or (critter_state(party_member_obj(16777720)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (unhealthy_members > 0) then begin
+        if (metarule(16, 0) == 2) then begin
+            giq_option(4, 95, 375, Node063a, 50);
+        end
+        else begin
+            giq_option(4, 95, 376, Node063a, 50);
+        end
+    end
+    if (global_var(384) == 1) then begin
+        giq_option(4, 95, 377, Node058, 50);
+    end
+    giq_option(4, 95, 378, Node044, 50);
+    giq_option(4, 95, 379, Node999, 50);
+end
+
+procedure Node064
+begin
+    critter_heal(dude_obj, get_critter_stat(dude_obj, 7) - get_critter_stat(dude_obj, 35));
+    critter_injure(dude_obj, 4 bwor 8 bwor 16 bwor 32 bwor 8388608);
+    gsay_message(95, 380, 50);
+    gfade_out(600);
+    gfade_in(600);
+    gsay_reply(95, 382);
+    unhealthy_members := 0;
+    if (party_member_obj(16777278) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777278), 35) < get_critter_stat(party_member_obj(16777278), 7)) or (get_poison(party_member_obj(16777278)) > 0) or get_critter_stat(party_member_obj(16777278), 37) or (critter_state(party_member_obj(16777278)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777376), 35) < get_critter_stat(party_member_obj(16777376), 7)) or (get_poison(party_member_obj(16777376)) > 0) or get_critter_stat(party_member_obj(16777376), 37) or (critter_state(party_member_obj(16777376)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777377), 35) < get_critter_stat(party_member_obj(16777377), 7)) or (get_poison(party_member_obj(16777377)) > 0) or get_critter_stat(party_member_obj(16777377), 37) or (critter_state(party_member_obj(16777377)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777305), 35) < get_critter_stat(party_member_obj(16777305), 7)) or (get_poison(party_member_obj(16777305)) > 0) or get_critter_stat(party_member_obj(16777305), 37) or (critter_state(party_member_obj(16777305)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777313), 35) < get_critter_stat(party_member_obj(16777313), 7)) or (get_poison(party_member_obj(16777313)) > 0) or get_critter_stat(party_member_obj(16777313), 37) or (critter_state(party_member_obj(16777313)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777323), 35) < get_critter_stat(party_member_obj(16777323), 7)) or (get_poison(party_member_obj(16777323)) > 0) or get_critter_stat(party_member_obj(16777323), 37) or (critter_state(party_member_obj(16777323)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777352), 35) < get_critter_stat(party_member_obj(16777352), 7)) or (get_poison(party_member_obj(16777352)) > 0) or get_critter_stat(party_member_obj(16777352), 37) or (critter_state(party_member_obj(16777352)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777378), 35) < get_critter_stat(party_member_obj(16777378), 7)) or (get_poison(party_member_obj(16777378)) > 0) or get_critter_stat(party_member_obj(16777378), 37) or (critter_state(party_member_obj(16777378)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777368), 35) < get_critter_stat(party_member_obj(16777368), 7)) or (get_poison(party_member_obj(16777368)) > 0) or get_critter_stat(party_member_obj(16777368), 37) or (critter_state(party_member_obj(16777368)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777379), 35) < get_critter_stat(party_member_obj(16777379), 7)) or (get_poison(party_member_obj(16777379)) > 0) or get_critter_stat(party_member_obj(16777379), 37) or (critter_state(party_member_obj(16777379)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777380), 35) < get_critter_stat(party_member_obj(16777380), 7)) or (get_poison(party_member_obj(16777380)) > 0) or get_critter_stat(party_member_obj(16777380), 37) or (critter_state(party_member_obj(16777380)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777381) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777381), 35) < get_critter_stat(party_member_obj(16777381), 7)) or (get_poison(party_member_obj(16777381)) > 0) or get_critter_stat(party_member_obj(16777381), 37) or (critter_state(party_member_obj(16777381)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777295), 35) < get_critter_stat(party_member_obj(16777295), 7)) or (get_poison(party_member_obj(16777295)) > 0) or get_critter_stat(party_member_obj(16777295), 37) or (critter_state(party_member_obj(16777295)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777407) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777407), 35) < get_critter_stat(party_member_obj(16777407), 7)) or (get_poison(party_member_obj(16777407)) > 0) or get_critter_stat(party_member_obj(16777407), 37) or (critter_state(party_member_obj(16777407)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777558), 35) < get_critter_stat(party_member_obj(16777558), 7)) or (get_poison(party_member_obj(16777558)) > 0) or get_critter_stat(party_member_obj(16777558), 37) or (critter_state(party_member_obj(16777558)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777687) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777687), 35) < get_critter_stat(party_member_obj(16777687), 7)) or (get_poison(party_member_obj(16777687)) > 0) or get_critter_stat(party_member_obj(16777687), 37) or (critter_state(party_member_obj(16777687)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777718), 35) < get_critter_stat(party_member_obj(16777718), 7)) or (get_poison(party_member_obj(16777718)) > 0) or get_critter_stat(party_member_obj(16777718), 37) or (critter_state(party_member_obj(16777718)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777719), 35) < get_critter_stat(party_member_obj(16777719), 7)) or (get_poison(party_member_obj(16777719)) > 0) or get_critter_stat(party_member_obj(16777719), 37) or (critter_state(party_member_obj(16777719)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777720), 35) < get_critter_stat(party_member_obj(16777720), 7)) or (get_poison(party_member_obj(16777720)) > 0) or get_critter_stat(party_member_obj(16777720), 37) or (critter_state(party_member_obj(16777720)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (unhealthy_members > 0) then begin
+        if (metarule(16, 0) == 2) then begin
+            giq_option(4, 95, 383, Node063a, 50);
+        end
+        else begin
+            giq_option(4, 95, 384, Node063a, 50);
+        end
+    end
+    if (global_var(384) == 1) then begin
+        giq_option(4, 95, 385, Node058, 50);
+    end
+    giq_option(4, 95, 386, Node044, 50);
+    giq_option(4, 95, 387, Node999, 50);
+end
+
+procedure Node065
+begin
+    poison(dude_obj, -get_poison(dude_obj));
+    radiation_dec(dude_obj, get_critter_stat(dude_obj, 37));
+    gsay_message(95, 388, 50);
+    gfade_out(600);
+    gfade_in(600);
+    gsay_reply(95, 390);
+    if ((has_skill(dude_obj, 7) >= 75) and (local_var(6) == 1)) then begin
+        giq_option(4, 95, 391, Node047, 50);
+    end
+    unhealthy_members := 0;
+    if (party_member_obj(16777278) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777278), 35) < get_critter_stat(party_member_obj(16777278), 7)) or (get_poison(party_member_obj(16777278)) > 0) or get_critter_stat(party_member_obj(16777278), 37) or (critter_state(party_member_obj(16777278)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777376) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777376), 35) < get_critter_stat(party_member_obj(16777376), 7)) or (get_poison(party_member_obj(16777376)) > 0) or get_critter_stat(party_member_obj(16777376), 37) or (critter_state(party_member_obj(16777376)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777377) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777377), 35) < get_critter_stat(party_member_obj(16777377), 7)) or (get_poison(party_member_obj(16777377)) > 0) or get_critter_stat(party_member_obj(16777377), 37) or (critter_state(party_member_obj(16777377)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777305) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777305), 35) < get_critter_stat(party_member_obj(16777305), 7)) or (get_poison(party_member_obj(16777305)) > 0) or get_critter_stat(party_member_obj(16777305), 37) or (critter_state(party_member_obj(16777305)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777313) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777313), 35) < get_critter_stat(party_member_obj(16777313), 7)) or (get_poison(party_member_obj(16777313)) > 0) or get_critter_stat(party_member_obj(16777313), 37) or (critter_state(party_member_obj(16777313)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777323) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777323), 35) < get_critter_stat(party_member_obj(16777323), 7)) or (get_poison(party_member_obj(16777323)) > 0) or get_critter_stat(party_member_obj(16777323), 37) or (critter_state(party_member_obj(16777323)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777352) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777352), 35) < get_critter_stat(party_member_obj(16777352), 7)) or (get_poison(party_member_obj(16777352)) > 0) or get_critter_stat(party_member_obj(16777352), 37) or (critter_state(party_member_obj(16777352)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777378) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777378), 35) < get_critter_stat(party_member_obj(16777378), 7)) or (get_poison(party_member_obj(16777378)) > 0) or get_critter_stat(party_member_obj(16777378), 37) or (critter_state(party_member_obj(16777378)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777368) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777368), 35) < get_critter_stat(party_member_obj(16777368), 7)) or (get_poison(party_member_obj(16777368)) > 0) or get_critter_stat(party_member_obj(16777368), 37) or (critter_state(party_member_obj(16777368)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777379) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777379), 35) < get_critter_stat(party_member_obj(16777379), 7)) or (get_poison(party_member_obj(16777379)) > 0) or get_critter_stat(party_member_obj(16777379), 37) or (critter_state(party_member_obj(16777379)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777380) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777380), 35) < get_critter_stat(party_member_obj(16777380), 7)) or (get_poison(party_member_obj(16777380)) > 0) or get_critter_stat(party_member_obj(16777380), 37) or (critter_state(party_member_obj(16777380)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777381) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777381), 35) < get_critter_stat(party_member_obj(16777381), 7)) or (get_poison(party_member_obj(16777381)) > 0) or get_critter_stat(party_member_obj(16777381), 37) or (critter_state(party_member_obj(16777381)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777295) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777295), 35) < get_critter_stat(party_member_obj(16777295), 7)) or (get_poison(party_member_obj(16777295)) > 0) or get_critter_stat(party_member_obj(16777295), 37) or (critter_state(party_member_obj(16777295)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777407) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777407), 35) < get_critter_stat(party_member_obj(16777407), 7)) or (get_poison(party_member_obj(16777407)) > 0) or get_critter_stat(party_member_obj(16777407), 37) or (critter_state(party_member_obj(16777407)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777558) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777558), 35) < get_critter_stat(party_member_obj(16777558), 7)) or (get_poison(party_member_obj(16777558)) > 0) or get_critter_stat(party_member_obj(16777558), 37) or (critter_state(party_member_obj(16777558)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777687) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777687), 35) < get_critter_stat(party_member_obj(16777687), 7)) or (get_poison(party_member_obj(16777687)) > 0) or get_critter_stat(party_member_obj(16777687), 37) or (critter_state(party_member_obj(16777687)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777718) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777718), 35) < get_critter_stat(party_member_obj(16777718), 7)) or (get_poison(party_member_obj(16777718)) > 0) or get_critter_stat(party_member_obj(16777718), 37) or (critter_state(party_member_obj(16777718)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777719) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777719), 35) < get_critter_stat(party_member_obj(16777719), 7)) or (get_poison(party_member_obj(16777719)) > 0) or get_critter_stat(party_member_obj(16777719), 37) or (critter_state(party_member_obj(16777719)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (party_member_obj(16777720) != 0) then begin
+        if ((get_critter_stat(party_member_obj(16777720), 35) < get_critter_stat(party_member_obj(16777720), 7)) or (get_poison(party_member_obj(16777720)) > 0) or get_critter_stat(party_member_obj(16777720), 37) or (critter_state(party_member_obj(16777720)) bwand (4 bwor 8 bwor 16 bwor 32))) then begin
+            unhealthy_members := unhealthy_members + 1;
+        end
+    end
+    if (unhealthy_members > 0) then begin
+        if (metarule(16, 0) == 2) then begin
+            giq_option(4, 95, 392, Node063a, 50);
+        end
+        else begin
+            giq_option(4, 95, 393, Node063a, 50);
+        end
+    end
+    if (global_var(384) == 1) then begin
+        giq_option(4, 95, 394, Node058, 50);
+    end
+    giq_option(4, 95, 395, Node044, 50);
+    giq_option(4, 95, 396, Node999, 50);
+end
+
+procedure Node1000
+begin
+    float_msg(self_obj, message_str(95, 397), 8);
+    call Node998;
+end
+
+procedure Node005a
+begin
+    if (global_var(85) == 0) then begin
+        call Node010;
+    end
+    else begin
+        call Node999;
+    end
+end
+
+procedure Node010a
+begin
+    From_10 := 1;
+    From_15 := 0;
+    call Node012;
+end
+
+procedure Node015a
+begin
+    if (global_var(85) == 0) then begin
+        From_10 := 0;
+        From_15 := 1;
+        call Node012;
+    end
+    else begin
+        call Node999;
+    end
+end
+
+procedure Node016a
+begin
+    set_global_var(85, 1);
+end
+
+procedure Node017a
+begin
+    variable LVar0 := 0;
+    LVar0 := obj_carrying_pid_obj(dude_obj, 259);
+    rm_obj_from_inven(dude_obj, LVar0);
+    destroy_object(LVar0);
+    if (((local_var(4) bwand 512) != 0) == 0) then begin
+        if (item_caps_total(self_obj) >= 1000) then begin
+            item_caps_adjust(self_obj, -1000);
+        end
+        else begin
+            if (item_caps_total(self_obj) > 0) then begin
+                item_caps_adjust(self_obj, -item_caps_total(self_obj));
+            end
+        end
+        item_caps_adjust(dude_obj, 1000);
+    end
+    set_local_var(4, local_var(4) bwor 512);
+    set_local_var(7, game_time);
+    set_global_var(85, 3);
+    call Node043;
+end
+
+procedure Node017b
+begin
+    variable LVar0 := 0;
+    LVar0 := obj_carrying_pid_obj(dude_obj, 259);
+    rm_obj_from_inven(dude_obj, LVar0);
+    destroy_object(LVar0);
+    if (((local_var(4) bwand 512) != 0) == 0) then begin
+        if (item_caps_total(self_obj) >= 1200) then begin
+            item_caps_adjust(self_obj, -1200);
+        end
+        else begin
+            if (item_caps_total(self_obj) > 0) then begin
+                item_caps_adjust(self_obj, -item_caps_total(self_obj));
+            end
+        end
+        item_caps_adjust(dude_obj, 1200);
+    end
+    set_local_var(4, local_var(4) bwor 512);
+    set_local_var(7, game_time);
+    set_global_var(85, 3);
+    call Node020;
+end
+
+procedure Node017c
+begin
+    variable LVar0 := 0;
+    LVar0 := obj_carrying_pid_obj(dude_obj, 259);
+    rm_obj_from_inven(dude_obj, LVar0);
+    destroy_object(LVar0);
+    if (((local_var(4) bwand 512) != 0) == 0) then begin
+        if (item_caps_total(self_obj) >= 1500) then begin
+            item_caps_adjust(self_obj, -1500);
+        end
+        else begin
+            if (item_caps_total(self_obj) > 0) then begin
+                item_caps_adjust(self_obj, -item_caps_total(self_obj));
+            end
+        end
+        item_caps_adjust(dude_obj, 1500);
+    end
+    set_local_var(4, local_var(4) bwor 512);
+    set_local_var(7, game_time);
+    set_global_var(85, 3);
+    call Node020;
+end
+
+procedure Node039a
+begin
+    item_caps_adjust(self_obj, -500);
+    item_caps_adjust(dude_obj, 500);
+    set_local_var(9, 1);
+    set_local_var(10, get_month);
+    set_local_var(8, 500);
+    call Node041;
+end
+
+procedure Node039b
+begin
+    if (has_skill(dude_obj, 15) >= 75) then begin
+        item_caps_adjust(self_obj, -1000);
+        item_caps_adjust(dude_obj, 1000);
+        set_local_var(9, 1);
+        set_local_var(10, get_month);
+        set_local_var(8, 1000);
+        call Node041;
+    end
+    else begin
+        call Node040;
+    end
+end
+
+procedure Node044a
+begin
+    From_44 := 1;
+    call Node043;
+end
+
+procedure Node054a
+begin
+    variable LVar0 := 0;
+    variable LVar1 := 0;
+    variable LVar2 := 0;
+    variable LVar3 := 0;
+    variable LVar4 := 0;
+    gfade_out(600);
+    set_global_var(79, 6);
+    set_global_var(50, global_var(50) + -30);
+    set_global_var(81, 0);
+    set_global_var(86, 0);
+    LVar1 := obj_is_carrying_obj_pid(dude_obj, 255);
+    if (LVar1 > 0) then begin
+        LVar0 := obj_carrying_pid_obj(dude_obj, 255);
+        LVar4 := rm_mult_objs_from_inven(dude_obj, LVar0, LVar1);
+        destroy_object(LVar0);
+    end
+    LVar3 := obj_is_carrying_obj_pid(dude_obj, 256);
+    if (LVar3 > 0) then begin
+        LVar2 := obj_carrying_pid_obj(dude_obj, 256);
+        LVar4 := rm_mult_objs_from_inven(dude_obj, LVar2, LVar3);
+        destroy_object(LVar2);
+    end
+    load_map(15, 0);
+    gfade_in(600);
+end
+
+procedure Node063a
+begin
+    if (global_var(79) == 5) then begin
+        call Node062;
+    end
+    else begin
+        call Node061;
+    end
+end
+

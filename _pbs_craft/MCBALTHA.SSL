@@ -1,0 +1,482 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Balthas
+        Location: Modoc
+        Description: He runs the tannery in Modoc.
+
+        Log: the following defines need to be changed:
+
+
+          Created: February 15, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+
+#define NAME                        SCRIPT_MCBALTHA
+#define TOWN_REP_VAR                GVAR_TOWN_REP_MODOC
+
+#include "..\headers\command.h"
+#include "..\headers\modoc.h"
+#include "..\headers\ModReact.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+
+// dialog nodes
+procedure Node000;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node026a; //added by killap - expansion
+procedure Node027;
+
+procedure Node999;                                      // This is the do nothing node
+procedure Node998;                                      // This Node is Always Combat
+procedure Node996;
+procedure Node995;
+procedure Node994;
+
+#define LVAR_Flags                        (4)
+#define LVAR_Home_Tile                    (5)
+#define LVAR_Home_Rotation                (6)
+#define LVAR_bad_karma                    (7) //added by killap
+
+#define node_3_bit                        bit_10
+#define gave_jonny_gun_bit                bit_11
+#define node_25_bit                       bit_12 //added by killap - expansion
+
+#define node_3                            lvar_bit(LVAR_Flags, node_3_bit)
+#define set_node_3                        set_lvar_bit_on(LVAR_Flags, node_3_bit)
+
+//added by killap - expansion
+#define node_25                           lvar_bit(LVAR_Flags, node_25_bit)
+#define set_node_25                       set_lvar_bit_on(LVAR_Flags, node_25_bit)
+//end added
+
+#define gave_jonny_gun                    lvar_bit(LVAR_Flags, gave_jonny_gun_bit)
+#define set_gave_jonny_gun                set_lvar_bit_on(LVAR_Flags, gave_jonny_gun_bit)
+
+// by phobos2077:
+#define _LEARN_CRAFT_BALTHAS
+#include "learn_craft.h"
+#define _BRINGX_MCBATLHA
+#include "..\_pbs_main\quests_bringx.h"
+// ;
+
+import variable modoc_balthas_box_obj;
+import variable ghost_farm_slag_obj;
+
+variable item; //added by killap - expansion
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+   //add_timer_event(self_obj,game_ticks(random(1,7)),1);
+end
+
+procedure map_enter_p_proc begin
+   match_dude_elevation;
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         set_local_var(LVAR_Home_Tile, self_tile);
+         set_local_var(LVAR_Home_Rotation, self_cur_rot);
+         if (cur_map_index != MAP_GHOST_FARM) then begin
+            critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_MODOC);
+         end
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD);
+      end else if (jonny_arriving_at_home) then begin
+         if (self_tile != 13923) then begin
+            critter_attempt_placement(self_obj, 13923, self_elevation);
+         end
+         Face_Critter(dude_obj,self_obj);
+         Face_Critter(self_obj,dude_obj);
+      end
+   end
+   check_show_ghost_farm_attackers
+   if (balthas_dead) then begin
+      destroy_object(self_obj);
+   end
+end
+
+procedure combat_p_proc begin
+   //added by killap (expansion)
+   if (obj_is_carrying_obj_pid(self_obj,PID_SLEDGEHAMMER) == 0) then begin
+      item := create_object(PID_SLEDGEHAMMER,0,0);
+      add_obj_to_inven(self_obj, item);
+   end
+   //added by killap
+   
+   if (dude_enemy_modoc) then begin
+      if (self_team == TEAM_PLAYER) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_MODOC);
+      end
+   end else if (cur_map_index == MAP_GHOST_FARM) then begin
+      critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+   end
+end
+
+procedure critter_p_proc begin
+   if ((cur_map_index == MAP_GHOST_FARM) and (hostile == false) and (dude_enemy_modoc == false)) then begin
+      Do_Attacking_Slag(10,7)
+   end else if (self_can_see_dude) then begin
+      if ((hostile) or (dude_enemy_modoc)) then begin
+         self_attack_dude;
+      end
+   end else if (self_tile != local_var(LVAR_Home_Tile)) then begin
+      animate_move_to_tile(local_var(LVAR_Home_Tile));
+   end else if (self_cur_rot != local_var(LVAR_Home_Rotation)) then begin
+      animate_rotation(local_var(LVAR_Home_Rotation));
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_enemy_modoc;
+      call Node998;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   if (cur_map_index == MAP_GHOST_FARM) then begin
+      kill_them_all_floater;
+   end else if (slags_killed_by_townspeople) then begin
+      floater_rand(151,153);
+   //added by killap (expansion)
+   end else if ( (jonny_seed_active) and (node_25) ) then begin
+      floater(240);
+   //end added by killap
+   end else begin
+      move_obj_inven_to_obj(modoc_balthas_box_obj, self_obj);
+      script_overrides;
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+         if ((jonny_at_home) and (jonny_dead == false)) then begin
+            if (node_3) then begin
+               call Node027;
+            end else begin
+               call Node003;
+            end
+         end else if (jonny_seed_active) then begin
+            if (gave_jonny_gun) then begin
+               call Node004;
+            end else begin
+               call Node002;
+            end
+         end else if (herebefore) then begin
+            call Node001;
+         end else begin
+            call Node000;
+         end
+      gSay_End;
+      end_dialogue;
+      move_obj_inven_to_obj(self_obj, modoc_balthas_box_obj);
+   end
+   set_herebefore;
+end
+
+procedure destroy_p_proc begin
+   move_obj_inven_to_obj(modoc_balthas_box_obj, self_obj); //added by killap (expansion)
+   inc_good_critter
+   set_balthas_dead;
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100 + herebefore);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(102);
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+// dialog action functions
+procedure Node999 begin
+  // do absolutely everything that pertains to nothing
+end
+procedure Node998 begin
+   set_hostile;
+end
+procedure Node996 begin
+   gdialog_mod_barter(0);
+   if (jonny_at_home) then begin
+      call Node027;
+   end else begin
+      call Node001;
+   end
+end
+procedure Node995 begin
+
+   /*if (global_var(TOWN_REP_VAR) < 0) then begin
+      call Node017;
+   end else if (global_var(TOWN_REP_VAR) == 0) then begin
+      call Node018;
+   end else begin
+      call Node011;
+   end*/
+   
+   //edit by killap
+   if ( (global_var(TOWN_REP_VAR) < 0) or (global_var(TOWN_REP_VAR) <= KARMA_SWORD_OF_DESPAIR) ) then begin
+      call Node017;
+   end else if (global_var(TOWN_REP_VAR) == 0) then begin
+      call Node018;
+   end else begin
+      call Node011;
+   end
+   //end edit by killap
+   
+end
+procedure Node994 begin
+   if (has_skill(dude_obj,SKILL_OUTDOORSMAN)) then begin
+      call Node014;
+   end else begin
+      call Node016;
+   end
+end
+
+// dialog nodes
+procedure Node000 begin
+   Reply(155);
+   if ((dude_perception >= 6) and (jonny_seed_unknown)) then begin
+      NOption(156,Node010,004);
+   end
+   NOption(157,Node996,004);
+   // by phobos2077:
+   ASK_CRAFT_INJECTION(1001)
+   INJECT_ASK_BRING(1101)
+   // ;
+   if (family_feud_seed_active) then begin
+      NOption(158,Node021,004);
+   end
+   NOption(159,Node999,004);
+   NOption(160,Node020,004);
+   NOption(161,Node022,-003);
+   NOption(g_mstr(300),Node999,-003);
+end
+procedure Node001 begin
+   Reply(163);
+   if ((dude_perception >= 6) and (jonny_seed_unknown)) then begin
+      NOption(156,Node010,004);
+   end
+   NOption(157,Node996,004);
+   // by phobos2077:
+   ASK_CRAFT_INJECTION(1001)
+   INJECT_ASK_BRING(1101)
+   // ;
+   NOption(160,Node020,004);
+   if (family_feud_seed_active) then begin
+      NOption(158,Node021,004);
+   end
+   NOption(168,Node999,004);
+   NOption(161,Node022,-003);
+   NOption(g_mstr(300),Node999,-003);
+end
+procedure Node002 begin
+   Reply(171);
+   if (jonny_spoken) then begin
+      NOption(178,Node025,004);
+      BOption(179,Node026,004); //unlocked by killap (RP)
+   end else if (jonny_bb_gun_found) then begin
+      NOption(172,Node024,004);
+   end
+   // by phobos2077:
+   ASK_CRAFT_INJECTION(1002)
+   INJECT_ASK_BRING(1102)
+   // ;
+   NOption(173,Node999,004);
+   NOption(g_mstr(300),Node999,-003);
+end
+procedure Node003 begin
+   set_node_3;
+   set_jonny_seed_inactive;
+   display_mstr(230);
+   inc_global_var_amt(GVAR_TOWN_REP_MODOC,REP_TOWN_SAVE_JONNY); // Seraph's Fix: changed 'inc_global_var' to 'inc_global_var_amt'. Thanks Rob!
+   give_xp(EXP_SAVE_JONNY);
+   give_pid_qty(dude_obj, PID_CURED_LEATHER_ARMOR, 1)
+   Reply(175);
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node004 begin
+   Reply(177);
+   if (jonny_spoken) then begin
+      NOption(178,Node025,004);
+      BOption(179,Node026,004); //unlocked by killap (RP)
+   end else if (jonny_bb_gun_found) then begin
+      NOption(172,Node024,004);
+   end
+   NOption(180,Node999,004);
+   NOption(g_mstr(300),Node999,-003);
+end
+procedure Node010 begin
+   Reply(181);
+   NOption(mstr(182) + dude_name + mstr(183),Node995,006);
+   NOption(184,Node996,004);
+   NOption(160,Node020,004);
+   NOption(186,Node999,001);
+end
+procedure Node011 begin
+   Reply(mstr(187) + dude_name + mstr(188));
+   NOption(189,Node012,004);
+   NOption(190,Node001,001);
+end
+procedure Node012 begin
+   Reply(191);
+   if (jonny_spoken) then begin
+      NOption(178,Node025,004);
+      BOption(179,Node026,004); //unlocked by killap (RP)
+   end else begin
+      NOption(192,Node013,008);
+      NOption(193,Node994,004);
+   end
+   NOption(194,Node996,004);
+   NOption(195,Node999,001);
+end
+procedure Node013 begin
+   set_laddie_joins_party;
+   set_jonny_seed_active;
+   Reply(196);
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node014 begin
+   Reply(197);
+   NOption(198,Node015,004);
+   NOption(199,Node001,004);
+end
+procedure Node015 begin
+   set_laddie_joins_party;
+   set_jonny_seed_active;
+   Reply(200);
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node016 begin
+   Reply(201);
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node017 begin
+   Reply(202);
+   NOption(203,Node001,004);
+   NOption(204,Node999,001);
+end
+procedure Node018 begin
+   Reply(205);
+   NOption(206,Node019,004);
+   NOption(204,Node999,001);
+end
+procedure Node019 begin
+   set_jonny_seed_active;
+   Reply(208);
+   if (jonny_spoken) then begin
+      NOption(178,Node025,004);
+      BOption(179,Node026,004); //unlocked by killap (RP)
+   end
+   NOption(203,Node001,004);
+   NOption(210,Node999,001);
+end
+procedure Node020 begin
+   Reply(211);
+   NOption(203,Node001,004);
+   NOption(159,Node999,001);
+end
+procedure Node021 begin
+   Reply(214);
+   NOption(215,Node999,001);
+end
+procedure Node022 begin
+   if (dude_is_male) then begin
+      Reply(216);
+   end else begin
+      Reply(217);
+   end
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node023 begin
+   Reply(218);
+   NOption(g_mstr(350),Node999,001);
+end
+
+procedure Node024 begin
+   set_jonny_pip(state_jonny_found_jonny);
+   remove_pid_qty(dude_obj, jonny_bb_gun_pid, 1)
+   set_gave_jonny_gun;
+   Reply(219);
+   NOption(g_mstr(350),Node999,001);
+end
+
+procedure Node025 begin
+   set_node_25; // added by killap - expansion
+   //set_jonny_pip(state_jonny_in_caves);
+   //set_jonny_seed_active; --comment out by killap
+   Reply(220);
+   NOption(g_mstr(350),Node999,001);
+end
+procedure Node026 begin
+   Reply(221);
+   NOption(g_mstr(350),Node026a,001); //edit by killap (expansion) - was999
+end
+
+//moved into a separate node - by killap (expansion)
+procedure Node026a begin
+   clear_attack_slag_time;
+   set_enemy_slags;
+   set_wipeout_scenario_1;
+   game_time_advance(ONE_GAME_DAY);
+   game_time_advance_hour(100);
+   set_started_slag_attack;
+   set_jonny_seed_inactive;
+   load_map(MAP_GHOST_FARM,0);
+end
+//end
+
+procedure Node027 begin
+   Reply(176);
+   NOption(157,Node996,004);
+   // by phobos2077:
+   ASK_CRAFT_INJECTION(1003)
+   INJECT_ASK_BRING(1101)
+   // ;
+   NOption(159,Node999,004);
+end

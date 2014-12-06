@@ -1,0 +1,141 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: GECKO SETTLEMENT MAP
+        Location: GECKO
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: December 04, 1997
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+#include "..\headers\GeckSetl.h"
+#include "..\headers\updatmap.h"
+
+#define NAME                    SCRIPT_GECKSETL
+
+#include "..\headers\command.h"
+
+procedure start;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure ghost_town;
+
+procedure start begin
+end
+
+procedure map_exit_p_proc begin
+end
+
+variable n := 0;
+
+procedure map_enter_p_proc begin
+   variable Critter;
+   variable item;
+   
+   if (map_first_run) then begin
+       display_msg(mstr(100));
+   end
+
+   //added by killap - RP
+   if (global_var(GVAR_LOAD_MAP_INDEX) == 555) then begin
+      Critter:=create_object_sid(PID_HOLY_MAN,0,0,SCRIPT_ABJASON);
+      critter_attempt_placement(Critter,19880,0);
+      //item:=create_object(54,0,0); //stealth boy
+      //add_obj_to_inven(Critter,item);
+      item:=create_object(PID_DECK_OF_TRAGIC_CARDS,0,0);
+      add_obj_to_inven(Critter,item);
+      move_to(dude_obj, 20280, 0);
+      
+      if (car_current_town == AREA_ABBEY) then begin
+         if (dude_has_car) then begin
+            set_global_var(GVAR_CAR_PLACED_TILE, 0);
+            set_car_current_town(AREA_GECKO);
+            Create_Car(CAR_GECKO_HEX,CAR_GECKO_ELEV)
+            if (tile_contains_pid_obj(CAR_GECKO_HEX, CAR_GECKO_ELEV, PID_DRIVABLE_CAR) != 0) then begin
+               Create_Trunk(CAR_GECKO_HEX,CAR_GECKO_ELEV)
+            end 
+         end
+      end else begin
+         Check_Create_Car(CAR_GECKO_HEX, CAR_GECKO_ELEV)
+      end
+   end  else begin
+      //added by killap - prevent car from disappearing if the car runs out of gas while on the town circle
+      if ((metarule(30, 0) == 21) and (cur_map_index != MAP_CAR_DESERT) /*and (car_out_of_fuel)*/) then begin
+         set_global_var(GVAR_CAR_PLACED_TILE, 0);
+         Create_Car(CAR_GECKO_HEX,CAR_GECKO_ELEV)
+         if (tile_contains_pid_obj(CAR_GECKO_HEX, CAR_GECKO_ELEV, PID_DRIVABLE_CAR) != 0) then begin
+            Create_Trunk(CAR_GECKO_HEX,CAR_GECKO_ELEV)
+         end 
+      end else 
+         Check_Create_Car(CAR_GECKO_HEX, CAR_GECKO_ELEV)
+      //end added
+   end
+   //Check_Create_Car(CAR_GECKO_HEX, CAR_GECKO_ELEV)
+
+   if (global_var(GVAR_GECKO_MELTDOWN) == 2) then begin
+      if ( (GAME_TIME_IN_HOURS - global_var(GVAR_GECKO_TIMER_MELTDOWN))  > 24) then begin
+         call ghost_town;
+      end
+   end
+   else if (global_var(GVAR_GECKO_MELTDOWN) == 1) then begin
+      //start the timer for ghouls leaving
+      set_global_var(GVAR_GECKO_MELTDOWN,2); //don't slag door twice
+      //reuse this global because player cant go back into the reactor anyway
+      set_global_var(GVAR_GECKO_TIMER_MELTDOWN, GAME_TIME_IN_HOURS);
+      //one day later all ghouls should be gone
+      Create_Slagged_Door(17853,CAR_GECKO_ELEV)
+      
+      //destory new flickering lights - killap (expansion)
+      destroy_object(tile_contains_pid_obj(14843,dude_elevation,33556608));
+      
+   end
+
+   Lighting;
+
+   set_global_var(GVAR_LOAD_MAP_INDEX,0);
+end
+
+procedure ghost_town begin
+      //a bunch of ghouls leave Town...No Power
+      kill_critter_type(PID_GENA_GHOUL,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_GENERIC_GHOUL,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_TOUGH_GHOUL,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_WOOZ,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_SKEETER,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_HAROLD,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_BRAHMIN,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_WEAK_BRAHMIN,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_WILD_BRAHMIN,KILL_DONT_LEAVE_BODY);
+      kill_critter_type(PID_LUMPY,KILL_DONT_LEAVE_BODY); //added by killap
+      kill_critter_type(PID_DOG,KILL_DONT_LEAVE_BODY); //added by killap
+      
+      if Lenny_In_Party then begin
+         //do nothing
+      end
+      else begin
+         kill_critter_type(PID_LENNY,KILL_DONT_LEAVE_BODY);
+      end
+end
+
+procedure map_update_p_proc begin
+   Lighting;
+   n++;
+   display_msg("n="+n);
+end

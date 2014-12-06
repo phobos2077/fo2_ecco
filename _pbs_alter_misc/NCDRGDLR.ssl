@@ -1,0 +1,202 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Drug Dealer
+        Location: New Reno
+        Description:
+
+        Log:
+
+           Created: April 21, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#include "..\headers\define.h"
+#define NAME                    SCRIPT_NCDRGDLR
+#define TOWN_REP_VAR            GVAR_TOWN_REP_NEW_RENO
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+#include "..\headers\NewReno.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure timed_event_p_proc;
+procedure map_update_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+procedure Node000;
+procedure Node001;
+procedure Node002;
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Flags                        (4)
+
+#define hidden_for_fight_bit              bit_10
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+
+#define get_money_pool     (local_var(2))
+#define set_money_pool(x)  set_local_var(2, x)
+//#define get_money_pool     ((local_var(LVAR_Flags) bwand 0xFFFF0000) / 0x10000)
+//#define set_money_pool(x)  set_local_var(LVAR_Flags, local_var(LVAR_Flags) bwor (x * 0x10000))
+
+
+procedure start begin 
+end
+
+procedure timed_event_p_proc begin
+   // setup barter
+   if ((combat_is_initialized == false) and (self_visible)) then begin
+      if (self_can_see_dude) then begin
+         if (enclave_destroyed) then begin
+            call Node001;
+         end else begin
+            call Node002;
+         end
+      end
+   end
+   nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+end
+
+procedure map_enter_p_proc begin
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NEW_RENO_DRUG_DEALER);
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_DRUG_DEALER);
+      end
+      nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+   end
+   set_money_pool(random(300,500)); // pbs
+end
+procedure map_update_p_proc begin
+   check_hide_durring_boxing_fight
+end
+
+procedure critter_p_proc begin
+   if ((hostile) and (self_can_see_dude)) then begin
+
+      self_attack_dude;
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_hostile;
+   end
+end
+
+procedure talk_p_proc begin
+   script_overrides;
+   Evil_Critter:=1;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION1;
+   CheckKarma;
+   GetReaction;
+   ReactToLevel; //added by killap
+   
+   // setup bartering values before going into dialog
+   if (enclave_destroyed) then begin
+      gdialog_set_barter_mod(-50); //killap's fix: was 50
+   end else if ((dude_is_prizefighter) or (dude_has_porn_star_rep) or (dude_is_made_man)) then begin
+      gdialog_set_barter_mod(-25); //killap's fix: was 25
+   end else begin
+      gdialog_set_barter_mod(0 + (10*(dude_caps>=100)) + (10*(dude_caps>=200)) + (10*(local_var(LVAR_reaction_level)<REACTION_LEVEL_NEUTRAL)));
+   end
+   item_caps_adjust(self_obj, get_money_pool - item_caps_total(self_obj));
+   start_gdialog(NAME,self_obj,4,-1,-1);
+   gSay_Start;
+      call Node000;
+   gSay_End;
+   end_dialogue;
+   set_money_pool(item_caps_total(self_obj));
+   item_caps_adjust(self_obj, - item_caps_total(self_obj));
+   nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+end
+
+procedure destroy_p_proc begin
+   inc_evil_critter
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(151);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr_rand(150,152);
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node999 begin
+end
+procedure Node998 begin
+   set_hostile;
+end
+procedure Node997 begin
+   
+   //added by killap
+   if (enclave_destroyed) then begin
+      gdialog_mod_barter(-50);
+   end else if ((dude_is_prizefighter) or (dude_has_porn_star_rep) or (dude_is_made_man)) then begin
+      gdialog_mod_barter(-25);
+   end else begin
+      gdialog_mod_barter(0 + (10*(dude_caps>=100)) + (10*(dude_caps>=200)) + (10*(local_var(LVAR_reaction_level)<REACTION_LEVEL_NEUTRAL)));
+   end
+   //end added by killap
+   //gdialog_barter;
+   //Reply(" ");
+   //NOption(g_mstr(350),Node999,001);
+   call Node000; //edit by killap
+end
+
+procedure Node000 begin
+   if (enclave_destroyed) then begin
+      Reply_Rand(214, 218);
+   end else if ((dude_is_prizefighter) or (dude_has_porn_star_rep) or (dude_is_made_man)) then begin
+      Reply_Rand(235-(5*dude_is_male), 237+(5*dude_is_female));
+   end else if (has_rep_slaver) then begin
+      Reply_Rand(247, 256);
+   end else begin
+      Reply_Rand(261, 270);
+   end
+   NOption(mstr(219) + dude_name + mstr(519), Node997, -003);
+   NOption(220, Node999, -003);
+   NOption(221, Node997, 004);
+   NOption(222, Node999, 004);
+end
+procedure Node001 begin
+   floater_rand(200, 207);
+end
+procedure Node002 begin
+   floater_rand(208, 213);
+end

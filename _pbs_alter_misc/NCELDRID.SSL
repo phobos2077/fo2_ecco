@@ -1,0 +1,974 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Eldridge
+        Location: New Reno
+        Description:
+
+        Log:
+
+           Created: May 6, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+/*
+#define eldrid_mid_tile_1                 (26311)
+#define eldrid_mid_tile_2                 (22923)
+
+#define try_one_or_other(t1,t2)           if (self_tile != t1) then begin                 \
+                                             animate_move_to_tile(t1);                    \
+                                          end                                             \
+                                          if (anim_busy(self_obj) == false) then begin    \
+                                             animate_move_to_tile(t2);                    \
+                                          end
+#define FAIL_STEP_ACTION                  if (dest_tile != eldridge_front_room_tile) then begin       \
+                                             try_one_or_other(eldrid_mid_tile_1, eldrid_mid_tile_2)   \
+                                          end else begin                                              \
+                                             try_one_or_other(eldrid_mid_tile_2, eldrid_mid_tile_1)   \
+                                          end
+*/
+
+
+#include "..\headers\define.h"
+#define NAME                    SCRIPT_NCELDRID
+#define TOWN_REP_VAR            GVAR_TOWN_REP_NEW_RENO
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+#include "..\headers\NewReno.h"
+
+#include "..\_pbs_main\lib.inven.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_exit_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+
+#define LVAR_Flags                     (4)
+#define LVAR_Barter_Penalty            (5)
+#define LVAR_Barks_Heard               (6)
+
+#define module_bit                     bit_10
+#define made_man_set_bit               bit_11
+#define module_price_bit               bit_12
+#define know_eldridge_bit              bit_13
+#define node_6_bit                     bit_14
+#define dude_touched_door_bit          bit_15
+#define back_room_bit                  bit_16
+#define closed_warning_bit             bit_17
+
+#define module                         lvar_bit(LVAR_Flags, module_bit)
+#define set_module                     set_lvar_bit_on(LVAR_Flags, module_bit)
+
+#define made_man_set                   lvar_bit(LVAR_Flags, made_man_set_bit)
+#define set_made_man_set               set_lvar_bit_on(LVAR_Flags, made_man_set_bit)
+
+#define module_price                   lvar_bit(LVAR_Flags, module_price_bit)
+#define set_module_price               set_lvar_bit_on(LVAR_Flags, module_price_bit)
+
+#define know_eldridge                  lvar_bit(LVAR_Flags, know_eldridge_bit)
+#define set_know_eldridge              set_lvar_bit_on(LVAR_Flags, know_eldridge_bit)
+
+#define node_6                         lvar_bit(LVAR_Flags, node_6_bit)
+#define set_node_6                     set_lvar_bit_on(LVAR_Flags, node_6_bit)
+
+#define dude_touched_door              lvar_bit(LVAR_Flags, dude_touched_door_bit)
+#define set_dude_touched_door          set_lvar_bit_on(LVAR_Flags, dude_touched_door_bit)
+
+#define back_room                      lvar_bit(LVAR_Flags, back_room_bit)
+#define set_back_room                  set_lvar_bit_on(LVAR_Flags, back_room_bit)
+
+#define closed_warning                 lvar_bit(LVAR_Flags, closed_warning_bit)
+#define set_closed_warning             set_lvar_bit_on(LVAR_Flags, closed_warning_bit)
+
+#define give_eldridge_box(x)           if (x != current_box) then begin                               \
+                                          if (current_box != 0) then begin                            \
+                                             move_obj_inven_to_obj(self_obj, current_box);            \
+                                          end else begin                                              \
+                                             move_obj_inven_to_obj(self_obj, new_reno_temp_box);      \
+                                          end                                                         \
+                                          move_obj_inven_to_obj(x, self_obj);                         \
+                                          if (x != new_reno_temp_box) then begin                      \
+                                             current_box := x;                                        \
+                                          end else begin                                              \
+                                             current_box := 0;                                        \
+                                          end                                                         \
+                                       end
+#define give_voice_chip(x)             if (module == false) then begin                    \
+                                          set_module;                                     \
+                                          give_pid_qty(x, PID_COMPUTER_VOICE_MODULE, 1)   \
+                                       end
+#define adj_eldridge_barter(x)         inc_local_var_amt(LVAR_Barter_Penalty, x);                                                                 \
+                                       set_local_var(LVAR_Barter_Penalty, local_var(LVAR_Barter_Penalty) - (local_var(LVAR_Barter_Penalty)%200)); \
+                                       gdialog_set_barter_mod(local_var(LVAR_Barter_Penalty))
+#define give_eldridge_money(x)         item_caps_adjust(dude_obj, -x);  \
+                                       item_caps_adjust(self_obj, x)
+
+// Begin Seraph's Fixes: changed each '250' to '25000' and added '/100' to the end
+// Magnum: replaced '2000' with '400'
+#define MCOST                          ((400 * (25000/(160 + has_skill(dude_obj, SKILL_BARTER))))/100)
+// Desert Eagle: replaced '3000' with '1500'
+#define DECOST                         ((1500 * (25000/(160 + has_skill(dude_obj, SKILL_BARTER))))/100)
+// Hunting Rifle: replaced '4000' with '1750'
+#define HRCOST                         ((1750 * (25000/(160 + has_skill(dude_obj, SKILL_BARTER))))/100)
+// Assault Rifle: replaced '6000' with '2000'
+#define ARCOST                         ((2000 * (25000/(160 + has_skill(dude_obj, SKILL_BARTER))))/100)
+// FN FAL: replaced '12000' with '4000'
+#define FNCOST                         ((4000 * (25000/(160 + has_skill(dude_obj, SKILL_BARTER))))/100)
+// Cattle Prod: replaced '3000' with '1500'
+#define CPCOST                         ((1500 * (25000/(160 + has_skill(dude_obj, SKILL_BARTER))))/100)
+// End Seraph's Fixes
+
+#define eldrid_mid_tile_1              (26311)
+#define eldrid_mid_tile_2              (23310)
+#define eldrid_mid_tile_3              (22923)
+
+#define barks_till_pissed              (3)
+
+variable current_box;
+import variable new_reno_barking_dog_obj;
+import variable new_reno_temp_box;
+import variable new_reno_eldridge_box;
+import variable new_reno_eldridge_box_2;
+import variable new_reno_eldridge_obj;
+variable prev_node;
+variable return_node;
+variable investigated_barking := 0; // added by killap - expansion
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+
+
+procedure start begin
+   new_reno_eldridge_obj := self_obj;
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == dogs_bark_param) then begin
+      if (combat_is_initialized == false) then begin
+         call Node027;
+         inc_local_var(LVAR_Barks_Heard);
+         debug_msg("heard bark count == "+ local_var(LVAR_Barks_Heard));
+      end
+   end else if (fixed_param == tamper_door_param) then begin
+      if (dude_touched_door) then begin
+         call Node998;
+      end else begin
+         set_dude_touched_door;
+         call Node028;
+      end
+   end else begin
+      if (eldridge_open) then begin
+         set_local_var(LVAR_Barks_Heard, 0);
+         if ((combat_is_initialized == false) and (warning_timer_up)) then begin
+            if (self_can_see_dude) then begin
+               if (Fallout2_enclave_destroyed) then begin
+                  call Node001;
+               end else if (dude_wearing_power_armor) then begin
+                  call Node002;
+               end else begin
+                  call Node003;
+               end
+            end
+         end
+      end
+   end
+   nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+end
+
+procedure map_enter_p_proc begin
+   new_reno_eldridge_obj := self_obj;
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NEW_RENO_ELDRIDGE);
+         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD);
+         nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+      end
+   end
+end
+
+procedure map_exit_p_proc begin
+   set_local_var(LVAR_Barks_Heard, 0);
+end
+
+procedure critter_p_proc begin
+   if (self_can_see_dude) then begin
+      if (anim_busy(self_obj) == false) then begin
+         Face_Critter(dude_obj,self_obj);
+      end
+      if (hostile) then begin
+         self_attack_dude;
+      end else if (obj_in_eldridge_store_area(dude_obj)) then begin
+         if ((eldrdige_closed) and (eldridge_bed_time)) then begin
+            if (closed_warning == false) then begin
+               set_closed_warning;
+               call Node030;
+               set_global_var(GVAR_NEW_RENO_WARNING_TIMER, game_time + warning_time);
+            end else if (warning_timer_up) then begin
+               call Node998;
+            end
+         end else if (obj_in_eldridge_front_room(dude_obj) == false) then begin
+            if (back_room == false) then begin
+               set_back_room;
+               call Node029;
+               set_global_var(GVAR_NEW_RENO_WARNING_TIMER, game_time + warning_time);
+            end else if (warning_timer_up) then begin
+               call Node998;
+            end
+         end
+      end
+   end else if (anim_busy(self_obj) == false) then begin
+     if (eldridge_open) then begin
+         off_eldridge_bed_time;
+         // edit by killap (expansion) - eldridge going to the back room to yell at the dogs
+         // could only happen at night before, but this would actullay never trigger
+         // since he was already in the back at night. I've enabled the code
+         // to trigger during the day now.
+         if (local_var(LVAR_Barks_Heard) >= barks_till_pissed) then begin
+            if (new_reno_barking_dog_obj != 0) then begin
+               anim_move_to_point_rate(eldridge_back_room_tile, 2)
+               else begin
+                  if (self_tile == eldridge_back_room_tile and investigated_barking == 0) then begin
+                     anim(self_obj, ANIMATE_ROTATION, 3);
+                     investigated_barking := 1;
+                     floater_rand(701, 702); // Seraph's Fix: floater only takes 1 arg; changed to floater_rand. Thanks Rob!
+                     nr_add_timer_event_rand(self_obj, 5, 10, float_param);
+                     //set_local_var(LVAR_Barks_Heard, 0);
+                  end
+               end
+            end
+         end else if (self_tile != eldridge_front_room_tile) then begin
+            anim_move_to_point_rate(eldridge_front_room_tile, 2)
+         end
+      /*end else if (local_var(LVAR_Barks_Heard) >= barks_till_pissed) then begin
+         if (new_reno_barking_dog_obj != 0) then begin
+            anim_move_to_point_rate(eldridge_back_room_tile, 2)
+            else begin
+               floater_rand(700, 702); // Seraph's Fix: floater only takes 1 arg; changed to floater_rand. Thanks Rob!
+               nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+               set_local_var(LVAR_Barks_Heard, 0);
+            end
+         end*/
+      end else if (obj_in_eldridge_back_room(self_obj) == false) then begin
+         set_eldridge_bed_time;
+         anim_move_to_point_rate(eldridge_back_room_tile, 2)
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   //added by killap
+   if (Fallout2_enclave_destroyed) then
+      gdialog_set_barter_mod(-200);
+   else if (made_man_set) then
+      gdialog_set_barter_mod(-20);
+   else if (get_jules_eldridge(jules_eldridge_discount)) then
+      gdialog_set_barter_mod(-10);
+   //added by killap
+   
+   if (eldridge_bed_time) then begin
+      call Node030;
+   end else begin
+      prev_node := 0;
+      give_eldridge_box(new_reno_eldridge_box)
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            if (know_eldridge) then begin
+               if (Fallout2_enclave_destroyed) then begin
+                  call Node005;
+               end else begin
+                  call Node006;
+               end
+            end else begin
+               call Node004;
+            end
+         gSay_End;
+         end_dialogue;
+      give_eldridge_box(new_reno_temp_box)
+
+      set_herebefore;
+   end
+   nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+end
+
+procedure destroy_p_proc begin
+   new_reno_eldridge_obj := 0;
+   call reduce_merchant_loot(new_reno_eldridge_box, 100, 100, 0, 70, 50, 0); // pbs: reduce loot in his box, but keep what's in his inventory as trophy
+   move_obj_inven_to_obj(new_reno_eldridge_box, self_obj);
+   //move_obj_inven_to_obj(new_reno_eldridge_box_2, self_obj); // pbs
+   give_voice_chip(self_obj)
+   set_eldridge_dead;
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(150 + (herebefore * examined));
+   set_examined;
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node998 begin
+   if (hostile == false) then begin
+      set_hostile;
+   end
+end
+procedure Node999 begin
+end
+
+procedure Node990 begin
+   if (Fallout2_enclave_destroyed) then begin
+      call Node005;
+   end else if (dude_is_stupid) then begin
+      call Node007;
+   end else begin
+      call Node006;
+   end
+end
+procedure Node989 begin
+   call Node008;
+end
+procedure Node988 begin
+   if (algernon_dead) then begin
+      call Node009;
+   end else begin
+      call Node010;
+   end
+end
+procedure Node987 begin
+//final weapon/money check added by killap
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_44_MAGNUM_REVOLVER)) and (dude_caps >= MCOST)) then begin
+      give_eldridge_money(MCOST);
+      remove_pid_qty(dude_obj, PID_44_MAGNUM_REVOLVER, 1)
+      give_pid_qty(dude_obj, PID_44_MAGNUM_SPEEDLOADER, 1)
+      call Node014;
+   end
+   else if ((dude_caps < MCOST)) then begin
+      Reply(802);
+      NOption(1346, Node999, 004);
+   end 
+   else if (not(obj_is_carrying_obj_pid(dude_obj, PID_44_MAGNUM_REVOLVER))) then begin
+      Reply(801);
+      NOption(1346, Node999, 004);
+   end 
+end
+//end final weapon/money check added by killap
+procedure Node986 begin
+//final weapon/money check added by killap
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_DESERT_EAGLE)) and (dude_caps >= DECOST)) then begin
+      give_eldridge_money(DECOST);
+      remove_pid_qty(dude_obj, PID_DESERT_EAGLE, 1)
+      give_pid_qty(dude_obj, PID_DESERT_EAGLE_EXT_MAG, 1)
+      call Node014;
+   end
+   else if ((dude_caps < DECOST)) then begin
+      Reply(802);
+      NOption(1346, Node999, 004);
+   end 
+   else if (not(obj_is_carrying_obj_pid(dude_obj, PID_DESERT_EAGLE))) then begin
+      Reply(801);
+      NOption(1346, Node999, 004);
+   end 
+end
+//end final weapon/money check added by killap
+procedure Node985 begin
+//final weapon/money check added by killap
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_HUNTING_RIFLE)) and (dude_caps >= HRCOST)) then begin
+      give_eldridge_money(HRCOST);
+      remove_pid_qty(dude_obj, PID_HUNTING_RIFLE, 1)
+      give_pid_qty(dude_obj, PID_SCOPED_HUNTING_RIFLE, 1)
+      call Node014;
+   end
+   else if ((dude_caps < HRCOST)) then begin
+      Reply(802);
+      NOption(1346, Node999, 004);
+   end 
+   else if (not(obj_is_carrying_obj_pid(dude_obj, PID_HUNTING_RIFLE))) then begin
+      Reply(801);
+      NOption(1346, Node999, 004);
+   end 
+end
+//end final weapon/money check added by killap
+procedure Node984 begin
+//final weapon/money check added by killap
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_ASSAULT_RIFLE)) and (dude_caps >= ARCOST)) then begin
+      give_eldridge_money(ARCOST);
+      remove_pid_qty(dude_obj, PID_ASSAULT_RIFLE, 1)
+      give_pid_qty(dude_obj, PID_ASSAULT_RIFLE_EXT_MAG, 1)
+      call Node014;
+   end
+   else if ((dude_caps < ARCOST)) then begin
+      Reply(802);
+      NOption(1346, Node999, 004);
+   end 
+   else if (not(obj_is_carrying_obj_pid(dude_obj, PID_ASSAULT_RIFLE))) then begin
+      Reply(801);
+      NOption(1346, Node999, 004);
+   end 
+end
+//end final weapon/money check added by killap
+procedure Node983 begin
+//final weapon/money check added by killap
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_FN_FAL)) and (dude_caps >= FNCOST)) then begin
+      give_eldridge_money(FNCOST);
+      remove_pid_qty(dude_obj, PID_FN_FAL, 1)
+      give_pid_qty(dude_obj, PID_FN_FAL_NIGHT_SCOPE, 1)
+      call Node014;
+   end
+   else if ((dude_caps < FNCOST)) then begin
+      Reply(802);
+      NOption(1346, Node999, 004);
+   end 
+   else if (not(obj_is_carrying_obj_pid(dude_obj, PID_FN_FAL))) then begin
+      Reply(801);
+      NOption(1346, Node999, 004);
+   end 
+end
+//end final weapon/money check added by killap
+procedure Node982 begin
+//final weapon/money check added by killap
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_CATTLE_PROD)) and (dude_caps >= CPCOST)) then begin
+      give_eldridge_money(CPCOST);
+      remove_pid_qty(dude_obj, PID_CATTLE_PROD, 1)
+      give_pid_qty(dude_obj, PID_SUPER_CATTLE_PROD, 1)
+      call Node014;
+   end
+   else if ((dude_caps < CPCOST)) then begin
+      Reply(802);
+      NOption(1346, Node999, 004);
+   end 
+   else if (not(obj_is_carrying_obj_pid(dude_obj, PID_CATTLE_PROD))) then begin
+      Reply(801);
+      NOption(1346, Node999, 004);
+   end 
+end
+//end final weapon/money check added by killap
+procedure Node981 begin
+   give_voice_chip(self_obj)
+   drop_obj(restock_obj);
+   call Node998;
+end
+procedure Node980 begin
+variable temp;
+   temp := roll_vs_skill(dude_obj,SKILL_BARTER,0);
+   if ((dude_charisma > 8) or ((is_success(temp)) and (is_critical(temp)))) then begin
+      set_module_price;
+      give_eldridge_money(1500);
+      call Node022;
+   end else if (is_success(temp)) then begin
+      call Node021;
+   end else begin
+      call Node020;
+   end
+end
+procedure Node979 begin
+   give_eldridge_money(2500);
+   call Node022;
+end
+procedure Node978 begin
+   set_fetch_laser(fetch_laser_assigned);
+   call Node006;
+end
+procedure Node977 begin
+   set_fetch_laser(fetch_laser_assigned);
+end
+procedure Node975 begin
+   give_eldridge_box(new_reno_eldridge_box_2)
+   
+   //added by killap
+   if (Fallout2_enclave_destroyed) then
+      gdialog_mod_barter(-200);
+   else if (made_man_set) then
+      gdialog_mod_barter(-20);
+   else if (get_jules_eldridge(jules_eldridge_discount)) then
+      gdialog_mod_barter(-10);
+   else
+   //end added by killap
+      gdialog_barter;
+      
+   call return_node;
+end
+procedure Node974 begin
+   give_eldridge_box(new_reno_eldridge_box)
+   
+   //added by killap
+   if (Fallout2_enclave_destroyed) then
+      gdialog_mod_barter(-200);
+   else if (made_man_set) then
+      gdialog_mod_barter(-20);
+   else if (get_jules_eldridge(jules_eldridge_discount)) then
+      gdialog_mod_barter(-10);
+   else
+   //end added by killap
+      gdialog_barter;
+   
+   call return_node;
+end
+procedure Node973 begin
+   give_eldridge_money(3000);
+   call Node022;
+end
+
+procedure Node001 begin
+   floater_rand(200, 204);
+end
+procedure Node002 begin
+   floater_rand(210, 214);
+end
+procedure Node003 begin
+   floater_rand(220, 234);
+end
+procedure Node004 begin
+   if (Fallout2_enclave_destroyed) then begin
+      Reply(240);
+   end else begin
+      Reply(241 + dude_is_female);
+   end
+   set_know_eldridge;
+   NOption(243 + (dude_is_stupid == false), Node990, 001);
+end
+procedure Node005 begin
+   return_node := "Node005";
+   if (prev_node == 0) then begin
+      Reply(mstr(250) + mstr(251));
+   end else begin
+      Reply(251);
+   end
+   adj_eldridge_barter(-200); // Seraph's Fix: changed '200' to '-200'
+   NOption(252, Node007, -003);
+   NOption(253, Node999, -003);
+   NOption(254, Node974, 004);
+   if (module == false) then begin
+      NOption(255, Node018, 004);
+   end
+   if (dude_is_made_man) then begin
+      if (made_man_set) then begin
+         NOption(262, Node975, 004);
+      end else begin
+         NOption(mstr(256) + dude_family_name + mstr(5256), Node026, 004);
+      end
+   end else if (get_jules_eldridge(jules_eldridge_refer)) then begin
+      NOption(257, Node989, 004);
+   end
+   if (get_fetch_laser(fetch_laser_none)) then begin
+      if ((know_lasers) and (dude_family != family_salvatore)) then begin
+         NOption(258, Node023, 004);
+      end
+   end else if (get_fetch_laser(fetch_laser_assigned)) then begin
+      if (obj_is_carrying_obj_pid(dude_obj, PID_LASER_PISTOL)) then begin
+         NOption(259, Node025, 004);
+      end
+   end
+   NOption(260, Node988, 004); // Seraph's Fix: changed 'Node998' to 'Node988'
+   BOption(261, Node999, 004);
+   prev_node := 5;
+end
+procedure Node006 begin
+   return_node := "Node006";
+   if (node_6 == false) then begin
+      Reply(270);
+   end else begin
+      Reply(272 + (prev_node != 0));
+   end
+   NOption(274, Node007, -003);
+   NOption(253, Node999, -003);
+   NOption(276 + node_6, Node974, 004);
+   if (module == false) then begin
+      NOption(255, Node018, 004);
+   end
+   if (dude_is_made_man) then begin
+      if (made_man_set) then begin
+         NOption(286, Node975, 004);
+      end else begin
+         NOption(mstr(256) + dude_family_name + mstr(5256), Node026, 004);
+      end
+   end else if (get_jules_eldridge(jules_eldridge_refer)) then begin
+      NOption(257, Node989, 004);
+   end
+   if (get_fetch_laser(fetch_laser_none)) then begin
+      if ((know_lasers) and (dude_family != family_salvatore)) then begin
+         NOption(258, Node023, 004);
+      end
+   end else if (get_fetch_laser(fetch_laser_assigned)) then begin
+      if (obj_is_carrying_obj_pid(dude_obj, PID_LASER_PISTOL)) then begin
+         NOption(259, Node025, 004);
+      end
+   end
+   NOption(283, Node988, 004);
+   BOption(284+ node_6, Node999, 004);
+   set_node_6;
+end
+procedure Node007 begin
+   return_node := "Node007";
+   Reply(300 + (Fallout2_enclave_destroyed == false));
+   NOption(302, Node974, -003);
+   if (module == false) then begin
+      NOption(303, Node018, -003);
+   end
+   NOption(304, Node999, -003);
+   prev_node := 7;
+end
+procedure Node008 begin
+   return_node := "Node008";
+   if (get_jules_eldridge(jules_eldridge_refer)) then begin
+      set_jules_eldridge(jules_eldridge_discount);
+      adj_eldridge_barter(-10); // Seraph's Fix: changed '10' to '-10'
+   end
+
+   Reply(mstr(310) + mstr(311 + dude_is_female));
+   NOption(277, Node974, 004);
+   if (module == false) then begin
+      NOption(255, Node018, 004);
+   end
+   if (dude_is_made_man) then begin
+      if (made_man_set) then begin
+         NOption(286, Node975, 004);
+      end else begin
+         NOption(mstr(256) + dude_family_name + mstr(5256), Node026, 004);
+      end
+   end
+   if (get_fetch_laser(fetch_laser_none)) then begin
+      if ((know_lasers) and (dude_family != family_salvatore)) then begin
+         NOption(258, Node023, 004);
+      end
+   end else if (get_fetch_laser(fetch_laser_assigned)) then begin
+      if (obj_is_carrying_obj_pid(dude_obj, PID_LASER_PISTOL)) then begin
+         NOption(259, Node025, 004);
+      end
+   end
+   NOption(283, Node988, 004);
+   BOption(285, Node999, 004);
+   prev_node := 8;
+end
+procedure Node009 begin
+   Reply(330);
+   NOption(331, Node006, 004);
+   NOption(285, Node999, 004);
+   prev_node := 9;
+end
+procedure Node010 begin
+variable has_pistol := false;
+variable has_rifle := false;
+variable has_other := false;
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_DESERT_EAGLE)) or (obj_is_carrying_obj_pid(dude_obj, PID_44_MAGNUM_REVOLVER))) then begin
+      has_pistol := true;
+   end
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_HUNTING_RIFLE)) or (obj_is_carrying_obj_pid(dude_obj, PID_ASSAULT_RIFLE)) or (obj_is_carrying_obj_pid(dude_obj, PID_FN_FAL))) then begin
+      has_rifle := true;
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_CATTLE_PROD)) then begin
+      has_other := true;
+   end
+   if ((has_pistol) or (has_rifle) or (has_other)) then begin
+      Reply(340);
+      if (has_pistol) then begin
+         NOption(341, Node011, 004);
+      end
+      if (has_rifle) then begin
+         NOption(342, Node012, 004);
+      end
+      if (has_other) then begin
+         NOption(343, Node013, 004);
+      end
+      NOption(344, Node006, 004);
+      NOption(345, Node999, 004);
+   end else begin
+      Reply(1340);
+      NOption(1345, Node006, 004);
+      NOption(1346, Node999, 004);
+   end
+   prev_node := 10;
+end
+procedure Node011 begin
+variable temp_msg := "";
+variable afford := false;
+   if (obj_is_carrying_obj_pid(dude_obj, PID_44_MAGNUM_REVOLVER)) then begin
+      temp_msg += mstr(350) + MCOST + mstr(5500) + " ";
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_DESERT_EAGLE)) then begin
+      temp_msg += mstr(351) + DECOST + mstr(5500);
+   end
+
+   Reply(temp_msg);
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_44_MAGNUM_REVOLVER)) and (dude_caps >= MCOST)) then begin
+      NOption(352, Node987, 004);
+      afford := true;
+   end
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_DESERT_EAGLE)) and (dude_caps >= DECOST)) then begin
+      NOption(353, Node986, 004);
+      afford := true;
+   end
+   if (afford == false) then begin
+      NOption(357, Node999, 004);
+   end
+   NOption(354, Node010, 004);
+   NOption(355, Node006, 004);
+   NOption(356, Node999, 004);
+   prev_node := 11;
+end
+procedure Node012 begin
+variable temp_msg;
+variable afford := false;
+   temp_msg := mstr(365);
+   if (obj_is_carrying_obj_pid(dude_obj, PID_HUNTING_RIFLE)) then begin
+      temp_msg += mstr(366) + HRCOST + mstr(5500) + " ";
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_ASSAULT_RIFLE)) then begin
+      temp_msg += mstr(367) + ARCOST + mstr(5500) + " ";
+   end
+   if (obj_is_carrying_obj_pid(dude_obj, PID_FN_FAL)) then begin
+      temp_msg += mstr(368) + FNCOST + mstr(5500);
+   end
+
+   Reply(temp_msg);
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_HUNTING_RIFLE)) and (dude_caps >= HRCOST)) then begin
+      NOption(369, Node985, 004);
+      afford := true;
+   end
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_ASSAULT_RIFLE)) and (dude_caps >= ARCOST)) then begin
+      NOption(370, Node984, 004);
+      afford := true;
+   end
+   if ((obj_is_carrying_obj_pid(dude_obj, PID_FN_FAL)) and (dude_caps >= FNCOST)) then begin
+      NOption(371, Node983, 004);
+      afford := true;
+   end
+   if (afford == false) then begin
+      NOption(357, Node999, 004);
+   end
+   NOption(354, Node010, 004);
+   NOption(355, Node006, 004);
+   NOption(356, Node999, 004);
+   prev_node := 12;
+end
+procedure Node013 begin
+   Reply(mstr(385) + CPCOST + mstr(5500));
+   if (dude_caps >= CPCOST) then begin
+      NOption(386, Node982, 004);
+   end else begin
+      NOption(357, Node999, 004);
+   end
+   NOption(354, Node010, 004);
+   NOption(355, Node006, 004);
+   NOption(356, Node999, 004);
+   prev_node := 13;
+end
+procedure Node014 begin
+   Reply(395);
+   NOption(396, Node017, 004);
+   prev_node := 14;
+end
+procedure Node015 begin
+   gfade_out(5);
+      game_time_advance(ONE_GAME_HOUR);
+      Reply(400);
+   gfade_in(5);
+   NOption(401, Node016, 004);
+   prev_node := 15;
+end
+procedure Node016 begin
+   gfade_out(5);
+      game_time_advance(ONE_GAME_HOUR);
+      Reply(405);
+   gfade_in(5);
+   NOption(406, Node017, 004);
+   prev_node := 16;
+end
+procedure Node017 begin
+   gfade_out(5);
+      game_time_advance(ONE_GAME_HOUR);
+      Reply(410);
+   gfade_in(5);
+   NOption(411, Node010, 004);
+   NOption(412, Node006, 004);
+   NOption(413, Node999, 004);
+   prev_node := 17;
+end
+procedure Node018 begin
+   Reply(420);
+   NOption(302, Node019, -003);
+   NOption(304, Node019, -003);
+   NOption(423, Node019, 004);
+   NOption(424, Node006, 004);
+   NOption(425, Node999, 004);
+   prev_node := 18;
+end
+procedure Node019 begin
+   Reply(430 + (dude_iq > 3) + (dude_iq > 6));
+   NOption(433, Node020, -003);
+   NOption(434, Node007, -003);
+   NOption(435, Node999, -003);
+   NOption(436 + (global_var(GVAR_GRUTHAR_DSTATUS) == 1), Node020, 004);
+   NOption(438, Node006, 004);
+   BOption(439, Node999, 004);
+   prev_node := 19;
+end
+procedure Node020 begin
+   Reply(450 + (prev_node != 19));
+   if (dude_caps >= 3000) then begin
+      NOption(452, Node973, -003);
+      NOption(386, Node973, 004);
+   end
+   NOption(434, Node007, -003);
+   NOption(454, Node981, -003);
+   NOption(455, Node999, -003);
+   if ((prev_node == 19) and (dude_caps >= 1500)) then begin
+      BOption(457, Node980, 004);
+   end
+   NOption(458, Node006, 004);
+   NOption(459, Node999, 004);
+end
+procedure Node021 begin
+   Reply(470);
+   if (dude_caps >= 2500) then begin
+      NOption(471, Node979, 004);
+   end else begin
+      NOption(474, Node999, 004);
+   end
+   NOption(472, Node006, 004);
+   NOption(473, Node999, 004);
+   prev_node := 21;
+end
+procedure Node022 begin
+   return_node := "Node022";
+   give_voice_chip(dude_obj)
+   Reply(mstr(480 + module_price) + mstr(482));
+   NOption(302, Node974, -003);
+   NOption(304, Node999, -003);
+   NOption(485, Node006, 004);
+   BOption(486, Node999, 004);
+   prev_node := 22;
+end
+procedure Node023 begin
+   Reply(495);
+   NOption(496, Node024, 004);
+   NOption(497, Node006, 004);
+   NOption(498, Node999, 004);
+   prev_node := 23;
+end
+procedure Node024 begin
+   Reply(505);
+   if (obj_is_carrying_obj_pid(dude_obj, PID_LASER_PISTOL)) then begin
+      GOption(506, Node025, 004);
+   end
+   NOption(507, Node978, 004);
+   NOption(508, Node006, 004);
+   NOption(509, Node977, 004);
+   NOption(510, Node999, 004);
+   prev_node := 24;
+end
+procedure Node025 begin
+   transfer_pid_between_objs(dude_obj, new_reno_temp_box, PID_LASER_PISTOL, 1)
+   item_caps_adjust(dude_obj, 1500);
+   display_mstr(800);
+   give_xp(EXP_ELDRIDGE_LASER);
+   inc_reno_rep(REP_NEW_RENO_ELDRIDGE_LASER);
+   set_fetch_laser(fetch_laser_given);
+   Reply(mstr(520 + (prev_node != 24)) + mstr(522));
+   NOption(523, Node006, 004);
+   NOption(524, Node999, 004);
+   prev_node := 25;
+end
+procedure Node026 begin
+   return_node := "Node026";
+   if (made_man_set == false) then begin
+      adj_eldridge_barter(-20); // Seraph's Fix: changed '20' to '-20'
+      set_made_man_set;
+   end
+   Reply(530);
+   NOption(386, Node975, 004);
+   NOption(532, Node006, 004);
+   NOption(533, Node999, 004);
+   prev_node := 26;
+end
+procedure Node027 begin
+   // added by killap - expansion
+   if (local_var(LVAR_Barks_Heard) < barks_till_pissed) then begin
+      floater_bad_rand(545, 547);
+   end else if (local_var(LVAR_Barks_Heard) == barks_till_pissed) then begin
+      floater_bad_rand(548, 549);
+   end else if (local_var(LVAR_Barks_Heard) > barks_till_pissed) then begin
+      floater_bad_rand(550, 550);
+   end
+   // end added
+end
+procedure Node028 begin
+   floater_bad_rand(560, 564);
+end
+procedure Node029 begin
+   floater_bad_rand(575, 578);
+end
+procedure Node030 begin
+   animate_stand;
+   float_msg(self_obj, mstr(600 + dude_is_female) + mstr(610), FLOAT_COLOR_NORMAL);
+end

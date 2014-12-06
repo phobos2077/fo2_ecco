@@ -1,0 +1,23 @@
+procedure start;
+
+#include "..\headers\itempid.h"
+#include "lib.arrays.h"
+
+import procedure testexport;
+
+procedure start begin
+	variable weapon, rounds, roundsVanilla, type;
+	
+    if (init_hook == 0) then
+      begin
+	      weapon := get_sfall_arg;
+	      rounds := get_sfall_arg;
+	      roundsVanilla := get_sfall_arg;
+	      type := get_sfall_arg;
+
+         display_msg("ammocost: wpn: "+weapon+" rounds "+rounds+" type "+type );
+         
+         call testexport;
+         //set_sfall_return(rounds*2);
+      end
+end

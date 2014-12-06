@@ -1,0 +1,439 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Karl
+        Location: NCR 1
+        Description: Deupty who lets you beat up on Oswald
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+#include "..\headers\ncr1.h"
+
+#define NAME                    SCRIPT_SCKARL
+#define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+
+#include "..\headers\ncr.h"
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure anim_end_call;
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+
+procedure walkUnLock;
+procedure walkBack;
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+import variable i_cell_door_obj;
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable doWalking := 0;
+variable openCloseDoor := 0;
+variable anim_flag := 0;
+variable Node1Count := 0;
+
+#define PLAYER_DONE 1
+#define WALK_BACK   2
+
+// by phobos2077 - bounty quest
+#define _BOUNTY_SCKARL
+#include "..\_pbs_main\quests_bounty.h"
+// end;
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == PLAYER_DONE) then begin
+      if (obj_can_see_obj(self_obj, dude_obj) and tile_distance_objs(self_obj, dude_obj) <= 3) then begin
+         doWalking := 1;
+         call walkUnLock;
+      end else begin
+         add_timer_event(self_obj, game_ticks(2), PLAYER_DONE);
+      end
+   end else if (fixed_param == WALK_BACK) then
+      call walkBack;
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR);
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD);
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+
+   do_self_anim_callback
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Node1Count := 0;
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_VERY_INTOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION5;
+
+   CheckKarma;
+
+   GetReaction;
+
+   ReactToLevel; //added by killap
+   
+   if (doWalking == 0) then begin
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+         call Node001;
+      gSay_End;
+      end_dialogue;
+      if (doWalking) then begin
+         set_map_var(MVAR_Beat_On_Oswald, 1);
+         call walkUnlock;
+      end
+   end
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Herebefore) == 0) then
+      display_msg(mstr(100));
+   else
+      display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   Node1Count += 1;
+
+   if (Node1Count == 1) then
+      Reply(103);
+   else
+      Reply(104);
+   INJECT_BOUNTY_DONE  // pbs
+   NLowOption(105, Node002);
+   NOption(106, Node003, 4);
+   if (not V13KNOWN) then
+      NOption(107, Node004, 4);
+   if ((global_var(GVAR_NCR_TANDI_JOB_ACCEPT) == 1) and not(ncr_global_state(NCR_OSWALD_DEAD))) then begin //edit by killap - added not(ncr_global_state(NCR_OSWALD_DEAD))
+      NOption(108, Node005, 4);
+      NLowOption(153, Node005); //added by killap
+   end
+   NOption(mstr(109) + " " + dude_name + mstr(152), Node006, 4);
+   if (global_var(GVAR_NCR_MIRA_STATE) == MJOBTAKEN) then
+      BOption(110, Node007, 4);
+   if (get_westin_flag(WESTIN_ACCEPT_SNUFF) and not get_westin_flag(WESTIN_DEAD)) then
+      NOption(111, Node008, 4);
+   NOption(300, Node999, 4); // pbs - added "goodbye" option
+end
+
+procedure Node002 begin
+   if (party_size > 1) then
+      //Reply(112);
+      Reply(113); //swapped replies - killap
+   else
+      //Reply(113);
+      Reply(112); //swapped replies - killap
+   ENDOPTION;
+end
+
+procedure Node003 begin
+   Reply(114);
+   NOption(115, Node001, 4);
+   NOption(116, Node999, 4);
+end
+
+procedure Node004 begin
+   Reply(117);
+   NOption(118, Node001, 4);
+   NOption(119, Node999, 4);
+end
+
+procedure Node005 begin
+   Reply(120);
+   NOption(121, Node009, 4);
+   NOption(122, NOde010, 4);
+   NLowOption(154, Node015); //added by killap
+end
+
+procedure Node006 begin
+   if (good_critter_reaction) then begin
+      ncr_set_global_state(NCR_KARL_REF_RANGERS);
+      Reply(123);
+   end else begin
+      set_global_var(GVAR_NCR_TANDI_WORK, 1);
+      Reply(124);
+   end
+   INJECT_ASK_BOUNTY // pbs
+   NOption(125, Node001, 4);
+   
+   if (good_critter_reaction) then //added by killap
+      NOption(133, Node999, 4);  //added by killap
+   else  //added by killap
+      NOption(126, NOde999, 4);
+end
+
+procedure Node007 begin
+   DownReactMinor;
+   Reply(127);
+   NOption(128, Node011, 4);
+   NOption(129, Node012, 4);
+end
+
+procedure Node008 begin
+   Reply(130);
+   NOption(131, Node013, 4);
+   NOption(132, Node001, 4);
+   NOption(133, Node999, 4);
+end
+
+procedure Node009 begin
+   Reply(134);
+   NOption(135, Node014, 4);
+   NOption(136, Node015, 4);
+end
+
+procedure Node010 begin
+   Reply(137);
+   NOption(138, Node015, 4);
+end
+
+procedure Node011 begin
+   Reply(139);
+   NOption(140, Node001, 4);
+   NOption(141, Node999, 4);
+end
+
+procedure Node012 begin
+   Reply(142);
+   NOption(143, Node001, 4);
+   NOption(144, Node999, 4);
+end
+
+procedure Node013 begin
+   Reply(145);
+   BOption(146, Node016, 4);
+   NOption(147, Node999, 4);
+end
+
+procedure Node014 begin
+   Reply(148);
+   doWalking := 1;
+   ENDOPTION;
+end
+
+procedure Node015 begin
+   Reply(149);
+   doWalking := 1;
+   ENDOPTION;
+end
+
+procedure Node016 begin
+   Reply(150);
+   NOption(151, Node999, 4);
+end
+
+procedure walkUnLock begin
+   reg_anim_clear(self_obj);
+   reg_anim_begin();
+   animate_move_to_tile(FRONT_OF_DOOR);
+   reg_anim_end();
+end
+
+procedure walkBack begin
+   reg_anim_clear(self_obj);
+   reg_anim_begin();
+   animate_move_to_tile(HOME_POS);
+   reg_anim_end();
+end
+
+procedure anim_end_call begin
+   if (doWalking == 1) then begin
+      if (i_cell_door_obj != -1) then begin
+         if (openCloseDoor == 0) then begin
+            debug_msg("opening door");
+            obj_unlock(i_cell_door_obj);
+            if (not obj_is_open(i_cell_door_obj)) then begin
+               use_obj(i_cell_door_obj);
+            end
+            openCloseDoor := 1;
+         end else begin
+            debug_msg("closing door");
+            if (obj_is_open(i_cell_door_obj)) then begin
+               use_obj(i_cell_door_obj);
+            end
+            if (obj_is_locked(i_cell_door_obj)) then
+               obj_unlock(i_cell_door_obj);
+            openCloseDoor := 0;
+         end
+//         add_timer_event(self_obj, game_ticks(1), WALK_BACK);
+         doWalking := 2;
+      end
+   end else if (doWalking == 2) then begin
+      debug_msg("doWalk == 2");
+      doWalking := 3;
+      call walkBack;
+      if (openCloseDoor == 0) then
+         obj_lock(i_cell_door_obj);
+   end else if (doWalking == 3 and openCloseDoor == 1) then begin
+      doWalking := 0;
+      add_timer_event(self_obj, game_ticks(2), PLAYER_DONE);
+   end else if (doWalking == 3 and openCloseDoor == 0) then begin
+      doWalking := 0;
+   end
+end
+
+//xxxxxxxxxxxxxxxxxxxx

@@ -1,0 +1,40 @@
+// 'createwin' procedure will create a new window
+// createwin("name",posx,posy,widht,height)
+
+createwin("win1",150,50,230,284);
+
+//Now we will add four buttons to this window
+//addbutton("nameofbutton",posx,posy,widht,height)
+// 0,0 point for posx and posy paremeters is left upper corner of a new window.
+AddButton("button1",17,44,44,43);
+AddButton("button2",17,104,44,43);
+AddButton("button3",17,164,44,43);
+AddButton("button4",17,224,44,43);
+
+//adding procedures to buttons
+//addbuttonproc("nameofbutton",mouse_on_procedure,mouse_out_procedure,buttonpres_procedure,buttonrelase_procedure);)
+AddButtonProc("button1",buton,butoff,butpres,butoff);
+AddButtonProc("button2",buton,butoff,butpres2,butoff);
+AddButtonProc("button3",buton,butoff,butpres3,butoff);
+AddButtonProc("button4",buton,butoff,butpres4,butoff);
+
+//adding graphics to buttons
+//addbuttongfx("buttonname","buttonpres_file.pcx","buttonrelise_file.pcx","mouse_over_file.pcx")
+//graph files must be in pcx format and in fallout2 standart color palette
+addbuttongfx("button1","ebut_in.pcx","ebut_out.pcx"," ");
+addbuttongfx("button2","ebut_in.pcx","ebut_out.pcx"," ");
+addbuttongfx("button3","ebut_in.pcx","ebut_out.pcx"," ");
+addbuttongfx("button4","ebut_in.pcx","ebut_out.pcx"," ");
+
+//create window bakground graphics
+//display("graph_filename.pcx")
+//file must be in pcx format and have fallout2 standart palette
+display("el_base1.pcx");
+
+//this command draws sprite on given coordinates in window
+//displaygfx("filename.pcx",posx,posy,hight,weight)
+//it draws elevator level arrow
+displaygfx("1.pcx",120,40,92,55);
+
+//This command will redraw curent window
+ShowWin;

@@ -1,0 +1,85 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/* Random Encounter scripts. These will be filled in more once they
+   have been designed.
+*/
+
+procedure start;
+
+#include "..\headers\define.h"
+#include "..\headers\bhrnddst.h"
+
+#define NAME                    SCRIPT_ECRAT
+
+#include "..\headers\command.h"
+
+procedure start;
+procedure destroy_p_proc;
+procedure critter_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+
+variable starttile := 0;
+
+
+// by phobos2077: rats eat poofs
+#include "gecko_hunger.h"
+variable food:=0;
+#define FOOD_DETECT_RADIUS    (15)
+
+
+procedure map_enter_p_proc begin
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RND_RATS);
+   starttile := self_tile;
+   reg_anim_clear(self_obj);
+   reg_anim_begin();
+   animate_rotation(Random(0, 5));
+   reg_anim_end();
+end
+
+procedure start begin
+end
+
+procedure critter_p_proc begin
+   if (obj_can_see_obj(self_obj, dude_obj)) then begin
+      attack(dude_obj);
+   end
+
+   if (not anim_busy(self_obj)) then begin
+      reg_anim_clear(self_obj);
+      reg_anim_begin();
+      animate_move_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
+      reg_anim_end();
+   end
+   
+   // by phobos2077:
+   if (not(combat_is_initialized)) then begin
+      if (random(0, 50) == 1 and not(food)) then begin
+         food := getNearestFoodForRat(FOOD_DETECT_RADIUS);
+         if (food) then
+            call anim_go_eat_food(food);
+      end else if (food) then if (should_delete_food(food)) then begin
+         destroy_object(food);
+         food := 0;
+      end
+   end
+   // ;
+end
+
+procedure combat_p_proc begin
+   food := 0; // pbs
+end
+
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+//   inc_evil_critter
+
+   if (cur_map_index == MAP_BH_RND_DESERT) then begin
+       dec_map_var(MVAR_Hostile_Total);
+   end
+
+/* Set global_variable for Enemy status*/
+end
