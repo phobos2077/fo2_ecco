@@ -53,7 +53,7 @@ variable begin
    // map pid => original price
 	price_list := 0;
 	// map TownId => (map pid => modifier)
-	town_demand_list := 0;
+	town_demand_map := 0;
 	// array
 	npc_pid_list := 0;
 	selling_prices_last_modified := 0;
@@ -252,64 +252,54 @@ procedure start begin
 end
 
 procedure remember_town_demand begin
-	variable i := 0;
-	variable j;
-	variable temp;
-	variable pairs;
-	variable pair;
-	town_demand_list := create_array(MaxTown + 1, 255);
-	set_sfall_global("barter_1", town_demand_list);
-	i := 0;
-	while (i <= MaxTown) do begin
+	variable i, j, temp, pairs, pair;
+	town_demand_map := create_array_map;
+	for (i:=0; i <= MaxTown; i++) begin
 		temp := get_ini_string("barter.ini|TOWNDEMAND|" + i);
 		if (temp != "") then begin
 			pairs := string_split(temp, "|");
-			if (len_array(pairs) > 0) then temp := create_assoc_array;
-			else temp := 0;
-			j := 0;
-			while (j < len_array(pairs)) do begin
-				pair := string_split(pairs[j], "*");
-				if (len_array(pair) == 2 and atoi(pair[0]) != 0 and atof(pair[1]) != 0) then begin
-					call set_assoc_array(temp, atoi(pair[0]), atof(pair[1]));
-				end
-				j++;
-			end
-			town_demand_list[i] := temp;
+			if (len_array(pairs) > 0) then begin
+   			temp := create_array_map;
+   			foreach (pair in pairs) begin
+   				pair := string_split(pair, "*");
+   				if (len_array(pair) == 2 and atoi(pair[0]) != 0 and atof(pair[1]) != 0) then
+   				   temp[atoi(pair[0])] := atof(pair[1]);
+   			end
+         end else
+            temp := 0;
+			town_demand_map[i] := temp;
+			//call display_array(temp);
 		end
-		i++;
 	end
 end
 
 procedure load_npc_list begin
-	variable i := 0;
-	npc_pid_list := get_sfall_global_array("barter_2", 200, 4);
+	variable i;
+	npc_pid_list := create_array_list(0);
 	#define _GET_SETTING	get_ini_setting("barter.ini|NPC|"+i)
-	while (_GET_SETTING != -1 and i < 200) do begin 
-		npc_pid_list[i] := _GET_SETTING;
-		i += 1;
+	for (i := 0; _GET_SETTING != -1 and i < 200; i++) begin 
+		call array_push(npc_pid_list, _GET_SETTING);
 	end
+	call display_array(npc_pid_list);
 	#undef _GET_SETTING
-	resize_array(npc_pid_list, i);
 end
 
 
 procedure remember_item_prices begin
-	variable i := 1;
+	variable pid := 1;
 	variable temp;
-	// memory safeguard
-	price_list := get_sfall_global_int("barter_0");
-	if (price_list != 0) then free_array(price_list);
 	price_list := create_array(2000, 4); // should be enough for any mod
 	set_sfall_global("barter_0", price_list);
-	temp := get_proto_data(i, PRODATA_IT_COST);
+	temp := get_proto_data(pid, PROTO_IT_COST);
 	while (temp != -1) do begin
-		if (i != 41) then begin
-			price_list[i] := temp;
+		if (pid != PID_BOTTLE_CAPS) then begin
+			price_list[pid] := temp;
 		end
-		i++;
-		temp := get_proto_data(i, PRODATA_IT_COST);
+		pid++;
+		temp := get_proto_data(pid, PROTO_IT_COST);
 	end
-	resize_array(price_list, i);
+	resize_array(price_list, pid);
+	//call display_array(price_list);
 end
 
 procedure modify_selling_prices(variable mod) begin
@@ -320,17 +310,17 @@ procedure modify_selling_prices(variable mod) begin
 	variable i := 1;
 	if (game_time != selling_prices_last_modified) then begin
 		// assoc array of PIDs and their modifiers
-		demand := town_demand_list[cur_town];
+		demand := town_demand_map[cur_town];
 		maxPid := len_array(price_list) - 1;
 		i := 1;
 		while (i <= maxPid) do begin
 			if (price_list[i] != 0) then begin
-				pid_mod := get_assoc_array(demand, i);
+				pid_mod := demand[i];
 				if (pid_mod == 0) then pid_mod := 1;
 				else begin
 					debug_msg("PID mod: " + i +  " * " + pid_mod);
 				end
-				set_proto_data(i, PRODATA_IT_COST, round(price_list[i] * mod * pid_mod));
+				set_proto_data(i, PROTO_IT_COST, round(price_list[i] * mod * pid_mod));
 			end
 			i++;
 		end
@@ -378,12 +368,11 @@ end
 
 procedure get_highest_barter_in_party begin
 	variable i := 0;
-	variable obj;
-	variable max;
+	variable obj, pid, max;
 	max := has_skill(dude_obj, SKILL_BARTER);
 	
-	while (i < len_array(npc_pid_list)) do begin
-		obj := party_member_obj(npc_pid_list[i]);
+	foreach (pid in npc_pid_list) begin
+		obj := party_member_obj(pid);
 		if (obj) then begin
 			#define _SK		has_skill(obj, SKILL_BARTER)
 			if (_SK > max) then begin
@@ -391,7 +380,6 @@ procedure get_highest_barter_in_party begin
 			end
 			#undef _SK
 		end
-		i++;
 	end
 	return max;
 end
