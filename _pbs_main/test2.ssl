@@ -2,7 +2,7 @@
 
 	This is universal script for all trap-related objects:
 	- visible floor traps (can be looked at and disarmed),
-	- read to be installed trap items lying on the ground,
+	- ready to be installed trap items lying on the ground,
 	- explosion visual effects (misc objects)
 
 	@author phobos2077
@@ -63,7 +63,7 @@ procedure identify_me begin
 		if (is_explosion_misc_pid(self_pid)) then begin
 			my_trap_index := INDEX_EXPLOSION;
 		end else begin
-			ar_global := get_sfall_global_array(SGVAR_TRAPS_BY_DUDE, 0, 4);
+			ar_global := load_create_array(ARR_TRAPS, 0);
 			if (local_var(LVAR_identified) == true) then begin
 				my_trap_index := local_var(LVAR_index);
 			end else begin

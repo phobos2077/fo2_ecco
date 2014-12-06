@@ -21,9 +21,11 @@ variable angry_set;
 variable attack_delay := -1;
 variable ini_assemble_hotkey;
 
+export variable _trapsImport := 77;
+
 procedure start begin
-	variable arr;
-	variable i;
+	variable arr, migrateMap;
+	variable i, k, v;
 	
 	variable list;
 	variable list2;
@@ -40,14 +42,21 @@ procedure start begin
   	//display_msg("traps init yo "+cur_map_index);
 	set_global_script_type(0);
 	set_global_script_repeat(100);
-	
-	//ar_explosions := get_sfall_global_array(SGVAR_FAKE_EXPLOSIONS, 0, 4);
-  	angry_set := get_sfall_global_array(SGVAR_ANGRY_TEAMS, 0, 4);
-  	//victims_Set := get_sfall_global_array(SGVAR_TRAP_VICTIMS, 0, 4);
   	
 	ini_trap_reveals_dude := get_ini_setting("combat.ini|TRAPS|trap_reveals_dude");
 	ini_trap_friendfoe := get_ini_setting("combat.ini|TRAPS|trap_friendfoe");
 	ini_assemble_hotkey := parse_hotkey(get_ini_string("combat.ini|TRAPS|assemble_hotkey"));
+	
+	// migrate from old saves
+	foreach (k: v in ({SGVAR_TRAPS_BY_DUDE: ARR_TRAPS, SGVAR_TRAPS_BY_DUDE_LOCAL: ARR_TRAPS_LOCAL, SGVAR_ANGRY_TEAMS: ARR_ANGRY_TEAMS})) begin
+   	arr := get_sfall_global_int(k);
+   	if (arr) then begin // convert
+   	   save_array(v, arr);
+   	   set_sfall_global(k, 0);
+   	end
+	end
+	
+  	angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
 	
   end else begin
 	
@@ -119,6 +128,7 @@ procedure start begin
 	
 	if (hotkey_pressed(ini_assemble_hotkey)) then begin
 	   if (not(key1)) then begin
+	      _trapsImport := random(100, 200);
 	      item := critter_inven_obj(dude_obj, active_hand);
 	      //display_msg("active: "+obj_name(item));
 	      if (is_trap_kit_pid(obj_pid(item))) then begin

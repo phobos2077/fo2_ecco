@@ -810,19 +810,21 @@ procedure Check_Bess_Float begin
    return 0;
 end
 
+import variable _trapsImport;
 
+/*
 import procedure testexport000;
 import procedure testexport111(variable a);
-import procedure testexport222(variable a, variable b);
+import procedure testexport222(variable a, variable b);*/
 procedure description_p_proc begin
     if (not(combat_is_initialized)) then begin
     	script_overrides;
-    	display_msg("here it goes...");
+    	display_msg("_trapsImport="+_trapsImport);
        //call batch_init;
       //call show_dialog;
-      call testexport000;
-      call testexport111(142);
-      call testexport222(12, 252);
+      //call testexport000;
+      //call testexport111(142);
+      //call testexport222(12, 252);
     end
 end
 

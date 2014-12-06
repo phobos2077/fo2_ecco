@@ -9,6 +9,7 @@ variable begin
 	
 end
 
+
 procedure start begin
 	variable critter;
 	variable hexes;

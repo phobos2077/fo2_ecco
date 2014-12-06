@@ -18,6 +18,12 @@
 #define SGVAR_LAST_DEATHANIM_CRITTER    ("PBSLTDTC")
 #define SGVAR_REMOVE_ITEM    ("PBSRMITM")
 
+// arrays
+#define ARR_GLOBALS        "phobos2077"
+#define ARR_TRAPS          "pbs_traps"
+#define ARR_TRAPS_LOCAL    "pbs_traps_local"
+#define ARR_ANGRY_TEAMS    "pbs_angry_teams"
+
 // normal global variables
 #define GVAR_BOUNTY_REDDING         (644)
 #define GVAR_BOUNTY_NCR             (645)
@@ -202,6 +208,9 @@
 #define is_using_ammo_pid(crit, pid)    (get_weapon_ammo_pid(critter_inven_obj(crit, 1)) == pid or get_weapon_ammo_pid(critter_inven_obj(crit, 2)) == pid)
 
 
+#define pbs_var(x)                  (get_array(load_array(ARR_GLOBALS), x))
+#define set_pbs_var(x, val)         (set_array(load_array(ARR_GLOBALS), x, val))
+// #define pbs_mod_version             (pbs_var("_version"))
 
 
 #endif

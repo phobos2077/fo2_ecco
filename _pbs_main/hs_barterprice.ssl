@@ -280,7 +280,7 @@ procedure load_npc_list begin
 	for (i := 0; _GET_SETTING != -1 and i < 200; i++) begin 
 		call array_push(npc_pid_list, _GET_SETTING);
 	end
-	call display_array(npc_pid_list);
+	//call display_array(npc_pid_list);
 	#undef _GET_SETTING
 end
 

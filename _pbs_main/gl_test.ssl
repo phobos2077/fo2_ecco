@@ -1,5 +1,5 @@
 
-import variable gecko_percy_box;
+//import variable gecko_percy_box;
 
 #include "sfall.h"
 #include "define_lite.h"
@@ -21,11 +21,11 @@ variable iii := 0;
 
 variable ary;
 
-export procedure testexport111(variable a);
+/*export procedure testexport111(variable a);
 
 procedure testexport111(variable a) begin
    display_msg("Hello from gl_test! "+a);
-end
+end*/
 
 procedure set_item_count(variable invenobj, variable itempid, variable newcount, variable wield)
 begin
@@ -101,19 +101,19 @@ procedure start begin
    call save_collection("people", coll);*/
    
    
-   coll := load_collection("people");
+   /*coll := load_collection("people");
    foreach (k: v in coll) 
       display_msg(""+k+": "+debug_array_str(v));
    
    unset_array(coll, 7);
-   call save_collection("people", coll);
+   call save_collection("people", coll);*/
    
    
-   /*display_msg(debug_array_str(
-      array_diff([1, 2, 3, 4, 5], [2, 1, 4, 25])
-   ));*/
+   set_global_script_repeat(500);
    
   end else begin
+     call display_array(load_array(ARR_TRAPS_LOCAL));
+  
      /*obj := get_sfall_global_int(SGVAR_REMOVE_ITEM);
      if (obj) then begin
          temp := rm_mult_objs_from_inven(dude_obj, obj, 1);
@@ -174,7 +174,7 @@ procedure start begin
    
    // follow cursor
    //if (combat_is_initialized) then begin
-      if (cursor_obj == 0) then begin
+      /*if (cursor_obj == 0) then begin
          cursor_obj := create_object_sid(PID_STEAM_2, 0, 0, -1);
          move_to(cursor_obj, tile_under_cursor, elevation(dude_obj));
          reg_anim_combat_check(0);
@@ -182,7 +182,7 @@ procedure start begin
          reg_anim_animate_forever(cursor_obj, 0);
          reg_anim_end();
          game_ui_enable;
-      end
+      end*/
    //end
    
    //reg_anim_change_fid(0, 0, 0); // refresh display

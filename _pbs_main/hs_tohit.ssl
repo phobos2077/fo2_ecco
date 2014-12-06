@@ -21,6 +21,8 @@ int     ret1 - the new hit chance
 NOTE: target and attacker should be switched
 */
 
+import variable _trapsImport;
+
 procedure start begin
 	variable hitChance;
 	variable target;
@@ -37,6 +39,7 @@ procedure start begin
 	
     if (init_hook == 0) then
       begin
+      display_msg("_trapsImport="+_trapsImport);
          hitChance := get_sfall_arg;
          attacker := get_sfall_arg;
          target := get_sfall_arg;

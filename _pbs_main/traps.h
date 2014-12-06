@@ -27,7 +27,7 @@
 
 #define is_explosion_misc_pid(pid)  (pid == PID_EXPLOSION_1 or pid == PID_EXPLOSION_2 or pid == PID_EXPLOSION_3 or pid == PID_EXPLOSION_4 or pid == PID_EXPLOSION_5 or pid == PID_EXPLOSION_6 or pid == PID_EXPLOSION_EMP_1 or pid == PID_EXPLOSION_EMP_2 or pid == PID_EXPLOSION_PLASMA_1)
 
-#define global_traps        (get_sfall_global_array(SGVAR_TRAPS_BY_DUDE, 0, 4))
+#define global_traps        (load_create_array(ARR_TRAPS, 0))
 
 #define TRAPINFO_SIZE        (10)
 
@@ -63,11 +63,12 @@
 
 pure procedure tile_contains_any_trap(variable tile, variable elev) begin
   variable pids, pid;
-  pids := temp_list6(PID_METAL_FLOOR_TRAP_VISIBLE, PID_METAL_FLOOR_TRAP_DISARMED, PID_METAL_FLOOR_TRAP_DEPRESSED, \
-      PID_CAVE_FLOOR_TRAP_VISIBLE, PID_CAVE_FLOOR_TRAP_DISARMED, PID_CAVE_FLOOR_TRAP_DEPRESSED);
-  pids := merge_array(pids, temp_list6(PID_PBS_SPIKE_TRAP_DISARMED, PID_PBS_SPIKE_TRAP, \
-      PID_PBS_MINE_DISARMED, PID_PBS_MINE, PID_PBS_SENSOR_MINE_DISARMED, PID_PBS_SENSOR_MINE));
-  foreach pid in pids begin
+  pids := [PID_METAL_FLOOR_TRAP_VISIBLE, PID_METAL_FLOOR_TRAP_DISARMED, PID_METAL_FLOOR_TRAP_DEPRESSED, 
+            PID_CAVE_FLOOR_TRAP_VISIBLE, PID_CAVE_FLOOR_TRAP_DISARMED, PID_CAVE_FLOOR_TRAP_DEPRESSED, 
+            PID_PBS_SPIKE_TRAP_DISARMED, PID_PBS_SPIKE_TRAP, 
+            PID_PBS_MINE_DISARMED, PID_PBS_MINE,
+            PID_PBS_SENSOR_MINE_DISARMED, PID_PBS_SENSOR_MINE];
+  foreach (pid in pids) begin
     if (tile_contains_obj_pid(tile, elev, pid)) then return true;
   end
   return false;
@@ -142,7 +143,7 @@ procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType);
 variable ar_traps_local;
 variable ini_trap_is_crime := 1;
 variable ini_trap_reveals_dude := 1;
-variable ini_trap_friendfoe := 2;
+variable ini_trap_friendfoe := 1;
 
 procedure get_traps_for_map begin
   variable ar_global;
@@ -152,9 +153,10 @@ procedure get_traps_for_map begin
   variable j := 0;
   //variable num := 0;
   if (cur_map_index != get_sfall_global_int(SGVAR_TRAPS_LAST_MAP)) then begin
-    //display_msg("Rebuild local");
+    debug_msg("Rebuild local traps");
     ar_global := global_traps;
-    ar_traps_local := get_sfall_global_array_new(SGVAR_TRAPS_BY_DUDE_LOCAL, 0, 4);
+    ar_traps_local := load_create_array(ARR_TRAPS_LOCAL, 0);
+    resize_array(ar_traps_local, 0);
     while (i < len_array(ar_global)) do begin
       // copy only active traps in current map, for optimization
       if (trap_map(ar_global, i) == cur_map_index and trap_state(ar_global, i) == TRAP_STATE_ACTIVE) then begin
@@ -165,9 +167,9 @@ procedure get_traps_for_map begin
       i += TRAPINFO_SIZE;
     end
     set_sfall_global(SGVAR_TRAPS_LAST_MAP, cur_map_index);
-    debug_msg("Local traps: "+(local_i/TRAPINFO_SIZE) + ", of total: "+(len_array(ar_global)/TRAPINFO_SIZE));
+    //debug_msg("Local traps: "+(local_i/TRAPINFO_SIZE) + ", of total: "+(len_array(ar_global)/TRAPINFO_SIZE));
   end else begin
-    ar_traps_local := get_sfall_global_array(SGVAR_TRAPS_BY_DUDE_LOCAL, 0, 4);
+    ar_traps_local := load_create_array(ARR_TRAPS_LOCAL, 0);
   end
   return ar_traps_local;
 end
@@ -374,7 +376,7 @@ end
 procedure react_hostile_action begin
   variable crit;
   variable angry_set;
-  angry_set := get_sfall_global_array(SGVAR_ANGRY_TEAMS, 0, 4);
+  angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
   foreach crit in list_as_array(LIST_CRITTERS) if (crit) then begin
     if (crit != dude_obj 
     	and not(obj_in_party(crit)) 
