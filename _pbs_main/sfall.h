@@ -101,10 +101,16 @@
 #define is_in_array(item, array)    (scan_array(array, item) != -1)
 // true if given array exists, false otherwise
 #define array_exists(array)         (len_array(array) != -1)
+// remove all elements from array
+#define clear_array(array)          resize_array(array, 0)
 // sort array in ascending order
 #define sort_array(array)           resize_array(array, -2)
 // sort array in descending order
 #define sort_array_reverse(array)   resize_array(array, -3)
+// reverse elements in list
+#define reverse_array(array)        resize_array(array, -4)
+// randomly shuffle elements in list
+#define shuffle_array(array)        resize_array(array, -5)
 // remove element from map or just replace value with 0 for list
 #define unset_array(array, item)    set_array(array, item, 0)
 

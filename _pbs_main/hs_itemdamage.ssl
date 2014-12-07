@@ -55,24 +55,24 @@ procedure start begin
 	         weaponPid := obj_pid(weapon);
 	         damageType := get_proto_data(weaponPid, 48);
 	         debug_msg("itemdamage: "+dmgMin+"-"+dmgMax+", wpn: "+weaponPid+", type: "+attackType+", dmg typ: "+damageType);
-	         if (weaponPid == PID_MOLOTOV_COCKTAIL) then begin
-	            res := set_attack_is_explosion_fire;
-	         end
-	         
+	         // tell engine to make smaller explosion effect
 	         if not(is_in_array(get_proto_data(weaponPid, PROTO_WP_PROJ_PID), ([PID_PROJ_ROCKET, PID_PROJ_ROBOT_ROCKET]))) then begin
 	            set_attack_explosion_pattern(1, 0);
 	         end
 	         //display_msg("t:"+get_last_target(attacker)+", isMelee:"+isMelee);
-	         /*if ((weaponPid == PID_MOLOTOV_COCKTAIL or get_weapon_ammo_pid(weapon) == PID_PBS_40MM_IC)
+	         // tell engine to remove knockback for incendiary weapons
+	         if ((weaponPid == PID_MOLOTOV_COCKTAIL or get_weapon_ammo_pid(weapon) == PID_PBS_40MM_IC)
 	               and get_proto_data(weaponPid, 48) == DMG_fire) then
 	         begin
 	         	set_weapon_knockback(weapon, 0, 0);
-	         	set_proto_data(weaponPid, 48, DMG_explosion);
-	         end*/
-	         if (get_proto_data(weaponPid, PROTO_WP_CALIBER) == CALIBER_40MM_GRENADE) then begin
-	            res := set_attack_explosion_radius(2);
+	         	set_attack_is_explosion_fire;
+	         	//set_proto_data(weaponPid, 48, DMG_explosion);
 	         end
-	         
+	         // tell engine to reduce explosion damage radius for smaller explosions
+	         if (get_proto_data(weaponPid, PROTO_WP_CALIBER) == CALIBER_40MM_GRENADE) then begin
+	            set_attack_explosion_radius(2);
+	         end
+	         // throwing weapons damage bonus
 	         if (ini_damage_bonus) then begin
 		         if (damageType == DMG_normal_dam) then begin 
 		         	 //target := get_last_target(attacker);

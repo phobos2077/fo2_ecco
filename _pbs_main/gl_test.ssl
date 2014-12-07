@@ -28,7 +28,7 @@ procedure testexport111(variable a) begin
 end*/
 
 
-import variable pbs_local_traps;
+//import variable pbs_local_traps;
 
 procedure set_item_count(variable invenobj, variable itempid, variable newcount, variable wield)
 begin
@@ -108,10 +108,10 @@ procedure start begin
    call save_collection("people", coll);*/
    
    
-   //set_global_script_repeat(1000);
+   set_global_script_repeat(500);
    
   end else begin
-     display_array(pbs_local_traps);
+     //display_array(pbs_local_traps);
   
      /*obj := get_sfall_global_int(SGVAR_REMOVE_ITEM);
      if (obj) then begin
@@ -138,8 +138,8 @@ procedure start begin
         
         
          temp := tile_num_in_direction(tile_num(dude_obj), 0, 9);
-         for (i:=0; i<5; i++) begin
-            create_object_sid(16777228, tile_num_in_direction(temp, i, 1), elevation(dude_obj), -1);
+         for (i:=0; i<6; i++) begin
+            create_object_sid(16777458, tile_num_in_direction(temp, i, random(1,2)), elevation(dude_obj), -1);
          end
          
         /*obj := create_object_sid(0x01000000+1, tile_num_in_direction(tile_num(dude_obj), 0, 7), elevation(dude_obj), -1);

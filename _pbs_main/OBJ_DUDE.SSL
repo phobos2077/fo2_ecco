@@ -11,9 +11,7 @@
 
 #include "..\headers\define.h"
 
-//#include "..\_pbs_main\traps.h"
-
-//#include "..\_pbs_craft\test0.ssl"
+#include "..\_pbs_craft\test0.ssl"
 
 #define NAME                    SCRIPT_OBJ_DUDE
 
@@ -800,22 +798,11 @@ procedure Check_Bess_Float begin
    return 0;
 end
 
-import variable _trapsImport;
-
-/*
-import procedure testexport000;
-import procedure testexport111(variable a);
-import procedure testexport222(variable a, variable b);*/
 
 procedure description_p_proc begin
     if (not(combat_is_initialized)) then begin
     	script_overrides;
-    	display_msg("_trapsImport="+_trapsImport);
-       //call batch_init;
-      //call show_dialog;
-      //call testexport000;
-      //call testexport111(142);
-      //call testexport222(12, 252);
+    	call batch_init;
     end
 end
 

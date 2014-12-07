@@ -104,7 +104,7 @@
 #define critter_max_hp(crit)		            (get_critter_stat(crit, STAT_max_hit_points))
 #define exp_for_kill_critter_pid(pid)			(get_proto_data(pid, PROTO_CR_KILL_EXP))
 #define critter_flags_by_pid(pid)               (get_proto_data(pid, PROTO_CR_CRITTER_FLAGS))
-#define can_steal_from_critter_pid(pid)         ((critter_flags_by_pid(pid) bwand CRITTER_FLAG_NOSTEAL) == 0)
+#define can_steal_from_critter_pid(pid)         ((critter_flags_by_pid(pid) bwand CFLG_STEAL) == 0)
 #define critter_facing_dir(crit)                (has_trait(TRAIT_OBJECT,crit,OBJECT_CUR_ROT))
 
 #define is_human(crit)		(critter_kill_type(crit) >= 0 and critter_kill_type(crit) <= 4)

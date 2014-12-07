@@ -21,7 +21,6 @@ procedure start begin
 	   // all initialization for traps is done in gl_traps
 	end else 
 	begin
-	display_msg(pbs_ini_trap_friendfoe);
 		critter := get_sfall_arg;
 		hexes := get_sfall_arg;
 		cost := get_sfall_arg;

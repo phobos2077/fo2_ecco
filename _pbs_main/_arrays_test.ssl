@@ -73,6 +73,12 @@ procedure array_test_suite begin
    arr := ["Albert", "John", "Mike", "David"];
    sort_array_reverse(arr);
    call assertEquals("sort DESC", arrays_equal(arr, ["Mike", "John", "David", "Albert"]), true);
+   reverse_array(arr);
+   call assertEquals("reverse list", arrays_equal(arr, ["Albert", "David", "John", "Mike"]), true);
+   shuffle_array(arr);
+   call assertEquals("shuffle list 1", arrays_equal(arr, ["Albert", "David", "John", "Mike"]), false);
+   call assertEquals("shuffle list 2", len_array(arr), 4);
+   if (test_suite_verbose) then display_array(arr);
    
    // some additional stuff
    call assertEquals("string_split", get_array(string_split("this+is+good", "+"), 2), "good");
@@ -118,6 +124,12 @@ procedure array_test_suite begin
    call assertEquals("array_key 1", array_key(arr, 0), 6);
    call assertEquals("array_key 2", array_key(arr, 3), "wtf");
    call assertEquals("array_key 3", array_key(arr, 1), 1.001);
+   
+   resize_array(arr, 2);
+   call assertEquals("map resize 1", len_array(arr), 2);
+   call assertEquals("map resize 2", arrays_equal(arr, {6:5, 1.001:0.5}), true);
+   resize_array(arr, 0);
+   call assertEquals("map clear", len_array(arr), 0);
    
    display_msg("Testing foreach...");
    s := "ar";

@@ -162,7 +162,7 @@ end
    in here. */
 procedure destroy_p_proc begin
    variable tail:=0;
-
+   
    //if ((obj_pid(self_obj) == PID_GECKO_SMALL) or (obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL)) then
    //     item := create_object(PID_GECKO_PELT,0,0);
    //else

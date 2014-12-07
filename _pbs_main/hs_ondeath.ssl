@@ -79,8 +79,6 @@ begin
 		   if (ini_drop_monster_parts) then begin
 		      call drop_monster_parts(critter);
 		   end
-		   // fix for trap kills
-		   call drop_vanilla_monster_parts(critter);
 		   //display_msg("ONDEATH ");
 	   end
 	   
@@ -164,8 +162,8 @@ begin
       critter_flags;
       i;
     end
-	critter_flags := get_proto_data(obj_pid(critter), PRODATA_CR_CRITTER_FLAGS);
-	if not(critter_flags bwand CRITTER_FLAG_NODROP) then begin
+	critter_flags := get_proto_data(obj_pid(critter), PROTO_CR_CRITTER_FLAGS);
+	if not(critter_flags bwand CFLG_DROP) then begin
 	    i := 1;
 	    while (i <= 2) do begin
 	      weapon := critter_inven_obj(critter, i);
@@ -211,7 +209,7 @@ begin
 			// reduce ammo in measures of individual rounds, not packs
 			pid := obj_pid(item);
 			count := actual_ammo_count(critter, item);
-			packsize := get_proto_data(pid, PRODATA_IT_AM_PACK_SIZE);
+			packsize := get_proto_data(pid, PROTO_AM_PACK_SIZE);
 			newcount := round(count * (100 - ini_reduce_ammo_percent) / 100.0);
 			//display_msg("count: "+count+", pack: "+packsize+", new: "+newcount+" ("+ceil(1.0*newcount / packsize)+")");
 			call set_item_count(critter, item, ceil(1.0*newcount / packsize));
@@ -240,7 +238,8 @@ end
 
 // this function makes sure that vanilla monster parts are dropped 
 // (in cases when critter died but destroy_p_proc wasn't executed)
-procedure drop_vanilla_monster_parts(variable critter) begin
+// DEPRECATED since sfall 3.4 
+/*procedure drop_vanilla_monster_parts(variable critter) begin
    variable pid;
    pid := 0;
    // geckos
@@ -262,7 +261,7 @@ procedure drop_vanilla_monster_parts(variable critter) begin
 	end
 	if (pid) then if (obj_is_carrying_obj_pid(critter, pid) == 0) then
 	   call add_item_pid(critter, pid);
-end
+end*/
 
 procedure set_item_count(variable invenobj, variable item, variable newcount)
 begin

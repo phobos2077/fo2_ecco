@@ -140,7 +140,6 @@ end
    in here. */
 procedure destroy_p_proc begin
    variable tail :=0;
-
    if (has_trait(TRAIT_PERK,dude_obj,PERK_gecko_skinning_perk)) then begin
        if ((obj_pid(self_obj) == PID_GECKO_SMALL) or (obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL)) then
             tail := create_object(PID_GECKO_PELT,0,0);

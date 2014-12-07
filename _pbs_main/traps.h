@@ -146,12 +146,14 @@ procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType);
 #ifdef _GL_TRAPS
    export variable pbs_local_traps := 0;
    export variable pbs_traps_last_map := 0;
+   export variable pbs_trap_victims := 0; // map:  objectId => constant 1
    export variable pbs_ini_trap_is_crime := 1;
    export variable pbs_ini_trap_reveals_dude := 1;
    export variable pbs_ini_trap_friendfoe := 1;
 #else
    import variable pbs_local_traps;
    import variable pbs_traps_last_map;
+   import variable pbs_trap_victims; 
    import variable pbs_ini_trap_is_crime;
    import variable pbs_ini_trap_reveals_dude;
    import variable pbs_ini_trap_friendfoe;
@@ -375,7 +377,7 @@ procedure trap_setoff_effect(variable pid, variable obj, variable crit) begin
   	maxDmg := floor(dude_skill(SKILL_TRAPS) / 3.0);
   	if (maxDmg < minDmg*2) then maxDmg := minDmg*2;
   	else if (maxDmg > TRAP_SPIKE_MAXDMG) then maxDmg := TRAP_SPIKE_MAXDMG;
-    call critter_dmg_trap(crit, random(50, 70), DMG_normal_dam);
+    call critter_dmg_trap(crit, random(maxDmg, maxDmg), DMG_normal_dam);
     if (critter_state(crit) != CRITTER_IS_DEAD) then begin
     	critter_injure(crit, DAM_CRITICAL bwor DAM_LOSE_TURN);
     	set_critter_current_ap(crit, 0);
@@ -421,10 +423,11 @@ procedure manual_trap_explosion(variable tile, variable elev, variable dmgMin, v
       if dist > 1 then dmg := floor(dmg * (1.0 - (0.5 / (radius - 1))*(dist - 1)));
       critter_dmg(crit, dmg, dmgType);
       if (get_critter_stat(crit, STAT_current_hp) <= get_expected_damage(crit, dmg, dmgType)) then begin
-         if (not(combat_is_initialized)) then begin
+         if (not(combat_is_initialized) and not(pbs_trap_victims[crit])) then begin
       	   exp += exp_for_kill_critter_pid(obj_pid(crit));
       	   mod_kill_counter(critter_kill_type(crit), 1);
          end     	   
+         pbs_trap_victims[crit] := true;
       end if (pbs_ini_trap_reveals_dude) then begin
         // dude is attacked by victim's team, if he's alive
         call add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(crit));
@@ -457,10 +460,12 @@ procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType) begin
   variable expectedDmg, sound, n, victims_set;
   expectedDmg := get_expected_damage(obj, dmg, dmgType);
   if (critter_state(obj) == CRITTER_IS_NORMAL and get_critter_stat(obj, STAT_current_hp) <= expectedDmg) then begin
-    if (not(combat_is_initialized)) then begin
+    //display_array(pbs_trap_victims);
+    if (not(combat_is_initialized) and not(pbs_trap_victims[obj])) then begin
        gain_exp_for_trapkill(exp_for_kill_critter_pid(obj_pid(obj)))
        mod_kill_counter(critter_kill_type(obj), 1);
     end
+    pbs_trap_victims[obj] := true;
   end else begin
     if (pbs_ini_trap_reveals_dude) then begin
       call add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(obj));

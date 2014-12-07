@@ -63,17 +63,14 @@ procedure start begin
 	         set_proto_data(PID_MOLOTOV_COCKTAIL, 48, damageType);
 	         // end Molotov code
 	         
-	         // fix for grenade launcher
-	         if (damageType == DMG_fire) then begin
-	            damageType := DMG_explosion;
-	            i:=1;
-   	         while (i<=2) do begin
-                  wpn := critter_inven_obj(attacker, i);
-                  if (wpn) then 
-                     if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
-                        damageType := DMG_fire;
-                  i++;
-               end
+	         // fix for grenade launcher, this is required because one weapon has different damage types!
+	         
+            damageType := DMG_explosion;
+	         for (i:=1; i<=2; i++) begin
+               wpn := critter_inven_obj(attacker, i);
+               if (wpn) then 
+                  if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
+                     damageType := DMG_fire;
             end
             set_proto_data(PID_PBS_M79, 48, damageType);
             set_proto_data(PID_PBS_MGL, 48, damageType);
