@@ -122,7 +122,7 @@ procedure remove_array_block(variable arr, variable blocksize, variable index);
  */
 procedure debug_array_str(variable arr);
 
-procedure display_array(variable arr);
+#define display_array(arr)       display_msg(debug_array_str(arr))
 
 
 /**
@@ -130,6 +130,8 @@ procedure display_array(variable arr);
  */
 // load array and create it (save) if it doesn't exist
 procedure load_create_array(variable name, variable size);
+// load array, delete it if exists, create new array and save it into $name slot
+procedure get_saved_array_new(variable name, variable size);
 // name - saved name, arr - two-dimensional array (array of arrays)
 // arrays on both levels can be both lists or maps
 procedure save_collection(variable name, variable arr);
@@ -137,17 +139,7 @@ procedure save_collection(variable name, variable arr);
 procedure load_collection(variable name);
 
 #define load_create_array_map(name)    (load_create_array(name, -1))
-
-/*
-  Sfall_global_arrays
-  
-  DEPRECATED since we have save_array, load_array in sfall 3.4+
-*/
-
-#define get_global_array_ints(global_id)    get_sfall_global_array(global_id, 0, 4)
-procedure get_sfall_global_array(variable global_id, variable elemcount, variable elemsize);
-procedure get_sfall_global_array_new(variable global_id, variable elemcount, variable elemsize);
-
+#define get_saved_array_new_map(name)    (get_saved_array_new(name, -1))
 
 
 // IMPLEMENTATION
@@ -477,6 +469,16 @@ procedure load_create_array(variable name, variable size) begin
    return arr;
 end
 
+procedure get_saved_array_new(variable name, variable size) begin
+   variable arr;
+   arr := load_array(name);
+   if (arr) then 
+      free_array(arr);
+   arr := create_array(size, 0);
+   save_array(name, arr);
+   return arr;
+end
+
 #define _ITEM_NAME(colname, itemkey)      ""+colname+"."+itemkey
 
 procedure save_collection(variable name, variable arr) begin
@@ -506,8 +508,10 @@ procedure load_collection(variable name) begin
    end
    return 0;
 end
-
 #undef _ITEM_NAME
+
+/* 
+DEPRECATED code, just for reference, don't use
 
 procedure get_sfall_global_array(variable global_id, variable elemcount, variable elemsize) begin
   variable ar;
@@ -537,15 +541,11 @@ procedure get_sfall_global_array_new(variable global_id, variable elemcount, var
   end
   return ar;
 end
-
+*/
 
 /**
   Different utility functions...
 */
-
-procedure display_array(variable arr) begin
-   display_msg(debug_array_str(arr));
-end
 
 procedure debug_array_str(variable arr) begin
    variable i := 0, k, s, len;

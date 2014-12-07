@@ -10,14 +10,14 @@ procedure stuff begin
       i++;
    end*/
    
-   foreach v in ar begin
-      k := 100;
-      v := 200;
+   foreach (v in ar) begin
+      k := 100 ;
+      v := 200 ;
    end
    
-   foreach k: v in [1,2,3] while (i < 0) begin
-      k := 100;
-      v := 200;
+   foreach (k: v in [1,2,3] while (i < 0)) begin
+      k := 100 ;
+      v := 200 ;
    end
 end
 

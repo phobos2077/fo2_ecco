@@ -93,8 +93,8 @@
 #define temp_array_map              (temp_array(-1, 0))
 // true if array is map, false otherwise
 #define array_is_map(x)             (array_key(x, -1) == 1)
-// returns temp list of names of all arrays saved with save_array() in alphabetical order
-#define list_saved_arrays           (load_array(0))
+// returns temp list with names of all arrays saved with save_array() in alphabetical order
+#define list_saved_arrays           (load_array("...all_arrays..."))
 // removes array from savegame
 #define unsave_array(x)             save_array(0, x)
 // true if given item exists in given array, false otherwise
@@ -102,9 +102,9 @@
 // true if given array exists, false otherwise
 #define array_exists(array)         (len_array(array) != -1)
 // sort array in ascending order
-#define sort_array(array)           resize_array(array, -1)
+#define sort_array(array)           resize_array(array, -2)
 // sort array in descending order
-#define sort_array_reverse(array)   resize_array(array, -2)
+#define sort_array_reverse(array)   resize_array(array, -3)
 // remove element from map or just replace value with 0 for list
 #define unset_array(array, item)    set_array(array, item, 0)
 
@@ -113,3 +113,4 @@
 #define set_attack_explosion_radius(x)        metarule2_explosions(3, x, 0)  
 #define set_attack_is_explosion(x)            metarule2_explosions(4, x, 0)  
 #define set_attack_is_explosion_fire          set_attack_is_explosion(DMG_fire)
+

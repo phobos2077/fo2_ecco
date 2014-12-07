@@ -403,17 +403,6 @@ procedure critter_p_proc begin
 end
 
 procedure use_obj_on_p_proc begin
-   variable temp;
-   variable begin
-	   tmp; charges; trapType; trapobj; pid; obj;
-	end
-   
-   // phobos2077 - traps assembly
-   /*if (is_trap_kit_pid(obj_pid(obj_being_used_with))) then begin
-      script_overrides;
-      call try_assemble_trap(source_obj, obj_being_used_with);
-   end*/
-
    //added by killap - expansion 
    //- player has 10% chance of becoming addicted to alcohol
    if ( (obj_pid(obj_being_used_with) == PID_BEER) or (obj_pid(obj_being_used_with) == PID_BOOZE) or
@@ -632,6 +621,7 @@ procedure use_obj_on_p_proc begin
             script_overrides;
             scr_return(1);
          end else if (obj_pid(obj_being_used_with) == PID_MAGIC_8_BALL) then begin
+            variable temp;
             script_overrides;
             if (dude_luck <= 3) then
                temp := random( 199, 228 );
@@ -816,6 +806,7 @@ import variable _trapsImport;
 import procedure testexport000;
 import procedure testexport111(variable a);
 import procedure testexport222(variable a, variable b);*/
+
 procedure description_p_proc begin
     if (not(combat_is_initialized)) then begin
     	script_overrides;

@@ -19,7 +19,7 @@ procedure start begin
 	      damage:= get_sfall_arg;
 	      animID:= get_sfall_arg;
 	      
-         display_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID);
+         debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID);
          
          // fix for critter_dmg function
          if (obj_art_fid(attacker) == 0x20001F5 and animID == ANIM_chunks_of_flesh) then begin

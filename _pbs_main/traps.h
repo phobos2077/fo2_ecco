@@ -13,6 +13,8 @@
 #include "lib.misc.h"
 #include "miscpid.h"
 
+#include "..\headers\ANIMCOMD.H"
+
 #define MELEE_TRAP_ARMAMENT_PID		PID_PLANT_SPIKE
 
 #define is_explosive_pid(pid)		(pid == PID_FRAG_GRENADE or pid == PID_PBS_HOMEMADE_GRENADE \
@@ -100,10 +102,10 @@ end
 #define TRAP_SENSOR_CHANCE	 (70)
 
 // custom timed_event's
-#define TRAP_EVENT_INIT					(0)  // does nothing, just init the script to map_exit_p_proc will always run
+#define TRAP_EVENT_INIT				(0)  // does nothing, just init the script to map_exit_p_proc will always run
 #define TRAP_EVENT_DESTROY			(1)
 
-#define TRAP_FRIENDFOE_DUDE			(1)
+#define TRAP_FRIENDFOE_DUDE		(1)
 #define TRAP_FRIENDFOE_PARTY		(2)
 
 //#define send_trap_signal(obj, signal, param)				add_timer_event(obj, 3, ((param) * 0x100) + signal)
@@ -140,10 +142,20 @@ procedure manual_trap_explosion(variable tile, variable elev, variable dmgMin, v
 procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType);
 
 // common variables for all trap system scripts
-variable ar_traps_local;
-variable ini_trap_is_crime := 1;
-variable ini_trap_reveals_dude := 1;
-variable ini_trap_friendfoe := 1;
+// will be exported from gl_traps.int and imported to all other scripts
+#ifdef _GL_TRAPS
+   export variable pbs_local_traps := 0;
+   export variable pbs_traps_last_map := 0;
+   export variable pbs_ini_trap_is_crime := 1;
+   export variable pbs_ini_trap_reveals_dude := 1;
+   export variable pbs_ini_trap_friendfoe := 1;
+#else
+   import variable pbs_local_traps;
+   import variable pbs_traps_last_map;
+   import variable pbs_ini_trap_is_crime;
+   import variable pbs_ini_trap_reveals_dude;
+   import variable pbs_ini_trap_friendfoe;
+#endif
 
 procedure get_traps_for_map begin
   variable ar_global;
@@ -152,26 +164,25 @@ procedure get_traps_for_map begin
   variable local_i := 0;
   variable j := 0;
   //variable num := 0;
-  if (cur_map_index != get_sfall_global_int(SGVAR_TRAPS_LAST_MAP)) then begin
+  if (cur_map_index != pbs_traps_last_map) then begin
     debug_msg("Rebuild local traps");
     ar_global := global_traps;
-    ar_traps_local := load_create_array(ARR_TRAPS_LOCAL, 0);
-    resize_array(ar_traps_local, 0);
+    if (pbs_local_traps) then
+       free_array(pbs_local_traps);
+    pbs_local_traps := create_array_list(0);
     while (i < len_array(ar_global)) do begin
       // copy only active traps in current map, for optimization
       if (trap_map(ar_global, i) == cur_map_index and trap_state(ar_global, i) == TRAP_STATE_ACTIVE) then begin
-        resize_array(ar_traps_local, len_array(ar_traps_local) + TRAPINFO_SIZE);
-        call copy_array(ar_global, i, ar_traps_local, local_i, TRAPINFO_SIZE);
+        resize_array(pbs_local_traps, len_array(pbs_local_traps) + TRAPINFO_SIZE);
+        call copy_array(ar_global, i, pbs_local_traps, local_i, TRAPINFO_SIZE);
         local_i += TRAPINFO_SIZE;
       end
       i += TRAPINFO_SIZE;
     end
-    set_sfall_global(SGVAR_TRAPS_LAST_MAP, cur_map_index);
+    pbs_traps_last_map := cur_map_index;
     //debug_msg("Local traps: "+(local_i/TRAPINFO_SIZE) + ", of total: "+(len_array(ar_global)/TRAPINFO_SIZE));
-  end else begin
-    ar_traps_local := load_create_array(ARR_TRAPS_LOCAL, 0);
   end
-  return ar_traps_local;
+  return pbs_local_traps;
 end
 
 /**
@@ -250,8 +261,8 @@ procedure arm_trap(variable index, variable pid) begin
 	ar_global[index + TRAPINFO_OFS_ARMPID] := pid;
 	ar_global[index + TRAPINFO_OFS_OBJPID] := obj_pid(newobj);
 	// this will rebuild local array for next run
-	set_sfall_global(SGVAR_TRAPS_LAST_MAP, -1); 
-	if (ini_trap_is_crime) then begin
+	pbs_traps_last_map := -1; 
+	if (pbs_ini_trap_is_crime) then begin
 		call react_hostile_action;
 	end
 	destroy_trap_object(trapobj);
@@ -284,7 +295,7 @@ procedure setoff_trap(variable index, variable victim, variable armpid) begin
 	end
 	// active state object is always deleted
 	destroy_trap_object(trapobj);
-	set_sfall_global(SGVAR_TRAPS_LAST_MAP, -1); // this will rebuild local array for next run
+	pbs_traps_last_map := -1;
 end
 
 /*
@@ -294,7 +305,7 @@ procedure remove_trap_info(variable index) begin
   variable ar_global;
   ar_global := global_traps;
   call remove_array_block(ar_global, TRAPINFO_SIZE, index);
-  set_sfall_global(SGVAR_TRAPS_LAST_MAP, -1);  // this will rebuild local array for next run
+  pbs_traps_last_map := -1;
 end
 
 procedure check_setoff_traps(variable obj, variable arr) begin
@@ -305,8 +316,8 @@ procedure check_setoff_traps(variable obj, variable arr) begin
     flag;
   end
   if not(is_critter_dead(obj)
-    or (obj == dude_obj and (ini_trap_friendfoe bwand TRAP_FRIENDFOE_DUDE))
-  	or (obj != dude_obj and obj_in_party(obj) and (ini_trap_friendfoe bwand TRAP_FRIENDFOE_PARTY))) then 
+    or (obj == dude_obj and (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_DUDE))
+  	or (obj != dude_obj and obj_in_party(obj) and (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_PARTY))) then 
   begin
     if (arr == 0) then begin
       arr := get_traps_for_map;
@@ -364,7 +375,7 @@ procedure trap_setoff_effect(variable pid, variable obj, variable crit) begin
   	maxDmg := floor(dude_skill(SKILL_TRAPS) / 3.0);
   	if (maxDmg < minDmg*2) then maxDmg := minDmg*2;
   	else if (maxDmg > TRAP_SPIKE_MAXDMG) then maxDmg := TRAP_SPIKE_MAXDMG;
-    call critter_dmg_trap(crit, random(minDmg, maxDmg), DMG_normal_dam);
+    call critter_dmg_trap(crit, random(50, 70), DMG_normal_dam);
     if (critter_state(crit) != CRITTER_IS_DEAD) then begin
     	critter_injure(crit, DAM_CRITICAL bwor DAM_LOSE_TURN);
     	set_critter_current_ap(crit, 0);
@@ -410,23 +421,31 @@ procedure manual_trap_explosion(variable tile, variable elev, variable dmgMin, v
       if dist > 1 then dmg := floor(dmg * (1.0 - (0.5 / (radius - 1))*(dist - 1)));
       critter_dmg(crit, dmg, dmgType);
       if (get_critter_stat(crit, STAT_current_hp) <= get_expected_damage(crit, dmg, dmgType)) then begin
-      	exp += exp_for_kill_critter_pid(obj_pid(crit));
-      end if (ini_trap_reveals_dude) then begin
+         if (not(combat_is_initialized)) then begin
+      	   exp += exp_for_kill_critter_pid(obj_pid(crit));
+      	   mod_kill_counter(critter_kill_type(crit), 1);
+         end     	   
+      end if (pbs_ini_trap_reveals_dude) then begin
         // dude is attacked by victim's team, if he's alive
-        call add_array_set(get_global_array_ints(SGVAR_ANGRY_TEAMS), obj_team(crit));
+        call add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(crit));
       end
     end
     i++;
   end else debug_msg("WRONG CRITTER PTR");
   expl_obj := create_object(pid, tile, elev);
   obj_set_light_level(expl_obj, 100, 6);
-  set_script(expl_obj, (SCRIPT_TEST2 - 1) /*bwor 0x05000000*/); // 05 stands for MISC object type
-  anim(expl_obj, ANIM_stand, 0);
-  add_timer_event(expl_obj, 13, TRAP_EVENT_DESTROY);
+  reg_anim_combat_check(0);
+  reg_anim_begin();
+  // set_script(expl_obj, (SCRIPT_TEST2 - 1) /*bwor 0x05000000*/); // 05 stands for MISC object type
+  reg_anim_animate_and_hide(expl_obj, ANIM_stand, 0);
+  reg_anim_destroy(expl_obj);
+  reg_anim_end();
+  //add_timer_event(expl_obj, 13, TRAP_EVENT_DESTROY);
   play_sfx("CMBTFLX"); // trap sound
   play_sfx(sfx);
+  // give exp when triggering trap out of combat
   if (exp > 0) then begin
-  	gain_exp_for_trapkill(exp)
+     gain_exp_for_trapkill(exp)
   end
 end
 
@@ -438,24 +457,18 @@ procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType) begin
   variable expectedDmg, sound, n, victims_set;
   expectedDmg := get_expected_damage(obj, dmg, dmgType);
   if (critter_state(obj) == CRITTER_IS_NORMAL and get_critter_stat(obj, STAT_current_hp) <= expectedDmg) then begin
-    //critter_dmg(obj, dmg+2, (dmgType BWOR DMG_BYPASS_ARMOR BWOR DMG_NOANIMATE));
-    //anim(obj,ANIM_fall_front,ANIMATE_FORWARD);
-    sound := sfx_build_char_name(obj, ANIM_fall_back, snd_die);
-    critter_heal(obj, -get_critter_stat(obj,STAT_max_hp));
-    reg_anim_clear(obj);
-    reg_anim_begin();
-    reg_anim_animate(obj, ANIM_fall_back, -1);
-    reg_anim_play_sfx(obj, sound, 0);
-    reg_anim_animate(obj, ANIM_fall_back_blood, -1);
-    reg_anim_end();
-    mod_kill_counter(critter_kill_type(obj), 1);
-    gain_exp_for_trapkill(exp_for_kill_critter_pid(obj_pid(obj)))
+    if (not(combat_is_initialized)) then begin
+       gain_exp_for_trapkill(exp_for_kill_critter_pid(obj_pid(obj)))
+       mod_kill_counter(critter_kill_type(obj), 1);
+    end
   end else begin
-    critter_dmg(obj, dmg, dmgType);
-    if (ini_trap_reveals_dude) then begin
-      call add_array_set(get_global_array_ints(SGVAR_ANGRY_TEAMS), obj_team(obj));
+    if (pbs_ini_trap_reveals_dude) then begin
+      call add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(obj));
     end
   end
+  set_target_knockback(obj, 0, 0); // prevents knockback
+  critter_dmg(obj, dmg, dmgType);
+  remove_target_knockback(obj);
   play_sfx("FLRTRAP");
   play_sfx("WH82FXX1");
 end
@@ -485,11 +498,15 @@ end
 	
 end*/
 
+/*
+   Checks if trap can be placed at the current tile and creates trap if it is
+   Returns true on success, false if trap could not be placed
+*/
 procedure try_assemble_trap(variable critter, variable item) begin
 variable begin
-   tmp; charges; trapType; trapobj; pid; obj; n;
+   charges; trapType; trapobj; pid;
 end
-   if (critter and item and get_game_mode == 0) then
+   if (critter and item and (get_game_mode == 0 or get_game_mode == INVENTORY)) then
    begin
       pid := obj_pid(item);
       if (tile_contains_any_trap(tile_num(critter), elevation(critter))) then begin
@@ -506,35 +523,15 @@ end
          trapType := trap_type_by_trapkit_pid(pid);
          trapobj := create_trap_object(trapType, TRAP_STATE_DISARMED, tile_num(critter), elevation(critter));
          call add_trap_info(trapobj, trapType, charges);
-         
-         if ((critter_inven_obj(critter, INVEN_TYPE_LEFT_HAND) == item) or (critter_inven_obj(critter, INVEN_TYPE_RIGHT_HAND) == item)) then begin
-            inven_unwield(critter);
-         end
-
-         rm_obj_from_inven(critter, item);
-         destroy_object(item);
-         
-         obj := obj_carrying_pid_obj(critter, pid);
-         if (obj) then begin
-            n := obj_is_carrying_obj_pid(critter, pid);
-            if (n > 1) then begin
-               // "split" one object from the stack
-               tmp := rm_mult_objs_from_inven(critter, obj, 1);
-               tmp := get_weapon_ammo_count(obj);
-               set_weapon_ammo_count(obj, -1); // this way the following command should not "merge" this object back into existing stack
-               add_obj_to_inven(critter, obj);
-               set_weapon_ammo_count(obj, tmp); // change charges back, but the item will remain in separate stack
-            end
-            wield_obj_critter(critter, obj);
-         end
-         
-         display_msg(message_str(SCRIPT_TEST2, 203));
+         display_msg(traps_mstr(203));
+         return true;
       end
    end else if (combat_is_initialized) then begin
       display_msg(traps_mstr(461));
-   end else if (get_game_mode bwand INVENTORY) then begin
-      display_msg(traps_mstr(460));
+   //end else if (get_game_mode bwand INVENTORY) then begin
+   //   display_msg(traps_mstr(460));
    end
+   return false;
 end
 
 

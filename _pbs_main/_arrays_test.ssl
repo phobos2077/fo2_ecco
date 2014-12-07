@@ -146,14 +146,14 @@ procedure array_test_suite begin
    call assertEquals("load fail", load_array("myarray"), 0);
    save_array(0.1, arr);
    call assertEquals("save as float", load_array(0.1), arr);
-   arr2 := load_array(0); // list of array names
+   arr2 := list_saved_arrays; // list of array names
    //display_msg(debug_array_str(arr2));
    call assertNotEquals("saved arrays 1", scan_array(arr2, 0.1), -1);
    call assertEquals("saved arrays 2", scan_array(arr2, "myarray"), -1);
    save_array(0, arr);
    call assertEquals("unsave array 1", load_array(0.1), 0);
    call assertEquals("unsave array 2", len_array(arr), 2);
-   call assertEquals("saved arrays 3", len_array(load_array(0)), len_array(arr2) - 1);
+   call assertEquals("saved arrays 3", len_array(list_saved_arrays), len_array(arr2) - 1);
    
    display_msg("All tests finished with "+test_suite_errors+" errors.");
 end

@@ -4,6 +4,18 @@ procedure start;
 
 	Global script for traps system. 
 	Should be of type 0 (local map) and repeated at least 5 times in second.
+	
+	This is the "main" script for traps system, functions:
+	1) Exports all traps-related variables and procedures for other scripts.
+	2) Loads INI variables.
+	3) Implements triggering traps in real-time.
+	4) Implements hotkey to place trap.
+	
+	Other scripts for traps:
+	test2.int            - skill-based interactions with assembled traps on the ground
+	hs_movecost.int      - triggering traps in combat
+	hs_useobj.int        - placing trap from inventory or main interface
+	hs_deathanim2.int    - fixes death animation for trap kills (doesn't include traps.h)
 
 	@author phobos2077
 	
@@ -12,19 +24,19 @@ procedure start;
 
 #include "sfall.h"
 #include "define_lite.h"
+
+#define _GL_TRAPS
 #include "traps.h"
+#undef _GL_TRAPS
 
 variable angry_set;
-//variable victims_set;
 //variable ar_explosions;
 
 variable attack_delay := -1;
 variable ini_assemble_hotkey;
 
-export variable _trapsImport := 77;
-
 procedure start begin
-	variable arr, migrateMap;
+	variable arr, savedArrays;
 	variable i, k, v;
 	
 	variable list;
@@ -43,20 +55,32 @@ procedure start begin
 	set_global_script_type(0);
 	set_global_script_repeat(100);
   	
-	ini_trap_reveals_dude := get_ini_setting("combat.ini|TRAPS|trap_reveals_dude");
-	ini_trap_friendfoe := get_ini_setting("combat.ini|TRAPS|trap_friendfoe");
+  	// exported settings
+	pbs_ini_trap_reveals_dude := get_ini_setting("combat.ini|TRAPS|trap_reveals_dude");
+	pbs_ini_trap_friendfoe := get_ini_setting("combat.ini|TRAPS|trap_friendfoe");
+	pbs_ini_trap_is_crime := get_ini_setting("combat.ini|TRAPS|trap_is_crime");
 	ini_assemble_hotkey := parse_hotkey(get_ini_string("combat.ini|TRAPS|assemble_hotkey"));
 	
-	// migrate from old saves
-	foreach (k: v in ({SGVAR_TRAPS_BY_DUDE: ARR_TRAPS, SGVAR_TRAPS_BY_DUDE_LOCAL: ARR_TRAPS_LOCAL, SGVAR_ANGRY_TEAMS: ARR_ANGRY_TEAMS})) begin
-   	arr := get_sfall_global_int(k);
-   	if (arr) then begin // convert
-   	   save_array(v, arr);
-   	   set_sfall_global(k, 0);
+	// migrate from old saves - nonzero value of this global indicates save from pre-3.4 sfall era
+	if (get_sfall_global_int(SGVAR_TRAPS_BY_DUDE_LOCAL) != 0) then begin
+	   display_msg("Migrating traps data to new format...");
+   	foreach (k: v in ({SGVAR_TRAPS_BY_DUDE: ARR_TRAPS, SGVAR_TRAPS_BY_DUDE_LOCAL: -1, SGVAR_ANGRY_TEAMS: ARR_ANGRY_TEAMS, SGVAR_TRAPS_LAST_MAP: -1})) begin
+      	arr := get_sfall_global_int(k);
+      	if (arr and v != -1) then 
+      	   save_array(v, arr); // save
+      	set_sfall_global(k, 0); // clear sfall global
+      	display_msg("set "+k+"=0");
    	end
+   	// clear all arrays with numeric keys from savegame to make in clean
+	   foreach (item in list_saved_arrays) begin
+	      if (typeof(item) == VALTYPE_INT) then
+	         free_array(load_array(item));
+	   end
 	end
 	
+	// initialize global and exported arrays
   	angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
+  	pbs_local_traps := create_array_list(0);
 	
   end else begin
 	
@@ -86,22 +110,6 @@ procedure start begin
 		end
 	end
 	
-	/*if (len_array(victims_set) > 0) then begin
-	   i := 0;
-	   n := len_array(victims_set);
-	   while (i < n) do begin
-	      obj := victims_set[i+1];
-	      if (game_time >= victims_set[i+2]) then begin
-	         critter_heal(obj, -get_critter_stat(obj,STAT_max_hp));
-	         destroy_object(obj);
-	         call remove_array_block(victims_set, 3, i);
-	         i := 0;
-	      end
-	      i+=3;
-	   end
-	   //resize_array(victims_set, 0);
-	end*/
-	
 	// for TESTING
 	/*if (key_pressed(DIK_F3)) then begin
 		obj := create_object(PID_PBS_TRAP_KIT_SPIKE,0,0); add_mult_objs_to_inven(dude_obj, obj, 3);
@@ -128,11 +136,30 @@ procedure start begin
 	
 	if (hotkey_pressed(ini_assemble_hotkey)) then begin
 	   if (not(key1)) then begin
-	      _trapsImport := random(100, 200);
 	      item := critter_inven_obj(dude_obj, active_hand);
 	      //display_msg("active: "+obj_name(item));
-	      if (is_trap_kit_pid(obj_pid(item))) then begin
-	         call try_assemble_trap(dude_obj, item);
+	      if (item) then if (is_trap_kit_pid(obj_pid(item))) then begin
+	         if (try_assemble_trap(dude_obj, item) == true) then begin
+	            variable pid, tmp;
+	            pid := obj_pid(item);
+	            // manually remove item and replace it with another from inventory
+               inven_unwield(dude_obj);
+               rm_obj_from_inven(dude_obj, item);
+               destroy_object(item);
+               obj := obj_carrying_pid_obj(dude_obj, pid);
+               if (obj) then begin
+                  n := obj_is_carrying_obj_pid(dude_obj, pid);
+                  if (n > 1) then begin
+                     // "split" one object from the stack
+                     tmp := rm_mult_objs_from_inven(dude_obj, obj, 1);
+                     tmp := get_weapon_ammo_count(obj);
+                     set_weapon_ammo_count(obj, -1); // this way the following command should not "merge" this object back into existing stack
+                     add_obj_to_inven(dude_obj, obj);
+                     set_weapon_ammo_count(obj, tmp); // change charges back, but the item will remain in separate stack
+                  end
+                  wield_obj_critter(dude_obj, obj);
+               end
+	         end
 	      end
 	      key1 := true;
 	   end else begin

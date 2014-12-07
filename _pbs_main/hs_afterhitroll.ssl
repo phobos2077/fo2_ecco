@@ -24,7 +24,7 @@ variable begin
 	ini_sneak_attack_max_skill;
 end
 
-variable set_who_see_dude;
+import variable pbs_set_who_see_dude;
 
 procedure start begin
 	variable willHit;
@@ -46,7 +46,6 @@ procedure start begin
  		ini_sneak_attack_min_skill := atoi(get_ini_string("combat.ini|STEALTH|sneak_attack_min_skill"));
  		ini_sneak_attack_max_skill := atoi(get_ini_string("combat.ini|STEALTH|sneak_attack_max_skill"));
  		
- 		set_who_see_dude := get_sfall_global_array(SGVAR_CRITTERS_SEE_DUDE, ARRAY_SET_BLOCK_SIZE, 4);
     end else 
       begin
          willHit := get_sfall_arg;
@@ -56,6 +55,7 @@ procedure start begin
          hitChance := get_sfall_arg;
          
          if (target and attacker) then begin
+            //display_array(pbs_set_who_see_dude);
 	         debug_msg("afterhitroll: "+willHit+" chance="+hitChance+"%% t="+target+" type="+obj_type(target)+" tpid="+obj_pid(target));
 	         // for Molotov:
 	         if (obj_type(target) == OBJ_TYPE_CRITTER and (willHit == 2 or willHit == 3)) then damageType := DMG_fire;
@@ -86,11 +86,11 @@ procedure start begin
 			         and using_skill(attacker,SKILL_SNEAK)
 			         and random(ini_sneak_attack_min_skill,ini_sneak_attack_max_skill) < skill
 		    	     //and (obj_can_see_obj(target,attacker)==0 or attacker_behind_target(attacker,target) )
-		    	     and not(is_in_array(target, set_who_see_dude))) then begin
+		    	     and not(is_in_array(target, pbs_set_who_see_dude))) then begin
 		         	set_sfall_return(3);
 		         	if (attacker == dude_obj) then display_msg(combat_mstr(5001));
 		         end
-		         call add_array_set(set_who_see_dude, target);
+		         call add_array_set(pbs_set_who_see_dude, target);
 	         end
          end
       end

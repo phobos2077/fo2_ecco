@@ -27,6 +27,9 @@ procedure testexport111(variable a) begin
    display_msg("Hello from gl_test! "+a);
 end*/
 
+
+import variable pbs_local_traps;
+
 procedure set_item_count(variable invenobj, variable itempid, variable newcount, variable wield)
 begin
    variable begin
@@ -42,10 +45,6 @@ begin
       count := rm_mult_objs_from_inven(invenobj, obj_carrying_pid_obj(invenobj, itempid), count - newcount);
       destroy_object(item);
    end
-end
-
-procedure destroy_p_proc begin
-
 end
 
 procedure testret(variable a) begin
@@ -109,10 +108,10 @@ procedure start begin
    call save_collection("people", coll);*/
    
    
-   set_global_script_repeat(500);
+   //set_global_script_repeat(1000);
    
   end else begin
-     call display_array(load_array(ARR_TRAPS_LOCAL));
+     display_array(pbs_local_traps);
   
      /*obj := get_sfall_global_int(SGVAR_REMOVE_ITEM);
      if (obj) then begin
@@ -126,10 +125,6 @@ procedure start begin
         set_weapon_ammo_count(obj, random(1, 20));
         display_msg("pid:"+obj_pid(obj)+", wtf: "+get_weapon_ammo_count(obj));
      end*/
-     
-     //ar := get_sfall_global_array(SGVAR_TRAPS_BY_DUDE, 0, 4);
-     //s := get_sfall_global_array(SGVAR_TRAPS_BY_DUDE_LOCAL, 0, 4);
-     //display_msg("global: "+len_array(ar)+", local: "+len_array(s));
      
      
      if (key_pressed(DIK_1) and (game_time-key_1)>50) then begin
@@ -197,7 +192,7 @@ procedure map_enter_p_proc begin
 end
 
 procedure map_update_p_proc begin
-   display_msg("Map update gl_test");
+   //display_msg("Map update gl_test");
 end
 
 procedure map_exit_p_proc begin

@@ -18,10 +18,10 @@ procedure start begin
 	variable mine;
 	
 	if (init_hook) then begin
-		ini_trap_reveals_dude := get_ini_setting("combat.ini|TRAPS|trap_reveals_dude");
-		ini_trap_friendfoe := get_ini_setting("combat.ini|TRAPS|trap_friendfoe");
+	   // all initialization for traps is done in gl_traps
 	end else 
 	begin
+	display_msg(pbs_ini_trap_friendfoe);
 		critter := get_sfall_arg;
 		hexes := get_sfall_arg;
 		cost := get_sfall_arg;

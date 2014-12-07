@@ -5,35 +5,42 @@ procedure start;
 #include "traps.h"
 
 /**
-	hs_useobjon.int
-	
-	Runs when a critter uses an object on another critter. (Or themselves)
-	
-	This is fired before the object is used, and the relevent use_obj_on script procedures are run.
-	
-	Critter arg1 - The user
-	Critter arg2 - The target
-	int     arg3 - The object used
+	hs_useobj.int
+
+   Runs when:
+   1) a critter uses an object from inventory which have "Use" action flag set or it's an active flare or dynamite.
+   2) player uses an object from main interface
+   
+   This is fired before the object is used, and the relevent use_obj script procedures are run. You can disable default item behavior.
+   NOTE: you can't remove and/or destroy this object during the hookscript (game will crash otherwise). To remove it, return 1.
+   
+   Critter arg1 - The user
+   int     arg2 - The object used
+   
+   int     ret1 - (if set) overrides default item handler and selects what should happen with the item: (0 - place it back, 1 - remove it)
 */
 
-// TODO: move traps placing here from dude_obj!!
-
 procedure start begin
-	variable critter;
-	variable target;
-	variable item;
-	
-	variable begin
-	   tmp; charges; trapType; trapobj; pid; obj;
-	end
-	
-    if (init_hook == 0) then
-      begin
-         critter := get_sfall_arg;
-         item := get_sfall_arg;
-         
-         display_msg(""+critter+" use "+item);
-         
-         //set_sfall_return(1);
+   variable critter;
+   variable target;
+   variable item;
+   
+   variable begin
+      tmp; charges; trapType; trapobj; pid; obj;
+   end
+   
+   if (init_hook) then begin
+      
+   end else begin
+      critter := get_sfall_arg;
+      item := get_sfall_arg;
+      
+      //display_msg(""+critter+" use "+item);
+      
+      // phobos2077 - traps assembly
+      if (item and critter) then if (critter == dude_obj and is_trap_kit_pid(obj_pid(item))) then begin
+         if (try_assemble_trap(critter, item) == true) then
+            set_sfall_return(1);
       end
+   end 
 end
