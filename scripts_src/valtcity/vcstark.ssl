@@ -1,0 +1,1650 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location:
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "vcstark"
+#include "../headers/define.h"
+//#include "../headers/<TownName.h>"
+
+#define NAME                    SCRIPT_VCSTARK
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
+
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+
+#define RECON_BROKEN_HILLS_ASSIGNED      (3) // added by phobos2077
+#define RECON_BROKEN_HILLS_DONE          (4) // added by phobos2077
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node997;
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node012a;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node024a;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node029a;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node032a;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node037;
+procedure Node038;
+procedure Node039;
+procedure Node040;
+procedure Node041;
+procedure Node042;
+procedure Node043;
+procedure Node044;
+procedure Node045;
+procedure Node046;
+procedure Node047;
+procedure Node048;
+procedure Node049;
+procedure Node050;
+procedure Node051;
+procedure Node052;
+procedure Node053;
+procedure Node054;
+procedure Node054a;
+procedure Node055;
+procedure Node055a;
+procedure Node055b;
+procedure Node056;
+procedure Node056a;
+procedure Node057;
+procedure Node058;
+procedure Node059;
+procedure Node059a;
+procedure Node059b;
+procedure Node060;
+procedure Node060a;
+procedure Node061;
+procedure Node062;
+procedure Node063;
+procedure Node064;
+
+//added by killap - expansion pack (Village)
+procedure Node058_1;
+procedure Node058_2;
+procedure Node058_2a; //added by Lujo
+procedure Node058_3;
+procedure Node058_4;
+procedure Node058_5;
+procedure Node058_6;
+procedure Node058_7;
+procedure Node058_8;
+procedure Node058_9;
+procedure Node058_10;
+procedure Node058_11;
+procedure Node058_12;
+procedure Node058_13;
+
+//added by Lujo - gameflow fixes
+
+procedure Node070;
+procedure Node071;
+procedure Node072;
+procedure Node072a;
+procedure Node073;
+procedure Node074;
+procedure Node074a;
+procedure Node075;
+procedure Node076;
+procedure Node077;
+procedure Node077a;
+procedure Node077b;
+Procedure Node078;
+//end
+
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Stark_Reprimanded          (7)
+#define LVAR_Stark_Cassidy              (8)
+#define LVAR_Stark_Raiders              (9)
+#define LVAR_Stark_Status               (10)
+#define LVAR_Told_About_Raider_Camp     (11)
+#define LVAR_Told_About_Wipe_Out        (12)
+
+#define STARK_UNKNOWN   (0)
+#define STARK_KNOWN     (1)
+
+#define gecko_reconned     ( wm_get_subtile_state( 1224, 171 ) > KNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1274, 172 ) > KNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1323, 173 ) > KNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1224, 223 ) > KNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1324, 225 ) > KNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1224, 274 ) > KNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1275, 274 ) > KNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1325, 273 ) > KNOWNTILETYPE )
+
+// by phobos2077
+#define broken_hills_reconned ( wm_get_subtile_state( 1125, 826 ) > KNOWNTILETYPE ) and \
+							( wm_get_subtile_state( 1175, 825 ) > KNOWNTILETYPE ) and \
+                            ( wm_get_subtile_state( 1225, 825 ) > KNOWNTILETYPE ) and \
+                            ( wm_get_subtile_state( 1225, 875 ) > KNOWNTILETYPE ) and \
+                            ( wm_get_subtile_state( 1225, 925 ) > KNOWNTILETYPE ) and \
+                            ( wm_get_subtile_state( 1175, 925 ) > KNOWNTILETYPE ) and \
+                            ( wm_get_subtile_state( 1125, 925 ) > KNOWNTILETYPE ) and \
+                            ( wm_get_subtile_state( 1125, 875 ) > KNOWNTILETYPE )
+						   
+/*
+#define ncr_reconned       ( wm_get_subtile_state( 1073, 137 ) > UNKNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1124, 137 ) > UNKNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1174, 137 ) > UNKNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1075, 142 ) > UNKNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1175, 142 ) > UNKNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1075, 147 ) > UNKNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1127, 147 ) > UNKNOWNTILETYPE ) and \
+                           ( wm_get_subtile_state( 1175, 147 ) > UNKNOWNTILETYPE )
+*/
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+import variable Stark_Ptr;
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable From_WTG := 0;
+variable From_9 := 0;
+variable From_10 := 0;
+variable From_54_or_55 := 0;
+variable From_58_or_59 := 0;
+
+procedure start begin
+   Stark_Ptr := self_obj;
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Stark_Ptr := self_obj;
+   Only_Once:=0;
+   set_self_team(TEAM_VAULT_CITIZENS);
+   set_self_ai(AI_TOUGH_GUARD);
+
+   add_timer_event( self_obj, game_ticks( random(20, 40) ), 1 );
+end
+
+procedure map_update_p_proc begin
+   Stark_Ptr := self_obj;
+end
+
+/*procedure timed_event_p_proc begin
+   if( fixed_param == 1 ) then begin
+      if( not( combat_is_initialized ) ) then begin
+         if( Fallout2_enclave_destroyed ) then
+            call Node001;
+         else if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_KICKED_OUT ) then
+            call Node004;
+         else if( ( day ) and
+                  ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) ) then
+            call Node002;
+         else if( ( day ) and
+                  ( Marcus_Ptr != 0 ) and
+                  obj_can_see_obj(self_obj, Marcus_Ptr) ) then // Seraph's Fix: now Stark must actually see Marcus. Thanks Rob!
+            call Node005;
+         else if( ( day ) and
+                  ( Lenny_Ptr != 0 ) and
+                  obj_can_see_obj(self_obj, Lenny_Ptr) ) then // Seraph's Fix: now Stark must actually see Lenny. Thanks Rob!
+            call Node006;
+         else if( ( day ) and
+                  ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_REAL_CITIZEN ) ) then
+            call Node003;
+         else if( day ) then
+            call Node007;
+      end
+      add_timer_event( self_obj, game_ticks( random( 20, 40 ) ), 1 );
+   end
+end*/
+
+procedure timed_event_p_proc begin
+   if( fixed_param == 1 ) then begin
+      if( not( combat_is_initialized ) ) then begin
+         if( ( Fallout2_enclave_destroyed ) and
+             ( self_can_see_dude ) ) then
+            call Node001;
+         else if( ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_KICKED_OUT) and
+                  ( self_can_see_dude ) ) then
+            call Node004;
+         else if( ( day ) and
+                  ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) and
+                  ( self_can_see_dude ) ) then
+            call Node002;
+         else if( ( day ) and
+                  ( Marcus_Ptr != 0 ) and
+                  ( obj_can_see_obj( self_obj, Marcus_Ptr ) ) ) then // Seraph's Fix: now Stark must actually see Marcus. Thanks Rob!
+            call Node005;
+         else if( ( day ) and
+                  ( Lenny_Ptr != 0 ) and
+                  ( obj_can_see_obj( self_obj, Lenny_Ptr ) ) ) then // Seraph's Fix: now Stark must actually see Lenny. Thanks Rob!
+            call Node006;
+         else if( ( day ) and
+                  ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_REAL_CITIZEN ) and
+                  ( self_can_see_dude ) ) then
+            call Node003;
+         else if( day ) then
+            call Node007;
+      end
+      add_timer_event( self_obj, game_ticks( random( 20, 40 ) ), 1 );
+   end
+end
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ( ( (local_var(LVAR_Hostile) == 2) or ( global_var( GVAR_ENEMY_VAULT_CITY ) == 1 ) ) and (self_can_see_dude)) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+      set_local_var(LVAR_Personal_Enemy,1);
+      set_global_var( GVAR_ENEMY_VAULT_CITY, 1 );
+      set_global_var( GVAR_VAULT_CITIZEN, CITIZEN_KICKED_OUT );
+      set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_KICKED_OUT ) );
+      set_global_var( GVAR_VAULT_CITIZENSHIP, 0 );
+   end
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION3;
+
+   CheckKarma;
+
+   GetReaction;
+
+   From_WTG := 1;
+   From_9 := 0;
+   From_10 := 0;
+   From_54_or_55 := 0;
+   From_58_or_59 := 0;
+
+   if( Fallout2_enclave_destroyed ) then
+      call Node001;
+   else if( ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) and
+            ( local_var( LVAR_Stark_Status ) == STARK_UNKNOWN ) ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node012;
+       gSay_End;
+       end_dialogue;
+   end
+   else if( ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) and
+            ( local_var( LVAR_Stark_Status ) == STARK_KNOWN ) ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node064;
+       gSay_End;
+       end_dialogue;
+   end
+   else if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_KICKED_OUT ) then
+      call Node004;
+   else if( Marcus_Ptr != 0 ) then
+      call Node005;
+   else if( Lenny_Ptr != 0 ) then
+      call Node006;
+   else if( ( night ) and
+            ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_REAL_CITIZEN ) ) then
+      call Node008;
+   else if( night ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node009;
+       gSay_End;
+       end_dialogue;
+   end
+   else if( local_var( LVAR_Stark_Status ) == STARK_KNOWN ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node064;
+       gSay_End;
+       end_dialogue;
+   end
+   else begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node012;
+       gSay_End;
+       end_dialogue;
+   end
+   set_local_var( LVAR_Herebefore, 1 );
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if( local_var( LVAR_Herebefore ) == 0 ) then
+      display_msg(mstr(101));
+   else
+      display_msg(mstr(100));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(101));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node997 begin
+   load_map(MAP_VAULTCITY_COURTYARD, 0);
+end
+
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   floater(104);
+end
+
+procedure Node002 begin
+   if( dude_is_male ) then begin
+      floater( random( 105, 106 ) );
+   end
+   else begin
+      floater( random( 373, 374 ) );
+   end
+end
+
+procedure Node003 begin
+   floater( random( 107, 108 ) );
+end
+
+procedure Node004 begin
+   floater(109);
+   call Node998;
+end
+
+procedure Node005 begin
+   floater(110);
+   call Node998;
+end
+
+procedure Node006 begin
+   floater(111);
+   call Node998;
+end
+
+procedure Node007 begin
+   floater( random( 112, 115 ) );
+end
+
+procedure Node008 begin
+   floater(116);
+end
+
+procedure Node009 begin
+   From_WTG := 0;
+   Reply(117);
+
+   BLowOption(118, Node013);
+   BOption(119, Node010, 004);
+   BOption(120, Node011, 004);
+   NOption(121, Node997, 004);
+end
+
+procedure Node010 begin
+   From_10 := 1;
+   Reply(122);
+
+   BOption(123, Node004, 004);
+   BOption(124, Node011, 004);
+   if( dude_item_count( PID_FAKE_CITIZENSHIP) > 0) then
+      NOption(125, Node029, 004);
+end
+
+procedure Node011 begin
+   if( From_10 == 1 ) then begin
+      From_10 := 0;
+      Reply(126);
+   end
+   else if( From_9 == 1 ) then begin
+      From_9 := 0;
+      Reply(127);
+   end
+
+   BOption(128, Node004, 004);
+   NOption(129, Node997, 004);
+end
+
+procedure Node012 begin
+   From_WTG := 0;
+   if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) then begin
+      if( dude_is_male ) then begin
+         Reply(130);
+      end
+      else begin
+         Reply(375);
+      end
+   end
+   else if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_REAL_CITIZEN ) then
+      Reply(131);
+   else
+      Reply(132);
+
+   BLowOption(133, Node013); // Seraph's Fix: BLowOption only takes 2 args. Thanks Rob!
+   NLowOption(134, Node999); // Seraph's Fix: NLowOption only takes 2 args. Thanks Rob!
+   NOption(135, Node012a, 004);
+   NOption(136, Node999, 004);
+end
+
+procedure Node012a begin
+   set_local_var( LVAR_Stark_Status, STARK_KNOWN );
+   call Node015;
+end
+
+procedure Node013 begin
+   if( dude_is_male ) then begin
+      Reply(137);
+   end
+   else begin
+      Reply(138);
+   end
+
+   NLowOption(139, Node997);
+   BLowOption(140, Node014);
+end
+
+procedure Node014 begin
+   Reply(141);
+
+   BLowOption(142, Node998);
+end
+
+procedure Node015 begin
+   if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) then begin
+      if( dude_is_male ) then begin
+         Reply(143);
+      end
+      else begin
+         Reply(376);
+      end
+   end
+   else if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_REAL_CITIZEN ) then
+      Reply(144);
+   else
+      Reply(145);
+
+   NOption(146, Node016, 004);
+   NOption(147, Node027, 004);
+   NOption(148, Node999, 004);
+end
+
+procedure Node016 begin
+   if( ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) and
+       ( local_var( LVAR_Stark_Reprimanded ) == 0 ) ) then begin
+      if( dude_is_male ) then begin
+         Reply(149);
+      end
+      else begin
+         Reply(377);
+      end
+   end
+   else if( ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) and
+            ( local_var( LVAR_Stark_Reprimanded ) == 1 ) ) then begin
+      if( dude_is_male ) then begin
+         Reply(150);
+      end
+      else begin
+         Reply(378);
+      end
+   end
+   else
+      Reply(151);
+
+   if( ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) and
+       ( local_var( LVAR_Stark_Reprimanded ) == 0 ) ) then
+      BOption(152, Node017, 004);
+   if( ( MacRae_Ptr != 0 ) and
+       ( local_var( LVAR_Stark_Cassidy ) == 0 ) ) then
+      NOption(153, Node020, 004);
+   if( global_var( GVAR_QUEST_JOSHUA ) == JOSHUA_ASSIGNED ) then
+      NOption(154, Node026, 004);
+   if( global_var( GVAR_VAULT_STARK_RECON ) == RECON_UNKNOWN ) then
+      NOption(155, Node050, 004);
+   if( local_var( LVAR_Stark_Raiders ) == 0 ) then
+      NOption(156, Node035, 004);
+   else
+      NOption(157, Node031, 004);
+   NOption(158, Node064, 004);
+   NOption(159, Node999, 004);
+end
+
+procedure Node017 begin
+   if( dude_is_male ) then begin
+      Reply(160);
+   end
+   else begin
+      Reply(379);
+   end
+
+   NOption(161, Node018, 004);
+   BOption(162, Node064, 004);
+   BOption(163, Node999, 004);
+end
+
+procedure Node018 begin
+   if( dude_is_male ) then begin
+      Reply(164);
+   end
+   else begin
+      Reply(380);
+   end
+
+   if( ( dude_charisma > 7 ) or ( has_skill( dude_obj, SKILL_SPEECH ) >= 75 ) ) then
+      NOption(165, Node019, 004);
+   NOption(166, Node064, 004);
+   NOption(167, Node999, 004);
+end
+
+procedure Node019 begin
+   set_local_var( LVAR_Stark_Reprimanded, 1 );
+   if( dude_is_male ) then begin
+      Reply(168);
+   end
+   else begin
+      Reply(381);
+   end
+
+   NOption(169, Node064, 004);
+   NOption(170, Node999, 004);
+end
+
+procedure Node020 begin
+   if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) then begin
+      if( dude_is_male ) then begin
+         Reply(171);
+      end
+      else begin
+         Reply(382);
+      end
+   end
+   else
+      Reply(172);
+
+   BOption(173, Node021, 004);
+   NOption(174, Node064, 004);
+   NOption(175, Node999, 004);
+end
+
+procedure Node021 begin
+   if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) then begin
+      if( dude_is_male ) then begin
+         Reply(176);
+      end
+      else begin
+         Reply(383);
+      end
+   end
+   else
+      Reply(177);
+
+   if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) then
+      BOption(178, Node024, 004);
+   else
+      BOption(179, Node023, 004);
+   NOption(180, Node064, 004);
+   NOption(181, Node999, 004);
+end
+
+procedure Node022 begin
+   float_msg( MacRae_Ptr, mstr(182), FLOAT_COLOR_NORMAL );
+end
+
+procedure Node023 begin
+   Reply(183);
+
+   BOption(184, Node004, 004);
+   NOption(185, Node064, 004);
+   NOption(186, Node022, 004);
+end
+
+procedure Node024 begin
+   set_local_var( LVAR_Stark_Cassidy, 1 );
+   if( dude_is_male ) then begin
+      Reply(187);
+   end
+   else begin
+      Reply(384);
+   end
+
+   BOption(188, Node024a, 004);
+   BOption(189, Node024a, 004);
+end
+
+procedure Node024a begin
+   gfade_out(600);
+   gfade_in(600);
+   call Node025;
+end
+
+procedure Node025 begin
+   dude_caps_adjust( 500);
+   display_msg( mstr(386) );
+   give_xp( EXP_VAULT_PULLED_RANK );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_PULLED_RANK_ON_STARK ) );
+   if( dude_is_male ) then begin
+      Reply(190);
+   end
+   else begin
+      Reply(385);
+   end
+
+   NOption(191, Node064, 004);
+   NOption(192, Node999, 004);
+end
+
+procedure Node026 begin
+   Reply(193);
+
+   NOption(194, Node064, 004);
+   NOption(195, Node999, 004);
+end
+
+procedure Node027 begin
+   if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) then begin
+      if( dude_is_male ) then begin
+         Reply(196);
+      end
+      else begin
+         Reply(387);
+      end
+   end
+   else if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_REAL_CITIZEN ) then
+      Reply(197);
+   else
+      Reply(198);
+
+   NOption(199, Node064, 004);
+   if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_GUARD_BELIEVE_FAKE ) then
+      BOption(200, Node028, 004);
+   if( ( global_var( GVAR_VAULT_CITIZEN ) != CITIZEN_CAPTAIN_GUARD ) and
+       ( global_var( GVAR_VAULT_CITIZEN ) != CITIZEN_REAL_CITIZEN ) ) then
+      NOption(201, Node030, 004);
+   NOption(202, Node999, 004);
+end
+
+procedure Node028 begin
+   Reply(203);
+
+   if( dude_item_count( PID_FAKE_CITIZENSHIP) > 0) then
+      NOption(204, Node029, 004);
+   NOption(205, Node064, 004);
+   NOption(206, Node999, 004);
+end
+
+procedure Node029 begin
+   Reply(207);
+
+   BOption(208, Node004, 004);
+   NOption(209, Node029a, 004);
+end
+
+procedure Node029a begin
+   variable DayPass_KickOutObj                  :=0;
+   variable DayPass_KickOutCount                :=0;
+   variable CitizenPapers_KickOutObj            :=0;
+   variable CitizenPapers_KickOutCount          :=0;
+   variable KickOutTemp                         :=0;
+
+   set_global_var(GVAR_VAULT_CITIZEN,CITIZEN_KICKED_OUT);
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_KICKED_OUT ) );
+   set_global_var(GVAR_VAULT_CITIZENSHIP,0);
+   set_global_var(GVAR_DAY_PASS_SHOWN, 0);
+   DayPass_KickOutCount := dude_item_count(PID_DAY_PASS);
+   if( DayPass_KickOutCount > 0 ) then begin
+      DayPass_KickOutObj := dude_item(PID_DAY_PASS);
+      KickOutTemp := rm_mult_objs_from_inven(dude_obj, DayPass_KickOutObj, DayPass_KickOutCount );
+      destroy_object(DayPass_KickOutObj); //added by killap
+   end
+   CitizenPapers_KickOutCount := dude_item_count(PID_FAKE_CITIZENSHIP);
+   if( CitizenPapers_KickOutCount > 0 ) then begin
+      CitizenPapers_KickOutObj := dude_item(PID_FAKE_CITIZENSHIP);
+      KickOutTemp := rm_mult_objs_from_inven(dude_obj, CitizenPapers_KickOutObj, CitizenPapers_KickOutCount );
+      destroy_object(CitizenPapers_KickOutObj); //added by killap
+   end
+   load_map( MAP_VAULTCITY_COURTYARD, 0 );
+end
+
+procedure Node030 begin
+   Reply(210);
+
+   NOption(211, Node064, 004);
+   NOption(212, Node999, 004);
+end
+
+procedure Node031 begin
+   Reply(213);
+
+   if( ( global_var( GVAR_VAULT_RAIDERS ) == RAIDERS_FOUND ) and
+       ( ( not( raiders_dead ) and not( raiders_scout_left ) ) ) ) then //edit by killap - expansion
+      NOption(214, Node032, 004);
+   if( raiders_dead ) then
+      NOption(215, Node033, 004);
+   else if ( raiders_scout_left) then //added by killap -expansion
+      NOption(1215, Node033, 004);
+
+   /*if( ( global_var( GVAR_VAULT_RAIDERS ) == RAIDERS_ACCEPTED_QUEST ) or
+       ( global_var( GVAR_VAULT_RAIDERS ) == RAIDERS_DECLINED_QUEST ) ) then
+      NOption(216, Node044, 004); --comment out by killap; was never obtainable anyway*/
+
+   if (global_var(GVAR_VAULT_RAIDERS) == RAIDERS_PROBLEM_KNOWN) then //added by killap
+      NOption(216, Node044, 004);
+
+   BOption(217, Node064, 004);
+   BOption(218, Node999, 004);
+end
+
+procedure Node032 begin
+   if( local_var( LVAR_Told_About_Raider_Camp ) == 0 ) then begin
+      set_local_var( LVAR_Told_About_Raider_Camp, 1 );
+      Reply(219);
+
+      GOption(221, Node032a, 004);
+   end
+   else begin
+      Reply(220);
+
+      NOption(222, Node064, 004);
+      NOption(223, Node999, 004);
+   end
+end
+
+procedure Node032a begin
+   gfade_out(600);
+   gfade_in(600);
+   call Node034;
+end
+
+procedure Node033 begin
+   if( local_var( LVAR_Told_About_Wipe_Out ) == 0 ) then begin
+      set_local_var( LVAR_Told_About_Wipe_Out, 1 );
+      if (raiders_dead) then
+        Reply(224);
+      else
+        Reply(1224); //added by killap
+
+      GOption(226, Node034, 004);
+   end
+   else begin
+      Reply(225);
+
+      NOption(227, Node064, 004);
+      NOption(228, Node999, 004);
+   end
+end
+
+procedure Node034 begin
+   Reply(229);
+
+   NOption(230, Node064, 004);
+   NOption(231, Node999, 004);
+end
+
+procedure Node035 begin
+   set_local_var( LVAR_Stark_Raiders, 1 );
+
+   //added by killap
+   if (global_var(GVAR_VAULT_RAIDERS) < RAIDERS_PROBLEM_KNOWN) then
+      set_global_var(GVAR_VAULT_RAIDERS,RAIDERS_PROBLEM_KNOWN);
+   //end
+
+   Reply(232);
+
+   NOption(233, Node036, 004);
+   BOption(234, Node039, 004);
+   BOption(235, Node043, 004);
+   BOption(236, Node043, 004);
+end
+
+procedure Node036 begin
+   Reply(237);
+
+   if( dude_iq == 4 ) then
+      BOption(238, Node037, 004);
+   NOption(239, Node037, 005);
+   NOption(240, Node037, 008);
+   BOption(241, Node043, 004);
+   BOption(242, Node043, 004);
+end
+
+procedure Node037 begin
+   if( dude_iq == 4 ) then
+      Reply(243);
+   else
+      Reply(244);
+
+   if( dude_iq == 4 ) then
+      NOption(245, Node038, 004);
+   NOption(246, Node038, 005);
+   BOption(247, Node064, 004);
+   BOption(248, Node999, 004);
+end
+
+procedure Node038 begin
+   Reply(249);
+
+   if( ( global_var( GVAR_VAULT_RAIDERS ) == RAIDERS_FOUND ) and
+       ( ( not( raiders_dead ) and not( raiders_scout_left ) ) ) ) then //edit by killap - expansion
+      GOption(250, Node032, 004);
+   if( raiders_dead ) then
+      GOption(251, Node033, 004);
+   else if ( raiders_scout_left ) then //added by killap - expansion
+      GOption(1251, Node033, 004);
+   NOption(252, Node044, 004);
+   NOption(253, Node064, 004);
+   NOption(254, Node999, 004);
+end
+
+procedure Node039 begin
+   Reply(255);
+
+   NOption(256, Node036, 004);
+   BOption(257, Node040, 004);
+   BOption(258, Node043, 004);
+   BOption(259, Node043, 004);
+end
+
+procedure Node040 begin
+   Reply(260);
+
+   NOption(261, Node036, 004);
+   BOption(262, Node042, 004);
+   BOption(263, Node041, 004);
+end
+
+procedure Node041 begin
+   Reply(264);
+
+   NOption(265, Node036, 004);
+   BOption(266, Node042, 004);
+   BOption(267, Node042, 004);
+end
+
+procedure Node042 begin
+   Reply(268);
+
+   BOption(269, Node998, 004);
+   BOption(270, Node998, 004);
+end
+
+procedure Node043 begin
+   Reply(271);
+
+   NOption(272, Node036, 004);
+   BOption(273, Node039, 004);
+   BOption(274, Node041, 004);
+end
+
+procedure Node044 begin
+   Reply(275);
+
+   NOption(276, Node045, 004);
+   NOption(277, Node064, 004);
+   NOption(278, Node999, 004);
+end
+
+procedure Node045 begin
+   Reply(279);
+
+   NOption(280, Node046, 004);
+   NOption(281, Node064, 004);
+   NOption(282, Node999, 004);
+end
+
+procedure Node046 begin
+   Reply(283);
+
+   NOption(284, Node047, 004);
+   NOption(285, Node064, 004);
+   NOption(286, Node999, 004);
+end
+
+procedure Node047 begin
+   Reply(287);
+
+   NOption(288, Node048, 004);
+   NOption(289, Node064, 004);
+   NOption(290, Node999, 004);
+end
+
+procedure Node048 begin
+   Reply(291);
+
+   NOption(292, Node049, 004);
+   NOption(293, Node064, 004);
+   NOption(294, Node999, 004);
+end
+
+procedure Node049 begin
+   Reply(295);
+   NOption(296, Node064, 004);
+   NOption(297, Node999, 004);
+end
+
+procedure Node050 begin
+   Reply(298);
+
+   if( dude_iq == 4 ) then
+      NOption(299, Node051, 004);
+   NOption(300, Node051, 005);
+   BOption(301, Node064, 005);
+   NOption(302, Node999, 005);
+end
+
+procedure Node051 begin
+   if( dude_iq == 4 ) then
+      Reply(303);
+   else
+      Reply(304);
+
+   NOption(305, Node052, 004);
+   NOption(306, Node064, 004);
+   NOption(307, Node999, 004);
+end
+
+procedure Node052 begin
+   Reply(308);
+
+   NOption(309, Node053, 004);
+   NOption(310, Node064, 004);
+   NOption(311, Node999, 004);
+end
+
+procedure Node053 begin
+   Reply(312);
+
+   NOption(313, Node054, 004);
+end
+
+procedure Node054 begin
+   mark_gecko_on_map
+
+   From_54_or_55 := 1;
+   Reply(314);
+
+   NOption(315, Node055, 004);
+   if( gecko_reconned ) then
+      NOption(316, Node056, 004);
+   NOption(317, Node054a, 004);
+   NOption(318, Node999, 004);
+end
+
+procedure Node054a begin
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_GECKO_ASSIGNED );
+   // End Dialogue.
+end
+
+procedure Node055 begin
+   From_54_or_55 := 1;
+   if( global_var( GVAR_VAULT_GECKO_PLANT ) < PLANT_DESTROYED ) then
+      Reply( mstr(319) + " " + mstr(322) );
+   else if( global_var( GVAR_VAULT_GECKO_PLANT ) == PLANT_DESTROYED ) then
+      Reply( mstr(320) + " " + mstr(322) );
+   else
+      Reply( mstr(321) + " " + mstr(322) );
+
+   if( gecko_reconned ) then
+      NOption(323, Node056, 004);
+   NOption(324, Node055a, 004);
+   NOption(325, Node055b, 004);
+   NOption(326, Node999, 004);
+end
+
+procedure Node055a begin
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_GECKO_ASSIGNED );
+   // End Dialogue.
+end
+
+procedure Node055b begin
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_GECKO_ASSIGNED );
+   call Node064;
+end
+
+procedure Node056 begin
+   if( From_54_or_55 == 1 ) then begin
+      From_54_or_55 := 0;
+      Reply( mstr(327) + " " + mstr(328) );
+   end
+   else
+      Reply(328);
+
+   NOption(329, Node056a, 004);
+end
+
+procedure Node056a begin
+   gfade_out(600);
+   gfade_in(600);
+   call Node057;
+end
+
+procedure Node057 begin
+   dude_caps_adjust( 300);
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_GECKO_DONE );
+   display_msg( mstr(388) );
+   give_xp( EXP_VAULT_GECKO_RECON );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_SCOUTED_GECKO ) );
+   Reply(330);
+
+   NOption(331, Node070, 004); // changed Node058 => Node070 by Lujo
+   NOption(332, Node064, 004);
+   NOption(333, Node999, 004);
+end
+
+procedure Node058 begin
+   mark_new_CA_republic_on_map
+
+   From_58_or_59 := 1;
+   Reply(334);
+
+   if( global_var( GVAR_FINISHED_STARK_RECON ) == 1 ) then
+      NOption(335, Node060, 004);
+   NOption(336, Node059, 004);
+   NOption(337, Node064, 004);
+   NOption(338, Node999, 004);
+end
+
+procedure Node059 begin
+   From_58_or_59 := 1;
+   Reply(339);
+
+   if( global_var( GVAR_FINISHED_STARK_RECON ) == 1 ) then
+      NOption(340, Node060, 004);
+   if( global_var( GVAR_FINISHED_STARK_RECON ) == 0 ) then begin
+      NOption(341, Node059a, 004);
+      NOption(342, Node059b, 004);
+   end
+   NOption(343, Node064, 004);
+   NOption(344, Node999, 004);
+end
+
+//added by killap - expansion pack (Village)
+/*procedure Node058
+begin
+  From_58_or_59 := 1;
+  gsay_reply(SCRIPT_VCSTARK, 334);
+  giq_option(4, SCRIPT_VCSTARK, 336, Node059, NEUTRAL_REACTION);
+  if (global_var(GVAR_QUEST_VAULT_SERVANT) == 0) then
+    giq_option(4, SCRIPT_VCSTARK, 335, Node058_1, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 337, Node064, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 338, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node059
+begin
+  if (town_known(10) == 0) then
+  begin
+    ndebug("  mark_on_map(" + 10 + ")");
+    mark_area_known(0, AREA_NCR, MARK_STATE_KNOWN);
+  end
+  From_58_or_59 := 1;
+  gsay_reply(SCRIPT_VCSTARK, 339);
+  if (global_var(GVAR_FINISHED_STARK_RECON) == 1) then
+    giq_option(4, SCRIPT_VCSTARK, 340, Node060, NEUTRAL_REACTION);
+  if (global_var(GVAR_FINISHED_STARK_RECON) == 0) then
+  begin
+    giq_option(4, SCRIPT_VCSTARK, 341, Node059a, NEUTRAL_REACTION);
+    giq_option(4, SCRIPT_VCSTARK, 342, Node059b, NEUTRAL_REACTION);
+  end
+  if (global_var(GVAR_QUEST_VAULT_SERVANT) == 0) then
+  begin
+    if (local_var(13) == 1) then
+      giq_option(4, SCRIPT_VCSTARK, 401, Node058_1, NEUTRAL_REACTION);
+    else
+      giq_option(4, SCRIPT_VCSTARK, 335, Node058_1, NEUTRAL_REACTION);
+  end
+  giq_option(4, SCRIPT_VCSTARK, 343, Node064, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 344, Node999, NEUTRAL_REACTION);
+end
+//end*/
+
+procedure Node059a begin
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_NCR_ASSIGNED );
+   // End Dialogue
+end
+
+procedure Node059b begin
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_NCR_ASSIGNED );
+   call Node064;
+end
+
+procedure Node060 begin
+   if( From_58_or_59 == 1 ) then begin
+      From_58_or_59 := 0;
+      Reply( mstr(345) + " " + mstr(346) );
+   end
+   else
+      Reply(346);
+
+   NOption(347, Node060a, 004);
+end
+
+procedure Node060a begin
+   gfade_out(600);
+   gfade_in(600);
+   call Node061;
+end
+
+procedure Node061 begin
+   variable item;
+
+   item := create_object( PID_MOTION_SENSOR, 0, 0 );
+   add_obj_to_inven( dude_obj, item );
+   dude_caps_adjust( 500);
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_NCR_DONE );
+   display_msg( mstr(389) );
+   give_xp( EXP_VAULT_NCR_RECON );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_SCOUTED_NCR ) );
+   Reply(348);
+
+   NOption(349, Node062, 004);
+end
+
+procedure Node062 begin
+   Reply(350);
+
+   NOption(351, Node063, 004);
+end
+
+procedure Node063 begin
+   Reply(352);
+
+   NOption(353, Node064, 004);
+   NOption(354, Node999, 004);
+end
+
+procedure Node064 begin
+   if( From_WTG == 1 ) then begin
+      From_WTG := 0;
+      if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) then
+         Reply(355);
+      else if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_REAL_CITIZEN ) then
+         Reply(356);
+      else
+         Reply(357);
+   end
+   else begin
+      if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) then begin
+         if( dude_is_male ) then begin
+            Reply(358);
+         end
+         else begin
+            Reply(390);
+         end
+      end
+      else if( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_REAL_CITIZEN ) then
+         Reply(359);
+      else
+         Reply(360);
+   end
+
+   BLowOption(361, Node013);
+   NLowOption(362, Node999);
+   if( ( global_var( GVAR_VAULT_CITIZEN ) == CITIZEN_CAPTAIN_GUARD ) and
+       ( local_var( LVAR_Stark_Reprimanded ) == 0 ) ) then
+      BOption(363, Node017, 004);
+   if( ( MacRae_Ptr != 0 ) and
+       ( local_var( LVAR_Stark_Cassidy ) == 0 ) ) then
+      NOption(364, Node020, 004);
+   if( global_var( GVAR_QUEST_JOSHUA ) == JOSHUA_ASSIGNED ) then
+      NOption(365, Node026, 004);
+   NOption(366, Node016, 004);
+   NOption(367, Node027, 004);
+   
+   //edited by Lujo, gameflow fixes - returning after finishing the scoutings
+   if( ( global_var( GVAR_VAULT_STARK_RECON ) == RECON_GECKO_ASSIGNED ) and
+       ( gecko_reconned ) ) then
+      NOption(368, Node056, 004);
+   if( ( global_var( GVAR_VAULT_STARK_RECON ) == RECON_BROKEN_HILLS_ASSIGNED ) and
+       ( broken_hills_reconned ) ) then
+	  NOption(439, Node072, 004);
+   if( ( global_var( GVAR_VAULT_STARK_RECON ) == RECON_NCR_ASSIGNED ) and
+       ( global_var( GVAR_FINISHED_STARK_RECON ) == 1 ) ) then
+      NOption(370, Node060, 004);
+	  
+   //edited by Lujo, gameflow fixes, asking for work after finishig the scoutings leads to the next one  
+   if( global_var( GVAR_VAULT_STARK_RECON ) == RECON_GECKO_DONE ) then
+      NOption(369, Node070, 004);
+   if( global_var( GVAR_VAULT_STARK_RECON ) == RECON_BROKEN_HILLS_DONE ) then
+      NOption(369, Node058, 004);
+   if( ( global_var( GVAR_VAULT_STARK_RECON ) == RECON_NCR_ASSIGNED ) and ( global_var( GVAR_FINISHED_STARK_RECON ) == 1 ) ) then
+      NOption(370, Node060, 004);  
+
+   //unlocking the vault village after having scouted gecko
+   if( global_var( GVAR_VAULT_STARK_RECON ) >= RECON_GECKO_DONE and global_var(GVAR_QUEST_VAULT_SERVANT) < SERVANT_QUEST_ACCEPTED) then
+      NOption(437, Node058_1, 004);
+   
+   //asking about the village if you've accepted the quest   
+   if ( (global_var(GVAR_QUEST_VAULT_SERVANT) >= SERVANT_QUEST_ACCEPTED) and (global_var(GVAR_QUEST_VAULT_SERVANT) < SERVANT_QUEST_FINISHED) ) then
+      giq_option(4, SCRIPT_VCSTARK, 402, Node058_4, NEUTRAL_REACTION);
+
+   if( local_var( LVAR_Stark_Raiders ) == 1 ) then
+      NOption(371, Node031, 004);
+   NOption(372, Node999, 004);
+end
+
+//added by killap - expansion pack (Village)
+procedure Node058_1
+begin
+  //set_local_var(13, 1);
+  gsay_reply(SCRIPT_VCSTARK, 391);
+  giq_option(4, SCRIPT_VCSTARK, 392, Node058_2, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 393, Node058_3, NEUTRAL_REACTION);
+  //if (global_var(GVAR_VAULT_STARK_RECON) == 2) then
+    //giq_option(4, SCRIPT_VCSTARK, 394, Node059, 50);
+  giq_option(4, SCRIPT_VCSTARK, 395, Node064, NEUTRAL_REACTION);
+  //added by lujo in global fixes
+  if ( global_var( GVAR_FINISHED_STARK_RECON ) != 1 ) then begin
+    if not ( broken_hills_reconned ) then
+    NOption(430, Node070, 4);
+    else
+    NOption(430, Node058, 4);
+  end
+  giq_option(4, SCRIPT_VCSTARK, 396, Node999, NEUTRAL_REACTION);
+end
+
+//edited by Lujo to make the time limit impossible to miss
+
+procedure Node058_2
+begin
+  if (town_known(49) == MARK_STATE_UNKNOWN) then
+    mark_area_known(0, 49, MARK_STATE_KNOWN);
+  set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_ACCEPTED);
+  gsay_reply(SCRIPT_VCSTARK, 397); //edited by Lujo dialogue to divide the mission and timing warning
+  giq_option(4, SCRIPT_VCSTARK, 441, Node058_2a, NEUTRAL_REACTION);
+end
+
+//added by Lujo, to make the time restriction impossible to miss
+
+procedure Node058_2a
+begin
+  set_global_var(GVAR_SERVANT_RAID_DATE, game_time);
+  gsay_reply(SCRIPT_VCSTARK, 440);
+  giq_option(4, SCRIPT_VCSTARK, 442, Node064, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 443, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node058_3
+begin
+  gsay_reply(SCRIPT_VCSTARK, 399); //lujo edited dialogue
+  giq_option(4, SCRIPT_VCSTARK, 400, Node058_2, NEUTRAL_REACTION);
+  //if (global_var(GVAR_VAULT_STARK_RECON) == 2) then
+  //  giq_option(4, SCRIPT_VCSTARK, 394, Node059, 50);
+  giq_option(4, SCRIPT_VCSTARK, 395, Node064, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 396, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node058_4 begin
+   //display_msg("GVAR_VAULT_SERVANT == " + global_var(GVAR_VAULT_SERVANT));
+   // by Lujo:
+   if (global_var(GVAR_VAULT_SERVANT) == SERVANT_TIME_EXTENDED) then begin
+       if (global_var(GVAR_QUEST_VAULT_VILLAGE) >= VILLAGE_QUEST_DELIVERED_GUNS) then begin
+          Reply(455); 
+          NOption(446, Node076, 004); 
+       end else begin
+       Reply(428);
+       NOption(429, Node999, 4);
+       end
+    end else if ( (global_var(GVAR_QUEST_VAULT_VILLAGE) >= VILLAGE_QUEST_DELIVERED_GUNS) and (global_var(GVAR_VAULT_VILLAGE) != VILLAGE_SCREWED) ) then begin
+       gsay_reply(SCRIPT_VCSTARK, 423);
+       NOption(444, Node075, 004);
+       giq_option(4, SCRIPT_VCSTARK, 175, Node999, 50);
+   //end else
+   //Old part
+   /*if ( (global_var(GVAR_QUEST_VAULT_VILLAGE) >= VILLAGE_QUEST_DELIVERED_GUNS) and (global_var(GVAR_VAULT_VILLAGE) != VILLAGE_SCREWED) ) then begin
+         //set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_FINISHED);
+         if 
+         gsay_reply(SCRIPT_VCSTARK, 423);
+         NOption(444, Node075, 004);
+    //if (global_var(GVAR_ENEMY_VAULT_VILLAGE) == 8) then
+         //if (global_var(GVAR_QUEST_VAULT_VILLAGE) == VILLAGE_QUEST_DELIVERED_GUNS) then begin
+         giq_option(4, SCRIPT_VCSTARK, 175, Node999, NEUTRAL_REACTION);
+         //Moved the option to turn Harry in
+         //BOption(426, Node058_13, 004);
+         //end*/    
+   end else begin if ((game_time - global_var(GVAR_SERVANT_RAID_DATE)) >= (ONE_GAME_MONTH) and (global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_DELIVERED_GUNS) ) then begin
+      set_global_var(GVAR_VAULT_SERVANT, SERVANT_FINISHED_VIOLENT);
+      set_global_var(GVAR_VAULT_VILLAGE, VILLAGE_SCREWED);
+      set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_FINISHED);
+      //-- Lujo: this ought to get the gun delivery crossed out in the pipboy
+      set_global_var(GVAR_QUEST_VAULT_VILLAGE, 9);
+	  
+      gsay_reply(SCRIPT_VCSTARK, 424);
+      giq_option(4, SCRIPT_VCSTARK, 425, Node058_12, NEUTRAL_REACTION);
+   end else begin
+      gsay_reply(SCRIPT_VCSTARK, 403);
+      if (global_var(GVAR_VAULT_MONSTER_COUNT) == 0) then
+        giq_option(4, SCRIPT_VCSTARK, 405, Node058_10, NEUTRAL_REACTION);
+      else
+        giq_option(4, SCRIPT_VCSTARK, 406, Node058_9, NEUTRAL_REACTION);
+      if ((global_var(GVAR_VAULT_VILLAGE) != 0) and (global_var(GVAR_QUEST_VAULT_SERVANT) == SERVANT_QUEST_ACCEPTED)) then
+        giq_option(4, SCRIPT_VCSTARK, 404, Node058_5, NEUTRAL_REACTION);
+    end
+  end
+end
+
+procedure Node058_5
+begin
+  gsay_reply(SCRIPT_VCSTARK, 407);
+  giq_option(4, SCRIPT_VCSTARK, 408, Node058_6, NEUTRAL_REACTION);
+end
+
+procedure Node058_6
+begin
+  gsay_reply(SCRIPT_VCSTARK, 409);
+  NOption(459, Node058_7, 4);
+  giq_option(4, SCRIPT_VCSTARK, 410, Node058_7, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 411, Node058_8, NEUTRAL_REACTION);
+end
+
+procedure Node058_7
+begin
+  gsay_reply(SCRIPT_VCSTARK, 412);
+  giq_option(4, SCRIPT_VCSTARK, 414, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node058_8
+begin
+  set_global_var(GVAR_VAULT_VILLAGE, VILLAGE_SCREWED);
+  set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_FINISHED);
+  set_global_var(GVAR_VAULT_SERVANT, SERVANT_FINISHED_VIOLENT);
+  //-- Lujo: this ought to get the gun delivery crossed out in the pipboy
+  set_global_var(GVAR_QUEST_VAULT_VILLAGE, 9);
+  //set_global_var(GVAR_QUEST_VAULT_SERVANT, 2);
+  //set_global_var(GVAR_VAULT_SERVANT, 3);
+  set_global_var(GVAR_TOWN_REP_VAULT_CITY, global_var(GVAR_TOWN_REP_VAULT_CITY) - 1);
+  gsay_reply(SCRIPT_VCSTARK, 413);
+  giq_option(4, SCRIPT_VCSTARK, 414, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node058_9
+begin
+  gsay_reply(SCRIPT_VCSTARK, 415);
+  giq_option(4, SCRIPT_VCSTARK, 414, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node058_10
+begin
+  give_xp(800);
+  set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + -30);
+  ndebug("Player gains " + -30 + " Karma Points.");
+  CheckKarma;
+  dude_caps_adjust(750);
+  set_global_var(GVAR_VAULT_VILLAGE, VILLAGE_SCREWED);
+  set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_FINISHED);
+  set_global_var(GVAR_VAULT_SERVANT, SERVANT_FINISHED_VIOLENT);
+  //set_global_var(GVAR_QUEST_VAULT_SERVANT, 2);
+  //set_global_var(GVAR_VAULT_SERVANT, 4);
+  set_global_var(GVAR_TOWN_REP_VAULT_CITY, global_var(GVAR_TOWN_REP_VAULT_CITY) + 4);
+  gsay_reply(SCRIPT_VCSTARK, 416);
+  giq_option(4, SCRIPT_VCSTARK, 417, Node058_11, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 418, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node058_11
+begin
+  gsay_reply(SCRIPT_VCSTARK, 419);
+  giq_option(4, SCRIPT_VCSTARK, 420, Node058_12, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 418, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node058_12
+begin
+  gsay_reply(SCRIPT_VCSTARK, 421);
+  giq_option(4, SCRIPT_VCSTARK, 422, Node999, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_VCSTARK, 1422, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node058_13
+begin
+  set_global_var(GVAR_VAULT_SERVANT, SERVANT_TURNED_IN_HARRY);
+  set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_FINISHED);
+  gsay_reply(SCRIPT_VCSTARK, 427);
+  set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + -15);
+  debug_msg("Player gains " + -15 + " Karma Points.");
+  CheckKarma;
+  set_global_var(GVAR_TOWN_REP_VAULT_CITY, global_var(GVAR_TOWN_REP_VAULT_CITY) + 1);
+  giq_option(4, SCRIPT_VCSTARK, 414, Node999, NEUTRAL_REACTION);
+end
+
+// added by Lujo begin
+procedure Node070 begin
+   mark_broken_hills_on_map
+   Reply(431);
+   NOption(432, Node071, 004); //asks why?
+   if( broken_hills_reconned ) then
+      NOption(316, Node072, 004); //allready done
+   NOption(317, Node074, 004); //accepts
+   NOption(325, Node074a, 004); //accepts with questions
+   NOption(318, Node999, 004); //exit
+end
+
+procedure Node071 begin
+   Reply(433);
+
+   if( broken_hills_reconned ) then
+      NOption(316, Node072, 004);
+   NOption(317, Node074, 004);
+   NOption(344, Node999, 004);
+end
+
+procedure Node072 begin
+   Reply(328);
+   NOption(329, Node072a, 004);
+end
+
+procedure Node072a begin
+   gfade_out(600);
+   gfade_in(600);
+   call Node073;
+end
+
+procedure Node073 begin
+   item_caps_adjust( dude_obj, 400 );
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_BROKEN_HILLS_DONE );
+   display_msg( mstr(434) );
+   give_xp( EXP_VAULT_GECKO_RECON );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_SCOUTED_GECKO ) );
+   Reply(435);
+
+   NOption(331, Node058, 004);
+   if( global_var(GVAR_QUEST_VAULT_SERVANT) < SERVANT_QUEST_ACCEPTED ) then
+   NOption(437, Node058_1, 004);
+
+   NOption(332, Node064, 004);
+   NOption(333, Node999, 004);
+end
+
+procedure Node074 begin
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_BROKEN_HILLS_ASSIGNED );
+   // End Dialogue.
+end
+
+procedure Node074a begin
+   set_global_var( GVAR_VAULT_STARK_RECON, RECON_BROKEN_HILLS_ASSIGNED );
+   call Node064;
+   // End Dialogue.
+end
+
+Procedure Node075 begin
+   Reply(445);
+   NOption(446, Node076, 004);
+end
+
+Procedure Node076 begin
+   Reply(447);
+   NOption(456, Node077, 004);
+end
+
+Procedure Node077 begin
+   Reply(457);
+   NOption(448, Node077a, 004);
+   NOption(449, Node077b, 004);
+   BOption(426, Node058_13, 004);
+   NOption(458, Node999, 004);
+end
+   
+Procedure Node077a begin
+   Reply(450);
+   NOption(452, Node078, 004);
+end
+
+Procedure Node077b begin
+   Reply(451);
+   NOption(453, Node999, 004);
+end
+
+Procedure Node078 begin
+   set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_FINISHED);
+   call Node999;
+end
+
+//end

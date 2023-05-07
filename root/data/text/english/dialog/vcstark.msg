@@ -275,7 +275,7 @@
 {370}{}{I plotted that route to NCR for you.}
 {371}{}{About those Raiders...}
 {372}{}{Never mind. Goodbye.}
-{373}{}{Good day...ma'am.}
+{373}{}{Good day... ma'am.}
 {374}{}{Vault City prevails... ma'am.}
 {375}{}{Captain. Can I help you... ma'am?}
 {376}{}{Sergeant Stark... ma'am. Did you need something?}
@@ -320,7 +320,7 @@
 {413}{}{All right, I'm dispatching a battle squad there immediately. Somebody HAS to do it.}
 {414}{}{[DONE]}
 {415}{}{Return when all is done.}
-{416}{}{Great work, soldier. Here's your $750 -- your cut out of a village full of new servants. You've done Vault City a great service.}
+{416}{}{Great work, soldier. Here's your $750 -- a small price to pay for a village full of new servants. You've done Vault City a great service.}
 {417}{}{Wait -- You never said anything about making the villagers your servants.}
 {418}{}{Whatever. Goodbye.}
 {419}{}{It's for their own good. Once they're servants of Vault City, there'll be no need for them to strife for survival. They'll be fed and taken care of. In return, they'll work for the good of the City. Everyone wins.}
@@ -328,9 +328,7 @@
 {421}{}{It's not slavery, but a mutually beneficial co-existence, a symbiosis so to speak.}
 {422}{}{Disgusting! Goodbye.}
 {1422}{}{Well, I agree. They're better off this way. Goodbye.}
-
 {423}{}{Those primitives must have lost their minds completely! They started shooting at us on sight! They even started lobbing grenades at us! So I called the whole thing off.}
-
 {424}{}{What village? Oh, the one we got our new servants from... what about it?}
 {425}{}{You say what!? You enslaved them all?}
 {426}{}{I know who provided them with explosives. It was that trader in the courtyard, Harry. }

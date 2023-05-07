@@ -1,0 +1,396 @@
+/*
+	Script for critter tmplete
+*/
+
+
+
+
+/* Include Files */
+#define SCRIPT_REALNAME "slvcc1"
+#include "../headers/define.h"
+
+#define NAME                    SCRIPT_SLVCC1
+
+#include "../headers/den.h"
+#include "../headers/slvcamp.h"
+#include "../headers/command.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure use_p_proc;
+procedure look_at_p_proc;
+procedure critter_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure use_obj_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure talk_p_proc;
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node007a;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+//procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node999;
+procedure Node998;
+procedure Node090;
+procedure Node091;
+procedure Node092;
+procedure Node093;
+// by Lujo - flow fixes begin
+procedure Node099;
+procedure Node100;
+procedure Node101;
+procedure Node102;
+// end
+
+/*****************************************************************
+   Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_
+*****************************************************************/
+
+#define LVAR_Flags                      (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Told_To_Leave              (7)
+#define LVAR_Force_Talk                 (8)
+
+/*******************************************************************
+   Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_)
+*******************************************************************/
+
+/*******************************************************************
+   Local variables which do not need to be saved between map changes.
+*******************************************************************/
+
+
+/*******************************************************************
+*******                         PROCEDURES                   *******
+*******************************************************************/
+
+
+/*******************************************************************
+   The start procedure is the first procedure called when the map is
+   first entered. Any initial information that needs to be set up
+   should be placed in here.
+*******************************************************************/
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+end
+
+/********************************************************************
+********************************************************************/
+
+procedure use_p_proc begin
+end
+
+/***************************************************************************
+   This is cursory glance description that the player will receive should
+   he just pass the Action Cursor over. Examines which give more information
+   need to be in the description_p_proc procedure.
+***************************************************************************/
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_msg(mstr(100));
+
+end
+
+
+procedure description_p_proc begin
+   script_overrides;
+   if (herebefore) then
+      display_msg(mstr(102));
+   else
+      display_msg(mstr(101));
+end
+
+
+
+procedure use_skill_on_p_proc begin
+end
+
+
+procedure use_obj_on_p_proc begin
+end
+
+
+/******************************************************************************************
+   IF it gets damaged
+******************************************************************************************/
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+      set_map_var(MVAR_Attack_Slavers,1);
+   end
+end
+
+procedure destroy_p_proc begin
+   variable ProtoOfItem;
+   inc_evil_critter
+   set_map_var(MVAR_Slaver_Count, ((map_var(MVAR_Slaver_Count)) - 1));
+
+   if (map_var(MVAR_Take_Slaves) == 0) then begin
+      ProtoOfItem:=create_object(PID_KEYS,0,0);
+      add_mult_objs_to_inven(self_obj,ProtoOfItem,1);
+   end
+
+   if (map_var(MVAR_Slaver_Count) == 0) then begin
+      set_global_var(GVAR_WIPED_OUT_SLAVER_CAMP,1);
+      display_msg(message_str(SCRIPT_SLVCM1, 200));
+   end
+end
+
+
+procedure critter_p_proc begin
+
+   if ( ( (metzger_dead) or (hostile) or (local_var(LVAR_Hostile) == 2) or (map_var(MVAR_Attack_Slavers) == 1) or ( (global_var(GVAR_NCR_PLAYER_RANGER)) ) ) and (self_can_see_dude) ) then begin
+         set_local_var(LVAR_Hostile,1);
+         call Node014;
+         self_attack_dude;
+      //end else if ( (local_var(LVAR_Force_Talk) == 0) and not (has_rep_slaver) ) then begin
+      //   set_local_var(LVAR_Force_Talk,1);
+      //   start_dialog_at_node(Node001);
+   end else if ( (tile_distance(dude_tile, self_tile) < 5) and (local_var(LVAR_Force_Talk) == 0) ) then begin
+      start_dialog_at_node(Node001);
+   end
+end
+
+
+/***************************************************************************************
+   Whenever the map is first entered, this procedure will be called.
+***************************************************************************************/
+
+procedure map_enter_p_proc begin
+   set_self_team(TEAM_SLAVER_CAMP_SLAVERS);
+end
+
+
+/**************************************************************************************
+   This procedure gets called roughly every 30 seconds of real time.
+**************************************************************************************/
+
+procedure map_update_p_proc begin
+end
+
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/**************************************************************************************
+   This is used for any dialogue that may need to occur with the player.
+**************************************************************************************/
+procedure talk_p_proc begin
+
+   if ( (metzger_dead) or (hostile) or (local_var(LVAR_Hostile) == 2) or (map_var(MVAR_Attack_Slavers) == 1) or (global_var(GVAR_NCR_PLAYER_RANGER)) ) then begin
+      if (self_can_see_dude) then begin
+        self_attack_dude;
+      end
+   end else if (has_rep_slaver) then begin
+      call Node013;
+   end else if (map_var(MVAR_Take_Slaves) == 1) then begin
+      floater(800);
+   end else if (local_var(LVAR_Told_To_Leave) == 1) then begin
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+         call Node012;
+      gSay_End;
+      end_dialogue;
+   end else begin
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+         call Node001;
+      gSay_End;
+      end_dialogue;
+   end
+   set_herebefore;
+end
+
+
+procedure Node001 begin
+   if (local_var(LVAR_Force_Talk) == 0) then
+      set_local_var(LVAR_Force_Talk,1);
+   Reply(105);
+   NOption(106,Node002,004);
+   NOption(107,Node090,004);
+   if not(has_rep_slaver) then
+      NOption(108,Node004,004);
+   NOption(109,Node003,004);
+
+end
+
+procedure Node002 begin
+   Reply(200);
+   NOption(500,Node998,004);
+end
+
+procedure Node003 begin
+   Reply(201);
+   NOption(500,Node998,004);
+end
+
+procedure Node004 begin
+   Reply(202);
+   NOption(300,Node005,004);
+   NOption(302,Node006,004);
+end
+
+procedure Node005 begin
+   Reply(301);
+   NOption(106,Node002,004);
+   NOption(107,Node007,004);
+   NOption(108,Node004,004);
+   NOption(109,Node003,004);
+end
+
+procedure Node006 begin
+   Reply(303);
+   NOption(304,Node093,004);
+   BOption(305,Node998,004);
+end
+
+procedure Node007 begin
+   Reply(203);
+   NOption(307,Node091,004);
+   NOption(900,Node007a,004);
+end
+
+procedure Node007a begin
+   Reply(901);
+   // option added by Lujo
+   if ( Vic_In_Party ) then
+      BOption (1001,Node099,004);
+   
+   NOption(304,Node093,004);
+   BOption(305,Node998,004);
+end
+
+procedure Node008 begin
+   Reply(308);
+   NOption(309,Node092,004);
+end
+
+procedure Node009 begin
+   Reply(310);
+   // option added by Lujo
+   if ( Vic_In_Party ) then begin
+      GOption (1001,Node099,004);
+   end else begin   
+      NOption(500,Node998,004);
+   end
+end
+
+procedure Node010 begin
+   Reply(311);
+   // option added by Lujo
+   if ( Vic_In_Party ) then
+      GOption (1001,Node099,004);
+   else begin
+      NOption(500,Node998,004);
+   end
+end
+
+//procedure Node011 begin
+
+//end
+
+procedure Node012 begin
+   Reply(450);
+   NOption(500,Node998,004);
+end
+
+procedure Node013 begin
+   floater(400);
+end
+
+procedure Node014 begin
+   if (global_var(GVAR_NCR_PLAYER_RANGER)) then
+      floater(601);
+   else
+      floater(600);
+end
+
+procedure Node090 begin
+   if (is_success(roll_vs_skill(dude_obj, SKILL_SPEECH, -15))) then
+      call Node007;
+   else
+      call Node009;
+end
+
+procedure Node091 begin
+   if (is_success(roll_vs_skill(dude_obj, SKILL_SPEECH, -25))) then
+      call Node008;
+   else
+      call Node010;
+end
+
+procedure Node998 begin
+   set_hostile;
+   set_map_var(MVAR_Attack_Slavers,1);
+end
+
+procedure Node999 begin
+
+end
+
+procedure Node092 begin
+   variable ProtoOfItem;
+
+   ProtoOfItem:=create_object(PID_KEYS,0,0);
+   add_mult_objs_to_inven(dude_obj,ProtoOfItem,1);
+
+   set_map_var(MVAR_Take_Slaves,1);
+
+end
+
+procedure Node093 begin
+   set_local_var(LVAR_Told_To_Leave,1);
+end
+
+// added by Lujo begin
+procedure Node099 begin
+   if (has_skill(dude_obj,SKILL_SPEECH) >= 40) then begin
+      Reply(1008);
+      NOption(1009, Node100, 004);
+   end else begin
+      Reply(1010);
+      NOption(500, Node998, 001);
+   end
+end
+   
+procedure Node100 begin
+   Reply(1002);
+   NOption(1003,Node101,004);
+end
+
+procedure Node101 begin
+   Reply(1004);
+   NOption(1005,Node102,004);
+end
+
+procedure Node102 begin
+   Reply(1006);
+   NOption(1007,Node092,004);
+end
+// xxxxxxxxxxxxxx

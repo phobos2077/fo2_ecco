@@ -1,0 +1,90 @@
+/*
+  ***   Script conwerted to Interplay format by Fallout Script Edytor (by Jargo)  ***
+*/
+
+#define SCRIPT_REALNAME "vill"
+#include "../headers/define.h"
+#include "../headers/vill.h"
+#include "../headers/updatmap.h"
+
+#define NAME                    SCRIPT_VILL          //Script name from scripts.h
+
+#include "../headers/command.h"
+
+procedure start;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+
+procedure start
+begin
+end
+
+procedure map_enter_p_proc
+begin
+  variable LVar1 := 0;
+  Lighting;
+
+  if ( (map_first_run) and (((game_time - global_var(GVAR_SERVANT_RAID_DATE)) < ONE_GAME_MONTH)) ) then begin
+    display_msg(message_str(SCRIPT_VILL, 100));
+  end else if ( (map_var(MVAR_Stage_Message) == 0) and (((game_time - global_var(GVAR_SERVANT_RAID_DATE)) >= ONE_GAME_MONTH) and (((global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_DELIVERED_GUNS) and (global_var(GVAR_QUEST_VAULT_VILLAGE) > 0)) or (global_var(GVAR_QUEST_VAULT_SERVANT) > 0) and (global_var(GVAR_VAULT_SERVANT) != SERVANT_FINISHED_DIPLOMATIC) and (global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_DELIVERED_GUNS))) )  then begin
+      //if (global_var(GVAR_VAULT_SERVANT) != SERVANT_MAP_VISITED) then begin
+         //set_global_var(GVAR_VAULT_SERVANT,SERVANT_MAP_VISITED);
+         display_msg(message_str(SCRIPT_VILL, 101));
+         float_msg(dude_obj, message_str(SCRIPT_VILL, 104), FLOAT_MSG_NORMAL);
+         set_map_var(MVAR_Stage_Message,3);
+      //end
+      // condition adjusted by Lujo
+  end else if ( (game_time - (map_var(MVAR_Building_Time))  >= ONE_GAME_MONTH) and (global_var(GVAR_VAULT_VILLAGE) < VILLAGE_STAGE_ONE) and /*(*/ (global_var(GVAR_QUEST_VAULT_VILLAGE) == VILLAGE_QUEST_FINISHED_DIPLOMATIC) /*or (global_var(GVAR_QUEST_VAULT_VILLAGE) == VILLAGE_QUEST_DELIVERED_GUNS) )*/ ) then begin
+       set_map_var(MVAR_Building_Time,game_time);
+       set_global_var(GVAR_VAULT_VILLAGE,VILLAGE_STAGE_ONE);
+  end else if ( (game_time - (map_var(MVAR_Building_Time))  >= ONE_GAME_MONTH) and (global_var(GVAR_VAULT_VILLAGE) == VILLAGE_STAGE_ONE) and (global_var(GVAR_VAULT_VILLAGE) != VILLAGE_STAGE_TWO) ) then begin
+       set_global_var(GVAR_VAULT_VILLAGE,VILLAGE_STAGE_TWO);
+  end
+
+  if (global_var(GVAR_VAULT_VILLAGE) == VILLAGE_STAGE_ONE) then begin
+      LVar1 := 1;
+      if (map_var(MVAR_Stage_Message) == 0) then begin
+         display_msg(message_str(SCRIPT_VILL, 102));
+         set_map_var(MVAR_Stage_Message,1);
+      end
+  end else if (global_var(GVAR_VAULT_VILLAGE) == VILLAGE_STAGE_TWO) then begin
+      LVar1 := 2;
+      if (map_var(MVAR_Stage_Message) == 1) then begin
+         display_msg(message_str(SCRIPT_VILL, 103));
+         set_map_var(MVAR_Stage_Message,2);
+      end
+  end
+
+
+
+  /*if (global_var(GVAR_VAULT_VILLAGE) == 5) then
+  begin
+    display_msg(message_str(SCRIPT_VILL, 101));
+    LVar1 := 1;
+  end
+  if ((global_var(GVAR_VAULT_VILLAGE) == 6) and (global_var(GVAR_VAULT_SERVANT) != 8)) then
+    LVar1 := 2;*/
+
+  override_map_start(115, 125, LVar1, 0);
+
+  //added by killap - prevent car from disappearing if the car runs out of gas while on the town circle
+   if ((car_current_town == 21) and (cur_map_index != MAP_CAR_DESERT) and (car_out_of_fuel)) then begin
+      set_global_var(GVAR_CAR_PLACED_TILE, 0);
+      Create_Car(CAR_VAULT_VILLAGE_HEX,dude_elevation)
+      if (tile_contains_pid_obj(CAR_VAULT_VILLAGE_HEX, dude_elevation, PID_DRIVABLE_CAR) != 0) then begin
+         Create_Trunk(CAR_VAULT_VILLAGE_HEX,dude_elevation)
+      end
+   end else
+      Check_Create_Car(CAR_VAULT_VILLAGE_HEX, LVar1)
+   //end added
+
+   //27125
+end
+
+procedure map_exit_p_proc begin
+end
+
+procedure map_update_p_proc
+begin
+  Lighting;
+end

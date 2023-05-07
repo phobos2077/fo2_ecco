@@ -1,0 +1,1174 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: McClure
+        Location: Vault City Council Area
+        Description: Senior Councilor McClure
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "vcmclure"
+#include "../headers/define.h"
+#include "../headers/vctycocl.h"
+
+#define NAME                    SCRIPT_VCMCLURE
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
+
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/vill.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node008a;
+procedure Node008b;
+procedure Node009;
+procedure Node009a;
+procedure Node010;
+procedure Node010a;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node035a;
+procedure Node036;
+procedure Node037;
+procedure Node038;
+procedure Node039;
+procedure Node040;
+procedure Node040a;
+procedure Node040b;
+procedure Node041;
+procedure Node041a;
+procedure Node042;
+procedure Node043;
+procedure Node044;
+procedure Node045;
+procedure Node045a;
+procedure Node046;
+procedure Node047;
+procedure Node047a;
+procedure Node048;
+procedure Node049;
+procedure Node049a;
+procedure Node050;
+procedure Node051;
+procedure Node052;
+procedure Node053;
+procedure Node054;
+procedure Node054a;
+procedure Node055;
+procedure Node055a;
+procedure Node056;
+procedure Node057;
+procedure Node058;
+procedure Node059;
+procedure Node059a;
+procedure Node060;
+
+//added by killap - expansion pack (Village)
+procedure Node061;
+procedure Node062;
+procedure Node062a; //Added by Lujo
+procedure Node063;
+procedure Node064;
+//end
+
+procedure Node1000;
+procedure Node1001;
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Pissed                     (7)
+#define LVAR_Told_About_Fixing          (8)
+#define LVAR_Told_About_Antidote        (9)
+#define LVAR_Gave_Reward_1              (10)
+#define LVAR_VILLAGE_RAID_POSTPONED     (11) //added by killap - expansion
+#define LVAR_End_Village_Attack          (12)
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable From_8 := 0;
+variable From_58 := 0;
+variable From_59 := 0;
+variable Already_Optimized :=0;
+
+procedure start begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   set_self_team(TEAM_VAULT_CITIZENS);
+   set_self_ai(AI_COWARD);
+
+   if( not( is_loading_game ) ) then begin
+      if( ( game_time_hour > 700 ) and ( game_time_hour < 1800 ) ) then begin
+         if( not( self_visible ) ) then begin
+            set_obj_visibility(self_obj, false);
+         end
+      end
+      else begin
+         if( self_visible ) then
+            set_obj_visibility(self_obj, true);
+      end
+   end
+end
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ( ( (local_var(LVAR_Hostile) == 2) or ( global_var( GVAR_ENEMY_VAULT_CITY ) == 1 ) ) and (self_can_see_dude)) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+      set_local_var(LVAR_Personal_Enemy,1);
+      set_global_var( GVAR_ENEMY_VAULT_CITY, 1 );
+      set_global_var( GVAR_VAULT_CITIZEN, CITIZEN_KICKED_OUT );
+      set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_KICKED_OUT ) );
+      set_global_var( GVAR_VAULT_CITIZENSHIP, 0 );
+   end
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION2;
+
+   CheckKarma;
+
+   GetReaction;
+
+   From_8 := 0;
+   From_58 := 0;
+   From_59 := 0;
+
+   if( Fallout2_enclave_destroyed ) then
+      call Node001;
+   else if( ( night ) and ( local_var( LVAR_Pissed ) == 0 ) ) then
+      call Node002;
+   else if( ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) and ( local_var(LVAR_Pissed) == 0 ) ) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node006;
+       gSay_End;
+       end_dialogue;
+   end
+   else if( Lenny_Ptr != 0 ) then
+      call Node003;
+   else if( Marcus_Ptr != 0 ) then
+      call Node004;
+   else if( (global_var(GVAR_VAULT_CITIZEN) == CITIZEN_KICKED_OUT) or (global_var(GVAR_ENEMY_VAULT_CITY) == 1) ) then
+      call Node1000;
+   else if( local_var(LVAR_Pissed) == 1 ) then
+      call Node005;
+   else begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node006;
+       gSay_End;
+       end_dialogue;
+   end
+   set_local_var( LVAR_Herebefore, 1 );
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if( local_var(LVAR_Herebefore) == 0 ) then
+      display_msg(mstr(101));
+   else
+      display_msg(mstr(100));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(101));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   floater(104);
+end
+
+procedure Node002 begin
+   floater(105);
+end
+
+procedure Node003 begin
+   floater(106);
+end
+
+procedure Node004 begin
+   floater(107);
+end
+
+procedure Node005 begin
+   floater(108);
+end
+
+procedure Node006 begin
+
+  //added by killap - expansion pack (Village) // condition edited by Lujo
+  if ( (local_var(LVAR_VILLAGE_RAID_POSTPONED == 1)) and ((global_var(GVAR_VAULT_SERVANT) == SERVANT_BRAIN_AGREEMENT) or (global_var(GVAR_QUEST_VAULT_VILLAGE) == VILLAGE_QUEST_FINISHED_DIPLOMATIC)) and (local_var(LVAR_End_Village_Attack) == 0)) then
+  begin
+    set_local_var(LVAR_End_Village_Attack, 1);
+    display_msg(message_str(SCRIPT_VCMCLURE, 359));
+    give_xp(1000);
+    set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + 15);
+    CheckKarma;
+    set_global_var(GVAR_TOWN_REP_VAULT_CITY, global_var(GVAR_TOWN_REP_VAULT_CITY) + 5);
+    //set_global_var(GVAR_QUEST_VAULT_SERVANT, 2);
+    set_global_var(GVAR_VAULT_SERVANT, SERVANT_FINISHED_DIPLOMATIC);
+    set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_FINISHED);
+    gsay_reply(SCRIPT_VCMCLURE, 357);
+    giq_option(4, SCRIPT_VCMCLURE, 358, Node999, NEUTRAL_REACTION);
+  end
+  else
+  begin
+  //end
+   if( ( local_var(LVAR_Herebefore) == 0 ) and ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) ) then
+      Reply(109);
+   else if( ( local_var(LVAR_Herebefore) == 0 ) and ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) ) then
+      Reply(110);
+   else if( local_var(LVAR_Herebefore) == 0 ) then
+      Reply(111);
+   else if( ( local_var(LVAR_Herebefore) == 1 ) and ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) ) then
+      Reply(112);
+   else if( ( local_var(LVAR_Herebefore) == 1 ) and ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) ) then
+      Reply(113);
+   else
+      Reply(114);
+
+   BLowOption(115, Node007);
+   NLowOption(116, Node999);
+   if( global_var(GVAR_MCCLURE_KNOWN) >= MCCLURE_KNOWN ) then
+      NOption(117, Node008, 004);
+   else
+      NOption(118, Node009, 004);
+   NOption(119, Node999, 004);
+  end
+end
+
+procedure Node007 begin
+   Reply(120);
+
+   BLowOption(121, Node1000);
+   BLowOption(122, Node1001);
+end
+
+procedure Node008 begin
+   From_8 := 1;
+   if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) then
+      Reply( mstr(123) + " " + mstr(125) );
+   else if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) then
+      Reply( mstr(124) + " " + mstr(125) );
+   else
+      Reply(125);
+
+   NOption(126, Node024, 004);
+   //if( not(Fallout2_tribe_kidnapped) ) then
+   if( not(dude_found_geck) ) then //edit by killap
+      NOption(127, Node017, 004);
+   NOption(128, Node021, 004);
+   if( ( global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_PROBLEM_KNOWN ) or
+       ( global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_ACCEPTED_QUEST ) or
+       ( global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_DECLINED_QUEST ) ) then
+      NOption(129, Node022, 004);
+   if( global_var(GVAR_VAULT_REDDING_PROBLEM) == REDDING_PROBLEM_KNOW_EXISTS ) then
+      NOption(130, Node023, 004);
+   if( ( global_var(GVAR_VAULT_REDDING_PROBLEM) >= REDDING_PROBLEM_KNOW_JET ) and
+       ( global_var(GVAR_VAULT_REDDING_PROBLEM) < REDDING_PROBLEM_DONE ) ) then
+      NOption(131, Node035, 004);
+   if( ( global_var(GVAR_VAULT_CITIZEN) != CITIZEN_CAPTAIN_GUARD ) and ( global_var(GVAR_VAULT_CITIZEN) != CITIZEN_REAL_CITIZEN ) ) then
+      NOption(132, Node008a, 004);
+   if( global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_NEED_PART ) then
+      NOption(133, Node042, 004);
+   if( global_var(GVAR_VAULT_GECKO_PLANT) >= PLANT_REPAIRED ) then
+      NOption(134, Node008b, 004);
+   if( ( ( dude_item_count( PID_GECKO_DATA_DISK) > 0) and
+       ( global_var(GVAR_VAULT_GECKO_PLANT) > PLANT_NEED_PART ) and
+       ( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REACTOR_DATA_ANALYZED ) and
+       ( global_var(GVAR_VAULT_GECKO_PLANT) != PLANT_DESTROYED ) and
+       ( global_var(GVAR_MCCLURE_KNOWN) < MCCLURE_CONVINCED ) )
+        or ( ( dude_item_count( PID_GECKO_DATA_DISK) > 0) and ( global_var(GVAR_VAULT_GECKO_PLANT) >= PLANT_OPTIMIZED ) ) ) then
+      NOption(135, Node048, 004);
+   if( ( global_var(GVAR_MCCLURE_KNOWN) == MCCLURE_CONVINCED ) and ( global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_RECEIVED ) ) then
+      NOption(136, Node060, 004);
+   if( ( global_var(GVAR_MCCLURE_KNOWN) == MCCLURE_APPROVAL ) and
+       ( dude_item_count( PID_REACTOR_DATA_DISK) > 0) and
+       ( global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_RECEIVED ) ) then
+      NOption(137, Node059, 004);
+   //added by killap - expansion pack (Village) //edited by Lujo - gameflowfixes
+   if ((global_var(GVAR_VAULT_VILLAGE) >= VILLAGE_KNOWN) and (global_var(GVAR_QUEST_VAULT_SERVANT) != SERVANT_QUEST_FINISHED) ) then
+      NOption(345, Node061, 004);
+   //end
+   NOption(138, Node999, 004);
+end
+
+procedure Node008a begin
+   if( has_skill( dude_obj, SKILL_SPEECH ) <= 50 ) then
+      call Node025;
+   else
+      call Node026;
+end
+
+procedure Node008b begin
+   if( local_var(LVAR_Told_About_Fixing) == 0 ) then
+      call Node046;
+   else
+      call Node047;
+end
+
+procedure Node009 begin
+   set_global_var( GVAR_MCCLURE_KNOWN, MCCLURE_KNOWN );
+   Reply(139);
+
+   BOption(140, Node009a, 004);
+   NOption( dude_name + mstr(141), Node016, 004);
+   NOption(142, Node999, 004);
+end
+
+procedure Node009a begin
+   if( ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) or ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) ) then
+      call Node010;
+   else
+      call Node011;
+end
+
+procedure Node010 begin
+   Reply(143);
+
+   BOption(144, Node014, 004);
+   BOption(145, Node010a, 004);
+   NOption(146, Node999, 004);
+end
+
+procedure Node010a begin
+   set_local_var( LVAR_Pissed, 1 );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_PISSED_MCCLURE ) );
+end
+
+procedure Node011 begin
+   Reply(147);
+
+   BOption(148, Node1000, 004);
+   NOption(149, Node012, 004);
+   NOption(150, Node1001, 004);
+end
+
+procedure Node012 begin
+   Reply(151);
+
+   if( dude_item_count( PID_FAKE_CITIZENSHIP) > 0) then
+      BOption(152, Node013, 004);
+   BOption(153, Node1000, 004);
+end
+
+procedure Node013 begin
+   Reply(154);
+
+   BOption(155, Node014, 004);
+   BOption(156, Node999, 004);
+end
+
+procedure Node014 begin
+   set_local_var( LVAR_Pissed, 1 );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_PISSED_MCCLURE ) );
+   Reply(157);
+
+   BOption(158, Node999, 004);
+   BOption(159, Node015, 004);
+   BOption(160, Node015, 009);
+end
+
+procedure Node015 begin
+   Reply(161);
+
+   BOption(162, Node1001, 004);
+   BOption(163, Node1000, 004);
+end
+
+procedure Node016 begin
+   Reply(164);
+
+   BOption(165, Node009a, 004);
+   //if( not(Fallout2_tribe_kidnapped) ) then
+   if( not(dude_found_geck) ) then //edit by killap
+      NOption(166, Node017, 004);
+   NOption(167, Node008, 004);
+   NOption(168, Node999, 004);
+end
+
+procedure Node017 begin
+   Reply(169);
+
+   NOption(170, Node018, 004);
+end
+
+procedure Node018 begin
+   Reply(171);
+
+   NOption(172, Node019, 004);
+   NOption(173, Node020, 004);
+   NOption(174, Node008, 004);
+   NOption(175, Node999, 004);
+end
+
+procedure Node019 begin
+   Reply(176);
+
+   NOption(177, Node020, 004);
+   NOption(178, Node008, 004);
+   if( dude_iq < 9 ) then
+      NOption(179, Node999, 004);
+   else
+      NOption(180, Node999, 009);
+end
+
+procedure Node020 begin
+   Reply(181);
+
+   NOption(182, Node019, 004);
+   NOption(183, Node008, 004);
+   NOption(184, Node999, 004);
+end
+
+procedure Node021 begin
+   Reply(185);
+
+   NOption(186, Node029, 004);
+   NOption(187, Node024, 004);
+   NOption(188, Node008, 004);
+   NOption(189, Node999, 004);
+end
+
+procedure Node022 begin
+   Reply(190);
+
+   NOption(191, Node030, 004);
+   NOption(192, Node031, 004);
+   NOption(193, Node008, 004);
+   NOption(194, Node999, 004);
+end
+
+procedure Node023 begin
+   Reply(195);
+
+   NOption(196, Node032, 004);
+   NOption(197, Node034, 004);
+   NOption(198, Node008, 004);
+   NOption(199, Node999, 004);
+end
+
+procedure Node024 begin
+   Reply(200);
+
+   NOption(201, Node021, 004);
+   NOption(202, Node008, 004);
+   NOption(203, Node999, 004);
+end
+
+procedure Node025 begin
+   Reply(204);
+
+   NOption(205, Node027, 004);
+   NOption(206, Node027, 004);
+   NOption(207, Node008, 004);
+   NOption(208, Node999, 004);
+end
+
+procedure Node026 begin
+   Reply(209);
+
+   NOption(210, Node028, 004);
+   NOption(211, Node008, 004);
+   NOption(212, Node999, 004);
+end
+
+procedure Node027 begin
+   Reply(213);
+
+   NOption(214, Node028, 004);
+   NOption(215, Node008, 004);
+   NOption(216, Node999, 004);
+end
+
+procedure Node028 begin
+   Reply(217);
+
+   NOption(218, Node008, 004);
+   NOption(219, Node999, 004);
+end
+
+procedure Node029 begin
+   if ( not( raiders_dead ) and not( raiders_scout_left ) ) then begin //edit by killap - expansion
+   //if( not( raiders_dead ) ) then begin
+      if( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_DESTROYED ) then
+         Reply( mstr(220) + " " + mstr(221) + " " + mstr(222) );
+      else
+         Reply( mstr(220) + " " + mstr(221));
+   end
+   else if( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_DESTROYED ) then
+      Reply( mstr(220) + " " + mstr(222));
+   else
+      Reply(220);
+
+   if( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_DESTROYED ) then begin
+      NOption(223, Node030, 004);
+      NOption(224, Node031, 004);
+   end
+   NOption(225, Node008, 004);
+   NOption(226, Node999, 004);
+end
+
+procedure Node030 begin
+   mark_gecko_on_map
+   Reply(227);
+
+   NOption(228, Node031, 004);
+   NOption(229, Node008, 004);
+   NOption(230, Node999, 004);
+end
+
+procedure Node031 begin
+   Reply(231);
+
+   NOption(232, Node030, 004);
+   NOption(233, Node008, 004);
+   NOption(234, Node999, 004);
+end
+
+procedure Node032 begin
+   Reply(235);
+
+   //added by killap
+   if (global_var(GVAR_VAULT_REDDING_PROBLEM) < REDDING_PROBLEM_KNOW_JET) then
+     set_global_var(GVAR_VAULT_REDDING_PROBLEM,REDDING_PROBLEM_KNOW_EXISTS);
+   //end added
+
+   NOption(236, Node033, 004);
+   NOption(237, Node034, 004);
+   NOption(238, Node999, 004);
+end
+
+procedure Node033 begin
+   Reply(239);
+
+   NOption(240, Node034, 004);
+   NOption(241, Node999, 004);
+end
+
+procedure Node034 begin
+   mark_redding_on_map
+   Reply(242);
+
+   NOption(243, Node032, 004);
+   NOption(244, Node999, 004);
+end
+
+procedure Node035 begin
+   Reply(245);
+
+   //NOption(246, Node023, 004);
+   if( global_var(GVAR_VAULT_REDDING_PROBLEM) == REDDING_PROBLEM_KNOW_JET ) then
+      NOption(247, Node035a, 004);
+   if( global_var(GVAR_VAULT_JET_QUEST) == JET_ANTIDOTE_FOUND ) then
+      NOption(248, Node039, 004);
+   if( global_var(GVAR_VAULT_REDDING_PROBLEM) == REDDING_PROBLEM_DELIVERED_ANTIDOTE ) then
+      NOption(249, Node040, 004);
+end
+
+procedure Node035a begin
+   if( local_var( LVAR_Gave_Reward_1 ) == 0 ) then begin
+      set_local_var( LVAR_Gave_Reward_1, 1 );
+      display_msg( mstr(336) );
+      give_xp( EXP_TOLD_MCCLURE_ADDICTION );
+      set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_MCCLURE_REDDING_PROBLEM ) );
+   end
+   call Node036;
+end
+
+procedure Node036 begin
+   Reply(250);
+
+   NOption(251, Node037, 004);
+   NOption(252, Node038, 004);
+end
+
+procedure Node037 begin
+   Reply(253);
+
+   NOption(254, Node008, 004);
+   NOption(255, Node999, 004);
+end
+
+procedure Node038 begin
+   Reply(256);
+
+   NOption(257, Node037, 004);
+end
+
+procedure Node039 begin
+   if( local_var( LVAR_Told_About_Antidote ) == 0 ) then begin
+      set_local_var( LVAR_Told_About_Antidote, 1 );
+      Reply(258);
+   end
+   else
+      Reply(259);
+
+   NOption(260, Node008, 004);
+   NOption(261, Node999, 004);
+end
+
+procedure Node040 begin
+   set_global_var( GVAR_VAULT_REDDING_PROBLEM, REDDING_PROBLEM_DONE );
+   Reply(262);
+
+   NOption(263, Node040a, 004);
+   NOption(264, Node040b, 004);
+   BOption(265, Node041, 004);
+end
+
+procedure Node040a begin
+   display_msg( mstr(343) );
+   give_xp( EXP_FREED_TRADE_WITH_REDDING );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_MCCLURE_ANTIDOTE_DELIVERED ) );
+   call Node999;
+end
+
+procedure Node040b begin
+   display_msg( mstr(343) );
+   give_xp( EXP_FREED_TRADE_WITH_REDDING );
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_MCCLURE_ANTIDOTE_DELIVERED ) );
+   call Node008;
+end
+
+procedure Node041 begin
+   Reply(266);
+
+   NOption(267, Node041a, 004);
+   BOption(268, Node1000, 004);
+end
+
+procedure Node041a begin
+   dude_caps_adjust( 500);
+end
+
+procedure Node042 begin
+   Reply(269);
+
+   NOption(270, Node043, 004);
+   NOption(271, Node999, 004);
+end
+
+procedure Node043 begin
+   Reply(272);
+
+   if( ( global_var(GVAR_VAULT_CITIZEN) != CITIZEN_CAPTAIN_GUARD ) and
+       ( global_var(GVAR_VAULT_CITIZEN) != CITIZEN_REAL_CITIZEN ) and
+       ( map_var(MVAR_Bribe) == 1 ) ) then
+      NOption(273, Node044, 004);
+   NOption(274, Node045, 004);
+   NOption(275, Node999, 004);
+end
+
+procedure Node044 begin
+   Reply(276);
+
+   NOption(277, Node045, 004);
+end
+
+procedure Node045 begin
+   set_global_var( GVAR_VAULT_GECKO_PLANT, PLANT_RANDAL_GIVE );
+
+   Reply(278);
+
+   if( dude_item_count( PID_GECKO_DATA_DISK) == 0) then
+      NOption(279, Node045a, 004);
+   else
+      NOption(280, Node048, 004);
+end
+
+procedure Node045a begin
+   set_global_var( GVAR_VAULT_GECKO_PLANT, PLANT_RANDAL_GIVE );
+end
+
+procedure Node046 begin
+   set_local_var( LVAR_Told_About_Fixing, 1 );
+
+   if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) then
+      Reply( mstr(281) + " " + mstr(282) );
+   else if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) then
+      Reply( mstr(281) + " " + mstr(283) );
+   else begin
+      set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_MCCLURE_CITIZENSHIP ) );
+      set_global_var( GVAR_VAULT_CITIZENSHIP, CITIZEN_TRUE );
+      set_global_var( GVAR_VAULT_CITIZEN, CITIZEN_REAL_CITIZEN );
+      Reply( mstr(281) + " " + mstr(284) );
+   end
+
+   NOption(285, Node999, 004);
+   if( ( global_var(GVAR_MCCLURE_KNOWN) >= MCCLURE_CONVINCED ) and
+       ( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REACTOR_DATA_RECEIVED ) ) then
+      NOption(338, Node047a, 004);
+   NOption(286, Node999, 004);
+end
+
+procedure Node047 begin
+   if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) then
+      Reply( mstr(287) + " " + mstr(289) );
+   else if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) then
+      Reply( mstr(287) + " " + mstr(288) );
+   else
+      Reply( mstr(287) + " " + mstr(290) );
+
+   NOption(291, Node008, 004);
+   if( ( global_var(GVAR_MCCLURE_KNOWN) >= MCCLURE_CONVINCED ) and
+       ( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REACTOR_DATA_RECEIVED ) ) then
+      NOption(339, Node047a, 004);
+   NOption(292, Node999, 004);
+end
+
+procedure Node047a begin
+   Reply(340);
+
+   NOption(341, Node008, 004);
+   NOption(342, Node999, 004);
+end
+
+procedure Node048 begin
+   Reply(293);
+
+   NOption(294, Node049, 004);
+   NOption(295, Node051, 004);
+   NOption(296, Node008, 004);
+   NOption(297, Node999, 004);
+end
+
+procedure Node049 begin
+   Reply(298);
+
+   NOption(299, Node049a, 004);
+end
+
+procedure Node049a begin
+   gfade_out(600);
+   gfade_in(600);
+
+   call Node050;
+end
+
+procedure Node050 begin
+   Reply(300);
+
+   NOption(301, Node051, 004);
+   NOption(302, Node051, 004);
+   NOption(303, Node051, 004);
+   NOption(304, Node051, 004);
+end
+
+procedure Node051 begin
+   Reply(305);
+
+   NOption(306, Node052, 004);
+end
+
+procedure Node052 begin
+   Reply(307);
+
+   //killap
+   if( global_var(GVAR_VAULT_GECKO_PLANT) >= PLANT_OPTIMIZED ) then begin
+      Already_Optimized := 1;
+      NOption(344, Node057, 004);
+   end
+   //end killap
+   if( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REPAIRED ) then
+      NOption(308, Node053, 004);
+   if( global_var(GVAR_VAULT_GECKO_PLANT) >= PLANT_REPAIRED ) then
+      NOption(309, Node053, 004);
+
+end
+
+procedure Node053 begin
+   Reply(310);
+
+   NOption(311, Node054, 004);
+end
+
+procedure Node054 begin
+   Reply(312);
+
+   if( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REPAIRED ) then
+      NOption(313, Node055, 004);
+   //if( global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REPAIRED ) then
+   if( ( global_var(GVAR_VAULT_GECKO_PLANT) >= PLANT_REPAIRED ) and
+       ( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REACTOR_DATA_RECEIVED ) ) then
+      NOption(314, Node055, 004);
+   if( global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_RECEIVED ) then
+      GOption(315, Node054a, 004);
+end
+
+procedure Node054a begin
+   if( ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) or ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) ) then
+      call Node056;
+   else
+      call Node058;
+end
+
+procedure Node055 begin
+   set_global_var( GVAR_MCCLURE_KNOWN, MCCLURE_CONVINCED );
+   Reply(316);
+   if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REPAIRED) then begin
+      NOption(317, Node055a, 004);
+   end else begin
+      NOption(175, Node999, 004);
+   end
+end
+
+procedure Node055a begin
+   if( dude_item_count( PID_GECKO_DATA_DISK) > 0) then
+      call Node057;
+   else
+      call Node999;
+end
+
+procedure Node056 begin
+   if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) then
+      Reply( mstr(318) + " " + mstr(320) );
+   else if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) then
+      Reply( mstr(319) + " " + mstr(320) );
+   else
+      Reply(320);
+
+   NOption(321, Node055a, 004);
+end
+
+procedure Node057 begin
+   variable item;
+   variable itemCount;
+   variable dummy;
+
+   if( dude_item_count( PID_GECKO_DATA_DISK) > 0) then begin
+
+      // Remove Econ disk from player inventory.
+      itemCount := dude_item_count( PID_GECKO_DATA_DISK);
+      item := dude_item( PID_GECKO_DATA_DISK);
+      dummy := rm_mult_objs_from_inven( dude_obj, item, itemCount );
+      destroy_object(item); //added by killap
+
+      // Give EXP to player.
+      display_msg( mstr(337) );
+      give_xp( EXP_ECON_DISK_GIVEN );
+      set_global_var(GVAR_GECKO_ECON_DISK, ECON_DISK_GIVEN); //added by killap
+
+      if( From_59 == 1 ) then begin
+         From_59 := 0;
+         Reply( mstr(322) + " " + mstr(323) );
+      end
+      // killap
+      else if ( Already_Optimized == 1) then
+         Reply( mstr(360) + " " + mstr(323) ); //was 345, changed to 360 - killap - expansion pack (Village)
+      // end killap
+      else
+         Reply(323);
+   end
+   else begin
+      if( From_59 == 1 ) then begin
+         From_59 := 0;
+         Reply(322);
+      end
+   end
+
+   NOption(324, Node999, 004);
+end
+
+procedure Node058 begin
+   set_global_var( GVAR_MCCLURE_KNOWN, MCCLURE_APPROVAL );
+   Reply(325);
+
+   if( dude_item_count( PID_REACTOR_DATA_DISK) == 0) then
+      NOption(326, Node055a, 004);
+   else
+      NOption(327, Node059, 004);
+end
+
+procedure Node059 begin
+   From_59 := 1;
+   if( From_8 == 1 ) then begin
+      From_8 := 0;
+      Reply( mstr(328) + " " + mstr(330) );
+   end
+   else if( From_58 == 1 ) then begin
+      From_58 := 0;
+      Reply( mstr(329) + " " + mstr(330) );
+   end
+
+   NOption(331, Node059a, 004);
+end
+
+procedure Node059a begin
+   set_global_var( GVAR_VAULT_GECKO_PLANT, PLANT_REACTOR_DATA_ANALYZED );
+   gfade_out(600);
+   gfade_in(600);
+   call Node057;
+end
+
+procedure Node060 begin
+   Reply(332);
+
+   NOption(333, Node054a, 004);
+end
+
+//added by killap - expansion pack (Village)
+procedure Node061
+begin
+  //Added by Lujo
+  if (global_var(GVAR_VAULT_SERVANT) == SERVANT_TIME_EXTENDED) then begin
+     Reply(377);
+     NOption(378, Node999, 4);
+  end else begin
+     Reply(346);
+     NOption(347, Node062, 4);
+  
+     //added by Lujo
+     if ( global_var(GVAR_QUEST_VAULT_VILLAGE) >= VILLAGE_QUEST_DELIVERED_GUNS ) then
+       NOption(371, Node063, 4);
+     NOption(348, Node008, 4);
+     NOption(349, Node999, 4);
+   end
+end
+
+// Edited by Lujo
+procedure Node062
+begin
+  Reply(350);
+      NOption(373, Node062a,4); 
+  if (has_skill(dude_obj,SKILL_SPEECH) > 60) then 
+      NOption(351, Node063, 4);
+  if ( mole_rat_origin_info and mole_rat_origin_amulet ) then
+      NOption(376, Node063, 4);
+  NOption(370, Node999, 4);
+end
+
+//Added by Lujo
+procedure Node062a begin
+   Reply(374); 
+   if ( mole_rat_origin_info and mole_rat_origin_amulet ) then
+      NOption(376, Node063, 50);
+   if ( mole_rat_origin_info ) then
+      NOption(375, Node999,4);
+      NOption(370, Node999,4);
+end
+
+procedure Node063
+begin
+   gsay_reply(SCRIPT_VCMCLURE, 352); //CHECK THIS AREA - killap -8/4/07
+
+   //if (global_var(GVAR_VAULT_VILLAGE_MOLERAT_ORIGIN_KNOWN) > 0 ) then begin
+   if ( (mole_rat_origin_info) or ( mole_rat_origin_info and mole_rat_origin_amulet )) then begin
+      giq_option(4, SCRIPT_VCMCLURE, 353, Node064, NEUTRAL_REACTION);
+   end else begin
+      giq_option(4, SCRIPT_VCMCLURE, 354, Node064, NEUTRAL_REACTION);
+   end
+end
+
+//edited by Lujo to extend the quest, (using SERVANT_TIME_EXTENDED as trigger for diplomacy at CONNOR? - will see about it)
+procedure Node064
+begin
+  if (global_var(GVAR_QUEST_VAULT_VILLAGE) == VILLAGE_QUEST_DELIVERED_GUNS) then begin
+     gsay_reply(SCRIPT_VCMCLURE, 372);
+  end else begin
+     gsay_reply(SCRIPT_VCMCLURE, 355);
+  end
+  if (global_var(GVAR_VAULT_SERVANT) < SERVANT_TIME_EXTENDED) then
+    set_global_var(GVAR_VAULT_SERVANT, SERVANT_TIME_EXTENDED);
+  set_global_var(GVAR_SERVANT_RAID_DATE, global_var(GVAR_SERVANT_RAID_DATE) + ONE_GAME_MONTH); //edit - killap
+  giq_option(4, SCRIPT_VCMCLURE, 356, Node999, NEUTRAL_REACTION);
+  set_local_var(LVAR_VILLAGE_RAID_POSTPONED,1);
+  //display_msg("GVAR_VAULT_SERVANT == " + global_var(GVAR_VAULT_SERVANT));
+end
+
+//end
+
+procedure Node1000 begin
+   set_global_var(GVAR_VAULT_CITIZEN,CITIZEN_KICKED_OUT);
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_KICKED_OUT ) );
+   set_global_var(GVAR_VAULT_CITIZENSHIP,CITIZEN_FALSE);
+   set_global_var(GVAR_DAY_PASS_SHOWN, 0);
+   call Node998;
+end
+
+procedure Node1001 begin
+   variable DayPass_KickOutObj                  :=0;
+   variable DayPass_KickOutCount                :=0;
+   variable CitizenPapers_KickOutObj            :=0;
+   variable CitizenPapers_KickOutCount          :=0;
+   variable KickOutTemp                         :=0;
+
+   set_global_var(GVAR_VAULT_CITIZEN,CITIZEN_KICKED_OUT);
+   set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_KICKED_OUT ) );
+   set_global_var(GVAR_VAULT_CITIZENSHIP,0);
+   set_global_var(GVAR_DAY_PASS_SHOWN, 0);
+   DayPass_KickOutCount := dude_item_count(PID_DAY_PASS);
+   if( DayPass_KickOutCount > 0 ) then begin
+      DayPass_KickOutObj := dude_item(PID_DAY_PASS);
+      KickOutTemp := rm_mult_objs_from_inven(dude_obj, DayPass_KickOutObj, DayPass_KickOutCount );
+      destroy_object(DayPass_KickOutObj); //added by killap
+   end
+   CitizenPapers_KickOutCount := dude_item_count(PID_FAKE_CITIZENSHIP);
+   if( CitizenPapers_KickOutCount > 0 ) then begin
+      CitizenPapers_KickOutObj := dude_item(PID_FAKE_CITIZENSHIP);
+      KickOutTemp := rm_mult_objs_from_inven(dude_obj, CitizenPapers_KickOutObj, CitizenPapers_KickOutCount );
+      destroy_object(CitizenPapers_KickOutObj); //added by killap
+   end
+   load_map( MAP_VAULTCITY_COURTYARD, 0 );
+end
+
+//xxxxxxxxxxxxxxxxxxxx

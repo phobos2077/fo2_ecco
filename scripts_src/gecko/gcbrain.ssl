@@ -1,0 +1,1145 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Brain
+        Location: Gecko
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: January 14, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "gcbrain"
+#include "../headers/define.h"
+#include "../headers/gecko.h"
+#include "../headers/vill.h" // added by killap - expansion
+
+#define NAME                    SCRIPT_GCBRAIN
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_GECKO)
+#define floater(x)		float_msg(self_obj, mstr(x),FLOAT_MSG_RED)
+
+// condition changed/moved to macro by Lujo/phobos2077
+#define patrols_attacked_by_rats_cond	( (town_known(AREA_VAULT_VILLAGE) == MARK_STATE_VISITED) and (global_var(GVAR_QUEST_VAULT_SERVANT) != SERVANT_QUEST_FINISHED) and (global_var(GVAR_VAULT_SERVANT) < SERVANT_BRAIN_AGREEMENT) and (global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_FINISHED_DIPLOMATIC) )
+
+//#define RECEIVED                1
+//#define GIVEN                   2
+
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure combat;
+
+/* Script Specific Procedure Calls */
+//procedure Node910;
+//procedure Node920;
+procedure Node995;
+procedure Node996;
+procedure Node997;
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node037;
+procedure Node038;
+procedure Node039;
+procedure Node040;
+procedure Node041;
+procedure Node042;
+// added by killap - expansion
+procedure Node043;
+procedure Node044;
+procedure Node045;
+procedure Node046;
+procedure Node047;
+procedure Node048;
+procedure Node049;
+procedure Node050;
+// end added
+procedure Node080; // by Lujo
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Give                       (7)
+#define LVAR_Muse                       (8)
+#define LVAR_43_before                  (9)
+#define LVAR_11_before                 (10)
+#define LVAR_times_here                (11)
+#define LVAR_brain_friend              (12)
+#define LVAR_times_here_002            (13) //added by killap
+#define LVAR_Node_045                  (14) //added by killap
+#define LVAR_Brain_Plan                (15) //added by killap
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable k;
+variable from_15:=0;
+variable rat_ruling:=0;
+variable item;
+
+procedure start begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   set_self_team(TEAM_GECKO);
+   set_self_ai(AI_KLAMATH_BRAIN);
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+   if (self_can_see_dude) then begin
+      if (global_var(GVAR_GECKO_MELTDOWN) == 1) then begin
+         set_local_var(LVAR_Hostile,1);
+         attack(dude_obj);
+      end
+      else if (local_var(LVAR_Hostile) == 2) then begin
+          set_local_var(LVAR_Hostile,1);
+          attack(dude_obj);
+      end
+   end
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+       set_global_var(GVAR_ENEMY_GECKO,1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   GetReaction;
+
+   if (local_var(LVAR_Personal_Enemy) == 1) then begin
+       ndebug("case 1");
+       call Node998;
+   end
+
+
+   else if ( (global_var(GVAR_QUEST_RAT_GOD) == RAT_GOD_SUCCESS) and (local_var(LVAR_Muse) == 0) ) then begin
+       ndebug("case 2");
+       set_local_var(LVAR_Muse,1);
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node040;
+       gSay_End;
+       end_dialogue;
+   end
+
+   else if (global_var(GVAR_VAULT_PLANT_STATUS) == PLANT_DESTROYED) then begin
+      ndebug("case 3");
+      call Node012;
+   end
+
+   else if ((dude_is_stupid)) then begin
+      ndebug("case 4");
+      call Node002;
+   end
+
+   //else if (Brain Friend = Enemy) then begin
+   //call Node001;
+   //end
+
+   else if ((global_var(GVAR_GECKO_ANKH) != ANKH_GIVEN) and (dude_item_count(PID_TALISMAN))) then begin
+   //else if (global_var(GVAR_GECKO_ANKH) == ANKH_TAKEN) then begin //killap comment - nothing is ever set anywhere for this to be called
+       ndebug("case 5");
+       set_local_var(LVAR_Herebefore,1); //added by killap
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node004;
+       gSay_End;
+       end_dialogue;
+   end
+
+   else if (dude_item_count(PID_CHEEZY_POOFS)) then begin
+       set_local_var(LVAR_Herebefore,1); //added by killap
+       ndebug("case 6");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node022;
+       gSay_End;
+       end_dialogue;
+   end
+/*
+   else if (global_var(GVAR_VAULT_PLANT_STATUS) == PLANT_REPAIRED) then begin
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node013;
+       gSay_End;
+       end_dialogue;
+   end
+*/
+   else if ( (global_var(GVAR_VAULT_PLANT_STATUS) == PLANT_OPTIMIZED) or (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_OPTIMIZED) ) then begin
+       ndebug("case 7");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node014;
+       gSay_End;
+       end_dialogue;
+   end
+//begin killap move - this has moved up from below
+   else if (global_var(GVAR_GECKO_ANKH) == ANKH_GIVEN) then begin
+       ndebug("case 13");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node003;
+       gSay_End;
+       end_dialogue;
+   end
+//end killap move
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_ANALYZED) then begin
+       ndebug("case 8");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node013;
+       gSay_End;
+       end_dialogue;
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_RECEIVED) then begin
+       ndebug("case 9");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node013;
+       gSay_End;
+       end_dialogue;
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REPAIRED) then begin
+       ndebug("case 10");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node013;
+       gSay_End;
+       end_dialogue;
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_NEED_PART) then begin
+       ndebug("case 11");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node013;
+       gSay_End;
+       end_dialogue;
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_NEED_PART) then begin
+       ndebug("case 12");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node013;
+       gSay_End;
+       end_dialogue;
+   end
+//begin killap comment out - this has been moved up
+/*   else if (global_var(GVAR_GECKO_ANKH) == ANKH_GIVEN) then begin
+ndebug("case 13");
+       start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node003;
+       gSay_End;
+       end_dialogue;
+   end
+*/
+//end killap comment out
+   else if (local_var(LVAR_brain_friend) == 0) then begin
+   //call Node005;
+   //end
+
+   //else begin
+      ndebug("case 14");
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+        call Node005;
+      gSay_End;
+      end_dialogue;
+   end
+   else begin
+      ndebug("case 15");
+      floater(700);
+   end
+   //adding following code in case no conditions met...NOT IN SCRIPT
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   GC_REP_ADJUST(-10)
+   inc_general_rep(REP_BONUS_GC_BRAIN_DEAD);
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   display_msg(mstr(100));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(101));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+procedure combat begin
+   call Node998;
+end
+
+/*
+procedure Node910 begin
+   if (global_var(GVAR_VAULT_PLANT_STATUS) == PLANT_REPAIRED) then
+      call Node008;
+   else
+      call Node007;
+end
+*/
+
+procedure Node940 begin
+
+   //added check by killap
+   if (dude_item_count(PID_TALISMAN)) then begin
+   end else begin
+      item:=create_object(PID_TALISMAN,0,0);
+      add_obj_to_inven(dude_obj,item);
+   end
+   set_local_var(LVAR_brain_friend,1);
+   set_global_var(GVAR_GECKO_ANKH, ANKH_GIVEN);
+   GC_REP_ADJUST(5)
+   //place in pc inventory
+   call Node023;
+
+end
+
+procedure Node995 begin
+   if (dude_charisma >= 7) then begin
+       TopReact;
+   end
+   else begin
+       BottomReact;
+   end
+end
+
+procedure Node996 begin
+   BottomReact;
+end
+
+procedure Node997 begin
+   if (dude_charisma >= 8) then
+       call Node004;
+   else
+       call Node005;
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   floater(110);
+   call combat;
+end
+
+procedure Node002 begin
+//save # of times here to determine float
+
+   //added by killap
+   set_local_var(LVAR_times_here_002, local_var(LVAR_times_here_002) + 1);
+   if (local_var(LVAR_times_here_002) == 1) then begin
+      floater(120);
+   end
+   else if (local_var(LVAR_times_here_002) == 2) then begin
+      floater(121);
+   end
+   else if (local_var(LVAR_times_here_002) == 3) then begin
+      floater(122);
+   end
+   else if (local_var(LVAR_times_here_002) > 3) then begin
+      floater(123);
+      call Node998;
+   end
+   //end added
+
+   /*k := random(1,4);
+   if (k == 1) then floater(120);
+   else if (k == 2) then floater(121);
+   else if (k == 3) then floater(122);
+   else if (k == 4) then floater(123);*/
+
+end
+
+procedure Node003 begin
+   ndebug("GVAR_VAULT_GECKO_PLANT: " + global_var(GVAR_VAULT_GECKO_PLANT));
+   if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_ANALYZED) then begin
+      Reply(602);
+      NOption(606,Node037,004);
+      if ( (local_var(LVAR_Node_045) == 1) and ( (global_var(GVAR_VAULT_PLANT_STATUS) < PLANT_OPTIMIZED) or (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_OPTIMIZED) ) and (global_var(GVAR_VAULT_SERVANT) < SERVANT_BRAIN_AGREEMENT) ) then
+         NOption(188,Node046,004);
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_RECEIVED) then begin
+      Reply(601);
+      NOption(605,Node036,004);
+      if ( (local_var(LVAR_Node_045) == 1 ) and ( (global_var(GVAR_VAULT_PLANT_STATUS) < PLANT_OPTIMIZED) or (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_OPTIMIZED) ) and (global_var(GVAR_VAULT_SERVANT) < SERVANT_BRAIN_AGREEMENT) ) then
+         NOption(188,Node046,004);
+   //end added
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) > PLANT_NEED_PART) then begin //added by killap
+      call Node013;
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_NEED_PART) then begin
+      if(random(1,2) == 2) then
+         Reply(603);
+      else
+         Reply(600);
+      //NOption(607,Node041,004);
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == 0) then begin
+      Reply(600);
+      NOption(604,Node030,004);
+   end
+   //added by killap - expansion
+   //if ( (town_known(AREA_VAULT_VILLAGE) == MARK_STATE_VISITED) and (global_var(GVAR_VAULT_SERVANT) < SERVANT_FINISHED_DIPLOMATIC) and ( (global_var(GVAR_QUEST_VAULT_VILLAGE) >= VILLAGE_QUEST_GET_GUNS) and (global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_DELIVERED_GUNS) ) ) then
+   //   NOption(706,Node046,004);
+   //end added
+   NOption(610,Node999,004);
+end
+
+procedure Node004 begin
+   Reply(140);
+   NOption(141,Node008,004);
+   NOption(142,Node008,004);
+   NOption(143,Node008,004);
+   //added by killap - expansion pack
+      //if (global_var(GVAR_VAULT_VILLAGE_MOLERAT_ORIGIN_KNOWN) == GAVE_AMULET ) then
+   if (mole_rat_origin_amulet) then
+      NOption(145,Node008,004);
+   //end
+   BOption(144,Node008,004);
+end
+
+procedure Node005 begin
+   Reply(150);
+   GOption(151,Node011,004);
+   NOption(152,Node026,004);
+  //BOption(153,Node005,004);
+   NOption(154,Node007,004);
+end
+
+procedure Node006 begin
+   Reply(160);
+   NOption(161,Node031,004);
+end
+
+procedure Node007 begin
+  Reply(170);
+  NOption(171,Node026,004);
+  GOption(172,Node011,004);
+end
+
+procedure Node008 begin
+   Reply(180);
+   //added by killap - expansion pack
+    //if ((global_var(GVAR_VAULT_SERVANT) == 6) and (global_var(GVAR_QUEST_VAULT_SERVANT) == 1)) then
+
+   //NOTE - GO HERE - killap
+   if patrols_attacked_by_rats_cond then  // Lujo/phobos2077
+      NOption(183,Node044,004);
+   //end
+   else
+      NOption(181,Node009,004); //edit by killap - was Node005
+   BOption(182,Node024,004);
+end
+
+procedure Node009 begin
+   Reply(190);
+   NOption(191,Node010,004);
+end
+
+procedure Node010 begin
+   Reply(200);
+   NOption(201,Node005,004); //edit by killap - was Node011
+end
+
+procedure Node011 begin
+   if (local_var(LVAR_11_before) == 0) then begin
+      set_local_var(LVAR_11_before,1);
+      Reply(210);
+   end
+   else begin
+      Reply(211);
+   end
+   
+   //added by killap - expansion pack
+   if patrols_attacked_by_rats_cond then // Lujo/phobos2077
+      NOption(706,Node044,004);
+   else
+      NOption(212,Node940,001);
+   NOption(213,Node024,001);
+   NOption(214,Node009,001);
+end
+
+procedure Node012 begin
+   set_local_var(LVAR_times_here, local_var(LVAR_times_here) + 1);
+   if (local_var(LVAR_times_here) == 1) then begin
+      floater(220);
+   end
+   else if (local_var(LVAR_times_here) == 2) then begin
+      floater(221);
+   end
+   else if (local_var(LVAR_times_here) > 2) then begin
+      floater(222);
+      call Node998;
+   end
+end
+
+procedure Node013 begin
+   set_local_var(LVAR_Brain_Plan,1); //added by killap
+   if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_ANALYZED) then begin
+      Reply(632); //You've had the Reactor Data disk analyzed...
+      NOption(637,Node037,004);
+
+      //added by killap - expansion pack
+      //if ((global_var(GVAR_VAULT_SERVANT) == 6) and (global_var(GVAR_QUEST_VAULT_SERVANT) == 1)) then
+      if patrols_attacked_by_rats_cond then // Lujo/phobos2077
+      begin
+         if (local_var(LVAR_Node_045) == 1) then
+            NOption(188,Node046,004);
+         else if (global_var(GVAR_VAULT_SERVANT) < SERVANT_BRAIN_AGREEMENT) then
+            NOption(706,Node044,004);
+      end
+      //end
+
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_RECEIVED) then begin
+      Reply(631); // You've received the Reactor Data disk, now...
+      NOption(636,Node036,004);
+
+      //added by killap - expansion pack
+      //if ((global_var(GVAR_VAULT_SERVANT) == 6) and (global_var(GVAR_QUEST_VAULT_SERVANT) == 1)) then
+      if patrols_attacked_by_rats_cond then // Lujo/phobos2077
+      begin
+         if (local_var(LVAR_Node_045) == 1) then
+            NOption(188,Node046,004);
+         else if (global_var(GVAR_VAULT_SERVANT) < SERVANT_BRAIN_AGREEMENT) then
+            NOption(706,Node044,004);
+      end
+      //end
+
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REPAIRED) then begin
+      Reply(230);
+      NOption(639,Node015,004);
+      NOption(641,Node015,004);
+      
+      //added by killap - expansion pack
+      //if ((global_var(GVAR_VAULT_SERVANT) == 6) and (global_var(GVAR_QUEST_VAULT_SERVANT) == 1)) then
+      if patrols_attacked_by_rats_cond then // Lujo/phobos2077
+      begin
+         if (local_var(LVAR_Node_045) == 1) then
+            NOption(188,Node046,004);
+         else if (global_var(GVAR_VAULT_SERVANT) < SERVANT_BRAIN_AGREEMENT) then
+            NOption(706,Node044,004);
+      end
+      //end
+
+   end
+   //moved up by killap
+   //else if (global_var(GVAR_VAULT_GECKO_PLANT) == 0) then begin
+   else if ( (local_var(LVAR_Herebefore) == 0) or (global_var(GVAR_VAULT_GECKO_PLANT) == 0) ) then begin
+      set_local_var(LVAR_Herebefore,1);
+      Reply(630); //The actions I propose...
+      NOption(635,Node030,004);
+   end
+   //end move
+   //else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_NEED_PART) then begin
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REPAIRED) then begin //edit by killap
+      Reply(633); //Our Atomic Reactor needs a part...
+      NOption(638,Node041,004);
+   end
+
+
+   //COMMENT OUT BY KILLAP -- lets see what this does
+   /*else if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REPAIRED) then begin
+      Reply(611);
+   end
+   if (global_var(GVAR_GECKO_ANKH) != ANKH_GIVEN) then
+      NOption(232,Node016,004);
+   if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_NEED_PART) then//RECENT CHANGE TO FIX BRAIN
+      NOption(234,Node026,004);
+   NOption(233,Node999,004);*/
+
+   giq_option(4, SCRIPT_GCBRAIN, 232, Node016, NEUTRAL_REACTION);
+   giq_option(4, SCRIPT_GCBRAIN, 233, Node999, NEUTRAL_REACTION);
+   if (global_var(GVAR_VAULT_GECKO_PLANT) < 5) then
+      giq_option(4, SCRIPT_GCBRAIN, 234, Node026, NEUTRAL_REACTION);
+
+end
+
+procedure Node014 begin
+   Reply(240);
+   //added by killap - expansion
+   if patrols_attacked_by_rats_cond then // Lujo/phobos2077
+      NOption(706,Node044,004);
+   //end added
+   NOption(241,Node999,004);
+   BOption(242,Node999,004);
+end
+
+procedure Node015 begin
+   from_15:=1;
+   set_global_var(GVAR_QUEST_OPTIMIZE_POWER_PLANT, OPTIMIZE_POWER_PLANT_ACCEPT);
+   Reply(250);
+   NOption(251,Node018,004);
+   NOption(252,Node018,004);
+end
+
+procedure Node016 begin
+   rat_ruling:=1;
+   Reply(260);
+   NOption(261,Node017,004);
+end
+
+procedure Node017 begin
+   set_local_var(LVAR_Brain_Plan,1); //added by killap
+   if (rat_ruling) then begin
+      rat_ruling:=0;
+      Reply(270);
+      //added by killap
+      if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_NEED_PART) then
+         NOption(654,Node030,004);
+      //end added
+      else if ( (local_var(LVAR_Node_045) == 0) and (town_known(AREA_VAULT_VILLAGE) == MARK_STATE_VISITED) and ((global_var(GVAR_VAULT_SERVANT) < SERVANT_BRAIN_AGREEMENT) and ( (global_var(GVAR_QUEST_VAULT_VILLAGE) >= VILLAGE_QUEST_GET_GUNS) and (global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_DELIVERED_GUNS) )) or ( ((global_var(GVAR_VAULT_SERVANT) < SERVANT_BRAIN_AGREEMENT) and ( (global_var(GVAR_QUEST_VAULT_VILLAGE) >= VILLAGE_QUEST_SPEAK_WITH_COUNCIL) and (global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_FINISHED_DIPLOMATIC) ))) ) then
+         NOption(185,Node045,004);
+   end else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_ANALYZED) then begin
+      Reply(652);
+      NOption(656,Node037,004);
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_RECEIVED) then begin
+      Reply(651);
+      NOption(655,Node036,004);
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REPAIRED) then begin
+      Reply(230);
+      NOption(659,Node015,004);
+      //NOption(641,Node015,004);
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_NEED_PART) then begin
+      Reply(653);
+      NOption(658,Node041,004);
+   end
+   else if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_NEED_PART) then begin
+      Reply(270);
+      NOption(654,Node030,004);
+   end
+//   Reply(270);
+//   NOption(271,Node015,004); comment out by killap - should not ask this yet.
+   if (local_var(LVAR_brain_friend) == 0) then
+      NOption(272,Node999,004);
+end
+
+procedure Node018 begin
+   if (from_15 == 1) then begin  //killap's fix: changed from (from_15)
+      from_15:=0;
+      if (global_var(GVAR_GECKO_ECON_DISK) >= ECON_DISK_RECEIVED) then begin //killap's fix: changed from 'GIVEN'
+         Reply(283);
+         NOption(284,Node999,004);
+      end
+      else begin
+         Reply(280);
+      end
+   end
+   else
+      Reply(281);
+
+   NOption(282,Node019,004);
+end
+
+procedure Node019 begin
+   Reply(290);
+   if (local_var(LVAR_brain_friend) == 0) then
+      NOption(291,Node021,004);
+   NOption(292,Node020,004);
+end
+
+procedure Node020 begin
+//major edit by killap
+   if ((global_var(GVAR_GECKO_ECON_DISK) < ECON_DISK_RECEIVED)) then begin
+      set_global_var(GVAR_GECKO_ECON_DISK, ECON_DISK_GET_DISK); //added by killap
+      if ((global_var(GVAR_QUEST_VAULT_SERVANT) > 0) and (dude_item_count(PID_TALISMAN))) then begin //edit by killap - expansion
+         Reply(300);
+         NOption(717,Node940,004);
+      end else if (local_var(LVAR_brain_friend) == 0) then begin
+         Reply(300);
+         NOption(301,Node011,004);
+      end else begin
+         NMessage(300);
+      end
+   end
+   else begin
+         Reply(716); //edit by killap - was 701
+         NOption(717,Node999,004); //edit by killap - was 702
+         NOption(718,Node999,004); //edit by killap - was 703
+   end
+//end major edit by killap
+end
+
+procedure Node021 begin
+   Reply(310);
+   NOption(311,Node020,004);
+   BOption(312,Node999,004);
+end
+
+procedure Node022 begin
+   Reply(320);
+   NOption(321,Node033,004);
+   GOption(322,Node034,004); //need to delete cheezy poofs from inven
+end
+
+procedure Node023 begin
+   Reply(330);
+
+   //added by killap
+   if (local_var(LVAR_Brain_Plan) == 0) then
+      if ( (global_var(GVAR_VAULT_PLANT_STATUS) == PLANT_OPTIMIZED) or (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_OPTIMIZED) ) then
+         NOption(187,Node014,004);
+      else
+         NOption(187,Node017,004);
+   //end added
+   else
+      NOption(331,Node032,004);
+   BOption(332,Node025,004);
+end
+
+procedure Node024 begin
+   Reply(340);
+   BOption(341,Node025,004);
+   NOption(342,Node027,004);
+   BOption(343,Node025,004);
+end
+
+procedure Node025 begin
+   NMessage(350);
+   call combat;
+end
+
+procedure Node026 begin
+   Reply(360);
+   NOption(361,Node028,004);
+end
+
+procedure Node027 begin
+   Reply(370);
+   GOption(371,Node011,004);
+   BOption(372,Node024,004);
+end
+
+procedure Node028 begin
+   Reply(380);
+   NOption(800,Node080,004); // added by Lujo
+   NOption(381,Node029,004);
+end
+
+procedure Node029 begin
+   Reply(390);
+
+   //edit by killap
+   if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REPAIRED) then
+      NOption(391,Node030,004);
+   else
+      NOption(444,Node013,004);
+   //end edit
+
+   //NOption(391,Node030,004);
+end
+
+procedure Node030 begin
+   if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_NEED_PART) then begin
+      ndebug("set part needed");
+      set_global_var(GVAR_VAULT_GECKO_PLANT, PLANT_NEED_PART);
+      set_local_var(LVAR_Brain_Plan,1); //added by killap
+   end else begin
+      ndebug("DIDN'T SET PART NEEDED");
+   end
+   Reply(400);
+   NOption(401,Node006,004);
+   NOption(402,Node031,004);
+end
+
+procedure Node031 begin
+   Reply(410);
+   NOption(411,Node018,004);
+end
+
+procedure Node032 begin
+//killap
+//   if (global_var(GVAR_GECKO_ECON_DISK) < ECON_DISK_RECEIVED) then
+//      set_global_var(GVAR_GECKO_ECON_DISK, ECON_DISK_GET_DISK);
+//killap
+   Reply(420);
+   if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REPAIRED) then
+      NOption(421,Node999,004);
+   else if ((global_var(GVAR_GECKO_ECON_DISK) == ECON_DISK_GET_DISK)) then
+      NOption(4211,Node999,004);
+   NOption(422,Node999,004);
+
+end
+
+procedure Node033 begin
+   Reply(430);
+   BOption(431,Node035,004);
+   GOption(432,Node034,004);
+end
+
+procedure Node034 begin
+  item:=dude_item(PID_CHEEZY_POOFS);
+  rm_obj_from_inven(dude_obj,item);
+  destroy_object(item);
+
+  //wip - killap
+
+   if (global_var(GVAR_GECKO_ANKH) == ANKH_GIVEN) then begin
+      Reply(441);
+      if (global_var(GVAR_VAULT_GECKO_PLANT) >= PLANT_OPTIMIZED) then begin
+         NOption(444,Node014,004);
+      end else begin
+         NOption(444,Node003,004);
+      end
+   end else begin
+      Reply(440);
+      NOption(444,Node005,004);
+   end
+
+
+
+  /*if (global_var(GVAR_VAULT_GECKO_PLANT) >= PLANT_OPTIMIZED) then begin
+     Reply(443);
+     NOption(444,Node014,004);
+  end
+  //RECENT CHANGE TO FIX BRAIN -unlocked by killap
+  //FIND SOLUTION FROM MATT
+  else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REPAIRED) then begin
+     Reply(442);
+     NOption(444,Node013,004);
+  end
+  else if ( (global_var(GVAR_GECKO_ANKH) == ANKH_GIVEN) and (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_NEED_PART) ) then begin
+     Reply(441);
+     NOption(444,Node003,004);
+  end
+  else begin
+     Reply(440);
+     NOption(444,Node011,004);
+  end*/
+
+end
+
+procedure Node035 begin
+   NMessage(450);
+   call combat;
+end
+
+procedure Node036 begin
+   Reply(460);
+   NOption(461,Node015,004);
+   NOption(462,Node999,004);
+end
+
+procedure Node037 begin
+   Reply(463);
+   NOption(462,Node999,004);
+end
+
+procedure Node038 begin
+   Reply(464);
+
+
+   if ((global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_NEED_PART) and (global_var(GVAR_GECKO_ECON_DISK) != ECON_DISK_RECEIVED)) then //killap's fix: added (global_var(GVAR_GECKO_ECON_DISK) != RECEIVED)
+      NOption(465,Node031,004);
+   NOption(466,Node999,004);
+end
+
+procedure Node039 begin
+   Reply(467);
+   NOption(468,Node999,004);
+end
+
+procedure Node040 begin
+   Reply(500);
+   NOption(501,Node999,001);
+end
+
+procedure Node041 begin
+   Reply(504);
+   NOption(505,Node038,004);
+   NOption(506,Node999,004);
+end
+
+procedure Node042 begin
+   Reply(510);
+   NOption(511,Node039,004);
+   NOption(512,Node999,004);
+end
+
+procedure Node043 begin
+   if (local_var(LVAR_43_before) == 0) then begin
+      set_local_var(LVAR_43_before, 1);
+      floater(670);
+   end
+   else begin
+      floater(671);
+   end
+end
+
+//added by killap - expansion pack
+procedure Node044 begin
+  rat_ruling:=1;
+  gsay_reply(SCRIPT_GCBRAIN, 184);
+  if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_OPTIMIZED) then begin
+    giq_option(4, SCRIPT_GCBRAIN, 185, Node045, NEUTRAL_REACTION);
+    giq_option(4, SCRIPT_GCBRAIN, 261, Node017, NEUTRAL_REACTION);
+  end else begin
+    giq_option(4, SCRIPT_GCBRAIN, 185, Node049, NEUTRAL_REACTION);
+  end
+end
+
+procedure Node045
+begin
+  set_local_var(LVAR_Node_045, 1);
+  gsay_reply(SCRIPT_GCBRAIN, 186);
+  if (global_var(GVAR_VAULT_GECKO_PLANT) >= PLANT_REPAIRED) then
+      giq_option(4, SCRIPT_GCBRAIN, 187, Node046, NEUTRAL_REACTION);
+  else if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_NEED_PART) then
+      giq_option(4, SCRIPT_GCBRAIN, 187, Node030, NEUTRAL_REACTION);
+  else
+      giq_option(4, SCRIPT_GCBRAIN, 187, Node050, NEUTRAL_REACTION);
+end
+
+procedure Node046
+begin
+  if (global_var(GVAR_GECKO_ANKH) != ANKH_GIVEN) then
+      set_global_var(GVAR_GECKO_ANKH, ANKH_GIVEN);
+
+
+
+  //if ( (global_var(GVAR_VAULT_PLANT_STATUS) < PLANT_REPAIRED) or (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_REPAIRED) )
+
+
+  if ((local_var(LVAR_Node_045) == 1) and ( (global_var(GVAR_VAULT_PLANT_STATUS) < PLANT_OPTIMIZED) or (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_OPTIMIZED) ) ) then
+  begin
+    set_local_var(LVAR_Node_045,2);
+    gsay_reply(SCRIPT_GCBRAIN, 189);
+    //giq_option(4, SCRIPT_GCBRAIN, 701, Node047, 50);
+    BOption(701,Node047,004);
+    GOption(672,Node048,004);
+  end
+  else
+  begin
+    set_local_var(LVAR_Node_045,2);
+    gsay_reply(SCRIPT_GCBRAIN, 713);
+    giq_option(4, SCRIPT_GCBRAIN, 185, Node049, NEUTRAL_REACTION);
+  end
+end
+
+procedure Node047
+begin
+
+  if (is_success(roll_vs_skill(dude_obj, SKILL_SPEECH, 5))) then
+  begin
+    set_global_var(GVAR_VAULT_SERVANT, SERVANT_BRAIN_AGREEMENT);
+    display_msg(message_str(SCRIPT_GCBRAIN, 705));
+    give_xp(500);
+    //display_msg(message_str(SCRIPT_GENERIC, 100) + 500 + message_str(SCRIPT_GENERIC, 101));
+    gsay_reply(SCRIPT_GCBRAIN, 702);
+    giq_option(4, SCRIPT_GCBRAIN, 703, Node013, NEUTRAL_REACTION);
+    giq_option(4, SCRIPT_GCBRAIN, 704, Node999, NEUTRAL_REACTION);
+  end
+  else
+  begin
+    gsay_reply(SCRIPT_GCBRAIN, 707);
+    giq_option(4, SCRIPT_GCBRAIN, 708, Node013, NEUTRAL_REACTION);
+    giq_option(4, SCRIPT_GCBRAIN, 711, Node999, NEUTRAL_REACTION);
+    if (local_var(8) == 1) then
+      giq_option(4, SCRIPT_GCBRAIN, 710, Node998, NEUTRAL_REACTION);
+    else
+      giq_option(4, SCRIPT_GCBRAIN, 709, Node998, NEUTRAL_REACTION);
+  end
+end
+
+procedure Node048
+begin
+  if (is_success(roll_vs_skill(dude_obj, SKILL_SPEECH, 5))) then
+  begin
+    set_global_var(GVAR_VAULT_SERVANT, SERVANT_BRAIN_AGREEMENT);
+    display_msg(message_str(SCRIPT_GCBRAIN, 705));
+    give_xp(500);
+    gsay_reply(SCRIPT_GCBRAIN, 712);
+    giq_option(4, SCRIPT_GCBRAIN, 703, Node013, NEUTRAL_REACTION);
+    giq_option(4, SCRIPT_GCBRAIN, 704, Node999, NEUTRAL_REACTION);
+  end
+  else
+  begin
+    gsay_reply(SCRIPT_GCBRAIN, 707);
+    giq_option(4, SCRIPT_GCBRAIN, 708, Node013, NEUTRAL_REACTION);
+    giq_option(4, SCRIPT_GCBRAIN, 711, Node999, NEUTRAL_REACTION);
+    if (local_var(8) == 1) then
+      giq_option(4, SCRIPT_GCBRAIN, 710, Node998, NEUTRAL_REACTION);
+    else
+      giq_option(4, SCRIPT_GCBRAIN, 709, Node998, NEUTRAL_REACTION);
+  end
+end
+
+procedure Node049
+begin
+  set_global_var(GVAR_VAULT_SERVANT, SERVANT_BRAIN_AGREEMENT);
+  display_msg(message_str(SCRIPT_GCBRAIN, 705));
+  give_xp(500);
+  gsay_reply(SCRIPT_GCBRAIN, 712);
+  if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_OPTIMIZED) then //added by killap
+      giq_option(4, SCRIPT_GCBRAIN, 714, Node013, NEUTRAL_REACTION);
+  giq_option(4, SCRIPT_GCBRAIN, 715, Node999, NEUTRAL_REACTION);
+end
+
+procedure Node050 begin
+   Reply(719);
+   GOption(720,Node940,004);
+   BOption(721,Node035,004);
+
+end
+//end - killap
+
+// added by Lujo
+procedure Node080 begin
+   mark_EPA_on_map
+   Reply(801);
+   NOption(381, Node029, 004);
+end
+//xxxxxxxxxxxxxxxxxxxx
