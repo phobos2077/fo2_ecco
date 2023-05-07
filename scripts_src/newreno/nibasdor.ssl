@@ -2,6 +2,8 @@
 	Metal doors guarding a bunch of loot at Bishop's
 */
 
+#define SCRIPT_REALNAME "nibasdor"
+
 #define LOCKED_STATUS      STATE_ACTIVE
 #define Crowbar_Bonus      (-3)
 #define Lock_Bonus         (-80)
@@ -12,5 +14,7 @@ import variable bishop_stair_guard_obj;
 
 #define WATCHER_OBJ     bishop_stair_guard_obj
 
-#include "_custom_door.ssl"
-#include "..\headers\NewReno.h"
+// TODO: try to use the new doors.h while keeping the watcher logic
+
+#include "../generic/_custom_door.ssl"
+#include "../headers/newreno.h"

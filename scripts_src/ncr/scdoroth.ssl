@@ -25,16 +25,17 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\ncr1.h"
+#define SCRIPT_REALNAME "scdoroth"
+#include "../headers/define.h"
+#include "../headers/ncr1.h"
 
 #define NAME                    SCRIPT_SCDOROTH
 #define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
-#include "..\headers\ncr.h"
+#include "../headers/ncr.h"
 
 
 /* Standard Script Procedures */
@@ -131,7 +132,7 @@ procedure timed_event_p_proc begin
             waitTime := 1;
             add_timer_event(self_obj, game_ticks(1), CHECK_PLANT_STATE);
          end else begin
-            if (obj_can_see_obj(dude_obj, self_obj) and not is_critter_dead(dude_obj)) then begin
+            if (dude_can_see_self and not is_critter_dead(dude_obj)) then begin
                rm_fixed_timer_event(self_obj, CHECK_PLANT_STATE);
                dialogue_system_enter;
             end else
@@ -159,8 +160,8 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_CITIZEN);
+   set_self_team(TEAM_NCR);
+   set_self_ai(AI_TOUGH_CITIZEN);
 
    add_timer_event(self_obj, game_ticks(1), CHECK_PLANT_STATE);
    if (i_jack_obj != -1 and jack_state != JACK_SURRENDER) then begin
@@ -183,7 +184,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -194,7 +195,7 @@ procedure critter_p_proc begin
             if (tile_distance_objs(self_obj, i_toto_obj) > 3) then begin
                reg_anim_clear(i_toto_obj);
                reg_anim_begin();
-               animate_move_obj_to_tile(i_toto_obj, tile_num_in_direction(self_tile, Random(1, 2), Random(0, 5)), 1);
+               animate_move_obj_to_tile(i_toto_obj, tile_num_in_direction(self_tile, Random(1, 2), Random(0, 5)), ANIMATE_RUN);
                reg_anim_end();
             end
          end
@@ -542,7 +543,7 @@ procedure walkToPos begin
          set_local_var(LVAR_Warped_to_fix, 1);
          reg_anim_clear(self_obj);
          reg_anim_begin();
-         animate_move_to_tile(DOROTHY_FIX_POS);
+         self_walk_to_tile(DOROTHY_FIX_POS);
          reg_anim_end();
       end
    end

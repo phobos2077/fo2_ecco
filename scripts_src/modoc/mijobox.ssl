@@ -2,7 +2,7 @@
 	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
 */
 
-#define EXTRA_HEADER                         "..\headers\Modoc.h"
+#define EXTRA_HEADER                         "../headers/modoc.h"
 
 #define LVAR_Restock_Time                    (1)
 #define LVAR_Restock_Time_Fix                (2) //added by killap
@@ -40,12 +40,12 @@
                                                       end                                                      \
                                                       /* by phobos2077 start */                                \
                                                       check_restock_item(PID_PUMP_PARTS, 1, 2, 25)             \
-				                                      check_restock_item(PID_FLARE, 1, 3, 100)                 \
-				                                      /* end  */                                               \
+                                                      check_restock_item(PID_FLARE, 1, 3, 100)                 \
+                                                      /* end  */                                               \
                                                       set_local_var(LVAR_Restock_Time, (random(2, 3) * ONE_GAME_DAY) + game_time);   \
                                                    end                                                         \
                                                 end                                                         \
                                              end
 
-#include "..\headers\ModMain.h"
-#include "..\GENERIC\ziLocker.ssl"
+#include "../headers/modmain.h"
+#include "../generic/zilocker.ssl"

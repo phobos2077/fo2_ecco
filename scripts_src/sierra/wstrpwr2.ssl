@@ -4,12 +4,13 @@
 
 
 /* Include Files */
-#include "..\headers\define.h"
-#include "..\headers\depolva.h"
+#define SCRIPT_REALNAME "wstrpwr2"
+#include "../headers/define.h"
+#include "../headers/depolvz.h"
 
 #define NAME                    SCRIPT_WSTRPWR2
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -73,6 +74,7 @@ end
 **************************************************************************************/
 
 procedure spatial_p_proc begin
+   // TODO: remember what this does
    // by phobos2077 begin:
    if (cur_map_index == MAP_SIERRA_123 and self_elevation == 0) then begin
       if (map_var(MVAR_Security_Level_1) == 0) then begin
@@ -87,7 +89,7 @@ procedure spatial_p_proc begin
       else
          display_msg(obj_name(source_obj) + "" + mstr(101));
       set_map_var(MVAR_Wire_Tripped,1);
-      set_global_var(GVAR_SIERRA_BASE_SECURITY,SIERRA_SECURITY_ON);
+      sierra_set_security_on;
       set_map_var(MVAR_Security_Level_2,1);
    end
 end

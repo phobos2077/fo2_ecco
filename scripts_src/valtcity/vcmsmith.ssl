@@ -25,14 +25,15 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-//#include "..\headers\<TownName.h>"
+#define SCRIPT_REALNAME "vcmsmith"
+#include "../headers/define.h"
+//#include "../headers/<TownName.h>"
 
 #define NAME                    SCRIPT_VCMSMITH
 #define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
 //#define PID_SMITH_COOL_ITEM             (3)
 
@@ -108,8 +109,8 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_VAULT_CITIZENS);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_PEASANT);
+   set_self_team(TEAM_VAULT_CITIZENS);
+   set_self_ai(AI_PEASANT);
 end
 
 
@@ -122,7 +123,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ( ( ( local_var(LVAR_Hostile) == 2 ) or ( ( global_var( GVAR_ENEMY_VAULT_COURTYARD ) == 1 ) ) ) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ( ( ( local_var(LVAR_Hostile) == 2 ) or ( ( global_var( GVAR_ENEMY_VAULT_COURTYARD ) == 1 ) ) ) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -183,7 +184,7 @@ procedure talk_p_proc begin
        gSay_End;
        end_dialogue;
    end
-   else if ((global_var(GVAR_VAULT_PLOW_PROBLEM) == PLOW_SCREW_SMITH) or (TOWN_REPUTATION < -15 and not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality)))) then begin // edit by killap - added not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))
+   else if ((global_var(GVAR_VAULT_PLOW_PROBLEM) == PLOW_SCREW_SMITH) or town_rep_is_hated) then begin
        floater(random(143,144));
    end
    else begin
@@ -361,7 +362,7 @@ procedure Node014 begin
 end
 
 procedure Node014a begin
-   item_caps_adjust( dude_obj, 150 );
+   dude_caps_adjust( 150);
    set_local_var(LVAR_Plow_Date,game_time);
    set_global_var(GVAR_VAULT_PLOW_PROBLEM,PLOW_HELP_CASH);
    call Node008a;
@@ -413,10 +414,10 @@ end
 procedure Node020 begin
    variable item;
 
-   item:=create_object(PID_DESERT_EAGLE_EXT_MAG,0,0);
+   item:=create_object(PID_DESERT_EAGLE_EXT_MAG,0,0); // pbs: changed from regular Desert Eagle
    add_mult_objs_to_inven(dude_obj,item,1);
    item:=create_object(PID_44_MAGNUM_JHP,0,0);
-   add_mult_objs_to_inven(dude_obj,item,2);
+   add_mult_objs_to_inven(dude_obj,item,2); // pbs: increased from 1
    set_global_var(GVAR_VAULT_PLOW_PROBLEM,PLOW_FIXED);
 
    set_global_var(GVAR_TOWN_REP_VAULT_CITY,(global_var(GVAR_TOWN_REP_VAULT_CITY) - 3*REP_TOWN_SCREW_SMITHS));

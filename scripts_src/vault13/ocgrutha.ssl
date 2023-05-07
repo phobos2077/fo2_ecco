@@ -30,16 +30,17 @@
 #define NPC_REACTION_TYPE       REACTION_TG
 #define NPC_REACTION_VAR        18 /* same as thief variable */
 
-#include "..\headers\define.h"
-#include "..\headers\vault13.h"
+#define SCRIPT_REALNAME "ocgrutha"
+#include "../headers/define.h"
+#include "../headers/vault13.h"
 
 #define NAME                    SCRIPT_OCGRUTHA
 #define TOWN_REP_VAR            GVAR_TOWN_REP_VAULT_13
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
-#include "..\headers\v13.h"
+#include "../headers/v13.h"
 
 
 /* Standard Script Procedures */
@@ -131,7 +132,7 @@ import variable i_matt_obj;
 import variable i_gruthar_obj;
 
 #define GRUTHAR_NO_LIKE_YOU    \
-   ( (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) and ( (bad_critter_reaction) or ( check_general_rep < 0 ) or (global_var(TOWN_REP_VAR) < 0) or (has_rep_childkiller) or ( has_rep_berserker ) ) ) //edit by killap - added (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality)))
+   (bad_critter_reaction or self_rep_negative or town_rep_negative or has_rep_childkiller or has_rep_berserker)
 
 #define STARTTILE 14695
 
@@ -181,15 +182,15 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_VAULT13);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_VAULT_DEATHCLAW);
+   set_self_team(TEAM_VAULT13);
+   set_self_ai(AI_VAULT_DEATHCLAW);
    if (map_var(MVAR_Dude_See) == 0) then
       set_obj_visibility(self_obj, OBJ_INVIS);
 
    //set_local_var(LVAR_Last_Matt_Obj, i_matt_obj);
 
    geck_container := tile_contains_pid_obj(GECK_LOCKER, GECK_LOCKER_ELE, PID_LOCKER_CLEAN_LEFT);
-   debug_msg("OCGRUTHA: checkgeck: " + checkGeck);
+   ndebug("checkgeck: " + checkGeck);
 end
 
 
@@ -201,19 +202,19 @@ procedure checkFunction begin
    if (dude_is_sneaking) then begin
       if (checkCounter >= checkThresh) then begin
          rollRes := roll_vs_skill(dude_obj, SKILL_SNEAK, -30);
-         debug_msg("Roll Res : " + rollRes);
+         ndebug("Roll Res : " + rollRes);
          if (is_success(rollRes)) then begin
-            debug_msg("SUCCESS");
+            ndebug("SUCCESS");
             checkCounter := 0;
             if (is_critical(rollRes)) then begin
-               debug_msg("CRITICAL SUCCESS");
+               ndebug("CRITICAL SUCCESS");
                checkThresh += 10;
             end
             retval := 0;
          end else retval := 1;
      end else retval := 0;
   end else retval := 1;
-  debug_msg("RETVAL " + retval);
+  ndebug("RETVAL " + retval);
   return retval;
 end
 
@@ -229,7 +230,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if (((local_var(LVAR_Hostile) != 0) or map_var(MVAR_Vault13_Enemy)) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if (((local_var(LVAR_Hostile) != 0) or map_var(MVAR_Vault13_Enemy)) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        set_map_var(MVAR_Vault13_Enemy, 1);
        self_attack_dude;
@@ -239,12 +240,12 @@ procedure critter_p_proc begin
    dstatus := GETDSTATUS;
    if (dstatus == GDREFUSE or dstatus == GDIDIOT or dstatus == 0) then begin
       if (local_var(LVAR_Talked_Gruthar) == 0) then begin
-         if (obj_can_see_obj(self_obj, dude_obj)) then begin
+         if (self_can_see_dude) then begin
             if (tile_distance_objs(self_obj, dude_obj) < 9) then
                doTalking := 1;
          end
       end else begin
-         if (obj_can_see_obj(self_obj, dude_obj)) then
+         if (self_can_see_dude) then
             doTalking := checkFunction;
       end
 
@@ -259,7 +260,7 @@ procedure critter_p_proc begin
       if (not anim_busy(self_obj)) then begin
          reg_anim_clear(self_obj);
          reg_anim_begin();
-         animate_move_to_tile(STARTTILE);
+         self_walk_to_tile(STARTTILE);
          reg_anim_end();
       end
    end
@@ -327,7 +328,7 @@ procedure talk_p_proc begin
       end_dialogue;
    end else if (local_var(LVAR_Talked_Gruthar) == 1) then begin
       if (local_var(LVAR_Personal_Enemy)) then begin
-         if (obj_can_see_obj(self_obj,dude_obj)) then begin
+         if (self_can_see_dude) then begin
             floater(202);
             set_local_var(LVAR_Hostile,2);
          end
@@ -383,7 +384,7 @@ procedure talk_p_proc begin
    end
 
    if (local_var(LVAR_Teleport) == 1) then begin
-      debug_msg("Should be TELEPORTING YEAH");
+      ndebug("Should be TELEPORTING YEAH");
       set_local_var(LVAR_Teleport, 0);
       load_map(MAPSTR_V13ENT, 5);
       //MAP_VAULT_13_ENTRANCE
@@ -499,11 +500,11 @@ procedure Node002 begin
    if (dude_iq > 3 and local_var(LVAR_Playing_Dumb) == 0) then begin
       Reply(113);
       set_local_var(LVAR_Playing_Dumb, 1);
-      NOption(MORESTRING, Node001, 0);
+      NOption(MORESTRING, Node001, 1);
    end else if (dude_iq > 3 and local_var(LVAR_Playing_Dumb) == 1) then begin
       Reply(114);
       SETDSTATUS(GDIDIOT);
-      NOption(MORESTRING, Node030, 0);
+      NOption(MORESTRING, Node030, 1);
    end else begin
       SETDSTATUS(GDTRUEIDIOT);
       Reply(115);
@@ -676,7 +677,7 @@ end
 procedure Node017 begin
    Reply(USEDUDENAME(177, 233));
    NOption(178, Node999, 4);
-   if (obj_is_carrying_obj_pid(dude_obj, VOICEREPAIROBJ) > 0) then
+   if (dude_item_count(VOICEREPAIROBJ) > 0) then
       GOption(179, Node029, 4);
 end
 
@@ -688,7 +689,7 @@ procedure Node018 begin
    set_global_var(GVAR_V13_COMP_QST, 2);   // Seraph - unlocked by killap
    inc_general_rep(REP_BONUS_V13_FIX_COMPUTER);
    inc_vault13_rep(REP_HERO_V13_FIX_COMPUTER);
-   give_xp(3000); // pbs: lowered from 5000
+   give_xp(3000); // pbs: lowered from 5000 (EXP_FIX_COMPUTER)
 
    Reply(181);
    if (local_var(LVAR_Give_Geck) == 1) then
@@ -789,17 +790,17 @@ end
 
 procedure Node030 begin
    Reply(225);
-   NOption(ENDSTRING, NodeTeleport, 0);
+   NOption(ENDSTRING, NodeTeleport, 1);
 end
 
 procedure Node031 begin
    Reply(226);
-   NOption(227, NodeTeleport, 0);
+   NOption(227, NodeTeleport, 1);
 end
 
 procedure Node032 begin
    Reply(229);
-   NOption(230, NodeTeleport, 0);
+   NOption(230, NodeTeleport, 1);
 end
 
 procedure Node033 begin
@@ -816,7 +817,7 @@ end
 
 procedure checkGeck begin
    if (geck_container) then begin
-      return obj_carrying_pid_obj(geck_container, GECKOBJ);
+      return get_item(geck_container, GECKOBJ);
    end
    return 0;
 end

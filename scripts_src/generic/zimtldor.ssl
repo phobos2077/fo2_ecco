@@ -1,0 +1,37 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/******************************************************************************************
+        Item: Wood Door
+        Locked: NO
+        Trapped: NO
+        Closing: YES
+        Description: This is a generic locked and trapped wooden door.
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: September 26, 1997
+
+           Updated:
+******************************************************************************************/
+
+/* Include Files */
+#define SCRIPT_REALNAME "zimtldor"
+
+/* Sets whether the door is locked or trapped or closing */
+#ifndef LOCKED_STATUS
+   #define LOCKED_STATUS                STATE_INACTIVE
+#endif
+#define TRAPPED_STATUS                  STATE_INACTIVE
+#define DOOR_STATUS                     STATE_METAL
+#define LOCK_STATUS                     STATE_STANDARD_LOCK
+#define CLOSE_STATUS                    STATE_DOOR_NOCLOSE
+
+/* Door close distance */
+#define DOOR_CLOSE_DIST                 (3)
+
+#include "../headers/doors.h"

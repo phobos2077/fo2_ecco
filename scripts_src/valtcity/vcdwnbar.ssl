@@ -25,14 +25,15 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-//#include "..\headers\<TownName.h>"
+#define SCRIPT_REALNAME "vcdwnbar"
+#include "../headers/define.h"
+//#include "../headers/<TownName.h>"
 
 #define NAME                    SCRIPT_VCDWNBAR
 #define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
 
 /* Standard Script Procedures */
@@ -128,15 +129,15 @@ variable KickOutTemp                   :=0;
 #define kick_out_of_vault_city      set_global_var(GVAR_VAULT_CITIZEN,CITIZEN_KICKED_OUT);\
                                     set_global_var(GVAR_VAULT_CITIZENSHIP,0);\
                                     set_global_var(GVAR_DAY_PASS_SHOWN, 0);\
-                                    DayPass_KickOutCount := obj_is_carrying_obj_pid(dude_obj, PID_DAY_PASS);\
+                                    DayPass_KickOutCount := dude_item_count(PID_DAY_PASS);\
                                     if( DayPass_KickOutCount > 0 ) then begin\
-                                       DayPass_KickOutObj := obj_carrying_pid_obj(dude_obj, PID_DAY_PASS);\
+                                       DayPass_KickOutObj := dude_item(PID_DAY_PASS);\
                                        KickOutTemp := rm_mult_objs_from_inven(dude_obj, DayPass_KickOutObj, DayPass_KickOutCount );\
                                        destroy_object(DayPass_KickOutObj); \
                                     end\
-                                    CitizenPapers_KickOutCount := obj_is_carrying_obj_pid(dude_obj, PID_FAKE_CITIZENSHIP);\
+                                    CitizenPapers_KickOutCount := dude_item_count(PID_FAKE_CITIZENSHIP);\
                                     if( CitizenPapers_KickOutCount > 0 ) then begin\
-                                       CitizenPapers_KickOutObj := obj_carrying_pid_obj(dude_obj, PID_FAKE_CITIZENSHIP);\
+                                       CitizenPapers_KickOutObj := dude_item(PID_FAKE_CITIZENSHIP);\
                                        KickOutTemp := rm_mult_objs_from_inven(dude_obj, CitizenPapers_KickOutObj, CitizenPapers_KickOutCount );\
                                        destroy_object(CitizenPapers_KickOutObj); \
                                     end\
@@ -154,22 +155,22 @@ procedure map_enter_p_proc begin
    From_15 := 0;
    From_33 := 0;
 
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_VAULT_CITIZENS);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_CITIZEN);
+   set_self_team(TEAM_VAULT_CITIZENS);
+   set_self_ai(AI_TOUGH_CITIZEN);
 
    if( not( is_loading_game ) ) then begin
       if( ( game_time_hour > 200 ) and ( game_time_hour < 700 ) ) then begin
          // I'm SLEEPING!!!!
          move_to( self_obj, 25488, 0 );
          critter_attempt_placement( self_obj, 25488, 0 );
-         animate_rotation( 2 );
+         self_rotate(2);
          add_timer_event( self_obj, game_ticks(random(30,40)), 1 );
       end
       else begin
          // I'm WORKING!!!!
          move_to( self_obj, 26306, 0 );
          critter_attempt_placement( self_obj, 26306, 0 );
-         animate_rotation( 5 );
+         self_rotate(5);
          add_timer_event( self_obj, game_ticks(random(30,40)), 1 );
       end
    end
@@ -178,7 +179,7 @@ end
 procedure timed_event_p_proc begin
    if( fixed_param == 1 ) then begin
       if( ( not( combat_is_initialized ) ) and
-          ( obj_can_see_obj( self_obj, dude_obj ) ) ) then begin
+          ( self_can_see_dude ) ) then begin
          if( ( game_time_hour > 200 ) and ( game_time_hour < 700 ) ) then
             floater(258);
          else if( Fallout2_enclave_destroyed ) then
@@ -205,7 +206,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ( ( (local_var(LVAR_Hostile) == 2) or ( global_var( GVAR_ENEMY_VAULT_CITY ) == 1 ) ) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ( ( (local_var(LVAR_Hostile) == 2) or ( global_var( GVAR_ENEMY_VAULT_CITY ) == 1 ) ) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -363,7 +364,7 @@ procedure Node008 begin
    NOption(120, Node014, 004);
    NOption(121, Node017, 004);
    if( (global_var(GVAR_VAULT_BOOZE_SMUGGLING) == BOOTLEG_ASSIGNED) and
-       ( (obj_is_carrying_obj_pid( dude_obj, PID_BEER ) >= 10) and (obj_is_carrying_obj_pid( dude_obj, PID_BOOZE ) >= 10) ) ) then
+       ( (dude_item_count( PID_BEER) >= 10) and (dude_item_count( PID_BOOZE) >= 10) ) ) then
       NOption(122, Node032, 004);
    NOption(123, Node999, 004);
 end
@@ -407,7 +408,7 @@ procedure Node012 begin
    NOption(138, Node014, 004);
    NOption(139, Node017, 004);
    if( (global_var(GVAR_VAULT_BOOZE_SMUGGLING) == BOOTLEG_ASSIGNED) and
-       ( (obj_is_carrying_obj_pid( dude_obj, PID_BEER ) >= 10) and (obj_is_carrying_obj_pid( dude_obj, PID_BOOZE ) >= 10) ) ) then
+       ( (dude_item_count( PID_BEER) >= 10) and (dude_item_count( PID_BOOZE) >= 10) ) ) then
       NOption(140, Node032, 004);
    NOption(141, Node999, 004);
 end
@@ -441,17 +442,17 @@ procedure Node014 begin
 
    if( global_var(GVAR_VAULT_BOOZE_SMUGGLING) == BOOTLEG_UNKNOWN ) then
       NOption(147, Node014a, 004);
-   if( item_caps_total( dude_obj ) >= 10 ) then begin
+   if( dude_caps >= 10) then begin
       NOption(148, Node014b, 004);
       NOption(149, Node014b, 004);
       NOption(150, Node014b, 004);
    end
-   if( item_caps_total( dude_obj ) >= 3 ) then begin
+   if( dude_caps >= 3) then begin
       NOption(151, Node014c, 004);
       NOption(152, Node015, 004);
    end
    NOption(153, Node017, 004);
-   if( item_caps_total( dude_obj ) < 3 ) then
+   if( dude_caps < 3) then
       NOption(154, Node999, 004);
    else
       NOption(155, Node999, 004);
@@ -465,7 +466,7 @@ procedure Node014a begin
 end
 
 procedure Node014b begin
-   item_caps_adjust( dude_obj, -10 );
+   dude_caps_adjust( -10);
    gfade_out(600);
    game_time_advance( ONE_GAME_MINUTE * 3 );
    gfade_in(600);
@@ -473,7 +474,7 @@ procedure Node014b begin
 end
 
 procedure Node014c begin
-   item_caps_adjust( dude_obj, -3 );
+   dude_caps_adjust( -3);
    gfade_out(600);
    game_time_advance( ONE_GAME_MINUTE * 3 );
    gfade_in(600);
@@ -492,7 +493,7 @@ procedure Node015 begin
 end
 
 procedure Node015a begin
-   item_caps_adjust( dude_obj, -3 );
+   dude_caps_adjust( -3);
    gfade_out(600);
    // Half an hour passes.
    game_time_advance(1800);
@@ -505,17 +506,17 @@ procedure Node016 begin
 
    if( global_var(GVAR_VAULT_BOOZE_SMUGGLING) == BOOTLEG_UNKNOWN ) then
       NOption(162, Node014a, 004);
-   if( item_caps_total( dude_obj ) >= 10 ) then begin
+   if( dude_caps >= 10) then begin
       NOption(163, Node014b, 004);
       NOption(164, Node014b, 004);
       NOption(165, Node014b, 004);
    end
-   if( item_caps_total( dude_obj ) >= 3 ) then begin
+   if( dude_caps >= 3) then begin
       NOption(166, Node014c, 004);
       NOption(167, Node015, 004);
    end
    NOption(168, Node017, 004);
-   if( item_caps_total( dude_obj ) < 3 ) then
+   if( dude_caps < 3) then
       NOption(169, Node999, 004);
    else
       NOption(170, Node999, 004);
@@ -530,7 +531,7 @@ procedure Node017 begin
    NOption(175, Node022, 004);
    NOption(176, Node014, 004);
    if( (global_var(GVAR_VAULT_BOOZE_SMUGGLING) == BOOTLEG_ASSIGNED) and
-       ( (obj_is_carrying_obj_pid( dude_obj, PID_BEER ) >= 10) and (obj_is_carrying_obj_pid( dude_obj, PID_BOOZE ) >= 10) ) ) then
+       ( (dude_item_count( PID_BEER) >= 10) and (dude_item_count( PID_BOOZE) >= 10) ) ) then
       NOption(177, Node032, 004);
    NOption(178, Node999, 004);
 end
@@ -650,7 +651,7 @@ procedure Node028 begin
 end
 
 procedure Node029 begin
-   Reply(261); 
+   Reply(261); //changed by Lujo
 
    NOption(235, Node030, 004);
    NOption(236, Node017, 004);
@@ -669,7 +670,7 @@ procedure Node031 begin
    Reply(240);
 
    if( (global_var(GVAR_VAULT_BOOZE_SMUGGLING) == BOOTLEG_ASSIGNED) and
-       ( (obj_is_carrying_obj_pid( dude_obj, PID_BEER ) >= 10) and (obj_is_carrying_obj_pid( dude_obj, PID_BOOZE ) >= 10) ) ) then
+       ( (dude_item_count( PID_BEER) >= 10) and (dude_item_count( PID_BOOZE) >= 10) ) ) then
       NOption(241, Node032, 004);
    NOption(242, Node017, 004);
    NOption(243, Node999, 004);
@@ -682,12 +683,12 @@ procedure Node032 begin
    set_global_var( GVAR_VAULT_BOOZE_SMUGGLING, BOOTLEG_DELIVERED );
    give_xp(EXP_BOOTLEG_DELIVERED);
    set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_DELIVERED_BOOZE ) );
-   item_caps_adjust( dude_obj, 500 ); // pbs: raised from 300
+   dude_caps_adjust(500); // pbs: raised from 300
    // Remove 10 beers from inventory
-   DrinkObj := obj_carrying_pid_obj(dude_obj, PID_BEER);
+   DrinkObj := dude_item(PID_BEER);
    Dummy := rm_mult_objs_from_inven(dude_obj, DrinkObj, 10 );
    // Remove 10 booze from inventory
-   DrinkObj := obj_carrying_pid_obj(dude_obj, PID_BOOZE);
+   DrinkObj := dude_item(PID_BOOZE);
    Dummy := rm_mult_objs_from_inven(dude_obj, DrinkObj, 10 );
 
    Reply(244);

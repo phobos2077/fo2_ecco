@@ -15,12 +15,13 @@
 */
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "ncdrgdlr"
+#include "../headers/define.h"
 #define NAME                    SCRIPT_NCDRGDLR
 #define TOWN_REP_VAR            GVAR_TOWN_REP_NEW_RENO
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
-#include "..\headers\NewReno.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/newreno.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -56,13 +57,12 @@ procedure Node002;
 
 /* Local variables which do not need to be saved between map changes. */
 
+// by phobos2077:
 #define get_money_pool     (local_var(2))
 #define set_money_pool(x)  set_local_var(2, x)
-//#define get_money_pool     ((local_var(LVAR_Flags) bwand 0xFFFF0000) / 0x10000)
-//#define set_money_pool(x)  set_local_var(LVAR_Flags, local_var(LVAR_Flags) bwor (x * 0x10000))
 
 
-procedure start begin 
+procedure start begin
 end
 
 procedure timed_event_p_proc begin
@@ -82,8 +82,8 @@ end
 procedure map_enter_p_proc begin
    if (is_loading_game == false) then begin
       if (map_first_run) then begin
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NEW_RENO_DRUG_DEALER);
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_DRUG_DEALER);
+         set_self_team(TEAM_NEW_RENO_DRUG_DEALER);
+         set_self_ai(AI_DRUG_DEALER);
       end
       nr_add_timer_event_rand(self_obj, 25, 35, float_param);
    end
@@ -120,7 +120,7 @@ procedure talk_p_proc begin
    CheckKarma;
    GetReaction;
    ReactToLevel; //added by killap
-   
+
    // setup bartering values before going into dialog
    if (enclave_destroyed) then begin
       gdialog_set_barter_mod(-50); //killap's fix: was 50
@@ -163,7 +163,7 @@ procedure Node998 begin
    set_hostile;
 end
 procedure Node997 begin
-   
+
    //added by killap
    if (enclave_destroyed) then begin
       gdialog_mod_barter(-50);

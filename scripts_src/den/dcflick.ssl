@@ -15,12 +15,13 @@
 */
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "dcflick"
+#include "../headers/define.h"
 #define NAME                    SCRIPT_DCFLICK
 #define TOWN_REPUTATION         GVAR_TOWN_REP_THE_DEN
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
-#include "..\headers\Den.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/den.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -95,8 +96,8 @@ procedure map_enter_p_proc begin
    flick_obj := self_obj;
    if (is_loading_game == false) then begin
       if (map_first_run) then begin
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_THE_DEN);
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_MERCHANT);
+         set_self_team(TEAM_THE_DEN);
+         set_self_ai(AI_LONER_CITIZEN);
       end
    end
 end
@@ -162,7 +163,7 @@ end
 procedure destroy_p_proc begin
    flick_obj := 0;
    set_flick_dead;
-   // reduce loot: all armors and all weapons except shotgun
+   // phobos2077: reduce loot: all armors and all weapons except shotgun
    restock_amt := 0;
    while (inven_ptr(den_flick_box_obj, restock_amt) != 0) do begin
       restock_obj := inven_ptr(den_flick_box_obj, restock_amt);

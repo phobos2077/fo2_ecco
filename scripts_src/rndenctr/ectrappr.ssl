@@ -6,11 +6,12 @@
    have been designed.
 */
 
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "ectrappr"
+#include "../headers/define.h"
 
 #define NAME                    SCRIPT_ECTRAPPR
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 procedure start;
 procedure critter_p_proc;
@@ -69,16 +70,11 @@ procedure timed_event_p_proc begin
 end
 
 procedure map_enter_p_proc begin
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RND_TRAPPER);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_GENERIC_GUARDS);
-   
-   //added by killap - fix for game_time going negative after 7 years
-   if (((game_time) < 0) and (local_var(LVAR_Restock_Time_Fix) == 0)) then begin
-      set_local_var(LVAR_Restock_Time, game_time - 1);
-      set_local_var(LVAR_Restock_Time_Fix, 1);
-   end
-   //end added   
-   
+   set_self_team(TEAM_RND_TRAPPER);
+   set_self_ai(AI_GENERIC_GUARDS);
+
+   restock_fix
+
    if (local_var(LVAR_Restock_Time) < game_time) then begin
       check_restock_item(PID_GECKO_PELT, 5, 7, 80)
       check_restock_item(PID_GOLDEN_GECKO_PELT, 1, 5, 60)
@@ -87,7 +83,7 @@ procedure map_enter_p_proc begin
 end
 
 procedure critter_p_proc begin
-   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -97,7 +93,7 @@ procedure critter_p_proc begin
          if (not anim_busy(self_obj)) then begin
             reg_anim_clear(self_obj);
             reg_anim_begin();
-            animate_move_to_tile(tile_num_in_direction(self_tile, Run_Away_From_Dude_Dir, 6));
+            self_walk_to_tile(tile_num_in_direction(self_tile, Run_Away_From_Dude_Dir, 6));
             reg_anim_end();
          end
       end else begin
@@ -115,7 +111,6 @@ end
 procedure talk_p_proc begin
    if (local_var(LVAR_Herebefore) == 0) then begin
       start_gdialog(NAME,self_obj,4,-1,-1);
-      gdialog_set_barter_mod(-70);
       gSay_Start;
          call Node001;
       gSay_End;
@@ -144,7 +139,7 @@ end
 
 procedure look_at_p_proc begin
    script_overrides;
-   if (get_critter_stat(self_obj,STAT_gender) == GENDER_MALE) then
+   if (self_is_male) then
        display_msg(mstr(100));
    else
        display_msg(mstr(200));
@@ -198,8 +193,8 @@ end
 
 procedure NodeBuyNormal begin
    if (dude_caps >= normal_price) then begin
-      item_caps_adjust(dude_obj, -normal_price);
-      item_caps_adjust(self_obj, normal_price);
+      dude_caps_adjust(-normal_price);
+      self_caps_adjust(normal_price);
       rm_obj_from_inven(self_obj, gecko_pelt);
       add_obj_to_inven(dude_obj, gecko_pelt);
       call Node003;
@@ -210,8 +205,8 @@ end
 
 procedure NodeBuyGolden begin
    if (dude_caps >= golden_price) then begin //edit was normal_price --edit by killap
-      item_caps_adjust(dude_obj, -golden_price);
-      item_caps_adjust(self_obj, golden_price);
+      dude_caps_adjust(-golden_price);
+      self_caps_adjust(golden_price);
       rm_obj_from_inven(self_obj, gold_gecko_pelt);
       add_obj_to_inven(dude_obj, gold_gecko_pelt);
       call Node003;
@@ -221,15 +216,16 @@ procedure NodeBuyGolden begin
 end
 
 procedure Node003 begin
-  /*
+   // phobos2077: replaced dialog-based barter with normal barter
+   /*
    variable amt;
    variable sub;
    variable gecko_pelt_inv_msg; // added by killap (expansion)
-   
-   gecko_pelt := obj_carrying_pid_obj(self_obj, PID_GECKO_PELT);
-   gold_gecko_pelt := obj_carrying_pid_obj(self_obj, PID_GOLDEN_GECKO_PELT);
-   gecko_pelt_num := obj_is_carrying_obj_pid(self_obj, PID_GECKO_PELT);
-   gecko_gold_pelt_num := obj_is_carrying_obj_pid(self_obj, PID_GOLDEN_GECKO_PELT);
+
+   gecko_pelt := self_item(PID_GECKO_PELT);
+   gold_gecko_pelt := self_item(PID_GOLDEN_GECKO_PELT);
+   gecko_pelt_num := self_item_count(PID_GECKO_PELT);
+   gecko_gold_pelt_num := self_item_count(PID_GOLDEN_GECKO_PELT);
 
    amt := has_skill(self_obj, SKILL_BARTER) - has_skill(dude_obj, SKILL_BARTER);
 
@@ -253,13 +249,13 @@ procedure Node003 begin
 
    // added by killap - expansion
    if (gecko_pelt_num == 0 and gecko_gold_pelt_num > 0) then
-      gecko_pelt_inv_msg := mstr(140) + gecko_gold_pelt_num + mstr(113);
+      gecko_pelt_inv_msg := mstr(140) + gecko_gold_pelt_num + " " + mstr(113);
    else if (gecko_pelt_num > 0 and gecko_gold_pelt_num == 0) then
-      gecko_pelt_inv_msg := mstr(141) + gecko_pelt_num + mstr(112);
+      gecko_pelt_inv_msg := mstr(141) + gecko_pelt_num + " " + mstr(112);
    else if (gecko_pelt_num == 0 and gecko_gold_pelt_num == 0) then
       gecko_pelt_inv_msg := mstr(142);
    else
-      gecko_pelt_inv_msg := mstr(111) + gecko_pelt_num + mstr(112) + " " + gecko_gold_pelt_num + mstr(113);
+      gecko_pelt_inv_msg := mstr(111) + " " + gecko_pelt_num + " " + mstr(112) + " " + gecko_gold_pelt_num + " " + mstr(113);
    // end added
 
    Reply(gecko_pelt_inv_msg);
@@ -284,7 +280,7 @@ procedure Node006a begin
    fadeout(1);
    playerSoldSex := 1;
    if ( (dude_spouse_is_female) or (dude_spouse_is_male) ) then
-      debug_msg("you are married.");
+      ndebug("you are married.");
    else
       up_sex_status;
    call Node999;

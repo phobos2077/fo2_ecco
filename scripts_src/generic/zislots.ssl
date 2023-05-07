@@ -15,10 +15,11 @@
 */
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "zislots"
+#include "../headers/define.h"
 #define NAME                              SCRIPT_ZISLOTS
-#include "..\headers\command.h"
-#include "..\headers\NewReno.h"
+#include "../headers/command.h"
+#include "../headers/newreno.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -155,7 +156,7 @@ procedure Node020; //added by killap - expansion pack
 #define slot_tube_size                    (local_var(LVAR_Caps))
 #define lowest_jackpot_payoff             (level_6_payoff_mult * low_bet * coin_mult)
 
-#define do_slot_payoff(x)                 item_caps_adjust(dude_obj, x);                                          \
+#define do_slot_payoff(x)                 dude_caps_adjust(x);                                          \
                                           set_local_var(LVAR_Caps_Restocked_Time, game_time + restock_time);      \
                                           set_local_var(LVAR_Caps, slot_tube_size - x);                           \
                                           if ((x>=lowest_jackpot_payoff) and (coin_mult==coin_max)) then begin    \
@@ -166,7 +167,7 @@ procedure Node020; //added by killap - expansion pack
                                           end else if (x == 0) then begin                                         \
                                              play_sfx("looser");                                                  \
                                           end                                                                     \
-                                          debug_msg("\nSlot money remaining == "+local_var(LVAR_Caps));
+                                          ndebug("\nSlot money remaining == "+local_var(LVAR_Caps));
 
 #define block_play_check                  ((slot_tube_size <= 0) or (won_jackpot) or (dude_caps < low_bet))
 
@@ -230,7 +231,7 @@ variable obj_near_machine := 0;
       obj_near_machine := tile_get_next_critter(tile_num_in_direction(self_tile, 3, 1), self_elevation, 0);
    end
    if (obj_near_machine != 0) then begin
-      if ((obj_near_machine != dude_obj) and (obj_in_party(obj_near_machine) == false) and (obj_is_visible_flag(obj_near_machine))) then begin //added obj_is_visible_flag - killap
+      if ((obj_near_machine != dude_obj) and (obj_in_party(obj_near_machine) == false) and (is_visible(obj_near_machine))) then begin //added obj_is_visible_flag - killap
          obj_near_machine := 1;
       end
    end
@@ -242,7 +243,7 @@ variable obj_near_machine := 0;
       dialogue_system_enter;
    end
    //end edit
-   
+
    /*if (obj_near_machine == 0) then begin
       dialogue_system_enter;
    end else begin
@@ -334,9 +335,9 @@ variable the_roll2;
       // goto display results node
       call Node002;
    end else begin
-      debug_msg("\nPLAY BLOCKED");
-      debug_msg("\n   slot_tube_size == "+slot_tube_size);
-      debug_msg("\n   won_jackpot == "+won_jackpot);
+      ndebug("\nPLAY BLOCKED");
+      ndebug("\n   slot_tube_size == "+slot_tube_size);
+      ndebug("\n   won_jackpot == "+won_jackpot);
    end
 end
 // related to the number of coins inserted
@@ -533,7 +534,7 @@ procedure Node003 begin
    if ((dude_caps < low_bet) and (won_jackpot == false)) then begin
       slot_reply(2175);
       //added by killap - expansion pack
-      if (global_var(GVAR_TOASTER_SLOTMACHINES) == 1) then          
+      if (global_var(GVAR_TOASTER_SLOTMACHINES) == 1) then
          slot_option(5000, Node020, 001);
       //end added
       slot_option(2176,Node999,001);
@@ -634,7 +635,7 @@ end
 //added by killap - expansion pack
 procedure Node020 begin
    if (get_critter_stat(dude_obj, 6) * 10 > random(0,99)) then begin
-      item_caps_adjust(dude_obj, machine_starting_caps);                                         
+      dude_caps_adjust(machine_starting_caps);
       slot_reply(5001);
       slot_option(5002,Node999,001);
    end else begin

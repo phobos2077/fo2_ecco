@@ -25,16 +25,17 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\ncr1.h"
+#define SCRIPT_REALNAME "scofjack"
+#include "../headers/define.h"
+#include "../headers/ncr1.h"
 
 #define NAME                    SCRIPT_SCOFJACK
 #define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
-#include "..\headers\ncr.h"
+#include "../headers/ncr.h"
 
 
 /* Standard Script Procedures */
@@ -194,8 +195,8 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD);
+   set_self_team(TEAM_NCR);
+   set_self_ai(AI_TOUGH_GUARD);
    if (is_loading_game == FALSE) then
       call checkLoadPos;
 end
@@ -210,7 +211,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -307,7 +308,7 @@ procedure destroy_p_proc begin
       add_obj_to_inven(self_obj, create_object(PID_PLASTIC_EXPLOSIVES, 0, 0));
    end
 
-   debug_msg("SCOFJACK: in jacks death 2: " + global_var(GVAR_NCR_MIRA_STATE));
+   ndebug("in jacks death 2: " + global_var(GVAR_NCR_MIRA_STATE));
 end
 
 /* Look_at_p_proc gets called any time that the player passes the cursor over any object.
@@ -377,7 +378,7 @@ end
 
 procedure Node004 begin
    Reply(118);
-   if ((has_skill(dude_obj, SKILL_CONVERSANT) > 79) or has_trait(TRAIT_PERK,dude_obj,PERK_speaker)) then
+   if ((has_skill(dude_obj, SKILL_SPEECH) > 79) or dude_perk(PERK_speaker)) then
       NOption(119, Node005, 4);
    BOption(120, Node002a999, 1);
 end
@@ -451,7 +452,7 @@ end
 procedure Node016 begin
    set_jack_state(JACK_SURRENDER);
    inc_general_rep(REP_BONUS_NCR_JACK_TALK_OUT);
-   give_xp(1000); // reduced by phobos2077 (was 6000)
+   give_xp(1000); // reduced by phobos2077 (was 6000 = EXP_TALK_JACK_OUT)
    inc_ncr_rep(REP_HERO_NCR_TALKED_JACK);
    warpJack := 1;
    Reply(151);
@@ -482,10 +483,10 @@ procedure putDownExplosive begin
       move_to(self_obj, JACK_CRAZY_TILE, 0);
       reg_anim_clear(self_obj);
       reg_anim_begin();
-      animate_rotation(2);
+      self_rotate(2);
       reg_anim_end();
-      if (obj_is_carrying_obj_pid(self_obj, PID_DESERT_EAGLE)) then begin
-         wield_obj(obj_carrying_pid_obj(self_obj, PID_DESERT_EAGLE));
+      if (self_item_count(PID_DESERT_EAGLE)) then begin
+         wield_obj(self_item(PID_DESERT_EAGLE));
       end
    end
 //   obj := create_object(PID_PLASTIC_EXPLOSIVES, self_tile, 0);
@@ -510,10 +511,10 @@ procedure getTimeTile begin
    Ttime := POWER_PLANT_TIME;
 
    if (bittime bwand Ttime) then begin
-      debug_msg("SCOFJACK: returning pos power for jack");
+      ndebug("returning pos power for jack");
       return POS_POWER;
    end else begin
-      debug_msg("SCOFJACK: return pos police for Jack");
+      ndebug("return pos police for Jack");
       return POS_POLICE;
    end
 end
@@ -523,28 +524,28 @@ procedure animateToTarget begin
       walking := 1;
       reg_anim_clear(self_obj);
       reg_anim_begin();
-      animate_move_to_tile(POS_INTER);
+      self_walk_to_tile(POS_INTER);
       reg_anim_end();
    end else if (walking == 1) then begin
       if (self_tile == POS_INTER) then begin
          walking := 2;
          reg_anim_clear(self_obj);
          reg_anim_begin();
-         animate_move_to_tile(target_tile);
+         self_walk_to_tile(target_tile);
          reg_anim_end();
       end else if (not anim_busy(self_obj) and self_tile != target_tile) then begin
          reg_anim_clear(self_obj);
          reg_anim_begin();
-         animate_move_to_tile(POS_INTER);
+         self_walk_to_tile(POS_INTER);
          reg_anim_end();
-         debug_msg("SCOFJACK: told to walk again.");
+         ndebug("told to walk again.");
       end
    end else if (walking == 2) then begin
       if (self_tile == target_tile) then begin
          walking := 0;
       end
    end else if (walking == 0 and self_tile == target_tile) then begin
-      animate_rotation(3);
+      self_rotate(3);
    end
 end
 
@@ -581,9 +582,9 @@ end
 
 procedure goCrazy begin
    move_to(self_obj, JACK_CRAZY_TILE, 0);
-   animate_rotation(3); // Seraph's Fix: animate_rotation always affects self_obj and only takes 1 arg. Thanks Rob!
+   self_rotate(3); // Seraph's Fix: animate_rotation always affects self_obj and only takes 1 arg. Thanks Rob!
    set_jack_state(JACK_ALARM);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR_CRAZY_JACK);
+   set_self_team(TEAM_NCR_CRAZY_JACK);
    add_timer_event(self_obj, 0, CHECK_STATE);
 end
 

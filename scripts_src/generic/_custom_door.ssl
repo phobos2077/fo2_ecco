@@ -4,11 +4,13 @@
 
 
 /* Include Files */
-#include "..\headers\define.h"
+#include "../headers/define.h"
+
+#define SCRIPT_REALNAME "zimtldor"
 
 #define NAME                    SCRIPT_DOOR
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 /* Defines and Macros */
 

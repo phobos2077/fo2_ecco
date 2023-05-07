@@ -19,12 +19,13 @@
 
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "iimine"
+#include "../headers/define.h"
 
 #define NAME                    SCRIPT_SPRTRP0
 #define CUR_SCRIPT              SCRIPT_IIMINE
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 #define TRAP_BONUS                      (-25)
 #define PERCEPTION_BONUS                (-4)
@@ -33,8 +34,8 @@
 #define TRAP_EXP                        EXP_TRAPS_NORMAL
 #define TRAP_TIME                       (0)             // In Seconds
 
-#define MIN_DMG                         (20)
-#define MAX_DMG                         (45)
+#define MIN_DMG                         (20) // pbs from 10
+#define MAX_DMG                         (45) // pbs from 20
 #define DAMAGE_TYPE                     DMG_explosive_dam
 
 #define TRAP_LVAR                       LVAR_Mine_Status
@@ -64,14 +65,14 @@ procedure damage_p_proc begin
    variable Trap;
 
    if( ( local_var( LVAR_Trap_Exploded ) == 0 ) and ( local_var(TRAP_LVAR) == 0 ) ) then begin
-      if (tile_contains_obj_pid(tile_num(self_obj),elevation(self_obj),ART_TRAP_VISIBLE)) then begin
-         debug_msg("Destroying Visible Trap");
-         destroy_object(tile_contains_pid_obj(tile_num(self_obj),elevation(self_obj),ART_TRAP_VISIBLE));
-         debug_msg("Destroyed Visible Trap");
+      if (tile_contains_obj_pid(self_tile,self_elevation,ART_TRAP_VISIBLE)) then begin
+         ndebug("Destroying Visible Trap");
+         destroy_object(tile_contains_pid_obj(self_tile,self_elevation,ART_TRAP_VISIBLE));
+         ndebug("Destroyed Visible Trap");
       end
-      Trap:=create_object(ART_TRAP_EXPLODED,tile_num(self_obj),elevation(self_obj));
+      Trap:=create_object(ART_TRAP_EXPLODED,self_tile,self_elevation);
 
-      explosion( tile_num( self_obj ), elevation( self_obj ), 1 );
+      explosion( self_tile, self_elevation, 1 );
       critter_dmg(source_obj,random(MIN_DMG,MAX_DMG),(DMG_normal_dam BWOR DMG_BYPASS_ARMOR BWOR DMG_NOANIMATE));
 
       set_local_var(LVAR_Trap_Exploded,1);
@@ -87,7 +88,7 @@ procedure spatial_p_proc begin
 
    if (obj_type(source_obj) == 1) then begin
 
-       Range:=get_critter_stat(source_obj,STAT_pe) + PERCEPTION_BONUS;
+       Range:=get_perception(source_obj) + PERCEPTION_BONUS;
        Range_Mod:=Range - (tile_distance_objs(self_obj,source_obj)*DIST_BONUS);
 
        if ((tile_distance_objs(self_obj,source_obj) <= Range) and
@@ -102,7 +103,7 @@ procedure spatial_p_proc begin
 
                set_local_var(LVAR_Trap_Found,1);
                reg_anim_clear(source_obj);
-               Trap:=create_object_sid(ART_TRAP_VISIBLE,tile_num(self_obj),elevation(self_obj),CUR_SCRIPT);
+               Trap:=create_object_sid(ART_TRAP_VISIBLE,self_tile,self_elevation,CUR_SCRIPT);
 
                if (is_critical(Detection_Roll)) then begin
                    if (source_obj == dude_obj) then
@@ -123,30 +124,30 @@ procedure spatial_p_proc begin
        if ( (tile_distance_objs(self_obj,source_obj) == 0) and
             (local_var(LVAR_Trap_Exploded) == 0) and
             (local_var(TRAP_LVAR) == 0) and
-            ( not( tile_contains_obj_pid(tile_num(self_obj),elevation(self_obj),ART_TRAP_DISARMED ) ) ) and
-            ( not( tile_contains_obj_pid(tile_num(self_obj),elevation(self_obj),ART_TRAP_EXPLODED ) ) ) ) then begin
+            ( not( tile_contains_obj_pid(self_tile,self_elevation,ART_TRAP_DISARMED ) ) ) and
+            ( not( tile_contains_obj_pid(self_tile,self_elevation,ART_TRAP_EXPLODED ) ) ) ) then begin
 
            //game_ui_disable;
 
-           debug_msg("Set off the Trap!");
+           ndebug("Set off the Trap!");
            //Projectile:=create_object(PROJECTILE_WEAPON,INITIAL_TILE,elevation(self_obj));
            //Face_Critter(source_obj,Projectile);
-           if (tile_contains_obj_pid(tile_num(self_obj),elevation(self_obj),ART_TRAP_VISIBLE)) then begin
-               debug_msg("Destroying Visible Trap");
-               destroy_object(tile_contains_pid_obj(tile_num(self_obj),elevation(self_obj),ART_TRAP_VISIBLE));
-               debug_msg("Destroyed Visible Trap");
+           if (tile_contains_obj_pid(self_tile,self_elevation,ART_TRAP_VISIBLE)) then begin
+               ndebug("Destroying Visible Trap");
+               destroy_object(tile_contains_pid_obj(self_tile,self_elevation,ART_TRAP_VISIBLE));
+               ndebug("Destroyed Visible Trap");
            end
-           Trap:=create_object(ART_TRAP_EXPLODED,tile_num(self_obj),elevation(self_obj));
+           Trap:=create_object(ART_TRAP_EXPLODED,self_tile,self_elevation);
 
            //added by killap
-           if ((source_obj == dude_obj) and (has_trait(TRAIT_PERK,dude_obj,PERK_light_step_perk)) and (random(0,1) == 1)) then
-               debug_msg("Used Light Step.");
+           if ((source_obj == dude_obj) and (dude_perk(PERK_light_step_perk)) and (random(0,1) == 1)) then
+               ndebug("Used Light Step.");
            else begin
-               explosion( tile_num( self_obj ), elevation( self_obj ), 1 );
+               explosion( self_tile, self_elevation, 1 );
                critter_dmg(source_obj,random(MIN_DMG,MAX_DMG),(DMG_normal_dam BWOR DMG_BYPASS_ARMOR BWOR DMG_NOANIMATE));
            end
            //end added by killap
-           
+
            set_local_var(LVAR_Trap_Exploded,1);
            set_local_var(TRAP_LVAR,1);
 
@@ -165,10 +166,10 @@ procedure use_skill_on_p_proc begin
        if (source_obj == dude_obj) then begin
            if (is_success(Traps_Roll)) then begin
                //Trap:=create_object_sid(ART_TRAP_DISARMED,tile_num(self_obj),elevation(self_obj),CUR_SCRIPT);
-               Trap:=create_object(ART_TRAP_DISARMED,tile_num(self_obj),elevation(self_obj)); // edit by killap
+               Trap:=create_object(ART_TRAP_DISARMED,self_tile,self_elevation); // edit by killap
                set_local_var(LVAR_Trap_Exploded,1);
                set_local_var(TRAP_LVAR,1);
-               display_msg(message_str(SCRIPT_GENERIC,102));
+               display_msg(g_mstr(102));
                if (local_var(LVAR_Gave_Exp) == 0) then begin
                    set_local_var(LVAR_Gave_Exp,1);
                    give_xp(TRAP_EXP);
@@ -177,28 +178,28 @@ procedure use_skill_on_p_proc begin
            else if (is_critical(Traps_Roll)) then begin
                set_local_var(LVAR_Trap_Exploded,1);
                set_local_var(TRAP_LVAR,1);
-               display_msg(message_str(SCRIPT_GENERIC,104));
+               display_msg(g_mstr(104));
                //for some reason this code segment causes issue - killap
-               /*if (tile_contains_obj_pid(tile_num(self_obj),elevation(self_obj),ART_TRAP_VISIBLE)) then begin
-                   debug_msg("Destroying Visible Trap");
-                   destroy_object(tile_contains_pid_obj(tile_num(self_obj),elevation(self_obj),ART_TRAP_VISIBLE));
-                   debug_msg("Destroyed Visible Trap");
+               /*if (tile_contains_obj_pid(self_tile,self_elevation,ART_TRAP_VISIBLE)) then begin
+                   ndebug("Destroying Visible Trap");
+                   destroy_object(tile_contains_pid_obj(self_tile,self_elevation,ART_TRAP_VISIBLE));
+                   ndebug("Destroyed Visible Trap");
                end*/
                //Trap:=create_object_sid(ART_TRAP_EXPLODED,tile_num(self_obj),elevation(self_obj),CUR_SCRIPT);
-               Trap:=create_object(ART_TRAP_EXPLODED,tile_num(self_obj),elevation(self_obj)); //edit by killap
-               explosion( tile_num( self_obj ), elevation( self_obj ), 1 );
+               Trap:=create_object(ART_TRAP_EXPLODED,self_tile,self_elevation); //edit by killap
+               explosion( self_tile, self_elevation, 1 );
                critter_dmg(source_obj,random(MIN_DMG,MAX_DMG),(DMG_normal_dam BWOR DMG_BYPASS_ARMOR BWOR DMG_NOANIMATE));
            end
            else begin
-               display_msg(message_str(SCRIPT_GENERIC,103));
+               display_msg(g_mstr(103));
            end
        end
        else begin
            if (is_success(Traps_Roll)) then begin
                //Trap:=create_object_sid(ART_TRAP_DISARMED,tile_num(self_obj),elevation(self_obj),CUR_SCRIPT);
-               Trap:=create_object(ART_TRAP_DISARMED,tile_num(self_obj),elevation(self_obj)); //edit by killap
+               Trap:=create_object(ART_TRAP_DISARMED,self_tile,self_elevation); //edit by killap
                set_local_var(TRAP_LVAR,1);
-               display_msg(obj_name(source_obj)+message_str(SCRIPT_GENERIC,105));
+               display_msg(obj_name(source_obj)+g_mstr(105));
                if (local_var(LVAR_Gave_Exp) == 0) then begin
                    set_local_var(LVAR_Gave_Exp,1);
                    give_xp(TRAP_EXP);
@@ -207,20 +208,20 @@ procedure use_skill_on_p_proc begin
            else if (is_critical(Traps_Roll)) then begin
                set_local_var(LVAR_Trap_Exploded,1);
                set_local_var(TRAP_LVAR,1);
-               display_msg(obj_name(source_obj)+message_str(SCRIPT_GENERIC,107));
+               display_msg(obj_name(source_obj)+g_mstr(107));
                //for some reason this code segment causes issue - killap
-               /*if (tile_contains_obj_pid(tile_num(self_obj),elevation(self_obj),ART_TRAP_VISIBLE)) then begin
-                   debug_msg("Destroying Visible Trap");
-                   destroy_object(tile_contains_pid_obj(tile_num(self_obj),elevation(self_obj),ART_TRAP_VISIBLE));
-                   debug_msg("Destroyed Visible Trap");
+               /*if (tile_contains_obj_pid(self_tile,self_elevation,ART_TRAP_VISIBLE)) then begin
+                   ndebug("Destroying Visible Trap");
+                   destroy_object(tile_contains_pid_obj(self_tile,self_elevation,ART_TRAP_VISIBLE));
+                   ndebug("Destroyed Visible Trap");
                end*/
                //Trap:=create_object_sid(ART_TRAP_EXPLODED,tile_num(self_obj),elevation(self_obj),CUR_SCRIPT);
-               Trap:=create_object(ART_TRAP_EXPLODED,tile_num(self_obj),elevation(self_obj)); //edit by killap
-               explosion( tile_num( self_obj ), elevation( self_obj ), 1 );
+               Trap:=create_object(ART_TRAP_EXPLODED,self_tile,self_elevation); //edit by killap
+               explosion( self_tile, self_elevation, 1 );
                critter_dmg(source_obj,random(MIN_DMG,MAX_DMG),(DMG_normal_dam BWOR DMG_BYPASS_ARMOR BWOR DMG_NOANIMATE));
            end
            else begin
-               display_msg(obj_name(source_obj)+message_str(SCRIPT_GENERIC,106));
+               display_msg(obj_name(source_obj)+g_mstr(106));
            end
        end
    end
@@ -229,7 +230,7 @@ end
 procedure look_at_p_proc begin
    script_overrides;
    display_msg(mstr(102));
-   debug_msg("Looking At the Trap");
+   ndebug("Looking At the Trap");
 end
 
 procedure description_p_proc begin

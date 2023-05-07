@@ -25,14 +25,14 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\vault13.h"
-#include "..\headers\updatmap.h"
+#define SCRIPT_REALNAME "vault13"
+#include "../headers/define.h"
+#include "../headers/vault13.h"
+#include "../headers/updatmap.h"
 
 #define NAME                    SCRIPT_VAULT13
 
-#include "..\headers\command.h"
-
+#include "../headers/command.h"
 #define EXP_FOUND_V13  (1000) // pbs: lowered from 2000
 
 export variable i_matt_obj;

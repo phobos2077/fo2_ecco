@@ -17,11 +17,12 @@
 
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "abdeathc"
+#include "../headers/define.h"
 
 #define NAME                    SCRIPT_ABDEATHC
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -85,7 +86,7 @@ procedure critter_p_proc begin
    if (not anim_busy(self_obj)) then begin
       reg_anim_clear(self_obj);
       reg_anim_begin();
-      animate_move_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
+      self_walk_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
       reg_anim_end();
    end
 end
@@ -144,7 +145,7 @@ procedure use_skill_on_p_proc begin
 end
 
 procedure map_enter_p_proc begin
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_DEATHCLAW);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_GENERIC_DEATH_CLAW);
+   set_self_team(TEAM_DEATHCLAW);
+   set_self_ai(AI_GENERIC_DEATH_CLAW);
    starttile := self_tile;
 end

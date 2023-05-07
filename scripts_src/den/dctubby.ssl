@@ -15,15 +15,16 @@
 */
 
 /* Include Files */
-#include "..\headers\define.h"
-#include "..\headers\den.h"
+#define SCRIPT_REALNAME "dctubby"
+#include "../headers/define.h"
+#include "../headers/den.h"
 
 #define NAME                        SCRIPT_DCTUBBY
 #define TOWN_REP_VAR                GVAR_TOWN_REP_THE_DEN
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
-#include "..\headers\denbus1.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/denbus1.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -78,8 +79,8 @@ procedure map_enter_p_proc begin
    tubby_obj := self_obj;
    if (is_loading_game == false) then begin
       if (map_first_run) then begin
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_DEN_TUBBYS);
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_STORE_OWNER);
+         set_self_team(TEAM_DEN_TUBBYS);
+         set_self_ai(AI_STORE_OWNER);
          set_local_var(LVAR_Home_Tile, self_tile);
          set_local_var(LVAR_Home_Rotation, self_cur_rot);
       end
@@ -92,13 +93,13 @@ procedure critter_p_proc begin
          self_attack_dude;
       end
    end else if (self_tile != local_var(LVAR_Home_Tile)) then begin
-      animate_move_to_tile(local_var(LVAR_Home_Tile));
+      self_walk_to_tile(local_var(LVAR_Home_Tile));
    end else if (self_cur_rot != local_var(LVAR_Home_Rotation)) then begin
-      animate_rotation(local_var(LVAR_Home_Rotation));
+      self_rotate(local_var(LVAR_Home_Rotation));
    end
    /*
    set_map_var(MVAR_Den_Tubby_Tile_Num,self_tile);
-   if ((obj_can_see_obj(self_obj,dude_obj)) and (local_var(LVAR_Hostile) == 2)) then begin
+   if ((self_can_see_dude) and (local_var(LVAR_Hostile) == 2)) then begin
       set_local_var(LVAR_Hostile,1);
       self_attack_dude;
    end else if (petey_said_help) then begin
@@ -112,9 +113,9 @@ procedure critter_p_proc begin
    end else if (critter_is_fleeing(self_obj)) then begin
       Flee_From_Dude
    end else if (self_tile != local_var(LVAR_Home_Tile)) then begin
-      animate_move_to_tile(local_var(LVAR_Home_Tile));
+      self_walk_to_tile(local_var(LVAR_Home_Tile));
    end else if (self_cur_rot != local_var(LVAR_Home_Rotation)) then begin
-      animate_rotation(local_var(LVAR_Home_Rotation));
+      self_rotate(local_var(LVAR_Home_Rotation));
    end
    */
 end
@@ -133,18 +134,18 @@ end
 
 procedure talk_p_proc begin
    script_overrides;
-   
+
    if (local_var(LVAR_Penalty) > 0) then //added by killap
       gdialog_set_barter_mod(30);
-                                 
-                                 
+
+
    move_obj_inven_to_obj(self_obj,generic_temp_box);
    move_obj_inven_to_obj(den_tubby_box_obj,self_obj);
    GetReaction;
    ReactToLevel; //added by killap
    start_gdialog(NAME,self_obj,4,-1,-1);
    gSay_Start;
-      if (dude_is_stupid) then begin
+      if (dude_is_stupid_talk) then begin
          call Node007;
       end else if ((hostile) or (REP_ENEMY_DEN) or (mom_attacked) or (mom_dead)) then begin
          call Node001;
@@ -172,7 +173,7 @@ end
 procedure destroy_p_proc begin
    tubby_obj := 0;
    set_tubby_dead;
-   // reduce loot: 50% of items
+   // phobos2077: reduce loot: 50% of items
    restock_amt := 0;
    while (inven_ptr(den_tubby_box_obj, restock_amt) != 0) do begin
       restock_obj := inven_ptr(den_tubby_box_obj, restock_amt);
@@ -236,8 +237,8 @@ end
 procedure Node993 begin
    // offer $100 for drug info
    if (dude_caps >= 100) then begin
-      item_caps_adjust(self_obj,100);
-      item_caps_adjust(dude_obj,-100);
+      self_caps_adjust(100);
+      dude_caps_adjust(-100);
       call Node009;
    end else begin
       Reply(192);
@@ -252,9 +253,9 @@ procedure Node992 begin
       NOption(191,Node006,004);
       NOption(193,Node999,004);
    end else begin
-      if (is_success(roll_vs_skill(dude_obj,SKILL_CONVERSANT,0))) then begin
-         item_caps_adjust(self_obj,50);
-         item_caps_adjust(dude_obj,-50);
+      if (is_success(roll_vs_skill(dude_obj,SKILL_SPEECH,0))) then begin
+         self_caps_adjust(50);
+         dude_caps_adjust(-50);
          call Node009;
       end else begin
          Reply(194);
