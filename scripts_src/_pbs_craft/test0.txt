@@ -1,0 +1,566 @@
+# CRAFTING SCHEMATICS:
+
+# FOOD
+
+[ITEM]
+627                              # Fish Soup
+pcx/items/stew1.pcx
+69060
+CRFT_FOD                                 # 
+18000                            # 0 h 30 m
+NO
+1                                # food
+[TOOLS]
+4|236                             # PID_KNIFE|PID_COMBAT_KNIFE
+[SKILLS]
+FIRST_AID+OUTDOORSMAN:75
+[COMPONENTS]
+535:1|536:1                      # Fish or Scaly Fish
+71:1                             # Fruit
+
+
+[ITEM]
+628                              # Meat Stew
+pcx/items/stew2.pcx
+69060
+CRFT_FOD                                 # 
+18000                            # 0 h 30 m
+NO
+1                                # food
+[TOOLS]
+4|236                             # PID_KNIFE|PID_COMBAT_KNIFE
+[SKILLS]
+FIRST_AID+OUTDOORSMAN:75
+[COMPONENTS]
+284:2|103:2|81:2                 # 2x Meat Jerky or 2x Meat-on-a-stick or 2x Iguana-on-a-stick
+71:1                             # Fruit
+
+
+# FIRST AID ITEMS
+
+[ITEM]
+273                               # PID_HEALING_POWDER
+pcx/items/healpwdr.pcx
+47060
+                                  # ALWAYS
+18000                             # 30 m
+NO
+3                                 # Drugs
+[TOOLS]
+[SKILLS]
+FIRST_AID+OUTDOORSMAN:50
+[COMPONENTS]
+271:1                             # PID_BROC_FLOWER
+272:1                             # PID_XANDER_ROOT
+
+
+[ITEM]
+49                                # PID_ANTIDOTE
+pcx/items/drug_bot.pcx
+90060
+CRFT_AID                          # first aid schematics
+30000                             # 50 m
+NO
+3                                 # Drugs
+[TOOLS]
+[SKILLS]
+FIRST_AID+OUTDOORSMAN:70
+SCIENCE:30
+[COMPONENTS]
+92:1|591:2                        # PID_SCORPION_TAIL or two Small Scorpion Tails
+125:1                             # PID_BOOZE
+
+
+[ITEM]
+40                                # PID_STIMPAK
+pcx/items/stimx.pcx
+89060
+CRFT_AID                          # first aid schematics
+51000                             # 1 h 25 m
+NO
+3                                 # Drugs
+[TOOLS]
+91                                # PID_DOCTORS_BAG
+[SKILLS]
+FIRST_AID:60
+SCIENCE:70
+[COMPONENTS]
+271:1                             # PID_BROC_FLOWER
+272:1                             # PID_XANDER_ROOT
+318:1                             # PID_HYPODERMIC_NEEDLE
+
+
+[ITEM]
+144                               # PID_SUPER_STIMPAK
+pcx/items/stimpak.pcx
+88059
+CRFT_AID                          # first aid schematics
+93000                             # 2 h 35 m
+NO
+3                                 # Drugs
+[TOOLS]
+91                                # PID_DOCTORS_BAG
+[SKILLS]
+FIRST_AID:90
+SCIENCE:100
+[COMPONENTS]
+71:1                              # PID_MUTATED_FRUIT
+106:1                             # PID_NUKA_COLA
+40:2                              # PID_STIMPAK
+
+
+# ADVANCED DRUGS
+
+[ITEM]
+110                               # PID_PSYCHO
+pcx/items/lastdrug.pcx
+77060
+CRFT_DRG                          # drugs schematics
+360000                            # 10 h
+NO
+3                                 # adv drug
+[TOOLS]
+91                                # PID_DOCTORS_BAG
+[SKILLS]
+DOCTOR:80
+SCIENCE:100
+[COMPONENTS]
+87:1                              # PID_BUFFOUT
+71:2                              # PID_MUTATED_FRUIT
+125:1                             # PID_BOOZE
+144:1                             # PID_SUPER_STIMPAK
+
+
+[ITEM]
+334                               # PID_POISON
+pcx/items/poison.pcx
+90065
+CRFT_DRG                          # drugs schematics
+81000                             # 2 h 15 m
+NO
+3                                 # adv drug
+[TOOLS]
+91                                # PID_DOCTORS_BAG
+[SKILLS]
+DOCTOR:30
+SCIENCE:50
+[COMPONENTS]
+318:1                             # PID_HYPODERMIC_NEEDLE
+106:1                             # PID_NUKA_COLA
+92:1|591:1                        # PID_SCORPION_TAIL or Small Scorpion Tail
+
+
+[ITEM]
+612                               # new fire resistance grug
+pcx/items/drugskin.pcx
+90070
+CRFT_DRG                          # drugs schematics
+126000                            # 3 h 30 m
+NO
+3                                 # adv drug
+[TOOLS]
+91                                # PID_DOCTORS_BAG
+[SKILLS]
+DOCTOR:70
+SCIENCE:80
+[COMPONENTS]
+144:1                             # PID_SUPER_STIMPAK
+334:1                             # PID_POISON
+
+
+[ITEM]                            # 
+620                               # new carry weight drug
+pcx/items/drugcrry.pcx
+47074
+CRFT_DRG
+30000                             # 
+NO
+3                                 # adv drug
+[TOOLS]
+91                                # PID_DOCTORS_BAG
+[SKILLS]
+DOCTOR:70
+SCIENCE:60
+[COMPONENTS]
+49:1                              # PID_ANTIDOTE
+71:2                              # PID_MUTATED_FRUIT
+106:1                             # PID_NUKA_COLA
+
+
+# EXPLOSIVES
+
+[ITEM]
+159                               # PID_MOLOTOV_COCKTAIL
+pcx/items/mola.pcx
+23060
+CRFT_EXP                          # explosives schematics
+18000                             # 0 h 30 m
+NO
+4                                 # Explosive
+[TOOLS]
+75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+[SKILLS]
+TRAPS+THROWING:70
+[COMPONENTS]
+79:2                              # PID_FLARE
+125:1                             # PID_BOOZE
+
+
+[ITEM]
+613:4                             # grenades
+pcx/items/homegren.pcx
+60050
+CRFT_EXP                          # explosives schematics
+180000                            # 5 h 00 m
+NO
+4                                 # Explosive
+[TOOLS]
+75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+[SKILLS]
+TRAPS+THROWING:100
+REPAIR:60
+[COMPONENTS]
+98:1                              # Junk
+51:1|85:1                         # Dynamite OR Plastic explosive
+95:2                              # Shotgun shells
+
+
+[ITEM]
+85                                # PID_PLASTIC_EXPLOSIVES
+pcx/items/plastic.pcx
+93063
+CRFT_EXP                          # explosives schematics
+72000                             # 2 h 00 m
+NO
+4                                 # Explosive
+[TOOLS]
+75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+[SKILLS]
+TRAPS+SCIENCE:120
+REPAIR:60
+[COMPONENTS]
+51:1                              # PID_DYNAMITE
+106:4                             # PID_NUKA_COLA
+
+
+# AMMO
+
+[ITEM]
+614                              # new 12ga slug ammo
+pcx/items/ssslugs.pcx
+74060
+CRFT_AMM                         # ammo craft schematics
+54000                            # 1 h 30 m
+NO
+5                                # Ammo
+[TOOLS]
+75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+SMALL_GUNS:100
+[COMPONENTS]
+95:1                             # Shotgun shells
+19:1                             # PID_ROCK
+
+
+[ITEM]
+641                              # new 12ga buck ammo
+pcx/items/ssbcksht.pcx
+79060
+CRFT_AMM                         # ammo craft schematics
+54000                            # 1 h 30 m
+NO
+5                                # Ammo
+[TOOLS]
+75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+SMALL_GUNS:120
+[COMPONENTS]
+95:1                             # Shotgun shells
+19:1                             # PID_ROCK
+
+
+[ITEM]
+615                                # new .223 AP
+pcx/items/223ap.pcx
+85065
+CRFT_AMM                              # ammo craft schematics
+162000                            # 4 h 30 m
+NO
+5                                # Ammo
+[TOOLS]
+308                            # PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+SMALL_GUNS:160
+[COMPONENTS]
+34:1                              # 223 FMJ
+36:1                             # 5mm AP
+
+
+[ITEM]
+633                               # 14mm JHP
+pcx/items/14mmJHP.pcx
+45068
+CRFT_AMM                          # Ammo schematics
+72000                             # 2h
+NO
+5                                # Ammo
+[TOOLS]
+75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+SMALL_GUNS:120
+[COMPONENTS]
+33:1                              # 14mm AP
+
+
+[ITEM]
+632                               # 40mm IC
+pcx/items/40mm_IC.pcx
+74060
+CRFT_AMM                          # Ammo schematics
+36000                             # 2h
+NO
+5                                # Ammo
+[TOOLS]
+308                               # Super tool kit
+[SKILLS]
+REPAIR+BIG_GUNS:150
+[COMPONENTS]
+631:1                              # 40mm HE grenades
+159:2                              # Molotov
+
+
+# TRAPS
+
+[ITEM]
+618:4                            # Trap kit Melee
+pcx/items/spiketrap.pcx
+85055
+                                 # ALWAYS
+144000                           # 4 h 00 m
+NO
+6                                # Traps
+[TOOLS]
+4|236                            # PID_KNIFE|PID_COMBAT_KNIFE
+[SKILLS]
+REPAIR+TRAPS:50
+[COMPONENTS]
+127:1                            # Rope
+7:2|280:2                        # Spear OR Sharp Spear
+
+
+[ITEM]
+616:4                            # Trap kit Mine
+pcx/items/trapkit.pcx
+68061
+CRFT_EXP                         # explosive schematics 644
+144000                           # 4 h 00 m
+NO
+6                                # Traps
+[TOOLS]
+308                              # PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+TRAPS:80
+[COMPONENTS]
+127:1                            # Rope
+98:1                             # Junk
+
+
+[ITEM]
+619                              # Trap kit Proximity
+pcx/items/sensmine.pcx
+55054
+CRFT_ELE                         # Electronics
+180000                           # 5 h 00 m
+NO
+6                                # Traps
+[TOOLS]
+308                              # PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+TRAPS:110
+SCIENCE:60
+[COMPONENTS]
+38:1                             # SEC
+98:1                             # Junk
+
+
+# LEATHER ARMOR
+
+[ITEM]
+74                                # PID_LEATHER_JACKET
+pcx/items/maxinv.pcx
+62060
+CRFT_LTJ                          # Leather Jacket schematics
+231000                            # 6 h 25 m
+NO
+7                                 # Armor
+[TOOLS]
+4|236                             # PID_KNIFE|PID_COMBAT_KNIFE
+[SKILLS]
+REPAIR:40
+[COMPONENTS]
+127:1                             # PID_ROPE
+276:4|623:4                       # PID_GECKO_PELT or Molerat Hide
+
+
+[ITEM]
+1                                 # PID_LEATHER_ARMOR
+pcx/items/ltharmor.pcx
+88055
+CRFT_LTH                          # Leather armor schematics
+243000                            # 6 h 45 m
+NO
+7                                 # Armor
+[TOOLS]
+4|236                             # PID_KNIFE|PID_COMBAT_KNIFE
+[SKILLS]
+REPAIR:70
+[COMPONENTS]
+127:2                             # PID_ROPE
+276:6|623:6                       # PID_GECKO_PELT or Molerat Hide
+
+
+[ITEM]
+379                               # PID_LEATHER_ARMOR_MK_II
+pcx/items/ltharmr2.pcx
+88055
+CRFT_LTH                          # Leather armor schematics
+291000                            # 8 h 5 m
+NO
+7                                 # Armor
+[TOOLS]
+4|236                             # PID_KNIFE|PID_COMBAT_KNIFE
+[SKILLS]
+REPAIR:90
+[COMPONENTS]
+1:1                               # PID_LEATHER_ARMOR
+277:4                             # PID_GOLDEN_GECKO_PELT
+
+
+# ELECTRONICS
+
+[ITEM]
+77                                # PID_ELECTRONIC_LOCKPICKS
+pcx/items/elecpic.pcx
+91060
+CRFT_EL2                          # advanced electronics schematic
+450000                            # 12 h 30 m
+NO
+8                                 # Electronics
+[TOOLS]
+228                               # PID_TECHNICAL_MANUAL
+75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+LOCKPICK:100
+SCIENCE:70
+[COMPONENTS]
+59:1                              # PID_MOTION_SENSOR
+52:1                              # PID_GEIGER_COUNTER
+
+
+[ITEM]
+411                               # PID_ELEC_LOCKPICK_MKII
+pcx/items/elockpk2.pcx
+86056
+CRFT_EL2                          # advanced electronics schematic
+324000                            # 9 h
+NO
+8                                 # Electronics
+[TOOLS]
+228                               # PID_TECHNICAL_MANUAL
+308                               # PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+LOCKPICK:120
+SCIENCE:100
+[COMPONENTS]
+77:1                              # PID_ELECTRONIC_LOCKPICKS
+
+
+# SHARPENING
+
+[ITEM]
+7                                 # PID_SPEAR
+pcx/items/spear.pcx
+165060
+CRFT_BLD                          # blades schematics
+27000                             # 45 m
+NO
+10                                # Weapons
+[TOOLS]
+278                               # PID_FLINT
+[SKILLS]
+REPAIR+MELEE_WEAPONS:70
+[COMPONENTS]
+4:1                               # PID_KNIFE
+320:1                             # PID_SHARPENED_POLE
+
+
+[ITEM]
+280                               # PID_SHARP_SPEAR
+pcx/items/spear2.pcx
+159039
+CRFT_BLD                          # blades schematics
+27000                             # 45 m
+NO
+10                                # Weapons
+[TOOLS]
+278                               # PID_FLINT
+[SKILLS]
+MELEE_WEAPONS+THROWING:60
+[COMPONENTS]
+7:1                               # PID_SPEAR
+
+
+# WEAPONS
+
+[ITEM]
+300                              # Zip Gun
+pcx/items/zipgun.pcx
+90060
+                                 # ALWAYS
+108000                           # 3 h 00 m
+NO
+10                               # Weapons
+[TOOLS]
+4                                # PID_KNIFE
+[SKILLS]
+REPAIR+SMALL_GUNS:85
+[COMPONENTS]
+7:1|280:1                        # Spear OR Sharp Spear
+
+
+[ITEM]
+640                              # Deathclaw Gauntlet
+pcx/items/clawgntl.pcx
+82053
+CRFT_GNT                         # special recipe
+108000                           # 3 h 00 m
+NO
+10                               # Weapons
+[TOOLS]
+308                              # PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+MELEE_WEAPONS:120
+[COMPONENTS]
+622:3                            # 3 death claws
+235:1                            # 1 power fist
+
+
+# MISC
+
+[ITEM]
+308                               # PID_SUPER_TOOL_KIT
+pcx/items/suprtool.pcx
+57055
+CRFT_TOL                          # tool schematics
+72000                             # 2 h 00 m
+NO
+11                                # Misc
+[TOOLS]
+[SKILLS]
+REPAIR:80
+SCIENCE:30
+[COMPONENTS]
+75:1                              # PID_MULTI_TOOL
+384:1                             # PID_WRENCH
+98:1                              # Junk
+

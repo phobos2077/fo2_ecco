@@ -1,0 +1,87 @@
+KLADWTWN:
+- added 1 Traps book to shelf at open part of Vic's and 1 Repair book to shelf at closed part
+
+KLATOXIC:
+- replaced combat armor MK2 with MK1
+- unloaded both energy pistols and Bozar
+- reduced SEC amount considerably, reduced gauss ammo to 20 and caseless ammo to 80
+
+DENBUS1:
+- added Knuckles to one of Tubby's friends and Knife to another
+- added SMG and ammo to Flick
+
+DENBUS2:
+- replaced several Metzger guards with more tough ones: 
+    1 male Melee Guard w/ sledge, 
+    1 female Melee Guard w/ sharp spear, 
+    2 Gun Guards guarding room (one with SMG), 
+    2-3 Bishop Thug 2 (Leather Mk2)
+- Metzger holding shotgun in hands
+- moved doorway to the right and added second window to Metzger room
+- added Flint to an empty shelf near Mom
+
+
+SLCAMP:
+- added script NIBIS1LK to shelf and table in the house
+- removed chair from the table (to bee seen better when stealing SMG)
+
+
+MODMAIN:
+- add footlocker with "MIJOBOX" script outside of map, remove this script from shelf
+
+DEPOLV1 (entrance):
+- grenades in crate 5 => 3
+- removed rocket launcher
+- re-created Sniper Rifle near the entrance
+
+DEPOLVA:
+- placed spatial script WSTRPWR2 at tile 26686 with radius 1
+- halfed grenades in crate at upper corner
+- removed laser pistol from one of two similar desks
+- remove 2 assault rifle from 2 lockers at level 3
+- remove 2 first aid books from wall locker in lower-right corner
+- added 1 barter book to red carpet room
+Room with lockers:
+- replace 2 combat armors with 2 metal armors mk2
+- add 2 packs of 5mm JHP
+- add 1 traps book (where Small guns book is)
+Room with crates:
+- replaced plasma rifle with laser rifle
+- number of rocket launchers crate  2 => 1
+- number of EMP grenades 5 => 3
+- replaced sniper rifle with 3 packs of 7.62mm
+
+RAIDERS1:
+- Main entrance: now leads directly to front entrance of hideout
+- Secret Entrance: moved manhole inside the house; manhole leads to Trap Caves now
+
+RAIDERS2:
+- redesigned level 0: replaced both entrances with dead ends and ladders (ladder up in bottom to RAIDERS1-level1, ladder down in top to level2)
+- redesigned level 2 main entrance (it leads to RAIDERS1-level0 and looks like moving to a sunshine)
+- large rocks near the secret entrance to hideout: widened the pass so you can't snipe enemies one by one anymore
+
+EPAX:
+- remove 7 syringes from desk at level 3; remove mentats
+
+EPAMAIN1:
+- remove rocket launcher
+- in "jammed" room, replace Laser Pistol with XL70E rifle, move all weak weapons/ammo to southern room, add 4 junk, 4 syringes
+- remove El. lockpick MK2 from locker in locked room on security level
+- remove 4 stimpaks from locker at security level
+- remove all books except science from locker on level 2, added 1 barter and 1 traps book
+- removed all ammo from M60
+
+NEWRCS:
+- add 2 junk (locker)
+- regular Sledge => Spiked Sledge (black guy)
+- shotgun => sawed-off (Boss guy)
+
+HUBSTASH:
+- remove Tesla Armor
+- replace P90c with XL70 rifle
+- remove Guns and Repair books from shelf, add 1 Traps and 1 Barter
+- remove 2 psycho from locker
+
+VAULT15:
+- added 4 more guards to 3rd floor with various weapons (2 "ncr guards" in combat armor)
+- added 5 more guards to 2nd floor (1 "bounty hunter" in combat armor)
