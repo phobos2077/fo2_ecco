@@ -1,0 +1,7 @@
+
+procedure start begin
+  variable k, a, arr2;
+  arr2 := 111;
+  foreach k in (arr2)
+    if (k) then arr2[k] := 1;
+end
