@@ -2,7 +2,6 @@
 *.dat
 *.err
 *.exe
-*.int
 *.log
 *.tmp
 *.zip
