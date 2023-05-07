@@ -169,7 +169,6 @@ procedure map_enter_p_proc begin
        end
    end
 */
-   //display_msg("map enter: "+cur_map_index);
 end
 
 procedure timed_event_p_proc begin
@@ -318,7 +317,7 @@ end
 
 
 procedure critter_p_proc begin
-   if (cur_map_index == MAP_NEW_RENO_1) then if ((map_var(MVAR_Kitty_Drug) > 0) and (map_var(MVAR_Kitty_Drug) < 4)) then begin
+   if (cur_map_index == MAP_NEW_RENO_1) then if (/*(map_var(MVAR_Kitty_Drug) > 0) and (map_var(MVAR_Kitty_Drug) < 4)*/false) then begin
       if (did_stats_check == 0) then begin
          if (map_var(MVAR_Kitty_Drug) == 1) then begin
             stats_check := (get_critter_stat(self_obj, STAT_st));
@@ -802,7 +801,7 @@ end
 procedure description_p_proc begin
     if (not(combat_is_initialized)) then begin
     	script_overrides;
-    	call batch_init;
+    	call batch_init; // crafting menu
     end
 end
 

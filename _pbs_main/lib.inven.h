@@ -25,6 +25,7 @@ procedure add_items_pid(variable who_obj, variable the_pid, variable pid_qty) be
     variable item;
     item := create_object(the_pid,0,0);
     add_mult_objs_to_inven(who_obj, item, (pid_qty));
+    return item;
 end
 
 // aliases:
@@ -36,6 +37,7 @@ end
 
 procedure unwield_armor(variable who_obj) begin
     variable armor;
+    if (not(who_obj)) then return;
     if (critter_wearing_armor(who_obj)) then begin
        armor := critter_inven_obj(who_obj,INVEN_TYPE_WORN);
        rm_obj_from_inven(who_obj, armor);
@@ -49,6 +51,7 @@ procedure remove_items_pid(variable who_obj, variable the_pid, variable pid_qty)
         removed_qty;
         tmp;
     end
+    if (not(who_obj)) then return;
     removed_qty := obj_is_carrying_obj_pid(who_obj,the_pid);
     if (pid_qty < removed_qty and pid_qty != -1) then begin
       removed_qty := pid_qty;
@@ -67,7 +70,7 @@ procedure remove_items_pid(variable who_obj, variable the_pid, variable pid_qty)
     end
 end
 
-/*procedure remove_item_obj(variable who_obj, variable item) begin
+procedure remove_item_obj(variable who_obj, variable item) begin
    if (obj_type(who_obj) == 1) then begin
       if (critter_inven_obj(who_obj,INVEN_TYPE_WORN) == item) then begin
          call unwield_armor(who_obj);
@@ -77,7 +80,7 @@ end
    end
    rm_obj_from_inven(who_obj, item);
    destroy_object(item);
-end*/
+end
 
 // aliases:
 #define remove_item_pid(obj, pid)            remove_items_pid(obj, pid, 1)
@@ -143,6 +146,17 @@ procedure reduce_merchant_loot(variable critter, variable moneyPercent, variable
          end
       end
    end
+end
+
+procedure item_by_attack_type(variable critter, variable type) begin
+   variable slot;
+   if (type > 3 and type != ATKTYPE_LWEP_RELOAD and type != ATKTYPE_RWEP_RELOAD) then
+      return 0;
+   if (type < 2 or type == ATKTYPE_LWEP_RELOAD) then
+      slot := INVEN_TYPE_LEFT_HAND;
+   else
+      slot := INVEN_TYPE_RIGHT_HAND;
+   return critter_inven_obj(critter, slot);
 end
 
 #endif

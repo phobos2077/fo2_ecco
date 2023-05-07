@@ -34,7 +34,6 @@
 #include "..\headers\command.h"
 #include "..\headers\ModReact.h"
 
-
 #define dr_heal(who)            critter_heal(who,(get_critter_stat(who,STAT_max_hp) - get_critter_stat(who,STAT_current_hp)))
 
 /* Standard Script Procedures */
@@ -153,6 +152,11 @@ procedure Node053a;
 // by phobos2077:
 #define _LEARN_CRAFT_DRJOHNSON
 #include "learn_craft.h"
+#define CONTAINER_TILE           (20171)
+#define violating_property       (tile_in_tile_rect(20530, 20523, 21723, 22530, dude_tile))
+#define move_inven_to_container    move_obj_inven_to_obj(self_obj, get_container())
+#define move_inven_from_container  move_obj_inven_to_obj(get_container(), self_obj)
+variable caught_sneaking := 0;
 // ;
 
 /* Imported variables from the Map scripts. These should only be
@@ -171,6 +175,14 @@ variable From_53:=0;
 procedure start begin
 end
 
+procedure get_container begin
+   variable obj;
+   obj := tile_contains_pid_obj(CONTAINER_TILE, 0, PID_FOOTLOCKER_CLEAN_LEFT);
+   if not(obj) then
+      obj := create_object(PID_FOOTLOCKER_CLEAN_LEFT, CONTAINER_TILE, 0);
+   return obj;
+end
+
 /* This procedure will get called each time that the map is first entered. It will
    set up the Team number and AI packet for this critter. This will override the
    default from the prototype, and needs to be set in scripts. */
@@ -187,13 +199,14 @@ procedure map_enter_p_proc begin
       set_local_var(LVAR_Restock_Time, game_time - 1);
       set_local_var(LVAR_Restock_Time_Fix, 1);
    end
-
    if (local_var(LVAR_Restock_Time) < game_time) then begin
       debug_msg("Should have restocked");
       check_restock_item(PID_STIMPAK, 4, 5, 100)
       check_restock_item(PID_ANTIDOTE, 1, 1, 80)
       check_restock_item(PID_BOTTLE_CAPS, 123, 200, 50)
       set_local_var(LVAR_Restock_Time, (random(2,6) * ONE_GAME_DAY) + game_time);
+      if not(is_loading_game) then
+         move_inven_to_container; // pbs
    end
    //end added
 
@@ -214,14 +227,23 @@ procedure critter_p_proc begin
    the player should the game be saved and loaded repeatedly. Additionally, if any special
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
-
-   if ((global_var(GVAR_ENEMY_REDDING) == 1) and (obj_can_see_obj(self_obj,dude_obj))) then begin
-       attack(dude_obj);
-   end
-
-   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
-       set_local_var(LVAR_Hostile,1);
-       attack(dude_obj);
+   if (obj_can_see_obj(self_obj,dude_obj)) then begin
+      if (global_var(GVAR_ENEMY_REDDING) == 1) then begin
+          attack(dude_obj);
+      end
+      else if (local_var(LVAR_Hostile) == 2) then begin
+          set_local_var(LVAR_Hostile,1);
+          attack(dude_obj);
+      end
+      else if (violating_property) then begin
+         if (caught_sneaking == 0) then begin
+            obj_floater_type(self_obj, g_mstr(random(3925, 3929)), FLOAT_COLOR_BAD);
+            caught_sneaking := game_time;
+         end
+         else if ((caught_sneaking+50) < game_time) then begin
+            set_local_var(LVAR_Hostile,2);
+         end
+      end
    end
 
 end
@@ -259,7 +281,8 @@ procedure talk_p_proc begin
    CheckKarma;
 
    GetReaction;
-
+   
+   move_inven_from_container; // pbs
    if (dude_iq < 4) then begin
        call Node001;
    end
@@ -290,6 +313,7 @@ procedure talk_p_proc begin
        end
 
    end
+   move_inven_to_container; // pbs
 end
 
 /* This procedure gets called only on the death of this NPC. Special things like
@@ -304,6 +328,9 @@ procedure destroy_p_proc begin
    set_global_var(GVAR_DOC_JOHNSON_STATUS,1);
 
    Doc_Johnson_Ptr:=0;
+   
+   move_inven_from_container; // pbs
+   destroy_object(get_container());
 
 /* Set global_variable for Enemy status*/
 end
@@ -370,7 +397,6 @@ procedure Node002 begin
        else
            Reply(117);
    end
-
    NOption(119,Node002a,004);
    NOption(120,Node012,004);
    NOption(121,Node010,004);
@@ -690,10 +716,12 @@ procedure Node010 begin
    NOption(160,Node042,004);
    NOption(161,Node012,004);
    // by phobos2077:
-   if (get_sfall_global_int(SGVAR_CRAFT_FIRST_AID) == 0) then begin
-      NOption(501, NodeCraft1, 004);
-   end else begin
-      NOption(502, NodeCraft10, 004);
+   if (crafting_mod_available) then begin
+      if (get_sfall_global_int(SGVAR_CRAFT_FIRST_AID) == 0) then begin
+         NOption(501, NodeCraft1, 004);
+      end else begin
+         NOption(502, NodeCraft10, 004);
+      end
    end
    // ;
    NOption(162,Node999,004);

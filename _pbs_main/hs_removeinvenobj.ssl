@@ -1,17 +1,18 @@
+/**
+
+   Used as a workaround to fix incorrect ammo PIDs and counts for weapons 
+   and ammo stack sizes for existing items on maps
+   
+   DEPRECETED, don't use
+
+*/
+
+
 procedure start;
 
-//#define NAME	SCRIPT_TEST2
-
 #include "sfall.h"
-//#include "assoc_array.ssl"
 #include "define_lite.h"
 #include "mod.h"
-//#include "traps.h"
-
-//variable ini_need_sneak_on_drop;
-//variable ini_traps_min_skill;
-
-// NOT USED
 
 procedure start begin
 variable begin
@@ -25,8 +26,7 @@ variable begin
 	ammoMax;
 end
    if init_hook then begin
-     // ini_need_sneak_on_drop := get_ini_setting("combat.ini|TRAPS|need_sneak_on_drop");
-      //ini_traps_min_skill := atof(get_ini_string("combat.ini|TRAPS|min_skill"));
+   
    end else begin
       critter:=get_sfall_arg;
       item:=get_sfall_arg;
@@ -53,9 +53,6 @@ end
                if (get_weapon_ammo_count(item) > ammoMax) then
                   set_weapon_ammo_count(item, ammoMax);
             end
-         end
-         else  if (reason == RMOBJ_EQUIP_ARMOR) then begin
-            display_msg("Ammo: "+get_weapon_ammo_count(item));
          end
       end
    end

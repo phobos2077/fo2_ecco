@@ -79,6 +79,7 @@
 #define SGVAR_CRAFT_BLADES         "CRFT_BLD"
 #define SGVAR_CRAFT_FOOD           "CRFT_FOD"
 #define SGVAR_CRAFT_TOOLS          "CRFT_TOL"
+#define SGVAR_CRAFT_DEATHCLAW      "CRFT_GNT"
 
 #define crafting_mod_available   (message_str(SCRIPT_TEST0, 1000) != "Error")
 

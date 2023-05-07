@@ -127,7 +127,7 @@ procedure start begin
 		//Buy_UsePartySkill := get_ini_setting("barter.ini|BUY|UsePartySkill");
 		
 		version := get_sfall_global_int("barter_v");
-		if (version > BARTERMOD_VERSION or version < 5) then begin
+		if ((version > BARTERMOD_VERSION or version < 5) and (get_sfall_global_int("barter_0") != 0)) then begin
 		   display_msg("Migrating barter mod data to new format...");
 		   // remove arrays previously stored in savegame and clear variables from old versions
 		   for (i := 0; i <= 7; i++) begin 
@@ -170,7 +170,7 @@ procedure start begin
 			master_trader := has_trait(TRAIT_PERK, dude_obj, PERK_master_trader);
 			
 			merchant_barter := has_skill(merchant, SKILL_BARTER);
-			barter_mod := itof_safe(gdialog_get_barter_mod);
+			barter_mod := gdialog_get_barter_mod;
 			
 			//display_msg("dude_barter " + dude_barter + "; merchant_barter " + merchant_barter + "; perk " + master_trader);
 			

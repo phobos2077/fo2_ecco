@@ -27,12 +27,78 @@ end
  * Join array of strings using delimeter
  */
 procedure string_join(variable array, variable join) begin
-   variable str, v;
+   variable str, i, len;
    str := "";
-   foreach v in array begin
-      if (str != "") then
-         str += join;
-      str += v;
+   len := len_array(array);
+   if (len > 0) then begin
+      str := array[0];
+      for (i:=1; i<len; i++) begin
+         str += join + array[i];
+      end
+   end
+   return str;
+end
+
+/**
+ * replaces all occurances of substring in a string with another substring
+ */
+#define string_replace(str, search, replace)    (string_join(string_split(str, search), replace))
+
+/**
+ * sprintf with two arguments
+ */
+procedure sprintf2(variable str, variable arg1, variable arg2) begin
+   variable split, len, i, j, arg;
+   split := string_split(str, "%");
+   len := len_array(split);
+   str := "";
+   if (len > 0) then begin
+      str := split[0];
+      j := 0;
+      for (i := 1; i < len; i++) begin
+         if (split[i] == "") then begin
+            if (i < len - 1) then begin
+               str += "%" + split[i+1];
+               i++;
+            end
+         end else begin
+            if (j == 0) then
+               arg := arg1;   
+            else if (j == 1) then 
+               arg := arg2;
+            else
+               arg := 0;
+            
+            str += sprintf("%" + split[i], arg);
+            j++;
+         end
+      end
+   end
+   return str;
+end
+
+/**
+ * sprintf with unlimited number of arguments
+ */
+procedure sprintf_array(variable str, variable args) begin
+   variable split, len, i, j;
+   split := string_split(str, "%");
+   len := len_array(split);
+   str := "";
+   if (len > 0) then begin
+      str := split[0];
+      j := 0;
+      for (i := 1; i < len; i++) begin
+         if (split[i] == "") then begin
+            if (i < len - 1) then begin
+               str += "%" + split[i+1];
+               i++;
+            end
+         end else begin
+            str += sprintf("%" + split[i], args[j]);
+            j++;
+         end
+      end
    end
    return str;
 end
@@ -85,7 +151,7 @@ end
 
 /**
  * Workaround for string_split bug in sfall 3.3
- * DEPRECATED as of sfall 3.4 (buf fixed)
+ * DEPRECATED as of sfall 3.4 (bug fixed)
  */
 procedure string_split_safe(variable str, variable split) begin
    variable lst;
@@ -102,15 +168,12 @@ end
 procedure string_split_ints(variable str, variable split) begin
 	variable i := 0;
 	variable list;
-	variable list4;
 	list := string_split(str, split);
-    list4 := temp_array(len_array(list), 4);
 	while (i < len_array(list)) do begin
-		list4[i] := atoi(list[i]);
+		list[i] := atoi(list[i]);
 		i++;
 	end
-    free_array(list);
-	return list4;
+	return list;
 end
 
 

@@ -13,7 +13,7 @@ procedure start;
 
 
 variable in_combat := false;
-export variable pbs_set_who_see_dude;
+variable set_who_see_dude; // pointer to normal array
 
 procedure start begin
 	variable crit, tmp;
@@ -26,10 +26,10 @@ procedure start begin
    tmp := get_sfall_global_int(SGVAR_CRITTERS_SEE_DUDE);
    if (tmp) then begin
       free_array(tmp);
-      set_sfall_global(SGVAR_CRITTERS_SEE_DUDE, 0); // unset
+      set_sfall_global(SGVAR_CRITTERS_SEE_DUDE, 0);
    end
    
-	pbs_set_who_see_dude := create_array_list(0);
+	set_who_see_dude := load_create_array(ARR_CRITTERS_SEE_DUDE, 0);
   end else begin
   
 	if (combat_is_initialized and not(in_combat)) then begin
@@ -37,14 +37,14 @@ procedure start begin
 		foreach crit in list_as_array(LIST_CRITTERS) if crit then begin
 			if (crit != dude_obj and obj_can_see_obj(crit, dude_obj)) then begin 
 				//display_msg(proto_data(obj_pid(crit),cr_name) + " see.");
-				call add_array_set(pbs_set_who_see_dude, crit);
+				call add_array_set(set_who_see_dude, crit);
 			end
 		end
 	end else if (not(combat_is_initialized) and in_combat) then begin
 		// display_msg("Combat end yo ");
 		in_combat := false;
 		// clean set
-		resize_array(pbs_set_who_see_dude, 0);
+		resize_array(set_who_see_dude, 0);
 	end
 	
   end

@@ -84,6 +84,8 @@ procedure identify_me begin
 				set_local_var(LVAR_index, my_trap_index);
 			end
 		end
+		// init variables
+	   call traps_common_init;
 	end
 	// update temp local vars from global array
 	if (my_trap_index >= 0) then begin

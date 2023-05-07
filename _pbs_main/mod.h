@@ -1,38 +1,51 @@
+/* Economy and Combat Rebalance Mod */
+/* Main header file */
+/* author: phobos2077 */
+
 #ifndef PBS_MOD_H
 #define PBS_MOD_H
 
+#include "sfall.h"
 //#include "define_lite.h"
 #include "define_extra.h"
 #include "lib.misc.h"
 
-#define SGVAR_CRITTERS_SEE_DUDE		    ("PBSACSD_")
-#define SGVAR_TRAPS_BY_DUDE			    ("PBSTRPS_")
-#define SGVAR_TRAPS_BY_DUDE_LOCAL		("PBSTRPSL")
-#define SGVAR_TRAPS_LAST_MAP		    ("PBSTRPSM")
-#define SGVAR_TRAPS_LAST_ARMAMENT       ("PBSTRPAR")
-//#define SGVAR_TRAP_VICTIMS 			    ("PBSTRPVC")
+#define SGVAR_CRITTERS_SEE_DUDE		   ("PBSACSD_")
+#define SGVAR_TRAPS_BY_DUDE			   ("PBSTRPS_")
+#define SGVAR_TRAPS_BY_DUDE_LOCAL	 	("PBSTRPSL")
+#define SGVAR_TRAPS_LAST_MAP		      ("PBSTRPSM")
+#define SGVAR_TRAPS_LAST_ARMAMENT      ("PBSTRPAR")
+// #define SGVAR_TRAP_VICTIMS 			    ("PBSTRPVC")
 // #define SGVAR_TRAP_FAILED_PID	      ("PBSTRPSF")
 // #define SGVAR_FAKE_EXPLOSIONS   		("PBSEXPLO")
-#define SGVAR_ANGRY_TEAMS 			    ("PBSANGRY")
-#define SGVAR_LAST_DEATHANIM		    ("PBSLTDTA")
-#define SGVAR_LAST_DEATHANIM_CRITTER    ("PBSLTDTC")
-#define SGVAR_REMOVE_ITEM    ("PBSRMITM")
+#define SGVAR_ANGRY_TEAMS 			      ("PBSANGRY")
+#define SGVAR_LAST_DEATHANIM		      ("PBSLTDTA")
+#define SGVAR_LAST_DEATHANIM_CRITTER   ("PBSLTDTC")
+#define SGVAR_REMOVE_ITEM              ("PBSRMITM")
+// quests:
+#define SGVAR_BOUNTY_NUM_ROBBERS       ("PQST_ROB")
 
 // arrays
-#define ARR_PBS_GLOBALS    "phobos2077"
-#define ARR_TRAPS          "pbs_traps"
-#define ARR_ANGRY_TEAMS    "pbs_angry_teams"
+#define ARR_TRAPVARS             "pbs_trapvars"
+#define ARR_PBS_GLOBALS          "phobos2077"
+#define ARR_TRAPS                "pbs_traps"
+#define ARR_ANGRY_TEAMS          "pbs_angry_teams"
+#define ARR_TRAPS_LOCAL          "pbs_traps_local"
+#define ARR_TRAP_VICTIMS         "pbs_trap_victims"
+#define ARR_CRITTERS_SEE_DUDE    "pbs_see_dude"
 
 // normal global variables
 #define GVAR_BOUNTY_REDDING         (644)
 #define GVAR_BOUNTY_NCR             (645)
+#define GVAR_BRINGX_TENTACLES       (646)
+#define GVAR_BRINGX_HIDES           (647)
 
 // new items
 #define PID_PBS_50_AMMO	          	(610)
-#define PID_PBS_THROWING_AXE	    (611)
-#define PID_PBS_DRAGON_SKIN	      	(612)
-#define PID_PBS_HOMEMADE_GRENADE	(613)
-#define PID_PBS_SHOTGUN_SLUGS	    (614)
+#define PID_PBS_THROWING_AXE	      (611)
+#define PID_PBS_DRAGON_SKIN	      (612)
+#define PID_PBS_HOMEMADE_GRENADE	   (613)
+#define PID_PBS_SHOTGUN_SLUGS	      (614)
 #define PID_PBS_223_AP	          	(615)
 #define PID_PBS_TRAP_KIT_MINE      	(616)
 #define PID_PBS_TASER          		(617)
@@ -53,6 +66,13 @@
 #define PID_PBS_40MM_IC             (632)
 #define PID_PBS_14MM_JHP            (633)
 #define PID_PBS_MGL                 (634)
+#define PID_PBS_TRAPS_BOOK          (635)
+#define PID_PBS_BARTER_BOOK         (636)
+#define PID_PBS_BOOMERANG           (637)
+#define PID_PBS_SPIKED_SLEDGE       (638)
+#define PID_PBS_PISTON_SPEAR        (639)
+#define PID_PBS_DEATHCLAW_GAUNTLET  (640)
+#define PID_PBS_SHOTGUN_BUCKS       (641)
 
 // new scenery
 #define PID_PBS_SPIKE_TRAP_DISARMED	    (0x02000000 + 2301)
@@ -69,11 +89,13 @@
 #define CALIBER_50                  (19)
 #define CALIBER_40MM_GRENADE        (20)
 
+#define msg(x)          display_msg(x)
 
 // macros for arrays
 #define is_in_array(item, array)    (scan_array(array, item) != -1)
 
 #define dude_skill(x)		(has_skill(dude_obj, x))
+#define dude_perk(x)       (has_trait(TRAIT_PERK,dude_obj,x))
 
 #define last_deathanim_critter      (get_sfall_global_int(SGVAR_LAST_DEATHANIM_CRITTER))
 #define last_deathanim              (get_sfall_global_int(SGVAR_LAST_DEATHANIM))
@@ -106,6 +128,14 @@
 #define critter_flags_by_pid(pid)               (get_proto_data(pid, PROTO_CR_CRITTER_FLAGS))
 #define can_steal_from_critter_pid(pid)         ((critter_flags_by_pid(pid) bwand CFLG_STEAL) == 0)
 #define critter_facing_dir(crit)                (has_trait(TRAIT_OBJECT,crit,OBJECT_CUR_ROT))
+
+#define is_critter(obj)		(obj_type(obj) == OBJ_TYPE_CRITTER)
+#define is_item(obj)		   (obj_type(obj) == OBJ_TYPE_ITEM)
+#define is_wall(obj)		   (obj_type(obj) == OBJ_TYPE_WALL)
+#define is_scenery(obj)	   (obj_type(obj) == OBJ_TYPE_SCENERY)
+
+#define is_weapon(obj)	   (obj_item_subtype(obj) == item_type_weapon)
+#define is_ammo(obj)	      (obj_item_subtype(obj) == item_type_ammo)
 
 #define is_human(crit)		(critter_kill_type(crit) >= 0 and critter_kill_type(crit) <= 4)
 #define is_animal(crit)		(critter_kill_type(crit) == KILL_TYPE_brahmin_kills \
@@ -206,10 +236,19 @@
 
 #define is_using_ammo_pid(crit, pid)    (get_weapon_ammo_pid(critter_inven_obj(crit, 1)) == pid or get_weapon_ammo_pid(critter_inven_obj(crit, 2)) == pid)
 
+#define weapon_anim_code(weapon)                      get_proto_data(obj_pid(weapon), PROTO_WP_ANIM)
+#define critter_fid_can_use_weapon_pid(fid, pid)      art_exists(fid bwor (get_proto_data(pid, PROTO_WP_ANIM) * 0x1000)))
+#define critter_has_art_for_weapon(crit, weapon)      critter_fid_can_use_weapon_pid(obj_art_fid(crit), obj_pid(weapon))
+
 
 #define pbs_global(x)                  (get_array(load_array(ARR_PBS_GLOBALS), x))
 #define set_pbs_global(x, val)         (set_array(load_create_array_map(ARR_PBS_GLOBALS), x, val))
 // #define pbs_mod_version             (pbs_var("_version"))
 
+#define INI_COMBAT         "combat.ini"
+#define INI_ECONOMY        "barter.ini"
+#define int_from_ini_file(name, file, section)    ini_##name := get_ini_setting(file "|" section "|" #name)
+#define str_from_ini_file(name, file, section)    ini_##name := get_ini_string(file "|" section "|" #name)
+#define float_from_ini_file(name, file, section)  ini_##name := atof(get_ini_string(file "|" section "|" #name))
 
 #endif

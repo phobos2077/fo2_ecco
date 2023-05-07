@@ -4,35 +4,23 @@
 /**
   Some generic procedures
 */
+/*
 procedure round(variable val) begin
 	variable intp;
 	intp := floor(val);
 	if ((val-intp) >= 0.5) then intp++;
 	return intp;
-end
-
-procedure ceil(variable val) begin
-	variable intp;
-	intp := floor(val);
-	if ((val-intp) > 0.0) then intp++;
-	return intp;
-end
-
-procedure cap_number(variable num, variable min, variable max) begin
-	if (num > max) then num := max;
-	else if (num < min) then num := min;
-	return num;
-end
+end*/
 
 // this fixes strange behavior when using negative float values
 // looks like the only way to create correct negative float is to use atof()
 // DEPRECATED as of sfall 3.4 (engine bug fixed)
-procedure itof_safe(variable var) begin
+/*procedure itof_safe(variable var) begin
 	if (var < 0) then begin
 		var := atof("-"+(-var));
 	end
 	return var;
-end
+end*/
 
 // Parse keyboard shortcut definition
 procedure parse_hotkey(variable string) begin
@@ -54,6 +42,23 @@ procedure hotkey_pressed(variable n) begin
    else
       return key_pressed(n bwand 0xFFFF) and key_pressed((n bwand 0xFFFF0000) / 0x10000);
 end
+
+// same as above, but suited for hs_keypress hook when keycode is already known
+procedure hotkey_pressed_now(variable n, variable key) begin
+   if (n < 0x10000) then
+      return key == n;
+   else begin
+      variable k1 := (n bwand 0xFFFF),
+               k2 := ((n bwand 0xFFFF0000) / 0x10000);
+      if (k1 == key) then begin
+         if (key_pressed(k2)) then return true;
+      end else if (k2 == key) then begin
+         if (key_pressed(k1)) then return true;
+      end
+      return false;
+   end
+end
+
 
 
 /**

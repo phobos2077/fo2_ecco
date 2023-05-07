@@ -1,36 +1,34 @@
 
 //import variable gecko_percy_box;
 
-#include "sfall.h"
+#include "..\..\!sfall.git\artifacts\scripting\headers\sfall.h"
+#include "..\..\!sfall.git\artifacts\scripting\headers\define_extra.h"
 #include "define_lite.h"
 #include "lib.arrays.h"
 #include "lib.strings.h"
+#include "lib.inven.h"
 #include "mod.h"
 #include "..\headers\aipacket.h"
 #include "..\headers\teams.h"
+#include "..\headers\itempid.h"
 //#include "traps.h"
 
-#include "_arrays_test.ssl"
+//#include "tests\arrays_testcase.ssl"
+//#include "tests\compiler_testcase.ssl"
 //#include "_dialogs_test.ssl"
 
-variable victim := 0;
+variable victim := 0; 
 variable key_1 := false;
 variable cursor_obj := 0;
 
-variable iii := 0;
+variable iii := 0; 
 
 variable ary;
 
-/*export procedure testexport111(variable a);
-
-procedure testexport111(variable a) begin
-   display_msg("Hello from gl_test! "+a);
-end*/
 
 
-//import variable pbs_local_traps;
 
-procedure set_item_count(variable invenobj, variable itempid, variable newcount, variable wield)
+procedure set_item_count(variable invenobj, variable itempid, variable newcount, variable wield := false)
 begin
    variable begin
       count;
@@ -47,11 +45,14 @@ begin
    end
 end
 
-procedure testret(variable a) begin
-   if (a==1) then return 111;
-   if (a==2) then return 222;
-   if (a==3) then return 333;
-   return "nope";
+procedure _name(variable a) begin
+   if not(a) then return "NULL";
+   return obj_name(a)+"("/*+obj_type(a)+","*/+obj_pid(a)+")";
+end
+
+procedure _name_fid(variable a) begin
+   if not(a) then return "NULL";
+   return obj_name(a)+"("+sprintf("0x%08X", obj_art_fid(a))+")";
 end
 
 procedure how_many_misc begin
@@ -66,135 +67,232 @@ procedure skip_call(variable adr) begin
    end
 end
 
+procedure spawn_group(variable pid, variable tile) begin
+   create_object_sid(pid, tile, dude_elevation, -1);
+   create_object_sid(pid, tile_num_in_direction(tile, 2, 1), dude_elevation, -1);
+   create_object_sid(pid, tile_num_in_direction(tile, 5, 1), dude_elevation, -1);
+   tile := tile_num_in_direction(tile, 0, 1);
+   create_object_sid(pid, tile, dude_elevation, -1);
+   create_object_sid(pid, tile_num_in_direction(tile, 2, 1), dude_elevation, -1);
+   create_object_sid(pid, tile_num_in_direction(tile, 5, 1), dude_elevation, -1);
+end
+
+
 variable objs;
 variable arr;
 
-procedure start begin
-  if game_loaded then begin
+procedure combatdamage_handler begin
+   variable args := get_sfall_args;
+   display_msg("combat damage " + obj_name(args[0]) + " x" + args[9]);
+end
+
+procedure to_hit_hook begin
+   variable 
+      chance := get_sfall_arg,
+      attacker := get_sfall_arg;
    
-   variable s := "";
-   variable obj;
-   variable item;
-   variable i, k, v;
-   variable temp, coll;
+   display_msg("gl_test to_hit_hook "+chance);
+   //set_hit_chance_max(100);
+   if (dude_obj != attacker) then set_sfall_return(0);
+end
+
+
+//export variable from_test := 555;
+//import variable bishop_stair_guard_obj;
+
+//import procedure testexport111(variable a);
+import procedure exportfromgl0;
+import procedure exportfromgl1(variable a);
+//import procedure exportdude(variable A);
+
+import procedure logicaltest(variable x, variable y, variable z);
+
+variable bastard;
+
+procedure keypress_handler begin
+   variable pressed := get_sfall_arg,
+      key := get_sfall_arg,
+      vkey := get_sfall_arg,
+      obj, ar, tile, step;
    
-   //test_suite_verbose := true;
-   //call array_test_suite; 
-   //call arrays_lib_tests; 
-   //return;
-   
-   // WARNING! DANGEROUS CODE!
-   // call _PURGE_all_saved_arrays;
-   // WARNING! End of dangerous code
-   
-   /*temp := ["John", "Mike", "Kate", "Presley", "Rob", "Jim", "Steven", "Greg"];
-   coll := create_array_map;
-   for (i:=1; i<=7; i++) begin
-      coll[i] := {
-         "name":  array_random_value(temp), 
-         "phone": random(10000, 99999), 
-         "price": (random(1000, 9999) / 100.0), 
-         "something": "else"
-      };
-   end
-   call save_collection("people", coll);*/
-   
-   
-   /*coll := load_collection("people");
-   foreach (k: v in coll) 
-      display_msg(""+k+": "+debug_array_str(v));
-   
-   unset_array(coll, 7);
-   call save_collection("people", coll);*/
-   
-   
-   set_global_script_repeat(500);
-   
-  end else begin
-     //display_array(pbs_local_traps);
-  
-     /*obj := get_sfall_global_int(SGVAR_REMOVE_ITEM);
-     if (obj) then begin
-         temp := rm_mult_objs_from_inven(dude_obj, obj, 1);
-         destroy_object(obj);
-         set_sfall_global(SGVAR_REMOVE_ITEM, 0);
-     end*/
-     
-     /*obj := critter_inven_obj(dude_obj, 1);
-     if (obj) then begin
-        set_weapon_ammo_count(obj, random(1, 20));
-        display_msg("pid:"+obj_pid(obj)+", wtf: "+get_weapon_ammo_count(obj));
-     end*/
-     
-     
-     if (key_pressed(DIK_1) and (game_time-key_1)>50) then begin
-      key_1 := game_time;
-      
-      
-     end
-     
-     if (key_pressed(DIK_LCONTROL) and key_pressed(DIK_F2)) then begin
-        if (not(key_1)) then begin
-        
-        
-         temp := tile_num_in_direction(tile_num(dude_obj), 0, 9);
-         for (i:=0; i<6; i++) begin
-            create_object_sid(16777458, tile_num_in_direction(temp, i, random(1,2)), elevation(dude_obj), -1);
+   if (pressed and vkey == '9') then begin
+      set_car_intface_art(306);
+      display_msg("CHANGE CAR");
+      //call add_item_pid(dude_obj, PID_AVENGER_MINIGUN);
+      //call spawn_group(PID_TOUGH_THUG_MALE, tile_under_cursor);
+      ar := tile_get_objs(tile_under_cursor, dude_elevation);
+      foreach (obj in ar) begin
+         if (obj_type(obj) == OBJ_TYPE_CRITTER and critter_state(obj) == CRITTER_IS_NORMAL) then begin
+            sfall_func1("set_dude_obj", obj);
          end
-         
-        /*obj := create_object_sid(0x01000000+1, tile_num_in_direction(tile_num(dude_obj), 0, 7), elevation(dude_obj), -1);
-         temp := tile_num_in_direction(tile_num(dude_obj), 0, 9);
-         obj := create_object_sid(0x01000000+2, temp, elevation(dude_obj), -1);
-         obj := create_object_sid(0x01000000+3, tile_num_in_direction(temp, 1, 1), elevation(dude_obj), -1);
-         obj := create_object_sid(0x01000000+3, tile_num_in_direction(temp, 5, 1), elevation(dude_obj), -1);
-         
-         
-         call set_item_count(dude_obj, PID_MINIGUN, 1, 1);*/
-            //call set_item_count(dude_obj, PID_CHEEZY_POOFS, 1, 1);
-            //critter_mod_skill(dude_obj, SKILL_ENERGY_WEAPONS, 100);
-            /*i := critter_facing_dir(dude_obj);
-            obj := tile_get_next_critter(tile_num_in_direction(dude_tile, i, 2), dude_elevation, 0);
-            if (obj) then begin
-               s := create_object_sid(obj_pid(obj), tile_num_in_direction(dude_tile, i, 1), dude_elevation, -1);
-               set_script(s, get_script(obj));
-               move_obj_inven_to_obj(obj, s);
-               //destroy_object(obj);
-            end*/
-         //attack_setup(obj, dude_obj);
-         
-         
-         key_1 := true;
       end
+   end else if (pressed and vkey == '0') then begin
+      set_car_intface_art(0x1B1);
+      display_msg("RESET CAR");
+   end else if (pressed and vkey == 'G') then begin
+      // hero_select_win(1);
+      obj := obj_blocking_line(dude_obj, tile_under_cursor, BLOCKING_TYPE_BLOCK);
+      if (obj) then begin
+         display_msg(_name(obj));
+         set_flags(obj, get_flags(obj) bwor FLAG_TRANSRED);
+         tile_refresh_display;
+      end
+      //display_array(array_map_func(party_member_list(true), @_name));
    end
+end
+
+variable guard;
+
+
+procedure skill_handler begin
+   variable args := get_sfall_args;
+   display_msg("gl_test skill "+debug_array_str(get_sfall_args));
+   if (args[2] == SKILL_FIRST_AID) then begin
+      critter_heal(dude_obj, -10);
+      set_sfall_return(0);
+   end
+end
+
+procedure barter_handler begin
+   variable args := get_sfall_args;
    
-   // follow cursor
-   //if (combat_is_initialized) then begin
-      /*if (cursor_obj == 0) then begin
-         cursor_obj := create_object_sid(PID_STEAM_2, 0, 0, -1);
-         move_to(cursor_obj, tile_under_cursor, elevation(dude_obj));
-         reg_anim_combat_check(0);
-         reg_anim_begin();
-         reg_anim_animate_forever(cursor_obj, 0);
-         reg_anim_end();
-         game_ui_enable;
-      end*/
-   //end
+   //display_msg("gl_test barter "+debug_array_str(args));
+   display_msg("my caps: " + item_caps_total(args[6]) + ", cost: " + args[7] + ", flag: " + args[8]);
+   //set_sfall_return(1);
+end
+
+procedure useobjon_handler begin
+   display_msg("gl_test useobjon "+debug_array_str(get_sfall_args) + " mode "+get_game_mode);
+end
+
+procedure useobj_handler begin
+   display_msg("gl_test useobj "+debug_array_str(get_sfall_args));
+   set_sfall_return(1);
+end
+
+procedure perception_handler begin
+   set_sfall_return(0);
+end
+
+procedure moveitem_handler begin
+   variable 
+      args := get_sfall_args,
+      map := {0: "backpack", 1: "left hand", 2: "right hand", 3: "armor slot", 4: "weapon reload"};
+   display_msg("gl_test move " + _name(args[1]) + " to " + map[args[0]] + " where "+_name(args[2]));
    
-   //reg_anim_change_fid(0, 0, 0); // refresh display
-   //if (i) then   display_msg("cr: "+proto_data(obj_pid(i), cr_name));
-     
-  end
+   if (args[0] == 4 and obj_pid(args[1]) == PID_FLAMETHROWER_FUEL and obj_pid(args[2]) == PID_IMPROVED_FLAMETHROWER) then begin
+      set_weapon_ammo_pid(args[2], PID_FLAMETHROWER_FUEL);
+      display_msg("Switch ammo PID");
+      //set_sfall_return(0);
+      //display_msg("This Flamer is not compatible with advanced fuel.");
+   end
+end
+
+
+procedure apcost_handler begin
+   variable args := get_sfall_args, item;
+   
+   display_msg("gl_test calcapcost "+debug_array_str(args));
+   
+   /*item := item_by_attack_type(args[0], args[1]);
+   if (obj_item_subtype(item) != item_type_weapon) then begin
+      set_sfall_return(4);
+   end*/
+end
+
+procedure test_weapon_anim(variable critterPid, variable itemPid) begin
+   variable obj, item;
+   obj := create_object_sid(critterPid, dude_tile - 8, dude_elevation, -1);
+   item := add_item_pid(obj, itemPid);
+   wield_obj_critter(obj, item);
+   attack_setup(obj, dude_obj);
+end
+
+procedure spawn_item_set(variable pidArray) begin
+   variable pid, dist := 1;
+   foreach (pid in pidArray) begin
+      create_object(pid, tile_num_in_direction(dude_tile, 0, dist), dude_elevation);
+      dist += 1;
+   end
+end
+
+procedure cartravel_handler begin
+   //display_msg("Car travel: " + debug_array_str(get_sfall_args));
+   set_sfall_return(1); // speed
+   set_sfall_return(500); // consumption
+end
+
+variable seen, color;
+
+procedure start begin
+   if game_loaded then begin
+      variable s := "";
+      variable obj, critter;
+      variable item;
+      variable i, k, v;
+      variable temp, coll; 
+      
+      //display_msg("FRM = " + read_int(0x4C2D9B));
+      // write_int(0x4C2D9B, 306);
+      
+      //intface_hide;
+      //display_array(sfall_func0("get_metarule_table"));
+      //display_msg("OK? " + sfall_func5("validate_test", 2, 5, "string", 23, 43));
+      
+      //call array_test_suite;
+      //call add_item_pid(dude_obj, PID_MOTION_SENSOR);
+      set_critter_skill_points(dude_obj, SKILL_OUTDOORSMAN, 300);
+      register_hook_proc(HOOK_KEYPRESS, keypress_handler);
+      register_hook_proc(HOOK_CARTRAVEL, cartravel_handler);
+
+      // display_msg("Gas = " + car_gas_amount + ", " + read_int(0x4C2DA0) + ", " + read_int(0x4C2D9B));
+      //display_msg("Fueled = " + car_give_gas(-50000));
+      //display_msg("Gas = " + car_gas_amount);
+      //register_hook_proc(HOOK_TOHIT, to_hit_hook);
+
+      /*call spawn_item_set([
+         PID_LEATHER_JACKET, 
+         PID_LEATHER_ARMOR, 
+         PID_METAL_ARMOR, 
+         PID_COMBAT_ARMOR, 
+         PID_POWERED_ARMOR, 
+         PID_ADVANCED_POWER_ARMOR, 
+         PID_PURPLE_ROBE
+      ]);*/
+
+      color := 1;
+   end else begin
+      color *= 2;
+      
+      
+      if (get_game_mode bwand INVENTORY) then begin
+         display_msg("Inventory!");
+      end else if (get_game_mode bwand INTFACEUSE) then begin
+         display_msg("Use!");
+      end else if (get_game_mode bwand INTFACELOOT) then begin
+         display_msg("Loot!");
+      end else if (get_game_mode bwand HEROWIN) then begin
+         display_msg("Hero window!");
+      end
+      
+      //set_light_level(1);
+      //set_flags(dude_obj, get_flags(dude_obj) bwor FLAG_TRANSRED);
+      //sfall_func2("set_outline", dude_obj, color);
+      //tile_refresh_display;
+      //display_msg("Color = " + sprintf("%x", sfall_func1("get_outline", dude_obj)));
+      //display_msg("WORLDMAP!!!");
+   end
 end
 
 
 procedure map_enter_p_proc begin
-   display_msg("Map enter gl_test");
+   display_msg("Map enter gl_test " + cur_town);
 end
 
 procedure map_update_p_proc begin
-   //display_msg("Map update gl_test");
+   display_msg("Map update gl_test");
 end
 
 procedure map_exit_p_proc begin
-   display_msg("Map exit gl_test");
+   //display_msg("Map exit gl_test");
 end

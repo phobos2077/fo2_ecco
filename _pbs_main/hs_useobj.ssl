@@ -18,11 +18,12 @@ procedure start;
    int     arg2 - The object used
    
    int     ret1 - (if set) overrides default item handler and selects what should happen with the item: (0 - place it back, 1 - remove it)
+   
+   NOT USED
 */
 
 procedure start begin
    variable critter;
-   variable target;
    variable item;
    
    variable begin
@@ -30,17 +31,16 @@ procedure start begin
    end
    
    if (init_hook) then begin
-      
+      // init variables
+	   call traps_common_init;
    end else begin
       critter := get_sfall_arg;
       item := get_sfall_arg;
       
-      //display_msg(""+critter+" use "+item);
-      
       // phobos2077 - traps assembly
-      if (item and critter) then if (critter == dude_obj and is_trap_kit_pid(obj_pid(item))) then begin
+      /*if (item and critter) then if (critter == dude_obj and is_trap_kit_pid(obj_pid(item))) then begin
          if (try_assemble_trap(critter, item) == true) then
             set_sfall_return(1);
-      end
+      end*/
    end 
 end

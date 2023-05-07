@@ -22,16 +22,16 @@
 
 /* Critter Flags */
 #define CFLG_BARTER			    2		//0x00000002 - Barter (can trade with)
-#define CFLG_STEAL			   32		//0x00000020 - Steal (cannot steal from)
-#define CFLG_DROP			   64		//0x00000040 - Drop (doesn't drop items)
-#define CFLG_LIMBS			  128		//0x00000080 - Limbs (can not lose limbs)
-#define CFLG_AGES		  	  256		//0x00000100 - Ages (dead body does not disappear)
-#define CFLG_HEAL			  512		//0x00000200 - Heal (damage is not cured with time)
+#define CFLG_NOSTEAL			   32		//0x00000020 - Steal (cannot steal from)
+#define CFLG_NODROP		      64		//0x00000040 - Drop (doesn't drop items)
+#define CFLG_NOLIMBS			  128		//0x00000080 - Limbs (can not lose limbs)
+#define CFLG_NOAGES	  	     256		//0x00000100 - Ages (dead body does not disappear)
+#define CFLG_NOHEAL		     512		//0x00000200 - Heal (damage is not cured with time)
 #define CFLG_INVULN			 1024		//0x00000400 - Invulnerable (cannot be hurt)
 #define CFLG_FLATTN			 2048		//0x00000800 - Flatten (leaves no dead body)
-#define CFLG_SPECIAL		 4096		//0x00001000 - Special (there is a special type of death)
-#define CFLG_RANGE			 8192		//0x00002000 - Range (melee attack is possible at a distance)
-#define CFLG_KOCK			16384		//0x00004000 - Knock (cannot be knocked down)
+#define CFLG_SPECIAL		    4096		//0x00001000 - Special (there is a special type of death)
+#define CFLG_RANGED			 8192		//0x00002000 - Range (melee attack is possible at a distance)
+#define CFLG_NOKNOCKDOWN   16384	   //0x00004000 - Knock (cannot be knocked down)
 
 //remove inven obj defines
 #define RMOBJ_CONSUME_DRUG	      4666772
@@ -66,6 +66,7 @@
 #define PROTO_IT_COST       (120)
 
 // weapons
+#define PROTO_WP_ANIM        (36)
 #define PROTO_WP_DMG_MIN     (40)
 #define PROTO_WP_DMG_MAX     (44)
 #define PROTO_WP_RANGE_1     (52)
@@ -74,11 +75,13 @@
 #define PROTO_WP_MIN_ST      (64)
 #define PROTO_WP_APCOST_1    (68)
 #define PROTO_WP_APCOST_2    (72)
+#define PROTO_WP_CRIT_FAIL   (76)
+#define PROTO_WP_PERK        (80)
 #define PROTO_WP_BURST       (84)
 #define PROTO_WP_CALIBER     (88)
 #define PROTO_WP_AMMO_PID    (92)
 #define PROTO_WP_MAG_SIZE    (96)
-#define PROTO_WP_ANIM        (36)
+#define PROTO_WP_SOUND      (100)
 
 // armor
 #define PROTO_AR_AC           (36)
@@ -96,6 +99,13 @@
 #define PROTO_AR_DT_ELECTRICAL   (84)
 #define PROTO_AR_DT_EMP       (88)
 #define PROTO_AR_DT_EXPLOSION (92)
+#define PROTO_AR_PERK         (96)
+#define PROTO_AR_FID_MALE    (100)
+#define PROTO_AR_FID_FEMALE  (104)
+
+// containers
+#define PROTO_CN_MAX_SIZE     (36)
+#define PROTO_CN_FLAGS        (40)
 
 // ammo
 #define PROTO_AM_CALIBER      (36)
@@ -105,10 +115,41 @@
 #define PROTO_AM_DMG_MULT     (52)
 #define PROTO_AM_DMG_DIV      (56)
 
+// misc items
+#define PROTO_MI_POWER_PID    (36)
+#define PROTO_MI_CALIBER      (40)
+#define PROTO_MI_CHARGES      (44)
+
+// drugs
+#define PROTO_DR_STAT_A          (36)
+#define PROTO_DR_STAT_B          (40)
+#define PROTO_DR_STAT_C          (44)
+#define PROTO_DR_AMOUNT_1_A      (48)
+#define PROTO_DR_AMOUNT_1_B      (52)
+#define PROTO_DR_AMOUNT_1_C      (56)
+#define PROTO_DR_DURATION_1      (60)
+#define PROTO_DR_AMOUNT_2_A      (64)
+#define PROTO_DR_AMOUNT_2_B      (68)
+#define PROTO_DR_AMOUNT_2_C      (72)
+#define PROTO_DR_DURATION_2      (76)
+#define PROTO_DR_AMOUNT_3_A      (80)
+#define PROTO_DR_AMOUNT_3_B      (84)
+#define PROTO_DR_AMOUNT_3_C      (88)
+#define PROTO_DR_ADDICT_CHANCE   (92)
+#define PROTO_DR_ADDICT_PERK     (96)
+#define PROTO_DR_ADDICT_DELAY   (100)
+
+
 // critters
-#define PROTO_CR_CRITTER_FLAGS   (32)
+#define PROTO_CR_ACTION_FLAGS    (32)
+#define PROTO_CR_HEAD_FID        (40)
+#define PROTO_CR_AI_PACKET       (44)
+#define PROTO_CR_TEAM_NUM        (48)
+#define PROTO_CR_FLAGS           (52)
+#define PROTO_CR_BODY_TYPE      (388)
 #define PROTO_CR_KILL_EXP       (392)
 #define PROTO_CR_KILL_TYPE      (396)
+#define PROTO_CR_DMG_TYPE       (400)
 
 // weapon calibers
 #define CALIBER_NONE                 (0)
@@ -130,5 +171,40 @@
 #define CALIBER_4_7MM_CASELESS      (16)
 #define CALIBER_HN_NEEDLER          (17)
 #define CALIBER_7_62MM              (18)
+
+// hidden perks
+#define PERK_add_nuka            (53)
+#define PERK_add_buffout         (54)
+#define PERK_add_mentats         (55)
+#define PERK_add_psycho          (56)
+#define PERK_add_radaway         (57)
+#define PERK_weapon_long_range   (58)
+#define PERK_weapon_accurate     (59)
+#define PERK_weapon_penetrate    (60)
+#define PERK_weapon_knockback    (61)
+#define PERK_armor_powered       (62)
+#define PERK_armor_combat        (63)
+#define PERK_weapon_scope_range  (64)
+#define PERK_weapon_fast_reload  (65)
+#define PERK_weapon_night_sight  (66)
+#define PERK_weapon_flameboy     (67)
+#define PERK_armor_advanced_1    (68)
+#define PERK_armor_advanced_2    (69)
+#define PERK_add_jet             (70)
+#define PERK_add_tragic          (71)
+#define PERK_armor_charisma      (72)
+
+#define WPN_ANIM_NONE				(0x00) // (A)
+#define WPN_ANIM_KNIFE				(0x01) // (D) 
+#define WPN_ANIM_CLUB				(0x02) // (E) 
+#define WPN_ANIM_SLEDGEHAMMER	   (0x03) // (F) 
+#define WPN_ANIM_SPEAR				(0x04) // (G) 
+#define WPN_ANIM_PISTOL			   (0x05) // (H) 
+#define WPN_ANIM_SMG				   (0x06) // (I) 
+#define WPN_ANIM_RIFLE				(0x07) // (J) 
+#define WPN_ANIM_BIG_GUN			(0x08) // (K) 
+#define WPN_ANIM_MINIGUN			(0x09) // (L) 
+#define WPN_ANIM_ROCKET_LAUNCHER	(0x0A) // (M)
+
 
 #endif // DEFINE_EXTRA_H

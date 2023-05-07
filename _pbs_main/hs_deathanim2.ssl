@@ -35,24 +35,26 @@ procedure start begin
          end
          
          // fix for grenade launcher
-         wpn := critter_inven_obj(attacker, 1);
-         if (wpn == 0) then
-            wpn := critter_inven_obj(attacker, 2);
-         else if (obj_pid(wpn) != weaponPID) then
-            wpn := critter_inven_obj(attacker, 2);
-         if (wpn) then if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
-         begin
-            kt := critter_kill_type(target);
-            if (kt == KILL_TYPE_men_kills or kt == KILL_TYPE_women_kills or kt == KILL_TYPE_children_kills or kt == KILL_TYPE_super_mutant_kills or kt == KILL_TYPE_ghoul_kills) then begin
-               if (random(0,99) < 50) then
-         	      animID := ANIM_fire_dance;
-         	   else
-         	      animID := ANIM_burned_to_nothing;
-         	end 
-         	//else if (is_humanoid(target)) then
-         	//   animID := ANIM_fire_dance;
-         	else if (kt != KILL_TYPE_robot_kills) then
-         	   animID := ANIM_charred_body;
+         if (is_critter(attacker)) then begin
+            wpn := critter_inven_obj(attacker, 1);
+            if (wpn == 0) then
+               wpn := critter_inven_obj(attacker, 2);
+            else if (obj_pid(wpn) != weaponPID) then
+               wpn := critter_inven_obj(attacker, 2);
+            if (wpn) then if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
+            begin
+               kt := critter_kill_type(target);
+               if (kt == KILL_TYPE_men_kills or kt == KILL_TYPE_women_kills or kt == KILL_TYPE_children_kills or kt == KILL_TYPE_super_mutant_kills or kt == KILL_TYPE_ghoul_kills) then begin
+                  if (random(0,99) < 50) then
+            	      animID := ANIM_fire_dance;
+            	   else
+            	      animID := ANIM_burned_to_nothing;
+            	end 
+            	//else if (is_humanoid(target)) then
+            	//   animID := ANIM_fire_dance;
+            	else if (kt != KILL_TYPE_robot_kills) then
+            	   animID := ANIM_charred_body;
+            end
          end
          
          debug_msg("DEATHANIM "+animID);

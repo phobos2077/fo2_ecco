@@ -3,9 +3,9 @@
 */
 
 /******************************************************************************************
-        Item: Stock for Happy Harry
+        Item: Stock for Randal
         Location : Vault City
-        Description: This box is for Happy Harry's Goods
+        Description: This box is for Randal's Goods
 
         Log:
            Please note any changes that have been made to the file in Updated. Then comment
@@ -21,27 +21,26 @@
 /* Include Files */
 #include "..\headers\define.h"
 
-#define NAME                    SCRIPT_VIHARBOX
+#define NAME                    SCRIPT_VIRANBOX
 
 #include "..\headers\command.h"
-#include "..\headers\VctyCtyd.h"
 /* Defines and Macros */
+
+#include "stock.h" // by phobos2077
+
 
 #define LVAR_Restock_Time                 (0)
 #define LVAR_Restock_Time_Fix             (1) //added by killap
-
-#include "stock.h"  // by phobos2077
 
 /* Standard Script Procedures */
 procedure start;
 procedure map_enter_p_proc;
 procedure map_update_p_proc;
-procedure pickup_p_proc;
 
-import variable vault_city_harry_box;
+import variable vault_city_randal_box;
 
 procedure start begin
-   vault_city_harry_box := self_obj;
+   vault_city_randal_box := self_obj;
 end
 
 procedure map_enter_p_proc begin
@@ -50,21 +49,20 @@ procedure map_enter_p_proc begin
    variable special_item;
    //end added 
 
-  //added check by killap - expansion pack (Village)
-  if (global_var(GVAR_VAULT_SERVANT) != SERVANT_TURNED_IN_HARRY) then begin
-   vault_city_harry_box := self_obj;
+
+   vault_city_randal_box := self_obj;
    if (is_loading_game == false) then begin
    
-      //added by killap - fix for game_time going negative after 7 years
+       //added by killap - fix for game_time going negative after 7 years
       if (((game_time) < 0) and (local_var(LVAR_Restock_Time_Fix) == 0)) then begin
          set_local_var(LVAR_Restock_Time, game_time - 1);
          set_local_var(LVAR_Restock_Time_Fix, 1);
       end
-      //end added   
+      //end added  
    
       if (local_var(LVAR_Restock_Time) < game_time) then begin
          
-                              //new added
+                                       //new added
       tmp := create_object(PID_FOOTLOCKER_CLEAN_LEFT,5,0);
       if (obj_is_carrying_obj_pid(self_obj, PID_NAV_COMPUTER_PARTS ) > 0) then begin
          special_item := obj_carrying_pid_obj(self_obj, PID_NAV_COMPUTER_PARTS);
@@ -314,62 +312,40 @@ procedure map_enter_p_proc begin
       //end new added
          
          destroy_obj_inven(self_obj); //added by killap - one of the preventives I am adding towards the "too many items bug"
-         check_restock_item(PID_BOTTLE_CAPS, 150, 390, 100)
+         check_restock_item(PID_BOTTLE_CAPS, 200, 600, 100)
+         check_restock_item(PID_BIG_BOOK_OF_SCIENCE, 1, 2, 75)
+         check_restock_item(PID_DEANS_ELECTRONICS, 1, 1, 75)
+         check_restock_item(PID_FIRST_AID_BOOK, 1, 1, 75)
+         check_restock_item(PID_PBS_TRAPS_BOOK, 1, 2, 75) // pbs
          check_restock_item(PID_KNIFE, 1, 3, 100)
-         check_restock_item(PID_CROWBAR, 1, 2, 100)
-         check_restock_item(PID_44_MAGNUM_REVOLVER, 1, 1, 100)
-         //check_restock_item(PID_10MM_PISTOL, 1, 2, 100) // removed
-         check_restock_item(PID_DESERT_EAGLE, 1, 1, 80)
-         check_restock_item(PID_HUNTING_RIFLE, 1, 1, 50)
+         check_restock_item(PID_10MM_PISTOL, 1, 2, 100)
          check_restock_item(PID_SHOTGUN, 1, 2, 25)
-         check_restock_item(PID_LEATHER_JACKET, 1, 2, 75)
-         check_restock_item(PID_LEATHER_ARMOR, 1, 1, 50)
-         check_restock_item(PID_44_FMJ_MAGNUM, 2, 3, 100)
-         check_restock_item(PID_44_MAGNUM_JHP, 2, 3, 100)
-         check_restock_item(PID_10MM_AP, 2, 3, 100)
-         check_restock_item(PID_10MM_JHP, 3, 6, 100)
-         check_restock_item(PID_SHOTGUN_SHELLS, 2, 5, 100)
-         check_restock_item(PID_DYNAMITE, 1, 1, 50)
-         check_restock_item(PID_SHOVEL, 1, 1, 50)
+         check_restock_item(PID_CLUB, 1, 1, 25)
+         check_restock_item(PID_METAL_ARMOR, 1, 2, 25)
+         check_restock_item(PID_10MM_JHP, 1, 3, 100)
+         check_restock_item(PID_SHOTGUN_SHELLS, 1, 3, 100)
+         check_restock_item(PID_STIMPAK, 3, 8, 100)
+         check_restock_item(PID_RAD_X, 3, 5, 100)
          check_restock_item(PID_FLARE, 1, 2, 50)
-         check_restock_item(PID_BEER, 1, 1, 100)
-         check_restock_item(PID_BOOZE, 1, 1, 100)
-         check_restock_item(PID_ROPE, 1, 3, 50)
-         check_restock_item(PID_223_FMJ, 1, 2, 100)
-         check_restock_item(PID_METAL_ARMOR, 1, 1, 25)
-         check_restock_item(PID_10MM_SMG, 1, 1, 50)
-         check_restock_item(PID_FRAG_GRENADE, 1, 2, 50)
-         // by phobos2077:
-         check_restock_item(PID_PBS_50_AMMO, 1, 2, 25)
-         check_restock_item(PID_PBS_THROWING_AXE, 1, 2, 25)
-         check_restock_item(PID_PBS_BOOMERANG, 1, 3, 50)
-         check_restock_item(PID_THROWING_KNIFE, 2, 5, 100)
-         check_restock_item(PID_PBS_9MM_SMG, 1, 1, 50)
-         check_restock_item(PID_9MM_AMMO, 2, 5, 100) // AP ammo
-         check_restock_item(PID_7_62MM_AMMO, 1, 3, 100)
-         check_restock_item(PID_5MM_JHP, 1, 3, 100)
-         // ;
+         check_restock_item(PID_ROPE, 1, 1, 50)
+         check_restock_item(PID_10MM_SMG, 1, 2, 100)
+         check_restock_item(PID_RADAWAY, 1, 3, 100)
+         check_restock_item(PID_FRAG_GRENADE, 2, 2, 100)
+         check_restock_item(PID_14MM_PISTOL, 1, 1, 100)
+         check_restock_item(PID_FN_FAL, 1, 1, 25)
+         check_restock_item(PID_COMBAT_SHOTGUN, 1, 1, 25)
+         check_restock_item(PID_14MM_AP, 1, 1, 100)
          set_local_var(LVAR_Restock_Time, (3 * ONE_GAME_DAY) + game_time);
          
-         //new added - killap
+                           //new added - killap
          move_obj_inven_to_obj(tmp, self_obj);
          destroy_object(tmp);
          //end new added
          
       end
    end
-  end
 end
 
 procedure map_update_p_proc begin
-   vault_city_harry_box := self_obj;
-end
-
-procedure pickup_p_proc begin
-   if(source_obj == dude_obj) then begin
-      if( is_success( roll_vs_skill( dude_obj, SKILL_STEAL, -20 ) ) == FALSE ) then begin
-         script_overrides;
-         set_map_var(MVAR_Stealing_From_Harry, 1 );
-      end
-   end
+   vault_city_randal_box := self_obj;
 end

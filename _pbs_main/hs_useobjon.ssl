@@ -24,7 +24,7 @@ procedure start begin
 	variable item;
 	
 	variable begin
-	   tmp; charges; trapType; trapobj; pid; obj;
+	   tmp; charges; trapType; trapobj; pid; obj; ap;
 	end
 	
     if (init_hook == 0) then
@@ -36,6 +36,13 @@ procedure start begin
          display_msg(""+critter+" use "+item+" on "+target);
          display_msg("Dude is "+dude_obj);
          
-         set_sfall_return(1);
+         if (combat_is_initialized and (get_game_mode bwand INVENTORY)) then begin
+            ap := get_critter_current_ap(critter);
+            if (ap >= 2) then begin
+               set_critter_current_ap(critter, ap - 2);
+            end else begin
+               set_sfall_return(0);
+            end
+         end
       end
 end

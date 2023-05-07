@@ -1,4 +1,7 @@
 procedure start;
+procedure keypress_hook;
+procedure useobj_hook;
+procedure movecost_hook;
 
 /**
 
@@ -6,28 +9,24 @@ procedure start;
 	Should be of type 0 (local map) and repeated at least 5 times in second.
 	
 	This is the "main" script for traps system, functions:
-	1) Exports all traps-related variables and procedures for other scripts.
+	1) (not anymore) Exports all traps-related variables and procedures for other scripts.
 	2) Loads INI variables.
-	3) Implements triggering traps in real-time.
+	3) Implements triggering traps in real-time (start proc) and turn-based (movecost_hook proc).
 	4) Implements hotkey to place trap.
 	
 	Other scripts for traps:
 	test2.int            - skill-based interactions with assembled traps on the ground
-	hs_movecost.int      - triggering traps in combat
-	hs_useobj.int        - placing trap from inventory or main interface
 	hs_deathanim2.int    - fixes death animation for trap kills (doesn't include traps.h)
 
 	@author phobos2077
 	
 */
 
-
 #include "sfall.h"
 #include "define_lite.h"
-
-#define _GL_TRAPS
+#define _TRAPS_EXPORT
 #include "traps.h"
-#undef _GL_TRAPS
+#undef _TRAPS_EXPORT
 
 variable angry_set;
 //variable ar_explosions;
@@ -53,7 +52,10 @@ procedure start begin
   if game_loaded then begin
   	//display_msg("traps init yo "+cur_map_index);
 	set_global_script_type(0);
-	set_global_script_repeat(100);
+	set_global_script_repeat(50);
+	
+	// init variables
+	call traps_common_init;
   	
   	// exported settings
 	pbs_ini_trap_reveals_dude := get_ini_setting("combat.ini|TRAPS|trap_reveals_dude");
@@ -85,6 +87,10 @@ procedure start begin
   	angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
   	pbs_local_traps := create_array_list(0);
   	pbs_trap_victims := create_array_map;
+  	
+  	register_hook_proc(HOOK_KEYPRESS, keypress_hook);
+  	register_hook_proc(HOOK_USEOBJ, useobj_hook);
+  	register_hook_proc(HOOK_MOVECOST, movecost_hook);
 	
   end else begin
 	
@@ -114,65 +120,7 @@ procedure start begin
 		end
 	end
 	
-	// for TESTING
-	/*if (key_pressed(DIK_F3)) then begin
-		obj := create_object(PID_PBS_TRAP_KIT_SPIKE,0,0); add_mult_objs_to_inven(dude_obj, obj, 3);
-		obj := create_object(PID_PBS_TRAP_KIT_MINE,0,0); add_mult_objs_to_inven(dude_obj, obj, 3);
-		obj := create_object(PID_PBS_TRAP_KIT_SENSOR,0,0); add_mult_objs_to_inven(dude_obj, obj, 3);
-		//foreach obj in list_as_array(LIST_CRITTERS) begin
-			//if (obj != dude_obj and tile_distance_objs(dude_obj, obj) < 6 and not(anim_busy(obj))) then begin
-				obj := create_object(16777459, tile_num_in_direction(dude_tile, 4, 4), dude_elevation);
-				float_msg(dude_obj, "come here, "+proto_data(obj_pid(obj),cr_name), 0);
-				//attack_setup(obj, dude_obj);
-				//move_obj_inven_to_obj(obj, dude_obj);
-				reg_anim_clear(obj);
-				reg_anim_begin();
-				reg_anim_obj_move_to_obj(obj, dude_obj, -1);
-				reg_anim_end();
-				//victim_obj := obj;
-				
-				//animate_move_obj_to_tile(obj, tile_num_in_direction(dude_tile,0,1), (ANIMATE_RUN ));
-		  		//anim(obj, ANIMATE_ROTATION, 0);
-			//end
-		//end
-		
-	end*/
-	
-	if (hotkey_pressed(ini_assemble_hotkey)) then begin
-	   if (not(key1)) then begin
-	      item := critter_inven_obj(dude_obj, active_hand);
-	      //display_msg("active: "+obj_name(item));
-	      if (item) then if (is_trap_kit_pid(obj_pid(item))) then begin
-	         if (try_assemble_trap(dude_obj, item) == true) then begin
-	            variable pid, tmp;
-	            pid := obj_pid(item);
-	            // manually remove item and replace it with another from inventory
-               inven_unwield(dude_obj);
-               rm_obj_from_inven(dude_obj, item);
-               destroy_object(item);
-               obj := obj_carrying_pid_obj(dude_obj, pid);
-               if (obj) then begin
-                  n := obj_is_carrying_obj_pid(dude_obj, pid);
-                  if (n > 1) then begin
-                     // "split" one object from the stack
-                     tmp := rm_mult_objs_from_inven(dude_obj, obj, 1);
-                     tmp := get_weapon_ammo_count(obj);
-                     set_weapon_ammo_count(obj, -1); // this way the following command should not "merge" this object back into existing stack
-                     add_obj_to_inven(dude_obj, obj);
-                     set_weapon_ammo_count(obj, tmp); // change charges back, but the item will remain in separate stack
-                  end
-                  wield_obj_critter(dude_obj, obj);
-               end
-	         end
-	      end
-	      key1 := true;
-	   end else begin
-	      key1 := false;
-	   end
-	end
-	
 	// traps setoff, realtime
-	//display_msg("gl_traps: check setoff traps");
 	if (not(combat_is_initialized)) then begin
    	arr := get_traps_for_map();
    	if (len_array(arr) > 0) then begin
@@ -183,6 +131,61 @@ procedure start begin
 	end
 	
   end
+end
+
+
+procedure keypress_hook begin
+   variable pressed := get_sfall_arg,
+            key := get_sfall_arg;
+   if (pressed and not(get_game_mode bwand bwnot(COMBAT + PCOMBAT))) then if (hotkey_pressed_now(ini_assemble_hotkey, key)) then begin
+      variable item;
+      item := critter_inven_obj(dude_obj, 2 - active_hand);
+      if (item) then if (is_trap_kit_pid(obj_pid(item))) then begin
+         if (try_assemble_trap(dude_obj, item) == true) then begin
+            variable pid, tmp, n, obj;
+            pid := obj_pid(item);
+            // manually remove item and replace it with another from inventory
+            inven_unwield(dude_obj);
+            rm_obj_from_inven(dude_obj, item);
+            destroy_object(item);
+            obj := obj_carrying_pid_obj(dude_obj, pid);
+            if (obj) then begin
+               n := obj_is_carrying_obj_pid(dude_obj, pid);
+               if (n > 1) then begin
+                  // "split" one object from the stack
+                  tmp := rm_mult_objs_from_inven(dude_obj, obj, 1);
+                  tmp := get_weapon_ammo_count(obj);
+                  set_weapon_ammo_count(obj, -1); // this way the following command should not "merge" this object back into existing stack
+                  add_obj_to_inven(dude_obj, obj);
+                  set_weapon_ammo_count(obj, tmp); // change charges back, but the item will remain in separate stack
+               end
+               wield_obj_critter(dude_obj, obj);
+            end
+         end
+      end
+	end
+end
+
+
+procedure useobj_hook begin
+   variable critter, item;
+   critter := get_sfall_arg;
+   item := get_sfall_arg;
+   
+   // traps assembly
+   if (item and critter) then if (critter == dude_obj and is_trap_kit_pid(obj_pid(item))) then begin
+      if (try_assemble_trap(critter, item) == true) then
+         set_sfall_return(1);
+   end
+end
+
+procedure movecost_hook begin
+   variable
+      critter := get_sfall_arg;
+   	
+	//display_msg(proto_data(obj_pid(critter), cr_name)+" move_by "+hexes+"cost"+cost);
+	// traps setoff, turn-based
+	call check_setoff_traps(critter, 0);
 end
 
 

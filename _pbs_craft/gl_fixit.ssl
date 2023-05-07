@@ -1,7 +1,7 @@
 procedure start;
 
 
-#include "..\!sfall\sfall.h"
+#include "..\_pbs_main\sfall.h"
 #define PID_BLOCKING_HEX                    (33554499)
 #define PID_WORKBENCH                    (157)
 #define SCRIPT_TEST0            (2)
@@ -15,23 +15,37 @@ procedure show_dialog;
 
 variable ini_fixit_hotkey;
 
+procedure hotkey_handler begin
+   variable pressed := get_sfall_arg, 
+            key := get_sfall_arg;
+   if (pressed) then begin
+      if (not(get_game_mode) and mode <= 0) then begin
+         if (hotkey_pressed_now(ini_fixit_hotkey, key)) then begin
+      		call batch_init;
+      		//call show_dialog;
+      	end
+      end else if (mode > 0) then begin
+         if (key == DIK_ESCAPE) then begin
+            call exit_mode;
+            tap_key(DIK_ESCAPE);
+         end else if (key >= DIK_1 and key <= DIK_9) then begin
+            //cur_section_start := key - DIK_1;
+            //display_msg("go "+cur_section_start);
+            //call item_options_mode;
+            //tap_key(DIK_ESCAPE);
+         end
+      end
+   end
+end
+
 procedure start begin
 	variable t;
 	//call create_workbench(tile_num_in_direction(tile_num(dude_obj), 3, 1), elevation(dude_obj));
 	if (game_loaded) then begin
 	   //set_global_script_type(1);
-		set_global_script_repeat(100);
+		//set_global_script_repeat(100);
 		ini_fixit_hotkey := parse_hotkey(cfg_fixit_hotkey);
-	end else begin
-		if (not(combat_is_initialized) and mode <= 0 and hotkey_pressed(ini_fixit_hotkey)) then begin
-			call batch_init;
-		end
-		/*if (a==0) then begin
-		set_self(dude_obj);
-		   call show_dialog();
-		   a := 1;
-		end*/
-		
+		register_hook_proc(HOOK_KEYPRESS, hotkey_handler);
 	end
 end
 
@@ -45,9 +59,7 @@ end
 procedure Node001 begin
 end
 
-procedure NodeWTF begin
-   display_msg("wtf?");
-end
+
 
 procedure close_dialog begin
    call butpress;
@@ -58,7 +70,7 @@ end
 
 procedure show_dialog begin
 //game_ui_disable;
-   createwin("win1",get_screen_width-340,get_screen_height-199,340,199);
+   createwin("win1", get_screen_width- 340, get_screen_height- 199, 340, 199);
    SelectWin("win1");
    
    //create window bakground graphics

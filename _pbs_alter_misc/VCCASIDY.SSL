@@ -1,0 +1,1078 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Old Man Cassidy
+        Location: Vault City Courtyard
+        Description: Party NPC
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#include "..\headers\define.h"
+//#include "..\headers\<TownName.h>"
+#include "..\headers\NEWR1.h" //added by killap
+
+#define NAME                    SCRIPT_VCCASIDY
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
+
+#define PARTY_NODE_X                   Node019
+
+#include "..\headers\command.h"
+#include "..\headers\ModReact.h"
+#include "..\headers\partybkg.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure use_obj_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure push_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node001a;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node004a;
+procedure Node004b;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node017a;
+procedure Node018;
+procedure Node019;
+
+// party member default nodes
+procedure Node1001;
+procedure Node1002;
+procedure Node1003;
+procedure Node1004;
+procedure Node1005;
+procedure Node1006;
+procedure Node1007;
+procedure Node1008;
+procedure Node1009;
+procedure Node1010;
+procedure Node1100;
+
+// Cassidy dialog
+procedure Node1101;
+procedure Node1101a;
+procedure Node1102;
+procedure Node1103;
+procedure Node1104;
+procedure Node1105;
+procedure Node1106;
+procedure Node1107;
+procedure Node1108;
+procedure Node1109;
+procedure Node1110;
+procedure Node1111;
+procedure Node1112;
+
+// Cassidy floats
+procedure Node2001;
+procedure Node2002;
+procedure Node2003;
+procedure Node2004;
+procedure Node2005;
+procedure Node2006;
+procedure Node2007;
+procedure Node2008;
+procedure Node2009;
+procedure Node2010;
+procedure Node2011;
+procedure Node2012;
+procedure Node2013;
+procedure Node2014;
+procedure Node2015;
+procedure Node2016;
+procedure Node2017;
+procedure Node2018;
+procedure Node2019;
+procedure Node2020;
+procedure Node2021;
+procedure Node2022;
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_WAITING                    (7)
+#define LVAR_FOLLOW_DISTANCE            (8)
+#define LVAR_TEAM                       (9)
+#define LVAR_Cassidy_Offered            (10)
+#define LVAR_Cassidy_Knows_Plan         (11)
+#define LVAR_Admonished_Cassidy         (12)
+#define LVAR_Mentioned_Vault            (13)
+#define LVAR_Joined_Party_Before        (14)
+
+#define LVAR_Used_Heart_Pills           (15) //added by killap - expansion
+
+#define check_bad_area(map, elev)         ((cur_map_index == map) and ((elevation(self_obj) == elev) or (elev == -1)))
+#define cassidy_doesnt_like_area            ((check_bad_area(MAP_RAIDERS_CAMP2, -1)) or           \
+                                           (check_bad_area(MAP_KLAMATH_TOXICCAVES, -1)) or              \
+                                           (check_bad_area(MAP_KLAMATH_RATCAVES, -1)) or            \
+                                           (check_bad_area(MAP_BROKEN_HILLS2, 1)) or     \
+                                           (check_bad_area(MAP_SAN_FRAN_TANKER, 1)) or    \
+                                           (check_bad_area(MAP_GHOST_FARM, -1)) or         \
+                                           (check_bad_area(MAP_REDDING_MINE_TUNNEL, -1)) or         \
+                                           (check_bad_area(MAP_SIERRA_BATTLE, -1)))      // *** finish
+
+#define cassidy_is_poisoned                    (get_poison(self_obj))
+#define cassidy_is_irradiated                  (get_critter_stat(self_obj, STAT_current_rad))
+#define cassidy_is_crippled                    ((critter_state(self_obj) bwand DAM_CRIP_LEG_LEFT)  or \
+                                                (critter_state(self_obj) bwand DAM_CRIP_LEG_RIGHT) or \
+                                                (critter_state(self_obj) bwand DAM_CRIP_ARM_LEFT)  or \
+                                                (critter_state(self_obj) bwand DAM_CRIP_ARM_RIGHT))
+
+#define cassidy_party_member_options    \
+           NOption(9999, Node1101, 004); \
+           party_member_default_options  
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable Perform_Party_Add:=0;
+variable Perform_Party_Remove:=0;
+variable Perform_Critter_Float := 0;
+variable waiting := 0; //added by killap
+
+procedure start begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   party_member_map_enter;
+
+   Only_Once:=0;
+   Perform_Party_Add:=0;
+   Perform_Party_Remove:=0;
+
+   if( MacRae_Ptr != 0 ) then
+      Perform_Critter_Float := 1;
+   else
+      Perform_Critter_Float := 0;
+
+   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_SLAVES);
+   //critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_CITIZEN);
+
+   //rm_timer_event( self_obj ); - comment out by killap
+   add_timer_event( self_obj, game_ticks( random(40, 50) ), 1);
+end
+
+procedure map_update_p_proc begin
+   if (combat_is_initialized == false) then begin
+      if (anim_busy(self_obj) == false) then begin
+         if (party_member_obj(obj_pid(self_obj)) != 0) then begin
+            if (chem_use_level(self_obj) == 1) then begin
+               if ((100 * self_cur_hits / self_max_hits) <= 60) then begin
+                  global_temp := 1;
+                  obj_heal_no_skill(self_obj)
+               end
+            end else if (chem_use_level(self_obj) == 2) then begin
+               if ((100 * self_cur_hits / self_max_hits) <= 30) then begin
+                  global_temp := 1;
+                  obj_heal_no_skill(self_obj)
+               end
+            end else if (chem_use_level(self_obj) == 3) then begin
+               if ((100 * self_cur_hits / self_max_hits) <= 50) then begin
+                  global_temp := 1;
+                  obj_heal_no_skill(self_obj)
+               end
+            end else if (chem_use_level(self_obj) == 4) then begin
+               if ((100 * self_cur_hits / self_max_hits) <= 50) then begin
+                  global_temp := 1;
+                  obj_heal_no_skill(self_obj)
+               end
+            end
+         end
+      end
+   end
+   
+   //added by killap - needed for "hacky fix" for kitty drug... :(
+   if (waiting == 1) then begin
+      waiting := 0;
+   end
+   //end added
+   
+end
+
+procedure timed_event_p_proc begin
+   // 1 - Standard Floats
+   if( fixed_param == 1 ) then begin
+      if( ( not( combat_is_initialized ) ) and
+          ( self_visible ) ) then begin
+         if( MacRae_Ptr != 0 ) then begin
+            if( cassidy_is_irradiated ) then
+               call Node2009;
+            else if( cassidy_is_poisoned ) then
+               call Node2008;
+            else if( Is_Crippled( MacRae_Ptr ) ) then
+               call Node2022;
+            else if( get_critter_stat(self_obj, STAT_current_hp) <= ( (get_critter_stat(self_obj, STAT_max_hp) * 3)/4) ) then
+               call Node2010;
+            else if( ( Cyberdog_Ptr != 0 ) and (random(1,2) == 1) ) then
+               call Node2013;
+            else if( ( Lenny_Ptr != 0 ) and (random(1,2) == 1) ) then
+               call Node2012;
+            else if( ( Myron_Ptr != 0 ) and (random(1,2) == 1) ) then
+               call Node2011;
+            else
+               call Node2020;
+         end
+         else begin
+            if( party_is_waiting ) then
+               call Node2019;
+         end
+      end
+      add_timer_event( self_obj, game_ticks( random(100, 125) ), 1); //edit by killap - was (40,50)
+   end
+   else if( fixed_param == 2 ) then begin
+      kill_critter( self_obj, ANIM_fall_front );
+   end
+end
+
+procedure push_p_proc begin
+   call Node2016;
+end
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+   //added by killap
+   if (cur_map_index == MAP_NEW_RENO_1) then if ((self_obj == party_member_obj(PID_JOHN_MACRAE)) and (map_var(MVAR_Kitty_Drug) == party_member_obj(PID_JOHN_MACRAE))) then begin 
+      set_map_var(MVAR_Kitty_Drug, 0);
+      waiting := 1;
+      if (get_critter_stat(self_obj, STAT_st) < 10) then begin
+         use_obj_on_obj(create_object_sid(PID_KITTY_SEX_DRUG_STRENGTH, 0, 0, -1), self_obj);
+      end
+   end 
+   //end added
+   
+   if( Perform_Critter_Float == 1 ) then begin
+      Perform_Critter_Float := 0;
+      // Float an appropriate message based on where we are.
+      if( cur_map_index == MAP_VAULTCITY_COURTYARD ) then
+         call Node2001;
+      else if( cassidy_doesnt_like_area ) then
+         call Node2002;
+      else if( ( cur_map_index == MAP_DEN_ENTRANCE ) or ( cur_map_index == MAP_NEW_RENO_1 ) ) then
+         call Node2003;
+      else if( cur_map_index == MAP_SAN_FRAN_CHINATOWN ) then
+         call Node2004;
+      else if( cur_map_index == MAP_ENCLAVE_DOCK ) then
+         call Node2005;
+      else if( cur_map_index == MAP_REDDING_DOWNTOWN ) then
+         call Node2006;
+      else if( cur_map_index == MAP_BROKEN_HILLS1 ) then
+         call Node2007;
+      else if( ( cur_map_index == MAP_VAULTCITY_DOWNTOWN ) and ( tile_distance( tile_num( self_obj ), 16056 ) <= 10 ) ) then
+         call Node2018;
+   end
+
+   if ((MacRae_In_Party) and (party_is_waiting == false)) then begin
+      if (waiting != 1) then begin //check added by killap - needed for "hacky fix" for kitty drug... :(
+         party_member_follow_dude
+      end
+   end
+   else if (self_can_see_dude) then begin
+      if ( local_var(LVAR_Hostile) == 2 ) then begin
+         self_attack_dude;
+      end
+   end
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_self_abandon_party;
+      call Node998;
+   end
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if ((source_obj == dude_obj) and (not MacRae_In_Party)) then begin
+       call Node998;
+   end
+end
+
+procedure use_obj_on_p_proc begin
+
+   //added by killap
+   if ( (obj_pid(obj_being_used_with) == PID_MICRO_FUSION_CELL) or (obj_pid(obj_being_used_with) == PID_SMALL_ENERGY_CELL) ) then begin
+      script_overrides;
+      display_msg(g_mstr(20000));
+   end
+   //end added
+
+   //added by killap - expansion
+   else if (obj_pid(obj_being_used_with) == PID_HEART_PILLS) then begin
+      script_overrides;
+      set_local_var(LVAR_Used_Heart_Pills,1);
+      floater(30000);
+   end
+   
+   else if (obj_pid(obj_being_used_with) == PID_CIGARETTE) then begin
+      script_overrides;
+      floater(30100);
+   end   
+   //end
+
+   else if( (obj_pid(obj_being_used_with) == PID_STIMPAK) or (obj_pid(obj_being_used_with) == PID_SUPER_STIMPAK) ) then
+      call Node2014;
+   else if( ( obj_pid(obj_being_used_with) == PID_JET ) or
+            ( obj_pid(obj_being_used_with) == PID_BUFFOUT ) or
+            ( obj_pid(obj_being_used_with) == PID_PSYCHO ) ) then begin
+      //added by killap - expansion
+      if (local_var(LVAR_Used_Heart_Pills)) then begin
+         floater(30001);
+      end else begin
+      //end added
+         script_overrides;
+         call Node2015;
+      end
+   end
+   else if( (obj_pid(obj_being_used_with) == PID_BEER ) or
+            (obj_pid(obj_being_used_with) == PID_BOOZE ) or
+            (obj_pid(obj_being_used_with) == PID_ROT_GUT ) or
+            (obj_pid(obj_being_used_with) == PID_ROENTGEN_RUM ) or
+            (obj_pid(obj_being_used_with) == PID_ABBEY_BOOZE ) or // added by killap - expansion
+            (obj_pid(obj_being_used_with) == PID_GAMMA_GULP_BEER ) ) then
+      call Node2017;
+   else if( obj_pid(obj_being_used_with) == PID_HEALING_POWDER ) then
+      call Node2021;
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION1;
+
+   CheckKarma;
+
+   GetReaction;
+
+   find_party_background;
+   
+   if ( ( MacRae_Ptr != 0 ) or ( party_is_waiting ) ) then begin
+       start_gdialog(NAME,self_obj,4,HEAD_CASSIDY,PartyMemberBackground);
+       //start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node019;
+       gSay_End;
+       end_dialogue;
+   end
+   else begin
+       start_gdialog(NAME,self_obj,4,HEAD_CASSIDY,PartyMemberBackground);
+       //start_gdialog(NAME,self_obj,4,-1,-1);
+       gSay_Start;
+           call Node001;
+       gSay_End;
+       end_dialogue;
+   end
+   set_local_var( LVAR_Herebefore, 1 );
+   
+   //comment out by killap
+   /*if( Perform_Party_Add == 1 ) then begin
+      Perform_Party_Add := 0;
+      party_add_self;
+      rm_timer_event( self_obj );
+      add_timer_event( self_obj, game_ticks( random(40, 50) ), 1);
+   end
+   if( Perform_Party_Remove == 1 ) then begin
+      Perform_Party_Remove := 0;
+      set_party_waiting;
+      critter_add_trait(self_obj, TRAIT_OBJECT,OBJECT_TEAM_NUM, TEAM_SLAVES);
+      rm_timer_event( self_obj );
+      add_timer_event( self_obj, game_ticks( random(40, 50) ), 1);
+   end*/
+   //end comment out by killap
+   
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+   //added by killap
+   if (not((MacRae_In_Party))) then
+      create_east_out_of_business( 19284, 0 );
+   //end added by killap
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   if( MacRae_Ptr == 0 ) then
+      display_msg(mstr(100));
+   else
+      display_msg(mstr(102));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   if( local_var( LVAR_Herebefore ) == 0 ) then
+      Reply(103);
+   else
+      Reply(104);
+
+   NLowOption(105, Node002);
+   NLowOption(106, Node999);
+   if( Fallout2_vault13_looking ) then
+      NOption(107, Node003, 004);
+   if( local_var( LVAR_Cassidy_Offered ) == 1 ) then
+      NOption(108, Node001a, 004);
+   NOption(109, Node004, 004);
+   NOption(110, Node005, 004);
+   NOption(111, Node999, 004);
+end
+
+procedure Node001a begin
+   set_local_var( LVAR_Cassidy_Offered, 1 );
+   if( ( dude_charisma == 1 ) or ( (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) and ( ( has_rep_slaver ) or ( has_rep_childkiller ) or ( check_general_rep < -100 ) ) ) or ( dude_at_max_party_size ) ) then //edit by killap - added (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality)))
+      call Node015;
+   else
+      call Node016;
+end
+
+procedure Node002 begin
+   Reply(112);
+
+   NLowOption(113, Node999);
+end
+
+procedure Node003 begin
+   Reply(114);
+
+   NOption(115, Node004, 004);
+   NOption(116, Node005, 004);
+   NOption(117, Node999, 004);
+end
+
+procedure Node004 begin
+   Reply(118);
+
+   if( Fallout2_vault13_looking ) then
+      NOption(119, Node003, 004);
+   if( item_caps_total( dude_obj ) >= 20 ) then
+      NOption(120, Node004a, 004);
+   if( item_caps_total( dude_obj ) >= 30 ) then
+      NOption(121, Node004b, 004);
+   NOption(122, Node005, 004);
+   NOption(123, Node999, 004);
+end
+
+procedure Node004a begin
+   item_caps_adjust( dude_obj, -20 );
+   call Node006;
+end
+
+procedure Node004b begin
+   item_caps_adjust( dude_obj, -30 );
+   call Node006;
+end
+
+procedure Node005 begin
+   Reply(124);
+
+   NOption(125, Node004, 004);
+   if( Fallout2_vault13_looking ) then
+      NOption(126, Node003, 004);
+   BOption(127, Node007, 004);
+   NOption(128, Node999, 004);
+end
+
+procedure Node006 begin
+   Reply(129);
+
+   BOption(130, Node007, 004);
+   NOption(131, Node999, 004);
+end
+
+procedure Node007 begin
+   Reply(132);
+
+   NOption(133, Node008, 004);
+end
+
+procedure Node008 begin
+   Reply(134);
+
+   NOption(135, Node009, 004);
+   NOption(136, Node999, 004);
+end
+
+procedure Node009 begin
+   Reply(137);
+
+   NOption(138, Node010, 004);
+   NOption(139, Node999, 004);
+end
+
+procedure Node010 begin
+   Reply(140);
+
+   NOption(141, Node011, 004);
+   NOption(142, Node999, 004);
+end
+
+procedure Node011 begin
+   Reply(143);
+
+   NOption(144, Node012, 004);
+//   if( Fallout2_vault13_looking ) then
+//      NOption(145, Node003, 004);
+   NOption(146, Node999, 004);
+end
+
+procedure Node012 begin
+   Reply(147);
+
+   NOption(148, Node013, 004);
+//   if( Fallout2_vault13_looking ) then
+//      NOption(149, Node003, 004);
+   NOption(150, Node999, 004);
+end
+
+procedure Node013 begin
+   Reply(151);
+
+   NOption(152, Node014, 004);
+   NOption(153, Node999, 004);
+end
+
+procedure Node014 begin
+   Reply(154);
+
+   NOption(155, Node001a, 004);
+   NOption(156, Node999, 004);
+end
+
+procedure Node015 begin
+   if( dude_charisma == 1 ) then
+      Reply(157);
+   else if( has_rep_slaver ) then
+      Reply(158);
+   else if( ( has_rep_childkiller ) or ( ( check_general_rep < -100 ) and (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) )  ) then //edit by killap - added (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality)))
+      Reply(159);
+   else
+      Reply(160);
+
+   if( ( ( check_general_rep >= -100 ) and (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) ) and ( not(has_rep_slaver) ) and ( not(has_rep_childkiller) ) and ( dude_charisma > 1 ) ) then //edit by killap - added (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality)))
+      NOption(161, Node999, 004);
+   if( ( dude_charisma == 1 ) or ( has_rep_slaver ) or ( ( ( has_rep_childkiller ) or ( check_general_rep < -100 ) ) and (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) ) ) then begin //edit by killap - added (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality)))
+      BOption(162, Node999, 004);
+      NOption(163, Node999, 004);
+   end
+end
+
+procedure Node016 begin
+   Reply(164);
+
+   NOption(165, Node017, 004);
+   NOption(166, Node999, 004);
+end
+
+procedure Node017 begin
+   Reply(167);
+
+   NOption(168, Node017a, 004);
+end
+
+procedure Node017a begin
+   if( local_var( LVAR_Joined_Party_Before ) == 0 ) then begin
+      set_local_var( LVAR_Joined_Party_Before, 1 );
+      set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_CASSIDY_JOINED ) );
+      display_msg( mstr(371) );
+      give_xp( EXP_CASSIDY_IN_PARTY );
+   end
+
+   //Perform_Party_Add := 1;
+   party_add_self; //added by killap
+
+   // Set up Out of Business sign.
+   create_east_out_of_business( 19284, 0 );
+   
+   call Node019; //added by killap
+end
+
+procedure Node018 begin
+   // Blank
+end
+
+procedure Node019 begin
+   Reply( random(171, 173) );
+   cassidy_party_member_options;
+end
+
+
+// party member default nodes
+procedure Node1001 begin
+   // heal yourself
+   obj_heal(self_obj)
+   global_temp := 0;
+   if (party_healed_max) then begin
+      Reply(4100);
+   end else if (party_healed_good) then begin
+      Reply(4200);
+   end else if (party_healed_hurt) then begin
+      Reply(4300);
+   end else begin
+      Reply(4400);
+   end
+   cassidy_party_member_options;
+end
+
+procedure Node1002 begin
+   // wait here
+   //Perform_Party_Remove:=1;
+   set_party_waiting; //added by killap
+   Reply(1000);
+   cassidy_party_member_options;
+end
+
+procedure Node1003 begin
+   // put your weapon away
+   inven_unwield( self_obj );
+   Reply(1100);
+   cassidy_party_member_options;
+end
+
+procedure Node1004 begin
+   // follow close
+   set_follow_close;
+   Reply(1200);
+   cassidy_party_member_options;
+end
+
+procedure Node1005 begin
+   // follow medium
+   set_follow_medium;
+   Reply(1300);
+   cassidy_party_member_options;
+end
+
+procedure Node1006 begin
+   // follow far
+   set_follow_far;
+   Reply(1400);
+   cassidy_party_member_options;
+end
+
+procedure Node1007 begin
+   // distance
+   Reply(20000);
+   party_member_def_follow_options;
+end
+procedure Node1008 begin
+   // gear
+   Reply(20001);
+   party_member_def_gear_options;
+end
+procedure Node1009 begin
+   // remove armor
+   remove_armor(self_obj)
+   Reply(20002);
+   cassidy_party_member_options;
+end
+procedure Node1010 begin
+   // weapons that can be used
+   //Reply("TEMP MESSAGE: CAN USE...");
+   //cassidy_party_member_options;
+   call Node1102;
+end
+
+procedure Node1100 begin
+   // join me
+   if( dude_charisma == 1 ) then begin
+      set_self_abandon_party;
+      Reply(2000);
+      NOption(2999, Node999, 001); //added by killap
+   end else if( has_rep_slaver ) then begin
+      set_self_abandon_party; //added by killap
+      Reply(2100);
+      BOption(3100, Node999, 001); //added by killap
+      NOption(3200, Node999, 001); //added by killap
+   end else if( ( ( ( has_rep_childkiller ) or ( check_general_rep < -100 ) ) and (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) ) ) then begin //edit by killap - added (not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality)))
+      set_self_abandon_party; //added by killap
+      Reply(2200);
+      BOption(3100, Node999, 001); //added by killap
+      NOption(3200, Node999, 001); //added by killap
+   end else if( dude_at_max_party_size ) then begin
+      set_self_abandon_party; //added by killap
+      Reply(2300);
+      NOption(2999, Node999, 001); //added by killap
+   end else begin
+      //Perform_Party_Add := 1;
+      //party_add_self; //added by killap
+      end_party_waiting; //added by killap
+      Reply(2400);
+      NOption(3000, Node999, 001); //added by killap
+   end
+
+   /* - this was commented out and merged into the above statements. This makes more sense plus all the other npcs did this.
+   if( ( check_general_rep >= -100 ) and ( not(has_rep_slaver) ) and ( not(has_rep_childkiller) ) and ( dude_charisma <= 1 ) and ( dude_at_max_party_size ) ) then //edit by killap - was > 1
+      NOption(2999, Node999, 001);
+   else if( ( check_general_rep >= -100 ) and ( not(has_rep_slaver) ) and ( not(has_rep_childkiller) ) and ( dude_charisma > 1 ) ) then
+      NOption(3000, Node999, 001);
+   else if( ( dude_charisma == 1 ) or ( has_rep_slaver ) or ( has_rep_childkiller ) or ( check_general_rep < -100 ) ) then begin
+      BOption(3100, Node999, 001);
+      NOption(3200, Node999, 001);
+   end*/
+   
+end
+
+// Cassidy dialog
+procedure Node1101 begin
+   if( Myron_Ptr != 0 ) then
+      Reply(261);
+   else
+      Reply(262);
+
+   if( Myron_Ptr != 0 ) then
+      NOption(263, Node1110, 001);
+   //NOption(264, Node1102, 001);
+   if( Myron_Ptr != 0 ) then
+      NOption(265, Node019, 001);
+   if( Myron_Ptr == 0 ) then
+      NOption(266, Node019, 001);
+   if( Myron_Ptr == 0 ) then
+      NOption(267, Node1101a, 001);
+   if( Myron_Ptr != 0 ) then
+      NOption(268, Node1101a, 001);
+end
+
+procedure Node1101a begin
+   //if( ( local_var( LVAR_Cassidy_Knows_Plan ) == 0 ) and ( not( Fallout2_fix_tanker ) ) ) then
+   if (( local_var( LVAR_Cassidy_Knows_Plan ) == 0 ) and (f2_flag_any < f2_state_fix_tanker) ) then //edit by killap
+      call Node1108;
+   else
+      call Node999;
+end
+
+procedure Node1102 begin
+   Reply(269);
+
+   NOption(270, Node1103, 001);
+   NOption(271, Node019, 001);
+   NOption(272, Node1101a, 001);
+end
+
+procedure Node1103 begin
+   Reply(273);
+
+   NOption(274, Node1104, 001);
+   NOption(275, Node019, 001);
+   NOption(276, Node1101a, 001);
+end
+
+procedure Node1104 begin
+   Reply(277);
+
+   NOption(278, Node1105, 001);
+   NOption(279, Node019, 001);
+   NOption(280, Node1101a, 001);
+end
+
+procedure Node1105 begin
+   if( ( local_var( LVAR_Admonished_Cassidy ) == 0 ) and ( Sulik_Ptr != 0 ) ) then
+      Reply(282);
+   else if( local_var( LVAR_Admonished_Cassidy ) == 0 ) then
+      Reply(281);
+   else if( local_var( LVAR_Admonished_Cassidy ) == 1 ) then
+      Reply(283);
+
+   if( local_var( LVAR_Admonished_Cassidy ) == 0 ) then
+      NOption(284, Node1106, 001);
+   NOption(285, Node019, 001);
+   NOption(286, Node1101a, 001);
+end
+
+procedure Node1106 begin
+   Reply(287);
+
+   NOption(288, Node1107, 001);
+   NOption(289, Node019, 001);
+   NOption(290, Node1101a, 001);
+end
+
+procedure Node1107 begin
+   set_local_var( LVAR_Admonished_Cassidy, 1 );
+   Reply(291);
+
+   NOption(292, Node019, 001);
+   NOption(293, Node1101a, 001);
+end
+
+procedure Node1108 begin
+   set_local_var( LVAR_Cassidy_Knows_Plan, 1 );
+   Reply(294);
+   
+   // edit by killap
+   if (f2_flag_any >= f2_state_tribe_kidnapped) then
+      NOption(297, Node1109, 001);
+   else if (f2_flag_any >= f2_state_v13_known and f2_flag_any < f2_state_tribe_kidnapped) then
+      NOption(296, Node1109, 001);
+   else
+      NOption(295, Node1109, 001);
+
+   /*if( not( Fallout2_vault13_location_known ) ) then
+      NOption(295, Node1109, 001);
+   else if( ( Fallout2_vault13_location_known ) and ( not( Fallout2_tribe_kidnapped ) ) ) then
+      NOption(296, Node1109, 001);
+   else if( ( Fallout2_vault13_location_known ) and ( Fallout2_tribe_kidnapped ) ) then
+      NOption(297, Node1109, 001);*/
+end
+
+procedure Node1109 begin
+   // edit by killap
+   if (f2_flag_any >= f2_state_tribe_kidnapped) then
+      Reply(300);
+   else if (f2_flag_any >= f2_state_v13_known and f2_flag_any < f2_state_tribe_kidnapped) then
+      Reply(299);
+   else
+      Reply(298);
+
+   /*if( not( Fallout2_vault13_location_known ) ) then
+      Reply(298);
+   else if( ( Fallout2_vault13_location_known ) and ( not( Fallout2_tribe_kidnapped ) ) ) then
+      Reply(299);
+   else if( ( Fallout2_vault13_location_known ) and ( Fallout2_tribe_kidnapped ) ) then
+      Reply(300);*/
+
+   NOption(301, Node999, 001);
+end
+
+procedure Node1110 begin
+   if( dude_is_female ) then
+      Reply( mstr(302) + " " + mstr(303) );
+   else
+      Reply(302);
+
+   if( dude_is_female ) then
+      NOption(304, Node1112, 001);
+   else
+      NOption(305, Node1112, 001);
+   NOption(306, Node1111, 001);
+   NOption(307, Node1101a, 001);
+end
+
+procedure Node1111 begin
+   if( dude_is_female ) then
+      Reply( mstr(308) + " " + mstr(309) );
+   else
+      Reply(308);
+
+   if( dude_is_female ) then
+      NOption(310, Node1112, 001);
+   else
+      NOption(311, Node1112, 001);
+   NOption(312, Node1101a, 001);
+end
+
+procedure Node1112 begin
+   if( dude_is_female ) then
+      Reply( mstr(313) + " " + mstr(314) );
+   else
+      Reply(314);
+
+   NOption(315, Node019, 001);
+   NOption(316, Node1101a, 001);
+   NOption(317, Node1101a, 001);
+end
+
+// Cassidy floats
+procedure Node2001 begin
+   floater( random(318, 320) );
+end
+
+procedure Node2002 begin
+   floater( random(321, 323) );
+end
+
+procedure Node2003 begin
+   floater(324);
+end
+
+procedure Node2004 begin
+   floater(325);
+end
+
+procedure Node2005 begin
+   floater(326);
+end
+
+procedure Node2006 begin
+   floater(327);
+end
+
+procedure Node2007 begin
+   floater(328);
+end
+
+procedure Node2008 begin
+   floater(329);
+end
+
+procedure Node2009 begin
+   floater(330);
+end
+
+procedure Node2010 begin
+   floater(331);
+end
+
+procedure Node2011 begin
+   floater( random(332, 333) );
+end
+
+procedure Node2012 begin
+   floater( random(334, 335) );
+end
+
+procedure Node2013 begin
+   floater( random(336, 339) );
+end
+
+procedure Node2014 begin
+   floater( random(340, 342) );
+end
+
+procedure Node2015 begin
+   // Gave bad drugs to Cassidy. Oops.
+   floater(343);
+   reg_anim_clear( self_obj );
+   reg_anim_begin();
+   reg_anim_animate( self_obj,ANIM_fall_front,-1 );
+   reg_anim_end();
+   add_timer_event( self_obj, 5, 2 );
+   display_msg( mstr(370) );
+end
+
+procedure Node2016 begin
+   floater( random(344, 346) );
+end
+
+procedure Node2017 begin
+   floater( random(347, 349) );
+end
+
+procedure Node2018 begin
+   if( local_var( LVAR_Mentioned_Vault ) == 0 ) then begin
+      set_local_var( LVAR_Mentioned_Vault, 1 );
+      floater(350);
+   end
+end
+
+procedure Node2019 begin
+   floater( random(351, 354) );
+end
+
+procedure Node2020 begin
+   floater( random(355, 364) );
+end
+
+procedure Node2021 begin
+   floater( random(365, 368) );
+end
+
+procedure Node2022 begin
+   floater(369);
+end
+
+//xxxxxxxxxxxxxxxxxxxx

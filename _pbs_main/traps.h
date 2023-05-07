@@ -10,7 +10,7 @@
 #include "lib.arrays.h"
 #include "lib.strings.h"
 #include "lib.inven.h"
-#include "lib.misc.h"
+#include "lib.math.h"
 #include "miscpid.h"
 
 #include "..\headers\ANIMCOMD.H"
@@ -141,23 +141,47 @@ procedure trap_setoff_effect(variable pid, variable obj, variable crit);
 procedure manual_trap_explosion(variable tile, variable elev, variable dmgMin, variable dmgMax, variable radius, variable dmgType, variable pid, variable sfx);
 procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType);
 
-// common variables for all trap system scripts
-// will be exported from gl_traps.int and imported to all other scripts
-#ifdef _GL_TRAPS
-   export variable pbs_local_traps := 0;
-   export variable pbs_traps_last_map := 0;
-   export variable pbs_trap_victims := 0; // map:  objectId => constant 1
-   export variable pbs_ini_trap_is_crime := 1;
-   export variable pbs_ini_trap_reveals_dude := 1;
-   export variable pbs_ini_trap_friendfoe := 1;
+
+#ifdef _TRAPS_EXPORT
+#define _EXPORT_VAR(name, value)    export variable name := value;
 #else
-   import variable pbs_local_traps;
-   import variable pbs_traps_last_map;
-   import variable pbs_trap_victims; 
-   import variable pbs_ini_trap_is_crime;
-   import variable pbs_ini_trap_reveals_dude;
-   import variable pbs_ini_trap_friendfoe;
+#define _EXPORT_VAR(name, value)    import variable name;
 #endif
+
+_EXPORT_VAR(pbs_local_traps, 0)
+_EXPORT_VAR(pbs_trap_victims, 0)
+_EXPORT_VAR(pbs_traps_last_map, 0)
+_EXPORT_VAR(pbs_ini_trap_is_crime, 1)
+_EXPORT_VAR(pbs_ini_trap_reveals_dude, 1)
+_EXPORT_VAR(pbs_ini_trap_friendfoe, 1)
+
+#undef _EXPORT_VAR
+
+/* 
+USE THIS IF EXPORTED VARIABLES WON'T WORK:
+// common variables for all trap system scripts
+variable trapv; // map with all variables (except arrays)
+// common arrays
+variable pbs_local_traps;
+variable pbs_trap_victims;
+
+
+// pseudo-exported variables
+
+#define pbs_traps_last_map         trapv[1]
+#define pbs_ini_trap_is_crime      trapv[2]
+#define pbs_ini_trap_reveals_dude  trapv[3]
+#define pbs_ini_trap_friendfoe     trapv[4]
+*/
+
+// initialize common variables
+procedure traps_common_init begin
+   // vars
+   // trapv := load_create_array_map(ARR_TRAPVARS); // always clean array
+   // arrays
+   // pbs_local_traps := load_create_array(ARR_TRAPS_LOCAL, 0);
+   // pbs_trap_victims := load_create_array_map(ARR_TRAP_VICTIMS);
+end
 
 procedure get_traps_for_map begin
   variable ar_global;
@@ -170,8 +194,7 @@ procedure get_traps_for_map begin
     debug_msg("Rebuild local traps");
     ar_global := global_traps;
     if (pbs_local_traps) then
-       free_array(pbs_local_traps);
-    pbs_local_traps := create_array_list(0);
+       clear_array(pbs_local_traps);
     while (i < len_array(ar_global)) do begin
       // copy only active traps in current map, for optimization
       if (trap_map(ar_global, i) == cur_map_index and trap_state(ar_global, i) == TRAP_STATE_ACTIVE) then begin
@@ -184,7 +207,8 @@ procedure get_traps_for_map begin
     pbs_traps_last_map := cur_map_index;
     //debug_msg("Local traps: "+(local_i/TRAPINFO_SIZE) + ", of total: "+(len_array(ar_global)/TRAPINFO_SIZE));
   end
-  return pbs_local_traps;
+  i := pbs_local_traps;
+  return i;
 end
 
 /**
@@ -423,11 +447,11 @@ procedure manual_trap_explosion(variable tile, variable elev, variable dmgMin, v
       if dist > 1 then dmg := floor(dmg * (1.0 - (0.5 / (radius - 1))*(dist - 1)));
       critter_dmg(crit, dmg, dmgType);
       if (get_critter_stat(crit, STAT_current_hp) <= get_expected_damage(crit, dmg, dmgType)) then begin
-         if (not(combat_is_initialized) and not(pbs_trap_victims[crit])) then begin
+         if (not(combat_is_initialized) and not(get_array(pbs_trap_victims, crit))) then begin
       	   exp += exp_for_kill_critter_pid(obj_pid(crit));
       	   mod_kill_counter(critter_kill_type(crit), 1);
          end     	   
-         pbs_trap_victims[crit] := true;
+         set_array(pbs_trap_victims, crit, true);
       end if (pbs_ini_trap_reveals_dude) then begin
         // dude is attacked by victim's team, if he's alive
         call add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(crit));
@@ -461,11 +485,11 @@ procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType) begin
   expectedDmg := get_expected_damage(obj, dmg, dmgType);
   if (critter_state(obj) == CRITTER_IS_NORMAL and get_critter_stat(obj, STAT_current_hp) <= expectedDmg) then begin
     //display_array(pbs_trap_victims);
-    if (not(combat_is_initialized) and not(pbs_trap_victims[obj])) then begin
+    if (not(combat_is_initialized) and not(get_array(pbs_trap_victims, obj))) then begin
        gain_exp_for_trapkill(exp_for_kill_critter_pid(obj_pid(obj)))
        mod_kill_counter(critter_kill_type(obj), 1);
     end
-    pbs_trap_victims[obj] := true;
+    set_array(pbs_trap_victims, obj, true);
   end else begin
     if (pbs_ini_trap_reveals_dude) then begin
       call add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(obj));

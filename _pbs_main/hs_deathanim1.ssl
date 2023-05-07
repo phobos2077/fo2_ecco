@@ -14,7 +14,7 @@ procedure start begin
 	      attacker:= get_sfall_arg;
 	      target:= get_sfall_arg;
 	      damage:= get_sfall_arg;
-         display_msg("deathanim1: wpn: "+weaponPID+", att: "+tile_num(attacker)+", targ: "+target+", dam: "+damage);
+         //display_msg("deathanim1: wpn: "+weaponPID+", att: "+tile_num(attacker)+", targ: "+target+", dam: "+damage);
          
          //set_sfall_return(PID_SPEAR);
       end

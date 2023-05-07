@@ -3,15 +3,18 @@ procedure start;
 //#include "Perk_Inc.h"
 //#include "../headers/scenepid.h"
 #include "define_lite.h"
+#include "command_lite.h"
 #include "lib.strings.h"
 #include "lib.arrays.h"
 #include "mod.h"
 #include "lib.inven.h"
+#include "lib.math.h"
 //#include "quests_bounty.h"
+#include "..\_pbs_craft\learn_craft.h"
 
-variable begin
+variable begin 
   ini_destroy_weapon_chance;
-  ini_destroy_weapon_except;
+  ini_destroy_weapon_list;
   ini_weapon_drop;
   ini_weapon_drop_dist;
   ini_weapon_drop_dir;
@@ -35,6 +38,8 @@ procedure drop_vanilla_monster_parts(variable critter);
 procedure set_item_count(variable invenobj, variable item, variable newcount);
 procedure parse_pid_list(variable str);
 
+#define load_ini_int(name)       int_from_ini_file(name, INI_COMBAT, "ONDEATH")
+#define load_ini_str(name)       str_from_ini_file(name, INI_COMBAT, "ONDEATH")
 
 /*
   Runs immediately after a critter dies for any reason. No return values; this is just a convinence for when you need to do something after death for a large number of different critters and don't want to have to script each and every one of them.
@@ -46,8 +51,9 @@ procedure start
 begin
     variable critter;
 	if (init_hook) then begin
+	
 	   ini_destroy_weapon_chance := get_ini_setting("combat.ini|ONDEATH|destroy_weapon_chance");
-	   ini_destroy_weapon_except := get_ini_string("combat.ini|ONDEATH|destroy_weapon_except");
+	   ini_destroy_weapon_list := get_ini_string("combat.ini|ONDEATH|destroy_weapon_list");
       ini_weapon_drop := get_ini_setting("combat.ini|ONDEATH|weapon_drop");
       ini_weapon_drop_dist := get_ini_setting("combat.ini|ONDEATH|weapon_drop_dist");
       ini_weapon_drop_dir := get_ini_setting("combat.ini|ONDEATH|weapon_drop_dir");
@@ -62,6 +68,8 @@ begin
 	end
 	else begin
 		critter := get_sfall_arg;
+		if (critter == dude_obj) then
+		   return;
 	   //call Scrounger_Perks(critter);
 	   /*if (ini_gecko_pelt_drop == 1) then begin
 	      call Gecko_Items(critter);
@@ -119,7 +127,7 @@ variable begin
    listI;
    len; i;
 end
-    listS := string_split(ini_destroy_weapon_except, ",");
+    listS := string_split(ini_destroy_weapon_list, ",");
     len := len_array(listS);
     listI := temp_array(len, 4);
     i:=0;
@@ -137,16 +145,18 @@ begin
       dir;
       weapon := 0;
       i;
-      exceptList;
+      pidList; tmp;
     end
-    exceptList := parse_pid_list(ini_destroy_weapon_except);
+    pidList := parse_pid_list(ini_destroy_weapon_list);
     i := 1;
     while (i <= 2) do begin
       weapon := critter_inven_obj(critter, i);
       if (weapon) then 
-         if (obj_item_subtype(weapon) == item_type_weapon and not(is_in_array(obj_pid(weapon), exceptList)) and random(0,99) < ini_destroy_weapon_chance) then begin
+         if (obj_item_subtype(weapon) == item_type_weapon and is_in_array(obj_pid(weapon), pidList) and random(0,99) < ini_destroy_weapon_chance) then begin
            rm_obj_from_inven(critter, weapon);
            destroy_object(weapon);
+           display_msg(obj_name(critter) + " " + mstr_combat(313 + critter_is_female*100) + ".");
+           break;
          end
       i++;
     end
@@ -205,6 +215,8 @@ begin
 	drugs_pids := string_split_ints(ini_reduce_drugs_pids, ",");
 	list := inven_as_array(critter);
 	foreach item in list begin
+	   if (item == 0) then
+	      continue;
 		if (obj_item_subtype(item) == item_type_ammo) then begin
 			// reduce ammo in measures of individual rounds, not packs
 			pid := obj_pid(item);
@@ -229,7 +241,14 @@ end
 
 procedure drop_monster_parts(variable critter) begin
 	if (can_steal_from_critter_pid(obj_pid(critter))) then begin
-		if (is_deathclaw(critter)) 		then call add_item_pid(critter, PID_PBS_DEATH_CLAW);
+		if (is_deathclaw(critter)) 		then begin
+		   call add_item_pid(critter, PID_PBS_DEATH_CLAW);
+		   if (get_sfall_global_int(SGVAR_CRAFT_DEATHCLAW) == false) then
+   		   if (is_success(roll_vs_skill(dude_obj, SKILL_REPAIR, 0))) then begin
+   		      display_msg(fixit_mstr(90));
+   		      set_sfall_global(SGVAR_CRAFT_DEATHCLAW, true);
+   		   end
+		end
 		else if (is_molerat(critter)) 	then call add_item_pid(critter, PID_PBS_MOLERAT_HIDE);
 		else if (is_floater(critter) or is_centaur(critter)) 	then call add_item_pid(critter, PID_PBS_TENTACLE);
 		else if (is_alien(critter)) 	then call add_item_pid(critter, PID_PBS_ALIEN_HAND);

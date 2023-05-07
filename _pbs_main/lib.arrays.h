@@ -137,9 +137,14 @@ procedure get_saved_array_new(variable name, variable size);
 procedure save_collection(variable name, variable arr);
 // load collection previously saved with save_collection
 procedure load_collection(variable name);
+// get array pointed to by given sfall global; create it if doesn't exist
+// the difference between this and load_create_array is that array itself might not be saved (but sfall global is always saved)
+//procedure sfall_global_array(variable global, variable size);
+
 
 #define load_create_array_map(name)    (load_create_array(name, -1))
 #define get_saved_array_new_map(name)    (get_saved_array_new(name, -1))
+//#define sfall_global_array_map(name)    (sfall_global_array(name, -1))
 
 
 // IMPLEMENTATION
@@ -209,16 +214,15 @@ end
 
 procedure array_slice(variable array, variable index, variable count) begin
    variable tmp, i, n;
-   tmp := temp_array_list(0);
    n := len_array(array);
-   if (n <= 0) then return tmp;
+   if (n <= 0) then return temp_array_list(0);
    if (index < 0) then
       index := n + index;
    if (count < 0) then
       count := n - index + count;
    else if (index + count > n) then
       count := n - index;
-   resize_array(tmp, count);
+   tmp := temp_array_list(count);
    for (i := 0; i < count; i++) begin
       tmp[i] := array[index + i];
    end
@@ -248,7 +252,7 @@ procedure array_diff(variable arr1, variable arr2) begin
    foreach (v in arr2) begin
       i := scan_array(arr1, v);
       if (i != -1) then begin
-         if (isMap) then
+         if (isMap) then 
             unset_array(arr1, i);
          else
             call array_cut(arr1, i, 1);
@@ -384,6 +388,14 @@ procedure remove_array_set(variable array, variable item) begin
   end
 end
 
+// use callback on each array element
+procedure array_map_func(variable arr, variable callback) begin
+   variable k, v, i;
+   foreach (k: v in arr)
+      arr[k] := callback(v);
+   return arr;
+end
+
 #define ARRAY_EMPTY_INDEX   (-1)
 
 /**
@@ -509,6 +521,18 @@ procedure load_collection(variable name) begin
    return 0;
 end
 #undef _ITEM_NAME
+
+
+/* NOT SAFE
+procedure sfall_global_array(variable global, variable size) begin
+  variable ar;
+  ar := get_sfall_global_int(global);
+  if (ar == 0) then begin
+    ar := create_array(size, 0); // persistent array, but not saved
+    set_sfall_global(global, ar);
+  end
+  return ar;
+end*/
 
 /* 
 DEPRECATED code, just for reference, don't use

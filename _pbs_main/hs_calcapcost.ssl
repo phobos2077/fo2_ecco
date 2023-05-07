@@ -19,6 +19,8 @@ procedure start begin
     if (type == ATKTYPE_HIPKICK) or (type == ATKTYPE_HOOKKICK) or (type == ATKTYPE_PIERCINGKICK) then begin
       i:=5 - (has_trait(TRAIT_PERK, dude_obj, PERK_bonus_hth_attacks) > 0);
     end
+    if (type == ATKTYPE_LWEP_RELOAD or type == ATKTYPE_RWEP_RELOAD) then
+      i := 4;
     if i != -1 then begin
       if aimed then i++;
       set_sfall_return(i);

@@ -1,3 +1,4 @@
+#include "..\_pbs_main\define_lite.h"
 #include "..\_pbs_main\define_extra.h"
 #include "learn_craft.h"
 
@@ -8,7 +9,7 @@
 #include "atoi2.ssl"
 #include "custstr2.ssl"
 
-#define CRAFT_MOD_VERSION		2
+#define CRAFT_MOD_VERSION		3
 
 #define SECTION_START           1000
 #define SECTION_STEP            100
@@ -127,18 +128,18 @@ pure procedure skill_names(variable skills);
 
 /******************************************************************************/
 
-#define _if_global_update(sgvar, gvar)		if (get_sfall_global_int(sgvar) == 0) then set_sfall_global(sgvar, global_var(gvar))
+#define _if_global_update(sgvar, gvar)		if (get_sfall_global_int(sgvar) == 0) then set_sfall_global(sgvar, global_var(gvar));
 
 procedure handle_mod_update begin
 	if (get_sfall_global_int(SGVAR_CRAFT_VERSION) < 2 and (global_var(644) or global_var(645) or global_var(647) or global_var(648) or global_var(649) or global_var(650))) then begin
 		// convert global vars from previous version
-    display_msg("Converting schematic gvars to new format...");
-		_if_global_update(SGVAR_CRAFT_EXPLOSIVES,   644);
-		_if_global_update(SGVAR_CRAFT_LEATHER, 		645);
-		_if_global_update(SGVAR_CRAFT_FIRST_AID, 	647);
-		_if_global_update(SGVAR_CRAFT_ELECTRONICS, 	648);
-		_if_global_update(SGVAR_CRAFT_AMMO, 		649);
-		_if_global_update(SGVAR_CRAFT_BLADES, 		650);
+      display_msg("Converting schematic gvars to new format...");
+		_if_global_update(SGVAR_CRAFT_EXPLOSIVES, 644)
+		_if_global_update(SGVAR_CRAFT_LEATHER, 	645)
+		_if_global_update(SGVAR_CRAFT_FIRST_AID, 	647)
+		_if_global_update(SGVAR_CRAFT_ELECTRONICS,648)
+		_if_global_update(SGVAR_CRAFT_AMMO, 		649)
+		_if_global_update(SGVAR_CRAFT_BLADES, 		650)
 	end
 	set_sfall_global(SGVAR_CRAFT_VERSION, CRAFT_MOD_VERSION);
 end

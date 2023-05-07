@@ -7,6 +7,8 @@
 
 #include "lib.inven.h"
 
+// common stuff BEGIN
+
 #define _dude_has(pid)  obj_is_carrying_obj_pid(dude_obj, pid) 
 
 #define _dialog_at_node(node)  begin                \
@@ -18,6 +20,13 @@
     end
 
 #define is_new_monsterparts_enabled         get_ini_setting("combat.ini|ONDEATH|drop_monster_parts")
+
+// GVAR_BRINGX_* statuses:
+#define BRINGX_QUEST_TAKEN   (1)
+#define BRINGX_QUEST_DONE    (2)
+
+// common stuff END
+
 
 #ifdef _BRINGX_SCHENRY
 
@@ -69,12 +78,14 @@ end
 
 procedure NodeBringAccept begin
     set_local_var(LVAR_BRING_X, 1);
+    set_global_var(GVAR_BRINGX_TENTACLES, BRINGX_QUEST_TAKEN); // for pip boy
     call Node999;
 end
 
 procedure NodeBringReward begin
     item_caps_adjust(dude_obj, _BRING_REWARD);
     set_local_var(LVAR_BRING_X, -(game_time + ONE_GAME_DAY*random(20, 30)));
+    set_global_var(GVAR_BRINGX_TENTACLES, BRINGX_QUEST_DONE);
     call remove_items_pid(dude_obj, PID_PBS_TENTACLE, _BRING_COUNT);
     give_exp_points(100);
     display_msg(g_mstr(100) + 100 + g_mstr(101));
@@ -133,6 +144,7 @@ end
 procedure NodeBringAccept begin
     if (is_first_bring) then set_local_var(LVAR_BRING_X, 1);
     else set_local_var(LVAR_BRING_X, 2);
+    set_global_var(GVAR_BRINGX_HIDES, BRINGX_QUEST_TAKEN);
     call Node999;
 end
 
@@ -159,6 +171,7 @@ end
 
 procedure NodeBringReward begin
     set_local_var(LVAR_BRING_X, -(game_time + ONE_GAME_DAY*random(20, 30)));
+    set_global_var(GVAR_BRINGX_HIDES, BRINGX_QUEST_DONE);
     call remove_items_pid(dude_obj, PID_PBS_MOLERAT_HIDE, _BRING_COUNT);
     give_exp_points(100);
     display_msg(g_mstr(100) + 100 + g_mstr(101));

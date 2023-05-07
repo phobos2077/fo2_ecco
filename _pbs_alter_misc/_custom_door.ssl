@@ -1,32 +1,14 @@
 /*
-	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+	Customizable door. Use from another script by setting defines
 */
-
-/******************************************************************************************
-        Item: Book shelf
-        Locked: Yes
-        Trapped: Yes
-        Description: This is a generic locked and trapped wooden door.
-
-        Log:
-           Please note any changes that have been made to the file in Updated. Then comment
-           the code which you have changed/altered/commented out. Please, do not delete any
-           code which was written.
-
-           Created: September 26, 1997
-
-           Updated:
-******************************************************************************************/
 
 
 /* Include Files */
 #include "..\headers\define.h"
 
-#define NAME                    SCRIPT_SISHELF2
+#define NAME                    SCRIPT_DOOR
 
 #include "..\headers\command.h"
-
-#include "stock.h" // by phobos2077
 
 /* Defines and Macros */
 
@@ -35,37 +17,84 @@
 #define STATE_INACTIVE                  (1)
 #define STATE_WOOD                      (0)
 #define STATE_METAL                     (1)
-#define STATE_FRIDGE                    (2)
 #define STATE_NON_DESTROY               (2)
 #define STATE_STANDARD_LOCK             (0)
 #define STATE_ELECTRIC_LOCK             (1)
+#define STATE_DOOR_CLOSE                (1)
+#define STATE_DOOR_NOCLOSE              (0)
 
-/* Sets whether the door is locked or trapped */
-#define LOCKED_STATUS                   STATE_ACTIVE
-#define TRAPPED_STATUS                  STATE_ACTIVE
-#define DOOR_STATUS                     STATE_WOOD
-#define LOCK_STATUS                     STATE_STANDARD_LOCK
+/* Sets whether the door is locked or trapped or closing */
+#ifndef LOCKED_STATUS
+   #define LOCKED_STATUS                STATE_INACTIVE
+#endif
+#ifndef TRAPPED_STATUS
+   #define TRAPPED_STATUS                  STATE_INACTIVE
+#endif
+#ifndef DOOR_STATUS
+   #define DOOR_STATUS                     STATE_METAL
+#endif   
+#ifndef LOCK_STATUS
+   #define LOCK_STATUS                     STATE_STANDARD_LOCK
+#endif
+#ifndef CLOSE_STATUS
+   #define CLOSE_STATUS                    STATE_DOOR_NOCLOSE
+#endif
 
 /* Penalties for Lock difficulty based on whether or not you are using lockpicks. */
-#define Lock_Bonus                      (-20)
-#define Lockpick_Bonus                  (0)
+#ifndef Lock_Bonus
+   #define Lock_Bonus                      (-20)
+#endif
+#define Lockpick_Bonus                  (Lock_Bonus+20)
+#define Exd_Lockpick_Bonus              (Lock_Bonus+40)
 
 /* Penalties for disarming the trap */
-#define Trap_Bonus                      (0)
-#define Trap_Set_Bonus                  (-10)
+#ifndef Trap_Bonus
+   #define Trap_Bonus                      (0)
+#endif
+#define Trap_Set_Bonus                  (Trap_Bonus-10)
 
 /* Penalties for forcing the door open using strength */
-#define Crowbar_Bonus                   (0)
+#ifndef Crowbar_Bonus
+   #define Crowbar_Bonus                   (0)
+#endif
+
+/* How much damage the door can withstand */
+#ifndef DOOR_HEALTH
+   #define DOOR_HEALTH                     (20 + DOOR_STATUS*50)
+#endif
+
+#define METAL_TRESHOLD                     (10)
 
 /* Max and Min damage for the trap */
-#define DOOR_STRENGTH                   (1)
-#define MIN_DAMAGE                      (10)
-#define MAX_DAMAGE                      (20)
-#define Crowbar_Strain                  (2)
+#ifndef MIN_DAMAGE
+   #define MIN_DAMAGE                      (10)
+#endif
+#ifndef MAX_DAMAGE
+   #define MAX_DAMAGE                      (20)
+#endif
+#ifndef Crowbar_Strain
+   #define Crowbar_Strain                  (2)
+#endif
 
 /* Experience Points for Skills */
 #define Lockpick_Exp                    EXP_LOCKPICK_NORMAL
 #define Traps_Exp                       EXP_TRAPS_NORMAL
+
+/* Door close distance */
+#define DOOR_CLOSE_DIST                 (3)
+/* How far do you want the last object that used the door to get away before it closes */
+#define PARTY_CLOSE_DIST                (5)
+/* How far do party members have to be from the door before it closes */
+
+/* Timer id's */
+#ifndef TIMER_CLOSE
+   #define TIMER_CLOSE                     (1)
+#endif
+
+#ifndef WATCHER_OBJ
+   #define WATCHER_OBJ   0
+#endif
+
 
 /* Standard Script Procedures */
 procedure start;
@@ -87,13 +116,15 @@ procedure Disarm_Traps;
 procedure Unlock_Lock;
 procedure Lockpick_Lock;
 procedure Lockpick_Door;
+procedure Super_Lockpick_Lock;
 procedure Lock_Door;
 procedure Set_Lock;
 procedure Set_Lockpick_Lock;
+procedure Super_Set_Lockpick_Lock;
 procedure Set_Trap;
 procedure Pry_Door;
 procedure Damage_Critter;
-
+procedure Damage_Door(variable dmg);
 
 /*****************************************************************
    Local Variables which are saved. All Local Variables need to be
@@ -104,12 +135,9 @@ procedure Damage_Critter;
 #define LVAR_Trapped                    (1)
 #define LVAR_Found_Trap                 (2)
 #define LVAR_Set_Door_Status            (3)
-#define LVAR_Explosion_Attempts         (4)
+#define LVAR_Door_HP                    (4)
 #define LVAR_Gave_Locks_XP              (5)
 #define LVAR_Gave_Traps_XP              (6)
-#define LVAR_Restock_Time               (7)
-#define LVAR_First_Restock              (8)
-#define LVAR_Restock_Time_Fix           (9) //added by killap
 
 
 /*******************************************************************
@@ -117,11 +145,6 @@ procedure Damage_Critter;
    pointers and variables that need not be saved. If a variable
    Needs to be saved, make it a map variable (MVAR_)
 *******************************************************************/
-#define ANNOYTHRESH 2
-
-import variable buster_obj;
-import variable book_obj2;
-import variable book_obj_look;
 
 
 
@@ -131,7 +154,7 @@ import variable book_obj_look;
 
 variable Locks_Roll;
 variable Traps_Roll;
-variable Book_Annoy_Count;
+variable last_source_obj;
 
 
 /*******************************************************************
@@ -146,8 +169,26 @@ variable Book_Annoy_Count;
 *******************************************************************/
 
 procedure start begin
-   book_obj2 := self_obj;
 end
+
+procedure timed_event_p_proc begin
+   if (obj_is_open(self_obj)) then begin
+      if not combat_is_initialized then begin
+         if ((tile_distance_objs(dude_obj, self_obj) > DOOR_CLOSE_DIST) and
+             (checkPartyMembersNearDoor == false) and
+             ((tile_distance_objs(self_obj, last_source_obj) > DOOR_CLOSE_DIST) or
+              (critter_state(last_source_obj) == CRITTER_IS_DEAD))) then begin
+            obj_close(self_obj);
+         end else begin
+            add_timer_event(self_obj, 10, TIMER_CLOSE);
+         end
+      end else begin
+         add_timer_event(self_obj, 10, TIMER_CLOSE);
+      end
+   end
+end
+
+
 
 /********************************************************************
    Any time that a critter tries to use this door will call this
@@ -157,11 +198,45 @@ end
 procedure use_p_proc begin
 /* Trap_Roll is a global variable to this script, defined at the beginning
    of the script. */
-   if (buster_obj and buster_obj != -1) then begin
-      script_overrides;
-      book_obj_look := 2;
+
+   Traps_Roll:=roll_vs_skill(source_obj,SKILL_TRAPS,Trap_Bonus);
+
+   if (local_var(LVAR_Trapped) == STATE_ACTIVE) then begin
+       if (is_success(Traps_Roll)) then begin
+           script_overrides;
+           set_local_var(LVAR_Found_Trap,1);
+           reg_anim_clear(source_obj);
+
+           if (source_obj == dude_obj) then begin
+               display_msg(mstr(204));
+           end
+           else begin
+               display_msg(mstr(205));
+           end
+       end
+
+       else begin
+           if (obj_is_locked(self_obj)) then begin
+               script_overrides;
+               display_msg(mstr(203));
+               call Damage_Critter;
+           end
+           else begin
+               call Damage_Critter;
+           end
+       end
    end
- end
+
+   else if (obj_is_locked(self_obj)) then begin
+       script_overrides;
+       display_msg(mstr(203));
+   end
+
+   if (CLOSE_STATUS == STATE_DOOR_CLOSE) then begin
+      last_source_obj := source_obj;
+      add_timer_event(self_obj, 10, TIMER_CLOSE);
+   end
+end
 
 /***************************************************************************
    This is cursory glance description that the player will receive should
@@ -172,7 +247,13 @@ procedure use_p_proc begin
 procedure look_at_p_proc begin
    script_overrides;
 
-   display_msg(mstr(100));
+   if (DOOR_STATUS == STATE_WOOD) then begin
+       display_msg(mstr(100));
+   end
+
+   else begin
+       display_msg(mstr(101));
+   end
 end
 
 
@@ -184,7 +265,25 @@ end
 
 procedure description_p_proc begin
    script_overrides;
-   display_msg(mstr(101));
+   if ((local_var(LVAR_Locked) == STATE_ACTIVE) and (local_var(LVAR_Trapped) == STATE_ACTIVE)) then begin
+       call Look_Traps_And_Locks;
+   end
+
+   else if (local_var(LVAR_Trapped) == STATE_ACTIVE) then begin
+       call Look_Traps;
+   end
+
+   else if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+       call Look_Locks;
+   end
+
+   else if (DOOR_STATUS == STATE_WOOD) then begin
+       display_msg(mstr(100));
+   end
+
+   else begin
+       display_msg(mstr(101));
+   end
 end
 
 
@@ -199,8 +298,17 @@ procedure use_skill_on_p_proc begin
 
    Skill_Used:=action_being_used;
 
+   if (Skill_Used == SKILL_LOCKPICK) then begin
+       script_overrides; //added by killap
+       if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+           call Unlock_Lock;
+       end
+       else begin
+           call Set_Lock;
+       end
+   end                                                          // End of Skill_Lockpick
 
-   if (Skill_Used == SKILL_TRAPS) then begin
+   else if (Skill_Used == SKILL_TRAPS) then begin
        script_overrides; //added by killap
        if (local_var(LVAR_Trapped) == STATE_ACTIVE) then begin
            call Skill_Disarm_Traps;
@@ -208,28 +316,14 @@ procedure use_skill_on_p_proc begin
        else begin
            if (source_obj == dude_obj) then begin
                display_msg(mstr(195));
-           end else begin
+           end
+
+           else begin
                display_msg(obj_name(source_obj)+mstr(200));
            end
        end
    end                                                          // End of Skill_Traps
-   else begin
-      if (buster_obj) then begin
-         if (not skill_success(dude_obj, Skill_Used, -35)) then begin
-            script_overrides;
-            if (Book_Annoy_Count < ANNOYTHRESH) then begin
-               if (Book_Annoy_Count == ANNOYTHRESH - 1) then begin
-                  float_msg(buster_obj, mstr(207), FLOAT_MSG_RED);
-               end else begin
-                  float_msg(buster_obj, mstr(208), FLOAT_MSG_RED);
-               end
-            end else begin
-               book_obj_look := 4;
-            end
-            Book_Annoy_Count += 1;
-         end
-      end
-   end
+
 end
 
 
@@ -244,27 +338,66 @@ procedure use_obj_on_p_proc begin
 
    Tool:=obj_pid(obj_being_used_with);
 
-   if ((Tool == PID_DYNAMITE) or (Tool == PID_PLASTIC_EXPLOSIVES)) then begin
-      script_overrides; //added by killap
-      if (buster_obj) then begin
-         float_msg(buster_obj, mstr(206), FLOAT_MSG_RED);
-         book_obj_look := 4;
-      end
-   end else begin
-      if (buster_obj) then begin
-         script_overrides;
-         if (Book_Annoy_Count < ANNOYTHRESH) then begin
-            if (Book_Annoy_Count == ANNOYTHRESH - 1) then begin
-               float_msg(buster_obj, mstr(207), FLOAT_MSG_WARNING);
-            end else begin
-               float_msg(buster_obj, mstr(208), FLOAT_MSG_RED);
-            end
-         end else begin
-            book_obj_look := 4;
-         end
-         Book_Annoy_Count += 1;
-      end
+   if (LOCK_STATUS == STATE_STANDARD_LOCK) then begin
+       if (Tool == PID_LOCKPICKS) then begin
+           script_overrides; //added by killap
+           if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+               call Lockpick_Lock;
+           end
+           else begin
+               call Set_Lockpick_Lock;
+           end
+       end
+       else if (Tool == PID_EXP_LOCKPICK_SET) then begin
+           script_overrides; //added by killap
+           if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+               call Super_Lockpick_Lock;
+           end
+           else begin
+               call Super_Set_Lockpick_Lock;
+           end
+       end 
+       else if (Tool == PID_CROWBAR) then begin
+           script_overrides; //added by killap
+           call Pry_Door;
+       end
+       else if ((Tool == PID_DYNAMITE) or (Tool == PID_PLASTIC_EXPLOSIVES)) then begin
+           script_overrides; //added by killap
+           call Set_Trap;
+       end
    end
+
+   else if (LOCK_STATUS == STATE_ELECTRIC_LOCK) then begin
+       if (Tool == PID_ELECTRONIC_LOCKPICKS) then begin
+           script_overrides; //added by killap
+           if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+               call Lockpick_Lock;
+           end
+           else begin
+               call Set_Lockpick_Lock;
+           end
+       end
+       else if (Tool == PID_ELEC_LOCKPICK_MKII) then begin
+           script_overrides; //added by killap
+           if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+               call Super_Lockpick_Lock;
+           end
+           else begin
+               call Super_Set_Lockpick_Lock;
+           end
+       end 
+       /* else if (Tool == PID_CROWBAR) then begin
+           script_overrides; //added by killap
+           call Pry_Door;
+       end */
+       else if ((Tool == PID_DYNAMITE) or (Tool == PID_PLASTIC_EXPLOSIVES)) then begin
+           script_overrides; //added by killap
+           call Set_Trap;
+       end
+   end
+
+   
+
 end
 
 
@@ -274,7 +407,68 @@ end
    free up the space.
 ******************************************************************************************/
 
+import variable pbs_last_hit_roll_result;
+import variable pbs_last_burst_size;
+
 procedure damage_p_proc begin
+   variable Trap_Damage;
+   variable DmgTresh := 0;
+   variable attacker;
+   variable weapon;
+   variable dmg;
+   variable sfx;
+   /*
+   reg_anim_combat_check(0);
+   reg_anim_begin();
+   reg_anim_animate(self_obj, 0, 0);
+   reg_anim_end();
+   return;
+   */
+   if (DOOR_STATUS == STATE_METAL) then
+      DmgTresh := METAL_TRESHOLD;
+   attacker := source_obj;
+   weapon := obj_being_used_with;
+   if not(is_success(pbs_last_hit_roll_result)) then 
+      return;
+   dmg := fixed_param ;
+   if (dmg > 0) then begin  // this only happens when blowing the door with dynamite
+      if (attacker == 0 and weapon == 0) then 
+         dmg := random(30, 50);
+   end else begin
+      if (attacker) then begin
+         if (weapon == 0 or weapon == self_obj) then begin // HTH attack
+            dmg := random(1, 2 + get_critter_stat(attacker, STAT_melee_dmg));
+         end else begin
+            dmg := get_proto_data(obj_pid(weapon), 44); // max dmg
+            if (pbs_last_burst_size > 1) then
+               dmg *= pbs_last_burst_size;
+            dmg := random(get_proto_data(obj_pid(weapon), 40), dmg);
+            display_msg("dmg="+dmg);
+         end
+      end
+   end
+   dmg -= DmgTresh;
+   // display_msg(get_sfall_global_int("HIT/MISS")+"dmg "+dmg+" with "+obj_name(obj_being_used_with)+" by "+obj_name(source_obj)+obj_name(target_obj));
+   /*if (DOOR_STATUS == STATE_METAL) then
+      sfx := "MXX1";
+   else
+      sfx := "FXX1";
+   play_sfx("WH5"+random(1,2)+sfx);*/
+   if (dmg > 0) then begin
+      if (local_var(LVAR_Trapped) == STATE_ACTIVE) then begin
+          set_local_var(LVAR_Trapped, STATE_INACTIVE);
+          set_local_var(LVAR_Locked, STATE_INACTIVE);
+          // trigger trap
+          Trap_Damage:=random(MIN_DAMAGE,MAX_DAMAGE);
+          play_sfx("WHO1XXX" + random(1,2));
+          critter_dmg(source_obj,Trap_Damage,(DMG_explosion BWOR DMG_BYPASS_ARMOR));
+          dmg += Trap_Damage;
+      end
+      call Damage_Door(dmg);
+   end
+   else begin
+       display_msg(mstr(193)); // not a scratch...
+   end
 end
 
 
@@ -286,312 +480,23 @@ end
 ***************************************************************************************/
 
 procedure map_enter_p_proc begin
-   //added by killap
-   variable tmp;
-   variable special_item;
-   //end added   
-   
-   if (buster_obj != -1 and buster_obj) then begin
-   
-      //added by killap - fix for game_time going negative after 7 years
-      if (((game_time) < 0) and (local_var(LVAR_Restock_Time_Fix) == 0)) then begin
-         set_local_var(LVAR_Restock_Time, game_time - 1);
-         set_local_var(LVAR_Restock_Time_Fix, 1);
-      end
-      //end added
-      
-      if (local_var(LVAR_Restock_Time) < game_time) then begin
-         //Common
-         
-                        //new added
-      tmp := create_object(PID_FOOTLOCKER_CLEAN_LEFT,5,0);
-      if (obj_is_carrying_obj_pid(self_obj, PID_NAV_COMPUTER_PARTS ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_NAV_COMPUTER_PARTS);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_NAVCOM_PARTS ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_NAVCOM_PARTS);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_COMPUTER_VOICE_MODULE ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_COMPUTER_VOICE_MODULE);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);
-      end 
-      if (obj_is_carrying_obj_pid(self_obj, PID_V15_COMPUTER_PART ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_V15_COMPUTER_PART);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);
-      end 
-      if (obj_is_carrying_obj_pid(self_obj, PID_GECK ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_GECK);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);
-      end 
-      if (obj_is_carrying_obj_pid(self_obj, PID_VERTIBIRD_PLANS ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_VERTIBIRD_PLANS);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);
-      end 
-      if (obj_is_carrying_obj_pid(self_obj, PID_TANKER_FOB ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_TANKER_FOB);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);   
-      end 
-      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_CELL ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_CELL);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);   
-      end 
-      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_CELL_CONTROLLER ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_CELL_CONTROLLER);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);   
-      end 
-      if (obj_is_carrying_obj_pid(self_obj, PID_CAR_FUEL_INJECTION ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_CAR_FUEL_INJECTION);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_VIC_RADIO ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_VIC_RADIO);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_VIC_WATER_FLASK ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_VIC_WATER_FLASK);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_HY_MAG_PART ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_HY_MAG_PART);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_DAY_PASS ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_DAY_PASS);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_FAKE_CITIZENSHIP ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_FAKE_CITIZENSHIP);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_CORNELIUS_GOLD_WATCH ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_CORNELIUS_GOLD_WATCH);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_RED_PASS_KEY ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_RED_PASS_KEY);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_BLUE_PASS_KEY ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_BLUE_PASS_KEY);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_GOLD_LOCKET ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_GOLD_LOCKET);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_YELLOW_PASS_KEY ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_YELLOW_PASS_KEY);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_ANNA_GOLD_LOCKET ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_ANNA_GOLD_LOCKET);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_TRAPPER_TOWN_KEY ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_TRAPPER_TOWN_KEY);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_GECKO_DATA_DISK ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_GECKO_DATA_DISK);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_REACTOR_DATA_DISK ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_REACTOR_DATA_DISK);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_YELLOW_REACTOR_KEYCARD ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_YELLOW_REACTOR_KEYCARD);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_RED_REACTOR_KEYCARD ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_RED_REACTOR_KEYCARD);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_PLASMA_TRANSFORMER ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_PLASMA_TRANSFORMER);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_MOORE_BAD_BRIEFCASE ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_MOORE_BAD_BRIEFCASE);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_MOORE_GOOD_BRIEFCASE ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_MOORE_GOOD_BRIEFCASE);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_LYNETTE_HOLO ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_LYNETTE_HOLO);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_WESTIN_HOLO ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_WESTIN_HOLO);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_SPY_HOLO ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_SPY_HOLO);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_DR_HENRY_PAPERS ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_DR_HENRY_PAPERS);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end      
-      if (obj_is_carrying_obj_pid(self_obj, PID_PRESIDENTIAL_PASS ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_PRESIDENTIAL_PASS);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_VAULT_13_SHACK_KEY ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_VAULT_13_SHACK_KEY);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_EXCAVATOR_CHIP ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_EXCAVATOR_CHIP);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_OPEN ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_OPEN);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_RAMIREZ_BOX_CLOSED ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_RAMIREZ_BOX_CLOSED);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_BISHOPS_HOLODISK ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_BISHOPS_HOLODISK);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_ACCOUNT_BOOK ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_ACCOUNT_BOOK);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_ECON_HOLODISK ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_ECON_HOLODISK);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_CELL_DOOR_KEY ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_CELL_DOOR_KEY);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_SMITTY_MEAL ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_SMITTY_MEAL);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_BECKY_BOOK ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_BECKY_BOOK);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_ENLIGHTENED_ONE_LETTER ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_ENLIGHTENED_ONE_LETTER);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_K9_MOTIVATOR ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_K9_MOTIVATOR);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      if (obj_is_carrying_obj_pid(self_obj, PID_PRES_ACCESS_KEY ) > 0) then begin
-         special_item := obj_carrying_pid_obj(self_obj, PID_PRES_ACCESS_KEY);
-         rm_obj_from_inven(self_obj,special_item);
-         add_obj_to_inven(tmp, special_item);  
-      end
-      //end new added
-         
-         destroy_obj_inven(self_obj); //added by killap - one of the preventives I am adding towards the "too many items bug"
-         
-         //Common
-	     check_restock_item(PID_KNIFE, 1, 5, 100)
-         check_restock_item(PID_CLUB, 1, 5, 100)
-         check_restock_item(PID_SPEAR, 1, 5, 100)
-         check_restock_item(PID_ROCK, 1, 5, 100)
-         check_restock_item(PID_CROWBAR, 1, 5, 100)
-         check_restock_item(PID_BRASS_KNUCKLES, 1, 5, 100)
-         check_restock_item(PID_THROWING_KNIFE, 5, 15, 100)
-         check_restock_item(PID_PBS_THROWING_AXE, 1, 3, 100) // new
-         check_restock_item(PID_COMBAT_KNIFE, 1, 5, 100)
 
-         //Uncommon
-         check_restock_item(PID_SPIKED_KNUCKLES, 1, 2, 60)
-         check_restock_item(PID_CATTLE_PROD, 1, 1, 60)
-         check_restock_item(PID_SHARP_SPEAR, 1, 1, 60)
-         check_restock_item(PID_SWITCHBLADE, 1, 1, 60)
+/* Set up the door state when the player first enters the map */
+   if (local_var(LVAR_Set_Door_Status) == 0) then begin
+       set_local_var(LVAR_Set_Door_Status,1);
+       set_local_var(LVAR_Locked,LOCKED_STATUS);
+       set_local_var(LVAR_Trapped,TRAPPED_STATUS);
+       set_local_var(LVAR_Door_HP,DOOR_HEALTH);
+   end else if (local_var(LVAR_Door_HP) == 0) then begin
+       set_local_var(LVAR_Door_HP,DOOR_HEALTH);
+   end
 
-         //Rare
-         check_restock_item(PID_RIPPER, 1, 1, 30)
+   if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+       obj_lock(self_obj);
+   end
 
-         //Really rare
-         check_restock_item(PID_POWER_FIST, 1, 1, 5)
-
-         //check_restock_item(PID_RIPPER, 1, 2, 25) - should be rare, see above (phobos2077)
-         //check_restock_item(PID_223_PISTOL, 1, 3, 100) - removed intentionally  (phobos2077)
-         check_restock_item(PID_10MM_JHP, 5, 10, 100)
-         check_restock_item(PID_SHOTGUN_SHELLS, 5, 10, 100)
-         check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 3, 50)  // pbs
-         check_restock_item(PID_PBS_SHOTGUN_BUCKS, 1, 3, 50)  // pbs
-
-         set_local_var(LVAR_Restock_Time, (random(2,4) * ONE_GAME_DAY) + game_time);
-         
-         //new added - killap
-         move_obj_inven_to_obj(tmp, self_obj);
-         destroy_object(tmp);
-         //end new added
-         
-      end
+   else begin
+       obj_unlock(self_obj);
    end
 end
 
@@ -604,6 +509,13 @@ end
 **************************************************************************************/
 
 procedure map_update_p_proc begin
+   if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+       obj_lock(self_obj);
+   end
+
+   else begin
+       obj_unlock(self_obj);
+   end
 end
 
 
@@ -1269,9 +1181,9 @@ procedure Set_Trap begin
 
    else begin
        script_overrides;
-       Removal_Counter:=rm_mult_objs_from_inven(source_obj,Explosive,1);
 
        if (is_success(Traps_Roll)) then begin
+           Removal_Counter:=rm_mult_objs_from_inven(source_obj,Explosive,1);
            set_local_var(LVAR_Trapped,STATE_ACTIVE);
            if (source_obj == dude_obj) then begin
                display_msg(mstr(208));
@@ -1283,6 +1195,7 @@ procedure Set_Trap begin
        end
 
        else if (is_critical(Traps_Roll)) then begin
+           Removal_Counter:=rm_mult_objs_from_inven(source_obj,Explosive,1);
            call Damage_Critter;
        end
 
@@ -1386,6 +1299,14 @@ procedure Lockpick_Lock begin
    call Lockpick_Door;
 end
 
+procedure Super_Lockpick_Lock begin
+/* Locks_Roll is a global variable to this script, defined at the beginning
+   of the script. */
+   Locks_Roll:=roll_vs_skill(source_obj,SKILL_LOCKPICK,Exd_Lockpick_Bonus);
+
+   call Lockpick_Door;
+end
+
 
 /***************************************************************************
    This procedure will check against the roll_vs_lockpick to see if the
@@ -1459,6 +1380,15 @@ procedure Set_Lockpick_Lock begin
    of the script. */
 
    Locks_Roll:=roll_vs_skill(source_obj,SKILL_LOCKPICK,Lockpick_Bonus);
+
+   call Lock_Door;
+end
+
+procedure Super_Set_Lockpick_Lock begin
+/* Locks_Roll is a global variable to this script, defined at the beginning
+   of the script. */
+
+   Locks_Roll:=roll_vs_skill(source_obj,SKILL_LOCKPICK,Exd_Lockpick_Bonus);
 
    call Lock_Door;
 end
@@ -1578,7 +1508,7 @@ procedure Damage_Critter begin
    variable Trap_Damage;
 
    Trap_Damage:=random(MIN_DAMAGE,MAX_DAMAGE);
-
+   play_sfx("WHO1XXX" + random(1,2));
    if (source_obj == dude_obj) then begin
        critter_dmg(dude_obj,Trap_Damage,(DMG_explosion BWOR DMG_BYPASS_ARMOR));
 /* display_msg("You set off the trap and were hit for "+Trap_Damage+" points of damage.);                 */
@@ -1593,4 +1523,26 @@ procedure Damage_Critter begin
 
 /* The trap is now disarmed and should never go off again.                           */
    set_local_var(LVAR_Trapped, STATE_INACTIVE);
+   /* also damage the door iteself */
+   call Damage_Door(Trap_Damage);
+end
+
+//#include "..\_pbs_main\lib.arrays.h"
+
+procedure Damage_Door(variable dmg) begin
+   if (WATCHER_OBJ != 0) then begin
+      //add_timer_event(self_obj, 10, 13);
+      //call add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(WATCHER_OBJ));
+      attack_setup(WATCHER_OBJ, dude_obj);
+   end
+   if (DOOR_STATUS != STATE_NON_DESTROY) then begin
+      dec_local_var_amt(LVAR_Door_HP, dmg);
+      if (local_var(LVAR_Door_HP) <= 0) then begin // destroy door
+          set_local_var(LVAR_Trapped, STATE_INACTIVE);
+          set_local_var(LVAR_Locked, STATE_INACTIVE);
+          set_obj_visibility(self_obj, 1);
+          //destroy_object(self_obj);
+      end
+   end
+   
 end

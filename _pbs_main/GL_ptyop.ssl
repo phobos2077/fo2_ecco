@@ -1,6 +1,6 @@
 /* PARTY ORDERS ADD ON SCRIPT v1.0d. */
 /* Author: pelicano */
-/* phobos2077 edition 11.07.2014 */
+/* phobos2077 edition 07.01.2015 */
 /* Contact: PM at http://www.nma-fallout.com/forum */
 procedure start;
 
@@ -9,6 +9,7 @@ procedure start;
 #include "..\HEADERS\Zcustom.H"
 #include "..\HEADERS\dik.h"
 #include "..\HEADERS\define_extra.h"
+#include "lib.math.h"
 #include "lib.misc.h"
 #include "lib.inven.h"
 
@@ -78,6 +79,7 @@ procedure start;
 #define SGVAR_CORPSE	"p_corpse"
 #define SGVAR_GITEM0	"p_gitem0"
 #define SGVAR_AMMO_TYPE	"p_ammtyp"
+#define SGVAR_OPTI01 "p_opti01"
 
 variable begin
 	down;
@@ -98,6 +100,7 @@ variable begin
 end
 
 // Main Order procedures
+procedure keypress_hook;
 procedure check_party_orders;
 procedure put_away_weapon(variable oC);
 procedure npc_heal_yourself(variable oC);
@@ -127,16 +130,12 @@ procedure temp_array_from_ini(variable iniSec) begin
 	return ar;
 end
 
-#define isHotkeyPressed(x)	(hotkey_pressed(x))
-
 procedure start begin
 variable begin
-	iParty_members;
 	temp;
 end
 	if (game_loaded) then begin
-		set_global_script_repeat(3);
-		down := 0;
+		set_global_script_repeat(30);
 		holster_key := parse_hotkey(get_ini_string(sec_SETTINGS+"HolsterOrderKey"));
 		healing_key := parse_hotkey(get_ini_string(sec_SETTINGS+"HealingOrderKey"));
 		looting_key := parse_hotkey(get_ini_string(sec_SETTINGS+"LootingOrderKey"));
@@ -168,36 +167,137 @@ end
 		set_sfall_global(SGVAR_CORPSE, 0);
 		set_sfall_global(SGVAR_GITEM0, 0);
 		
-		
+		register_hook_proc(HOOK_KEYPRESS, keypress_hook);
 	end
-	iParty_members := metarule(16,0) -1;
-	if(isHotkeyPressed(holster_key)) then begin	// H: Holster weapons
-		if((not down) and (tWaiting_time <= game_time)) then begin
-			down:=1;
-			if(iParty_members)then begin
-				if(not combat_is_initialized)then begin
-					current_order := co_HOLSTER_WEAPON;
-					call check_party_orders;
-					tWaiting_time := game_time + 1 * ONE_GAME_SECOND;
+	
+   /*end else if (get_sfall_global_int("p_ordbtn") > 0) then begin // commands from UI
+      current_order := get_sfall_global_int("p_ordbtn");
+      call check_party_orders;
+      set_sfall_global("p_ordbtn", 0);*/
+      
+	if(not combat_is_initialized)then begin
+		// NPC Looter system here //
+		if(oLooter)then begin
+			if((looting_stage == ls_STOP) and (tLooting_time <= game_time))then begin // Looting done
+				if(not_party_member(oLooter))then party_add(oLooter);
+				if(oLooter == dude_obj)then
+					temp := FLOAT_MSG_BLUE;
+				else
+					temp := FLOAT_MSG_YELLOW;
+				if(cant_carry_all == 1)then
+					float_msg(oLooter,m_str((10+co_LOOT_CORPSES)*100 +15),temp);
+				else if(cant_carry_all == 2)then
+					float_msg(oLooter,m_str((10+co_LOOT_CORPSES)*100 +random(20,24)),temp);
+				oLooter := 0;
+				set_sfall_global(SGVAR_LOOTER, 0);
+				cant_carry_all := 0;
+			end else if((looting_stage == ls_SEEK) and (tLooting_time <= game_time))then begin
+				//float_msg(oLooter,"Stage Seek",0);
+				//float_msg(oCorpse,"Seek Here",0);
+				looting_stage += 1;
+				tLooting_time := game_time; // + 1 * ONE_GAME_SECOND; // time to begin to run to a corpse
+			end else if((looting_stage == ls_MOVE) and (tLooting_time <= game_time))then begin
+				//float_msg(oLooter,"Stage Move",0);
+				//float_msg(oCorpse,"Move Here",0);
+
+				// Remove looter from party, to remove distance bounds
+				if(is_party_member(oLooter))then party_remove(oLooter);
+				// Anim run to corpse
+				reg_anim_begin();
+				  reg_anim_obj_run_to_obj(oLooter, oCorpse, -1);
+				reg_anim_end();
+
+				tLooting_time := game_time; // + 2 * ONE_GAME_SECOND; // time between run checks
+
+				if(tile_distance_objs(oLooter, oCorpse) <= 1)then begin
+					looting_stage += 1;
+					tLooting_time := game_time; // time to begin to loot the corpse
 				end
-			end
-		end
-	end else if(isHotkeyPressed(healing_key)) then begin	// F: Heal yourself
-		if((not down) and (tWaiting_time <= game_time)) then begin
-			down:=1;
-			if(iParty_members)then begin
-				if(not combat_is_initialized)then begin
-					tWaiting_time := game_time + 5 * ONE_GAME_SECOND;
+				tLooting_time := game_time; // time to begin to look for the next corpse
+			end else if((looting_stage == ls_LOOT) and (tLooting_time <= game_time))then begin
+				//float_msg(oLooter,"Stage Loot!",0);
+				//float_msg(oCorpse,"Loot Here",0);
+
+				if(inven_count(oCorpse)>0)then begin
+					// Anim pick up stuff
+					reg_anim_clear(oLooter);
+					reg_anim_begin();
+						reg_anim_animate (oLooter, ANIM_magic_hands_ground, -1);
+					reg_anim_end();
+					// Inventory checks and item grabbing stuff here //
+					if((loot_items) and (inven_free_amt(oLooter)<carry_amount(oCorpse)))then begin
+						obj_drop_everything(oCorpse);
+						cant_carry_all := 1;
+					end else begin
+						if (cant_carry_all == 0) then cant_carry_all := 2;
+						move_obj_inven_to_obj(oCorpse,oLooter);
+					end
+				end
+
+				tLooting_time := game_time; // + 1 * ONE_GAME_SECOND; // time to grab nearby items
+
+				oGItem := get_ground_item_near_critter(oLooter, oCorpse); // checks nearby items on the ground
+				looting_stage += 1;
+			end else if((looting_stage == ls_PICKUP) and (tLooting_time <= game_time))then begin
+				if(oGItem)then begin
+					set_self(oLooter);
+					pickup_obj(oGItem);
+					looting_stage -= 1; // come back one step and check for more items to pick up
 				end else begin
-					tWaiting_time := game_time + 1 * ONE_GAME_SECOND;
+					oCorpse := find_next_corpse;
 				end
-				current_order := co_HEAL_YOURSELF;
-				call check_party_orders;
+				tLooting_time := game_time + 1 * ONE_GAME_SECOND; // time to begin to look for the next corpse
+			end
+		end // end Loot System
+		// Dude picking stuff up -->
+		if(dude_picking_up == 1) and (dude_pickup_delay <= game_time) then begin
+			temp := get_ground_item_near_critter(dude_obj, dude_obj);
+			if temp then begin
+				set_self(dude_obj);
+				pickup_obj(temp);
+				dude_pickup_delay := game_time + 1 * ONE_GAME_SECOND;
+			end else begin
+				dude_picking_up := 0;
 			end
 		end
-	end else if(isHotkeyPressed(looting_key)) then begin	// G: Loot bodies/items - WIP -
-		if(not down)then begin
-			down:=1;
+	end else begin	//if combat mode then cancel looting (if active)
+		if(oLooter)then call cancel_looting;
+		//cancels dude picking stuff up
+		if dude_picking_up then dude_picking_up := 0;
+	end
+end
+
+#define isHotkeyPressed(x)	(hotkey_pressed_now(x, key))
+
+procedure keypress_hook begin
+   variable iParty_members,
+            pressed := get_sfall_arg,
+            key := get_sfall_arg;
+   if (pressed) then begin
+      iParty_members := metarule(16,0) -1;
+   	if (isHotkeyPressed(holster_key)) then begin	// H: Holster weapons
+   		if (tWaiting_time <= game_time) then begin
+   			if (iParty_members) then begin
+   				if (not combat_is_initialized) then begin
+   					current_order := co_HOLSTER_WEAPON;
+   					call check_party_orders;
+   					tWaiting_time := game_time + 1 * ONE_GAME_SECOND;
+   				end
+   			end
+   		end
+   	end else if (isHotkeyPressed(healing_key)) then begin	// F: Heal yourself
+   		if (tWaiting_time <= game_time) then begin
+   			if (iParty_members) then begin
+   				if (not combat_is_initialized) then begin
+   					tWaiting_time := game_time + 3 * ONE_GAME_SECOND;
+   				end else begin
+   					tWaiting_time := game_time + 1 * ONE_GAME_SECOND;
+   				end
+   				current_order := co_HEAL_YOURSELF;
+   				call check_party_orders;
+   			end
+   		end
+   	end else if (isHotkeyPressed(looting_key)) then begin	// G: Loot bodies/items - WIP -
 			if((looting_stage == ls_STOP) or (oLooter == dude_obj))then begin
 				if(tWaiting_time <= game_time)then begin
 					if(iParty_members)then begin
@@ -211,37 +311,31 @@ end
 			end else begin
 				call cancel_looting;
 			end
-		end
-	end else if(isHotkeyPressed(regroup_key)) then begin	// R: regroup party
-		if((not down) and (tWaiting_time <= game_time)) then begin
-			down:=1;
-			if(iParty_members)then begin
-				if(not combat_is_initialized)then begin
-					current_order := co_REGROUP;
-					call check_party_orders;
-					tWaiting_time := game_time + 5 * ONE_GAME_SECOND;
-				end
-			end
-		end
-	end else if(isHotkeyPressed(spread_key)) then begin	// X: Spread out party
-		if((not down) and (tWaiting_time <= game_time)) then begin
-		//call close_dialog;
-			down:=1;
-			if(iParty_members)then begin
-				if(not combat_is_initialized)then begin
-					current_order := co_SPREAD;
-					call check_party_orders;
-					tWaiting_time := game_time + 3 * ONE_GAME_SECOND;
-				end
-			end
-		end
-	end else if(isHotkeyPressed(pickup_key)) then begin	// T: Pick up items or Loot bodies
-		if(not down)then begin
-			down:=1;
-			if(not combat_is_initialized)then begin
+   	end else if(isHotkeyPressed(regroup_key)) then begin	// R: regroup party
+   		if (tWaiting_time <= game_time) then begin
+   			if (iParty_members) then begin
+   				if (not combat_is_initialized) then begin
+   					current_order := co_REGROUP;
+   					call check_party_orders;
+   					tWaiting_time := game_time + 3 * ONE_GAME_SECOND;
+   				end
+   			end
+   		end
+   	end else if (isHotkeyPressed(spread_key)) then begin	// X: Spread out party
+   		if (tWaiting_time <= game_time) then begin
+   			if (iParty_members) then begin
+   				if (not combat_is_initialized) then begin
+   					current_order := co_SPREAD;
+   					call check_party_orders;
+   					tWaiting_time := game_time + 2 * ONE_GAME_SECOND;
+   				end
+   			end
+   		end
+   	end else if(isHotkeyPressed(pickup_key)) then begin	// T: Pick up items or Loot bodies
+			if (not combat_is_initialized) then begin
 				if (oLooter == dude_obj) then begin
 					call cancel_looting;
-				end else if(get_sfall_global_int("p_opti01") == 1)then begin
+				end else if (get_sfall_global_int(SGVAR_OPTI01) == 1) then begin
 					if (oLooter) then call cancel_looting;
 					call loot_nearby_corpses(dude_obj);
 				end else begin
@@ -249,144 +343,33 @@ end
 					dude_pickup_delay := game_time;
 				end
 			end
-			//call test_(obj_carrying_pid_obj(dude_obj,41),obj_is_carrying_obj_pid(dude_obj,41));
-			/*temp := get_ground_item_near_critter(dude_obj, dude_obj);
-			if(temp)then begin
-				set_self(dude_obj);
-				pickup_obj(temp);
-			end*/
-		end
-	end else if(isHotkeyPressed(ammotype_key)) then begin	// A: Switch ammo types
-		if((not down) and (tWaiting_time <= game_time)) then begin
-			down:=1;
-			if(iParty_members)then begin
-				if(not combat_is_initialized)then begin
-					tWaiting_time := game_time + 3 * ONE_GAME_SECOND;
-					current_order := co_AMMO_TYPE;
-					if (cur_ammo_type == AMMO_TYPE_JHP) then
-						set_sfall_global(SGVAR_AMMO_TYPE, AMMO_TYPE_AP);
-					else
-						set_sfall_global(SGVAR_AMMO_TYPE, AMMO_TYPE_JHP);
-					ap_ammo_list := temp_array_from_ini(sec_AMMO_AP);
-					call check_party_orders;
-				end
-			end
-		end
-	end else if(isHotkeyPressed(switch_key)) then begin	// 0: Turn dude loot bodies on/off
-		if(not down)then begin
-			down:=1;
-
-			temp := get_sfall_global_int("p_opti01");
-			if(temp == 1)then begin
-				temp := 0;
-				set_sfall_global("p_opti01", temp);
+   	end else if(isHotkeyPressed(ammotype_key)) then begin	// A: Switch ammo types
+   		if (tWaiting_time <= game_time) then begin
+   			if (iParty_members) then begin
+   				if(not combat_is_initialized) then begin
+   					tWaiting_time := game_time + 3 * ONE_GAME_SECOND;
+   					current_order := co_AMMO_TYPE;
+   					if (cur_ammo_type == AMMO_TYPE_JHP) then
+   						set_sfall_global(SGVAR_AMMO_TYPE, AMMO_TYPE_AP);
+   					else
+   						set_sfall_global(SGVAR_AMMO_TYPE, AMMO_TYPE_JHP);
+   					ap_ammo_list := temp_array_from_ini(sec_AMMO_AP);
+   					call check_party_orders;
+   				end
+   			end
+   		end
+   	end else if (isHotkeyPressed(switch_key)) then begin	// 0: Turn dude loot bodies on/off
+			if (get_sfall_global_int(SGVAR_OPTI01) == 1) then begin
+				set_sfall_global(SGVAR_OPTI01, 0);
 				float_msg(dude_obj,m_str(0),FLOAT_MSG_RED);
 			end else begin
-				temp := 1;
-				set_sfall_global("p_opti01", temp);
+				set_sfall_global(SGVAR_OPTI01, 1);
 				float_msg(dude_obj,m_str(1),FLOAT_MSG_GREEN);
 			end
-			//display_msg("p_opt1: "+get_sfall_global_int("p_opti01"));
-		end
-   /*end else if (get_sfall_global_int("p_ordbtn") > 0) then begin // commands from UI
-      current_order := get_sfall_global_int("p_ordbtn");
-      call check_party_orders;
-      set_sfall_global("p_ordbtn", 0);*/
-	end else begin // always running...
-		down := 0;
-		if(not combat_is_initialized)then begin
-			// NPC Looter system here //
-			if(oLooter)then begin
-				if((looting_stage == ls_STOP) and (tLooting_time <= game_time))then begin // Looting done
-					if(not_party_member(oLooter))then party_add(oLooter);
-					if(oLooter == dude_obj)then
-						temp := FLOAT_MSG_BLUE;
-					else
-						temp := FLOAT_MSG_YELLOW;
-					if(cant_carry_all == 1)then
-						float_msg(oLooter,m_str((10+co_LOOT_CORPSES)*100 +15),temp);
-					else if(cant_carry_all == 2)then
-						float_msg(oLooter,m_str((10+co_LOOT_CORPSES)*100 +random(20,24)),temp);
-					oLooter := 0;
-					set_sfall_global(SGVAR_LOOTER, 0);
-					cant_carry_all := 0;
-				end else if((looting_stage == ls_SEEK) and (tLooting_time <= game_time))then begin
-					//float_msg(oLooter,"Stage Seek",0);
-					//float_msg(oCorpse,"Seek Here",0);
-					looting_stage += 1;
-					tLooting_time := game_time; // + 1 * ONE_GAME_SECOND; // time to begin to run to a corpse
-				end else if((looting_stage == ls_MOVE) and (tLooting_time <= game_time))then begin
-					//float_msg(oLooter,"Stage Move",0);
-					//float_msg(oCorpse,"Move Here",0);
-
-					// Remove looter from party, to remove distance bounds
-					if(is_party_member(oLooter))then party_remove(oLooter);
-					// Anim run to corpse
-					reg_anim_begin();
-					  reg_anim_obj_run_to_obj(oLooter, oCorpse, -1);
-					reg_anim_end();
-
-					tLooting_time := game_time; // + 2 * ONE_GAME_SECOND; // time between run checks
-
-					if(tile_distance_objs(oLooter, oCorpse) <= 1)then begin
-						looting_stage += 1;
-						tLooting_time := game_time; // time to begin to loot the corpse
-					end
-					tLooting_time := game_time; // time to begin to look for the next corpse
-				end else if((looting_stage == ls_LOOT) and (tLooting_time <= game_time))then begin
-					//float_msg(oLooter,"Stage Loot!",0);
-					//float_msg(oCorpse,"Loot Here",0);
-
-					if(inven_count(oCorpse)>0)then begin
-						// Anim pick up stuff
-						reg_anim_clear(oLooter);
-						reg_anim_begin();
-							reg_anim_animate (oLooter, ANIM_magic_hands_ground, -1);
-						reg_anim_end();
-						// Inventory checks and item grabbing stuff here //
-						if((loot_items) and (inven_free_amt(oLooter)<carry_amount(oCorpse)))then begin
-							obj_drop_everything(oCorpse);
-							cant_carry_all := 1;
-						end else begin
-							if (cant_carry_all == 0) then cant_carry_all := 2;
-							move_obj_inven_to_obj(oCorpse,oLooter);
-						end
-					end
-
-					tLooting_time := game_time; // + 1 * ONE_GAME_SECOND; // time to grab nearby items
-
-					oGItem := get_ground_item_near_critter(oLooter, oCorpse); // checks nearby items on the ground
-					looting_stage += 1;
-				end else if((looting_stage == ls_PICKUP) and (tLooting_time <= game_time))then begin
-					if(oGItem)then begin
-						set_self(oLooter);
-						pickup_obj(oGItem);
-						looting_stage -= 1; // come back one step and check for more items to pick up
-					end else begin
-						oCorpse := find_next_corpse;
-					end
-					tLooting_time := game_time + 1 * ONE_GAME_SECOND; // time to begin to look for the next corpse
-				end
-			end // end Loot System
-			// Dude picking stuff up -->
-			if(dude_picking_up == 1) and (dude_pickup_delay <= game_time) then begin
-				temp := get_ground_item_near_critter(dude_obj, dude_obj);
-				if temp then begin
-					set_self(dude_obj);
-					pickup_obj(temp);
-					dude_pickup_delay := game_time + 1 * ONE_GAME_SECOND;
-				end else begin
-					dude_picking_up := 0;
-				end
-			end
-		end else begin	//if combat mode then cancel looting (if active)
-			if(oLooter)then call cancel_looting;
-			//cancels dude picking stuff up
-			if dude_picking_up then dude_picking_up := 0;
-		end
-		//float_msg(dude_obj,game_time+" : "+tWaiting_time,0);
-	end
+   	end
+   end
 end
+
 
 #define _setWhoName	if(get_name(i,sList_names) != "")then begin 	\
 						sWho_name := get_name(i,sList_names);   	\

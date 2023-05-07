@@ -1,5 +1,12 @@
 procedure start;
 
+/*
+
+   formerly a part of traps system,
+   NO LONGER USED
+   
+*/
+
 #include "sfall.h"
 //#include "assoc_array.ssl"
 #include "define_lite.h"
@@ -10,15 +17,16 @@ variable begin
 end
 
 
+
 procedure start begin
 	variable critter;
 	variable hexes;
 	variable cost;
-	
 	variable mine;
 	
 	if (init_hook) then begin
-	   // all initialization for traps is done in gl_traps
+	   // init variables
+	   call traps_common_init;
 	end else 
 	begin
 		critter := get_sfall_arg;
@@ -29,7 +37,7 @@ procedure start begin
 		
 		// traps setoff, turn-based
 		call check_setoff_traps(critter, 0);
-		set_sfall_return(cost);
+		//set_sfall_return(cost);
 	end
 end
 
