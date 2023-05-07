@@ -16,13 +16,14 @@
 
 /* Include Files */
 
-#include "..\headers\define.h"
-//#include "..\headers\<TownName.h>"
+#define SCRIPT_REALNAME "zclrat"
+#include "../headers/define.h"
+//#include "../headers/<TownName.h>"
 
 #define NAME                    SCRIPT_ZCLRAT
 
-#include "..\headers\command.h"
-//#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+//#include "../headers/modreact.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -35,12 +36,12 @@ procedure damage_p_proc;
 procedure map_enter_p_proc;
 procedure timed_event_p_proc;
 
-procedure combat_p_proc; // pbs
+procedure combat_p_proc; // phobos2077
 
 /* Local variables which do not need to be saved between map changes. */
 
 // by phobos2077: rats eat poofs
-#include "gecko_hunger.h"
+#include "..\_pbs_headers\gecko_hunger.h"
 variable food:=0;
 #define FOOD_DETECT_RADIUS    (15)
 
@@ -51,7 +52,7 @@ procedure timed_event_p_proc begin
    if (not(food) and (not(combat_is_initialized)) and ((critter_state(self_obj) bwand DAM_KNOCKED_OUT) == FALSE)) then begin
       reg_anim_clear(self_obj);
       reg_anim_begin();
-         animate_move_to_tile(tile_num_in_direction(tile_num(self_obj),random(0,5),random(1,3)));
+         self_walk_to_tile(tile_num_in_direction(self_tile,random(0,5),random(1,3)));
       reg_anim_end();
    end
    add_timer_event(self_obj,game_ticks(random(3,5)),0);
@@ -59,6 +60,7 @@ end
 
 procedure critter_p_proc begin
    // the rat attacks if it sees the player
+   if not self_obj then return;
    if (self_can_see_dude) then begin
       attack(dude_obj);
    end
@@ -100,7 +102,7 @@ end
 
 procedure use_obj_on_p_proc begin
    //added by killap - expansion
-   if ( (obj_pid(self_obj) == PID_GIANT_ANT) or (obj_pid(self_obj) == PID_TOUGH_GIANT_ANT) ) then begin
+   if ( (self_pid == PID_GIANT_ANT) or (self_pid == PID_TOUGH_GIANT_ANT) ) then begin
       if ((obj_pid(obj_being_used_with) == PID_BUG_SPRAY)) then begin
          kill_critter(self_obj, ANIM_melted_to_nothing_sf);
       end
@@ -114,7 +116,8 @@ procedure use_skill_on_p_proc begin
 end
 
 procedure map_enter_p_proc begin
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RAT);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_GENERIC_RAT);
+   if not self_obj then return;
+   set_self_team(TEAM_RAT);
+   set_self_ai(AI_GENERIC_RAT);
    add_timer_event(self_obj,game_ticks(random(1,5)),0);
 end

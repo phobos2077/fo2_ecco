@@ -44,7 +44,7 @@ variable In_Timed_Event:=0;
 #define LVAR_Hostile    (0)
 
 // by phobos2077: gecko eat food
-#include "gecko_hunger.h"
+#include "..\_pbs_headers\gecko_hunger.h"
 variable food:=0;
 #define FOOD_DETECT_RADIUS    (15)
 

@@ -1,5 +1,5 @@
-#include "..\_pbs_main\sfall.h"
-#include "..\_pbs_main\lib.arrays.h"
+#include "..\sfall\sfall.h"
+#include "..\sfall\lib.arrays.h"
 
 procedure getNearestFood(variable maxRadius, variable foodList) begin
    variable items, item, dist, minDist, food;
@@ -20,13 +20,13 @@ end
 
 procedure getNearestFoodForGecko(variable maxRadius) begin
    variable foodList;
-   foodList := temp_list3(PID_MEAT_JERKY,PID_IGUANA_ON_A_STICK,PID_MEAT_ON_A_STICK);
+   foodList := [PID_MEAT_JERKY, PID_IGUANA_ON_A_STICK, PID_MEAT_ON_A_STICK];
    return getNearestFood(maxRadius, foodList);
 end
 
 procedure getNearestFoodForRat(variable maxRadius) begin
    variable foodList;
-   foodList := temp_list2(PID_CHEEZY_POOFS, -1);
+   foodList := [PID_CHEEZY_POOFS, -1];
    return getNearestFood(maxRadius, foodList);
 end
 
