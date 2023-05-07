@@ -1,5 +1,12 @@
-#include "..\sfall\sfall.h"
-#include "..\sfall\lib.arrays.h"
+#ifndef GECKO_HUNGER_H
+#define GECKO_HUNGER_H
+
+#include "../sfall/sfall.h"
+#include "../sfall/lib.arrays.h"
+
+#include "../sfall/command_lite.h"
+#include "../headers/itempid.h"
+#include "../headers/animcomd.h"
 
 procedure getNearestFood(variable maxRadius, variable foodList) begin
    variable items, item, dist, minDist, food;
@@ -46,3 +53,5 @@ procedure anim_go_eat_food(variable food) begin
 end
 
 #define should_delete_food(food)    (not(anim_busy(self_obj)) and tile_distance_objs(self_obj, food) <= 2)
+
+#endif

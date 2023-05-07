@@ -1,0 +1,4 @@
+mls:
+  translation:
+    directory: root/data/text/english/dialog
+    auto_tra: true

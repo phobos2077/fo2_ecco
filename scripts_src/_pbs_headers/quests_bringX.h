@@ -1,11 +1,11 @@
-#include "define_lite.h"
-#include "command_lite.h"
-#include "mod.h"
-#include "lib.strings.h"
-#include "sfall.h"
-#include "..\headers\teams.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/command_lite.h"
+#include "../sfall/lib.strings.h"
+#include "../sfall/lib.inven.h"
+#include "../sfall/sfall.h"
+#include "../headers/teams.h"
 
-#include "lib.inven.h"
+#include "ecco.h"
 
 // common stuff BEGIN
 

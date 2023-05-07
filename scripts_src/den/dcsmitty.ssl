@@ -15,13 +15,14 @@
 */
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "dcsmitty"
+#include "../headers/define.h"
 #define NAME                    SCRIPT_DCSMITTY
 #define TOWN_REPUTATION         GVAR_TOWN_REP_THE_DEN
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
-#include "..\headers\DenBus1.h"
-#include "..\headers\Den.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/denbus1.h"
+#include "../headers/den.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -94,11 +95,7 @@ procedure Node027;
 #define repeated_car_warning              lvar_bit(LVAR_Flags, repeated_car_warning_bit)
 #define set_repeated_car_warning          set_lvar_bit_on(LVAR_Flags, repeated_car_warning_bit)
 
-// by phobos2077: crafting
-#define _LEARN_CRAFT_SMITTY
-#include "learn_craft.h"
-
-
+#include "../_pbs_craft/learn_craft_smitty.h" // by phobos2077: crafting
 
 /* Imported variables from the Map scripts. These should only be
    pointers and variables that need not be saved. If a variable
@@ -138,8 +135,8 @@ procedure map_enter_p_proc begin
    smitty_obj := self_obj;
    if (is_loading_game == false) then begin
       if (map_first_run) then begin
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_THE_DEN);
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_CITIZEN);
+         set_self_team(TEAM_THE_DEN);
+         set_self_ai(AI_TOUGH_CITIZEN);
          set_local_var(LVAR_Home_Tile, self_tile);
          set_local_var(LVAR_Home_Rotation, self_cur_rot);
       end
@@ -162,9 +159,9 @@ procedure critter_p_proc begin
          Follow_Dude_Run_Only(2,2)
       end
    end else if (self_tile != local_var(LVAR_Home_Tile)) then begin
-      animate_move_to_tile(local_var(LVAR_Home_Tile));
+      self_walk_to_tile(local_var(LVAR_Home_Tile));
    end else if (self_cur_rot != local_var(LVAR_Home_Rotation)) then begin
-      animate_rotation(local_var(LVAR_Home_Rotation));
+      self_rotate(local_var(LVAR_Home_Rotation));
    end
 end
 
@@ -275,6 +272,7 @@ procedure Node003 begin
    if (get_sfall_global_int(SGVAR_CRAFT_EXPLOSIVES) == 0) then begin
       NOption(701, NodeCraft1, 004);
    end
+   // end by phobos
    NOption(249, Node999, 004);
 end
 
@@ -352,8 +350,8 @@ procedure Node012 begin
       game_time_advance(ONE_GAME_HOUR);
       set_smitty_part(state_smitty_part_given);
       set_car_part_pip(car_part_pip_done);
-      item_caps_adjust(self_obj,2000);
-      item_caps_adjust(dude_obj,-2000);
+      self_caps_adjust(2000);
+      dude_caps_adjust(-2000);
       set_global_var(GVAR_PLAYER_GOT_CAR, 1);
       remove_pid_qty(dude_obj, PID_CAR_FUEL_CELL_CONTROLLER, 1)
    gfade_in(ONE_GAME_SECOND);
@@ -449,8 +447,8 @@ end
 procedure Node026 begin
    gfade_out(ONE_GAME_SECOND);
       game_time_advance(ONE_GAME_HOUR);
-      item_caps_adjust(self_obj,750);
-      item_caps_adjust(dude_obj,-750);
+      self_caps_adjust(750);
+      dude_caps_adjust(-750);
       remove_pid_qty(dude_obj, PID_CAR_FUEL_INJECTION, 1)
       set_car_upgrade_fuel_cell_regulator;
    gfade_in(ONE_GAME_SECOND);

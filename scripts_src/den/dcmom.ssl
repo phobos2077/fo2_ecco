@@ -15,12 +15,13 @@
 */
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "dcmom"
+#include "../headers/define.h"
 #define NAME                    SCRIPT_DCMOM
 #define TOWN_REPUTATION         GVAR_TOWN_REP_THE_DEN
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
-#include "..\headers\Den.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/den.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -98,8 +99,7 @@ procedure Node992;
 import variable den_mom_box_obj;
 import variable generic_temp_box;
 
-#define _LEARN_CRAFT_MOM
-#include "learn_craft.h"
+#include "../_pbs_craft/learn_craft_mom.h"
 
 procedure start begin
 end
@@ -114,8 +114,8 @@ end
 procedure map_enter_p_proc begin
    if (is_loading_game == false) then begin
       if (map_first_run) then begin
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_THE_DEN);
-         critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_PEASANT);
+         set_self_team(TEAM_THE_DEN);
+         set_self_ai(AI_PEASANT);
       end
    end
 end
@@ -195,9 +195,9 @@ end
 
 procedure Node990 begin
    if (dude_caps > 10) then begin
-      item_caps_adjust(dude_obj, -5);
+      dude_caps_adjust(-5);
    end else if (dude_caps > 0) then begin
-      item_caps_adjust(dude_obj, -1);
+      dude_caps_adjust(-1);
    end
    call Node010;
 end
@@ -211,7 +211,7 @@ procedure Node989 begin
    if (dude_is_stupid) then begin
       call Node011;
    end else begin
-      item_caps_adjust(dude_obj, -10);
+      dude_caps_adjust(-10);
       call Node007;
    end
 end
@@ -230,7 +230,7 @@ procedure Node001 begin
    Reply(200 + herebefore);
    NOption(mstr(202) + dude_name + ".", Node002, 001); //added . - killap
    NOption(203, Node999, 001);
-   
+
    set_herebefore; //added by killap
 end
 
@@ -333,7 +333,7 @@ procedure Node013 begin
       NOption(410, Node008, 004);
    end
    NOption(411, Node009, 004);
-   
+
    //added by killap - expansion pack
    if (global_var(GVAR_DEN_ORPHANAGE) == 1) then
       NOption(800, Node026, 004);
@@ -456,7 +456,7 @@ procedure Node030 begin
       Reply(1822);
    else
       Reply(823);
-      
+
    NOption(824, Node992, 004);
 end
 
@@ -466,7 +466,7 @@ end
 
 procedure Node992 begin
    display_msg(mstr(850));
-      
+
    if (global_var(GVAR_DEN_ORPHANAGE) == 3) then begin
       give_xp(500);
    end else if (global_var(GVAR_DEN_ORPHANAGE) == 4) then begin
@@ -474,7 +474,7 @@ procedure Node992 begin
    end else begin
       give_xp(1000);
    end
-      
+
    set_global_var(GVAR_DEN_ORPHANAGE,6);
    set_ate_at_moms;
    dude_eat_food(large_meal);
@@ -483,7 +483,7 @@ procedure Node992 begin
       critter_heal(dude_obj, random(2, 8));
    gfade_in(ONE_GAME_SECOND);
    inc_global_var_amt(GVAR_TOWN_REP_THE_DEN,5);
-   set_global_var(GVAR_DEN_ORPHANAGE_BUILD_TIME,game_time); 
+   set_global_var(GVAR_DEN_ORPHANAGE_BUILD_TIME,game_time);
 end
 
 //end added by killap - expansion pack

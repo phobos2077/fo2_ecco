@@ -25,15 +25,16 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\ncr1.h"
+#define SCRIPT_REALNAME "schenry"
+#include "../headers/define.h"
+#include "../headers/ncr1.h"
 
 #define NAME                    SCRIPT_SCHENRY
 #define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
-#include "..\headers\ncr.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/ncr.h"
 
 
 /* Standard Script Procedures */
@@ -101,7 +102,7 @@ procedure DoCallGuards;
 
 // by phobos2077 - bring X quest
 #define _BRINGX_SCHENRY
-#include "..\_pbs_main\quests_bringx.h"
+#include "..\_pbs_headers\quests_bringx.h"
 // ;
 /* Imported variables from the Map scripts. These should only be
    pointers and variables that need not be saved. If a variable
@@ -131,8 +132,8 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_DOCTOR);
+   set_self_team(TEAM_NCR);
+   set_self_ai(AI_DOCTOR);
 end
 
 
@@ -145,7 +146,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -279,7 +280,7 @@ procedure Node001 begin
       NOption(107, Node013, 4);
    if (global_var(GVAR_NCR_ENCLAVE_INFO) bwand 1) then
       NOption(108, Node014, 4);
-   INJECT_ASK_BRING
+   INJECT_ASK_BRING // phobos2077
    NOption(109, Node015, 4);
 end
 
@@ -392,8 +393,9 @@ procedure Node017 begin
    if (is_new_monsterparts_enabled) then begin
 	   Reply(400);
 	   INJECT_ASK_BRING
-   end else Reply(146);
+   end else
    // end;
+   Reply(146);
    ENDOPTION;
 end
 
@@ -432,14 +434,15 @@ procedure Node022 begin
 	  Reply(400);
 	  INJECT_ASK_BRING
 	  ENDOPTION;
-   end else float_msg(self_obj, mstr(157 + Random(0, 2)), FLOAT_MSG_NORMAL);
+   end else
    // end;
+   float_msg(self_obj, mstr(157 + Random(0, 2)), FLOAT_MSG_NORMAL);
 end
 
 procedure Node023 begin
    variable madeit;
 
-   madeit := skill_success(dude_obj, SKILL_CONVERSANT, 0);
+   madeit := skill_success(dude_obj, SKILL_SPEECH, 0);
    if (madeit) then begin
       Reply(163);
    end else begin

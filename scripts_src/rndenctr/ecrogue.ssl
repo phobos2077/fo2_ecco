@@ -25,16 +25,17 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\bhrnddst.h"
+#define SCRIPT_REALNAME "ecrogue"
+#include "../headers/define.h"
+#include "../headers/bhrnddst.h"
 
 #define NAME                    SCRIPT_ECBANDIT
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 // by phobos2077:
 #define _BOUNTY_ECROGUE
-#include "..\_pbs_main\quests_bounty.h"
+#include "..\_pbs_headers\quests_bounty.h"
 // end;
 
 
@@ -71,9 +72,9 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RND_ROGUE);
+   set_self_team(TEAM_RND_ROGUE);
    //critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_BERSERKER); //comment out by killap
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD); //added by killap
+   set_self_ai(AI_TOUGH_GUARD); //added by killap
    call bounty_hook_map_enter; // by phobos2077
 end
 
@@ -100,14 +101,11 @@ procedure critter_p_proc begin
    the player should the game be saved and loaded repeatedly. Additionally, if any special
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
-   
-   variable msg;
 
-   if (obj_can_see_obj(self_obj,dude_obj)) then begin
+   if (self_can_see_dude) then begin
        // by phobos2077 (different floater for quest robbers):
-       if (i_am_bounty) then msg := random(240, 244);
-	   else msg := random(205, 212);
-       floater(msg);
+       if (i_am_bounty) then floater(random(240, 244));
+       else floater(random(205,212));
        // end;
        attack(dude_obj);
    end

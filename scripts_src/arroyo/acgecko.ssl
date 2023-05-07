@@ -25,12 +25,13 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\ArGarden.h"
+#define SCRIPT_REALNAME "acgecko"
+#include "../headers/define.h"
+#include "../headers/argarden.h"
 
 #define NAME                    SCRIPT_ACGECKO
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 procedure start;
 procedure critter_p_proc;
@@ -49,8 +50,8 @@ variable food:=0;
 #define FOOD_DETECT_RADIUS    (15)
 
 procedure start begin
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_GECKO);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_WIMPY_GECKO);
+   set_self_team(TEAM_GECKO);
+   set_self_ai(AI_WIMPY_GECKO);
 end
 
 procedure critter_p_proc begin
@@ -59,16 +60,17 @@ procedure critter_p_proc begin
        add_timer_event(self_obj,game_ticks(5),1);
    end
 
-   if ((obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((self_pid == PID_TOUGH_GECKO_SMALL) and (self_can_see_dude)) then begin
        attack(dude_obj);
    end
 
    if (local_var(LVAR_Hostile) == 1) then
        attack(dude_obj);
-   
+
+   // by phobos2077: search for food
    if (not(combat_is_initialized) and not(In_Timed_Event)) then begin
       if (random(0, 50) == 1 and not(food)) then begin
-         food := getNearestFood(FOOD_DETECT_RADIUS);
+         food := getNearestFoodForGecko(FOOD_DETECT_RADIUS);
          if (food) then
             call anim_go_eat_food(food);
       end else if (food and not(anim_busy(self_obj))) then begin
@@ -76,6 +78,7 @@ procedure critter_p_proc begin
          food := 0;
       end
    end
+   // end by phobos
 end
 
 procedure damage_p_proc begin
@@ -86,27 +89,29 @@ end
 procedure timed_event_p_proc begin
    if (fixed_param == 1) then begin
        In_Timed_Event:=0;
-       animate_move_to_tile(tile_num_in_direction(tile_num(self_obj),random(0,5),random(3,6)));
+       self_walk_to_tile(tile_num_in_direction(self_tile,random(0,5),random(3,6)));
    end
 end
 
 procedure destroy_p_proc begin
    variable item;
 
-   if (obj_pid(self_obj) == PID_GECKO_SMALL) then begin
+   if (self_pid == PID_GECKO_SMALL) then begin
        set_map_var(MVAR_Current_Gecko_Easy,map_var(MVAR_Current_Gecko_Easy)-1);
    end
-   else if (obj_pid(self_obj) == PID_TOUGH_GECKO_SMALL) then begin
+   else if (self_pid == PID_TOUGH_GECKO_SMALL) then begin
        set_map_var(MVAR_Current_Gecko_Hard,map_var(MVAR_Current_Gecko_Hard)-1);
    end
 
-   if (has_trait(TRAIT_PERK,dude_obj,PERK_gecko_skinning_perk)) then begin
+   if (dude_perk(PERK_gecko_skinning_perk)) then begin
        item:=create_object(PID_GECKO_PELT,0,0);
        add_obj_to_inven(self_obj,item);
    end
 end
 
 procedure combat_p_proc begin
+   food := 0;   // phobos2077: reset food
+
    if (fixed_param == COMBAT_SUBTYPE_HIT_SUCCEEDED) then begin
        if (random(0,100) == 1) then begin
            if (Sneer == 0) then begin

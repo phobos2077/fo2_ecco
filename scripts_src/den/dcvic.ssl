@@ -16,15 +16,16 @@
 */
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "dcvic"
+#include "../headers/define.h"
 
 #define NAME                        SCRIPT_DCVIC
 #define TOWN_REP_VAR                GVAR_TOWN_REP_THE_DEN
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
-#include "..\headers\den.h"
-#include "..\headers\NEWR1.h" //added by killap
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/den.h"
+#include "../headers/newr1.h" //added by killap
 
 /* Standard Script Procedures */
 procedure start;
@@ -116,25 +117,7 @@ import variable vic_door_obj; //added by killap
 #define node_13_bit                       bit_17
 #define node_1010_bit                     bit_18
 
-// added by phobos2077: crafting pointers
-#include "learn_craft.h"
-
-#define node_craft_bit                    bit_20
-#define node_craft                        lvar_bit(LVAR_Flags, node_craft_bit)
-#define set_node_craft                    set_lvar_bit_on(LVAR_Flags, node_craft_bit)
-
-procedure NodeCraft1;
-procedure NodeCraft2;
-procedure NodeCraft3;
-procedure NodeCraft4;
-procedure NodeCraft5;
-procedure NodeCraft6;
-procedure NodeCraft7;
-procedure NodeCraft8;
-procedure NodeCraft9;
-procedure NodeCraft10;
-procedure NodeCraft11;
-// ;
+#include "../_pbs_craft/learn_craft_vic.h" // by phobos2077: crafting pointers
 
 #define node_2                            lvar_bit(LVAR_Flags, node_2_bit)
 #define set_node_2                        set_lvar_bit_on(LVAR_Flags, node_2_bit)
@@ -175,7 +158,7 @@ procedure NodeCraft11;
          party_member_default_options
 
 //#define vic_in_his_old_place              (false) // ### put this in
-#define vic_in_his_old_place              (tile_distance(tile_num(self_obj),18053) <= 5) // ### put this in //added by killap
+#define vic_in_his_old_place              (tile_distance(self_tile,18053) <= 5) // ### put this in //added by killap
 
 #define vic_mom_tile                      (24482)
 
@@ -184,7 +167,6 @@ procedure NodeCraft11;
 #define TIMER_ENSURE_ANIM     555 //added by killap
 
 variable did_node12:=0;
-variable waiting := 0; //added by killap
 
 procedure start begin
 end
@@ -192,7 +174,7 @@ end
 procedure timed_event_p_proc begin
    if (fixed_param == 666) then begin
       set_self_abandon_party;
-      critter_add_trait(self_obj, TRAIT_OBJECT, OBJECT_TEAM_NUM, TEAM_VAULT_CITIZENS);
+      set_self_team(TEAM_VAULT_CITIZENS);
       set_daughter_attacked;
       attack(dude_obj);
    end else if (fixed_param == timed_event_float) then begin
@@ -207,7 +189,7 @@ procedure timed_event_p_proc begin
                   //added by killap
                   end else if (Is_Crippled(self_obj)) then begin
                      floater(5500);
-                  end else if (get_critter_stat(self_obj, STAT_current_rad)) then begin
+                  end else if (self_rads) then begin
                      floater(5501);
                   end else if (get_poison(self_obj)) then begin
                      floater(5502);
@@ -244,29 +226,29 @@ procedure timed_event_p_proc begin
    else if (fixed_param == TIMER_ENSURE_ANIM) then begin
       if not anim_busy(self_obj) then begin
          if ( (local_var(LVAR_Head_To_Mom) == 1) ) then begin //added (local_var(LVAR_Head_To_Mom)) - killap
-            if (self_tile != 22092) then 
-               animate_move_to_tile(22092);
+            if (self_tile != 22092) then
+               self_walk_to_tile(22092);
             else begin
-               animate_move_to_tile(27094);
+               self_walk_to_tile(27094);
                set_local_var(LVAR_Head_To_Mom,2);
             end
          end else if ( (local_var(LVAR_Head_To_Mom) == 2) ) then begin
             if (self_tile != 27094) then
-               animate_move_to_tile(27094);
+               self_walk_to_tile(27094);
             else begin
-               animate_move_to_tile(vic_mom_tile);
-               set_local_var(LVAR_Head_To_Mom,3);         
+               self_walk_to_tile(vic_mom_tile);
+               set_local_var(LVAR_Head_To_Mom,3);
             end
          end else if ( (local_var(LVAR_Head_To_Mom) == 3) ) then begin
             if (self_tile != vic_mom_tile) then
-               animate_move_to_tile(vic_mom_tile);
+               self_walk_to_tile(vic_mom_tile);
             else begin
-               set_local_var(LVAR_Home_Tile, vic_mom_tile); 
+               set_local_var(LVAR_Home_Tile, vic_mom_tile);
                set_local_var(LVAR_Head_To_Mom,0);
             end
          end
       end
-         add_timer_event(self_obj, game_ticks(1), TIMER_ENSURE_ANIM); 
+         add_timer_event(self_obj, game_ticks(1), TIMER_ENSURE_ANIM);
    end
 end
 
@@ -276,7 +258,7 @@ variable temp_weapon;
    if (is_loading_game == false) then begin
       if (cur_map_index == MAP_DEN_BUSINESS) then begin
          if (map_first_run) then begin
-            critter_add_trait(self_obj, TRAIT_OBJECT,OBJECT_TEAM_NUM, TEAM_SLAVES);
+            set_self_team(TEAM_SLAVES);
             set_local_var(LVAR_Home_Tile, self_tile);
          end else if (has_joined_party == false) then begin
             //unlocked by killap
@@ -285,7 +267,7 @@ variable temp_weapon;
                   set_local_var(LVAR_Head_To_Mom,0);
                   set_local_var(LVAR_Home_Tile, vic_mom_tile); //edit by killap, was-- set_local_var(vic_mom_tile, vic_mom_tile);
                   critter_attempt_placement(self_obj, vic_mom_tile, self_elevation);
-                  animate_rotation(1);
+                  self_rotate(1);
                end
             end
             //end unlocked
@@ -298,7 +280,7 @@ end
 procedure map_update_p_proc begin
    if (combat_is_initialized == false) then begin
       if (anim_busy(self_obj) == false) then begin
-         if (party_member_obj(obj_pid(self_obj)) != 0) then begin
+         if (party_member_obj(self_pid) != 0) then begin
             if (chem_use_level(self_obj) == 1) then begin
                if ((100 * self_cur_hits / self_max_hits) <= 60) then begin
                   global_temp := 1;
@@ -323,13 +305,6 @@ procedure map_update_p_proc begin
          end
       end
    end
-   
-   //added by killap - needed for "hacky fix" for kitty drug... :(
-   if (waiting == 1) then begin
-      waiting := 0;
-   end
-   //end added  
-   
 end
 
 procedure push_p_proc begin
@@ -341,16 +316,6 @@ procedure push_p_proc begin
 end
 
 procedure critter_p_proc begin
-   //added by killap
-   if ((cur_map_index == MAP_NEW_RENO_1) and (self_obj == party_member_obj(PID_VIC)) and (map_var(MVAR_Kitty_Drug) == party_member_obj(PID_VIC))) then begin 
-      set_map_var(MVAR_Kitty_Drug, 0);
-      waiting := 1;
-      if (get_critter_stat(self_obj, STAT_st) < 10) then begin
-         use_obj_on_obj(create_object_sid(PID_KITTY_SEX_DRUG_STRENGTH, 0, 0, -1), self_obj);
-      end
-   end 
-   //end added
-
    //move by killap - would never be run if player was near Vic
    if (has_joined_party == false) then begin
       /*if (vic_free) then begin
@@ -369,18 +334,16 @@ procedure critter_p_proc begin
    end else
    //end move
    if ((Vic_In_Party) and (party_is_waiting == false)) then begin
-      if (waiting != 1) then begin //check added by killap - needed for "hacky fix" for kitty drug... :(
-         party_member_follow_dude
-      end
+      party_member_follow_dude
    end else if (self_can_see_dude) then begin
       if ( local_var(LVAR_Hostile) == 2 ) then begin
          self_attack_dude;
       end
-      
+
    /*end else if (has_joined_party == false) then begin
       if (vic_free) then begin
          if (self_tile != local_var(LVAR_Home_Tile)) then begin
-            animate_move_to_tile(local_var(LVAR_Home_Tile)); // Seraph's Fix: animate_move_to_tile only takes one parameter. Thanks Rob!
+            self_walk_to_tile(local_var(LVAR_Home_Tile)); // Seraph's Fix: animate_move_to_tile only takes one parameter. Thanks Rob!
          end
       end*/
    end
@@ -393,7 +356,7 @@ procedure use_obj_on_p_proc begin
       display_msg(g_mstr(20000));
    end
    //end added
-   
+
    if (obj_item_subtype(obj_being_used_with) == item_type_drug) then begin
       if (has_joined_party) then begin
          if ((obj_pid(obj_being_used_with) == PID_FIRST_AID_KIT) or
@@ -411,7 +374,7 @@ procedure use_obj_on_p_proc begin
       end
       flush_add_timer_event_sec(self_obj, random(15, 30), timed_event_float);
    end
-   
+
 
 end
 
@@ -431,17 +394,11 @@ procedure pickup_p_proc begin
 end
 
 procedure talk_p_proc begin
-   //begin B-team mod
-   variable loc1;
-   variable loc2;
-   loc1:=critter_inven_obj(self_obj,0);
-   //end B-team mod
-
-   debug_msg("Trunk_In_Party == " + (Trunk_Ptr != 0));
-   debug_msg("party_size == " + party_size);
-   debug_msg("true_party_size == " + true_party_size);
-   debug_msg("party_max_formula == " + party_max_formula);
-   debug_msg("dude_at_max_party_size == " + dude_at_max_party_size);
+   ndebug("Trunk_In_Party == " + (Trunk_Ptr != 0));
+   ndebug("party_size == " + party_size);
+   ndebug("true_party_size == " + true_party_size);
+   ndebug("party_max_formula == " + party_max_formula);
+   ndebug("dude_at_max_party_size == " + dude_at_max_party_size);
    script_overrides;
    if ((daughter_attacked) or (hostile)) then begin
       call Node1020;
@@ -475,70 +432,6 @@ procedure talk_p_proc begin
       end
       set_herebefore;
    end
-   
-   //begin B-Team mod   
-   loc2 := critter_inven_obj(self_obj, 2);
-   if (loc2 == 0) then begin
-      loc2 := critter_inven_obj(self_obj, 1);
-   end 
-   if  (critter_inven_obj(self_obj,0)!=loc1) then
-    begin
-     if (critter_inven_obj(self_obj,0)== 0 ) then
-     begin
-     // Ustawianie grafiki dla golej postaci 
-     metarule3(107,self_obj,FID_NMFATT,0);
-     end
-     else
-     if ((obj_pid(critter_inven_obj(self_obj,0))== 1) or (obj_pid(critter_inven_obj(self_obj,0))==379)) then
-     begin
-     // Ustawianie grafiki dla Lether Armor
-     metarule3(107,self_obj,FID_NMVILA,0);
-     end
-     else
-     if ((obj_pid(critter_inven_obj(self_obj,0))== 232) or (obj_pid(critter_inven_obj(self_obj,0))== 3 )) then
-     begin
-     // Ustawianie grafiki dla Power Armor
-     metarule3(107,self_obj,FID_NMVIPA,0);
-     end
-     else
-     if ((obj_pid(critter_inven_obj(self_obj,0))==349) or (obj_pid(critter_inven_obj(self_obj,0))==348 )) then
-     begin
-     // Ustawianie grafiki dla Advenced Power Armor
-     metarule3(107,self_obj,FID_HANPWR,0);
-     end
-     else
-     if ((obj_pid(critter_inven_obj(self_obj,0))==240) or (obj_pid(critter_inven_obj(self_obj,0))==380) or (obj_pid(critter_inven_obj(self_obj,0))==2 )) then
-     begin
-     // Ustawianie grafiki dla Metal Armor
-     metarule3(107,self_obj,FID_NMVIMA,0);
-     end
-     else
-     if ((obj_pid(critter_inven_obj(self_obj,0))==74) or (obj_pid(critter_inven_obj(self_obj,0))==265)) then
-     begin
-     // Ustawianie grafiki dla Lether Jacket
-     metarule3(107,self_obj,FID_NMVILJ,0);
-     end
-     else
-     if ((obj_pid(critter_inven_obj(self_obj,0))==239) or (obj_pid(critter_inven_obj(self_obj,0))==17) or (obj_pid(critter_inven_obj(self_obj,0))==381 )) then
-     begin
-     // Ustawianie grafiki dla Combat Armor
-     metarule3(107,self_obj,FID_NMVICA,0);
-     end
-     else
-     if ((obj_pid(critter_inven_obj(self_obj,0))==524) or (obj_pid(critter_inven_obj(self_obj,0))==113)) then
-     begin
-     // Ustawianie grafiki dla habitu
-     metarule3(107,self_obj,FID_HAROBE,0);
-     end
-     restock_obj := critter_inven_obj(self_obj, 1);
-     debug_msg("armour pid == " + obj_pid(restock_obj));
-     rm_obj_from_inven(self_obj, restock_obj);
-     add_obj_to_inven(self_obj, restock_obj);
-     if (loc2 != 0) then begin
-      wield_obj_critter(self_obj, loc2);
-     end
-    end
-   //end B-team mod
 end
 
 procedure destroy_p_proc begin
@@ -564,7 +457,6 @@ procedure Node999 begin
 end
 procedure Node998 begin
    // sets up combat
-   //set_hostile;
    set_local_var(LVAR_Hostile,2);
 end
 procedure Node996 begin
@@ -593,7 +485,7 @@ procedure Node993 begin
       set_local_var(LVAR_Head_To_Mom,1);
                reg_anim_clear(self_obj);
          reg_anim_begin();
-            animate_move_to_tile(22092);
+            self_walk_to_tile(22092);
          reg_anim_end();
       add_timer_event(self_obj, game_ticks(1), TIMER_ENSURE_ANIM); //was 2 ticks
    end
@@ -637,7 +529,7 @@ procedure Node003 begin
    if (dude_has_vic_radio) then begin
       NOption(170,Node005a,004); //edit by killap - was 005
       NOption(172,Node005a,-003); //edit by killap - was 005
-   end else if (obj_carrying_pid_obj(dude_obj,PID_RADIO) != 0) then begin
+   end else if (dude_item(PID_RADIO) != 0) then begin
       NOption(170,Node014,004);
       NOption(172,Node014,-003);
    end else begin
@@ -654,7 +546,7 @@ procedure Node004 begin
    Reply(173);
    if (dude_has_vic_radio) then begin
       NOption(174,Node005,004);
-   end else if (obj_carrying_pid_obj(dude_obj,PID_RADIO) != 0) then begin
+   end else if (dude_item(PID_RADIO) != 0) then begin
       NOption(174,Node014,004);
    end
    NOption(175,Node006,004);
@@ -662,7 +554,7 @@ procedure Node004 begin
 end
 procedure Node005 begin
 variable the_radio;
-   the_radio := obj_carrying_pid_obj(dude_obj, PID_VIC_RADIO);
+   the_radio := dude_item(PID_VIC_RADIO);
    if (the_radio) then begin
       rm_obj_from_inven(dude_obj,the_radio);
       destroy_object(the_radio); //added by killap
@@ -750,8 +642,6 @@ procedure Node010 begin
       end
       call Node993; //now Vic will go to Mom's if you don't recruit him
    end
-   //NOption(g_grunt,Node994,-003); --commented out by killap - move above
-   //NOption(195,Node994,004); --commented out by killap - move above
 end
 procedure Node011 begin
    if (node_11) then begin
@@ -769,12 +659,12 @@ procedure Node011 begin
       NOption(198,Node999,004);
    end
    NOption(502,Node013,-003);
-   
+
    //moved from above - killap
    set_vic_trader;
    mark_vault_city_on_map
    //end
-   
+
 end
 procedure Node013 begin
    mark_vault_city_on_map
@@ -820,7 +710,7 @@ procedure Node020 begin
    Reply(750);
    if (dude_has_vic_radio) then begin
       NOption(170,Node005,004);
-   end else if (obj_carrying_pid_obj(dude_obj,PID_RADIO) != 0) then begin
+   end else if (dude_item(PID_RADIO) != 0) then begin
       NOption(170,Node014,004);
    end
    if (Fallout2_vault13_looking) then begin
@@ -835,7 +725,7 @@ procedure Node021 begin
    NOption(761, Node020, 004);
    if (dude_has_vic_radio) then begin
       NOption(170,Node005,004);
-   end else if (obj_carrying_pid_obj(dude_obj,PID_RADIO) != 0) then begin
+   end else if (dude_item(PID_RADIO) != 0) then begin
       NOption(170,Node014,004);
    end
    if (Fallout2_vault13_looking) then begin
@@ -849,11 +739,11 @@ procedure Node022 begin
    if (dude_has_vic_radio) then begin
       NOption(170,Node005a,004); //edit by killap - was 005
       NOption(172,Node005a,-003); //added by killap
-   end else if (obj_carrying_pid_obj(dude_obj,PID_RADIO) != 0) then begin
+   end else if (dude_item(PID_RADIO) != 0) then begin
       NOption(170,Node014,004);
       NOption(172,Node014,-003); //added by killap
    end
-   
+
    NOption(814, Node999, -003); //added by killap
    NOption(803, Node999, 004);
 end
@@ -971,7 +861,7 @@ procedure Node1021 begin
          NOption(51001, NodeCraft5, 004);
       end
    end
-   // ;
+   // end by phobos;
    NOption(2404, PARTY_NODE_X, 004);
 end
 
@@ -1031,65 +921,3 @@ procedure SlaverCampNode02 begin
    NOption(6003, PARTY_NODE_X, 004);
 end
 // end added
-
-
-
-// added by phobos2077: crafting pointers
-procedure NodeCraft1 begin
-  Reply(5101);
-  NOption(5102, NodeCraft3, 004);
-end
-
-procedure NodeCraft3 begin
-  Reply(5103);
-  if (get_sfall_global_int(SGVAR_CRAFT_BLADES) == 0) then
-     NOption(51041, NodeCraft4, 004);
-  else
-     NOption(5104, NodeCraft5, 004);
-end
-
-procedure NodeCraft4 begin
-  Reply(5105);
-  set_sfall_global(SGVAR_CRAFT_BLADES, 1);
-  display_msg(fixit_mstr(87));
-  NOption(5106, NodeCraft5, 004);
-  //NOption(5130, Node110, 004);
-end
-
-procedure NodeCraft5 begin
-  Reply(5107);
-  set_node_craft;
-  NOption(5108, NodeCraft6, 004);
-  NOption(5130, Node110, 004);
-end
-
-procedure NodeCraft6 begin
-  Reply(5109);
-  NOption(5110, NodeCraft7, 004);
-  NOption(5130, Node110, 004);
-end
-
-procedure NodeCraft7 begin
-  Reply(5111);
-  NOption(5112, NodeCraft8, 004);
-  NOption(5130, Node110, 004);
-end
-
-procedure NodeCraft8 begin
-  Reply(5113);
-  NOption(5116, NodeCraft9, 004);
-  NOption(5130, Node110, 004);
-end
-
-procedure NodeCraft9 begin
-  Reply(5117);
-  NOption(5120, NodeCraft10, 004);
-  NOption(5130, Node110, 004);
-end
-
-procedure NodeCraft10 begin
-  Reply(5121);
-  NOption(5122, Node110, 004);
-end
-
-// end crafting;

@@ -25,16 +25,17 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\ncr1.h"
+#define SCRIPT_REALNAME "sckarl"
+#include "../headers/define.h"
+#include "../headers/ncr1.h"
 
 #define NAME                    SCRIPT_SCKARL
 #define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
-#include "..\headers\ncr.h"
+#include "../headers/ncr.h"
 
 
 /* Standard Script Procedures */
@@ -109,7 +110,7 @@ variable Node1Count := 0;
 
 // by phobos2077 - bounty quest
 #define _BOUNTY_SCKARL
-#include "..\_pbs_main\quests_bounty.h"
+#include "..\_pbs_headers\quests_bounty.h"
 // end;
 
 procedure start begin
@@ -117,7 +118,7 @@ end
 
 procedure timed_event_p_proc begin
    if (fixed_param == PLAYER_DONE) then begin
-      if (obj_can_see_obj(self_obj, dude_obj) and tile_distance_objs(self_obj, dude_obj) <= 3) then begin
+      if (self_can_see_dude and tile_distance_objs(self_obj, dude_obj) <= 3) then begin
          doWalking := 1;
          call walkUnLock;
       end else begin
@@ -132,8 +133,8 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD);
+   set_self_team(TEAM_NCR);
+   set_self_ai(AI_TOUGH_GUARD);
 end
 
 
@@ -146,7 +147,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -191,7 +192,7 @@ procedure talk_p_proc begin
    GetReaction;
 
    ReactToLevel; //added by killap
-   
+
    if (doWalking == 0) then begin
       start_gdialog(NAME,self_obj,4,-1,-1);
       gSay_Start;
@@ -263,7 +264,7 @@ procedure Node001 begin
       Reply(103);
    else
       Reply(104);
-   INJECT_BOUNTY_DONE  // pbs
+   INJECT_BOUNTY_DONE  // phobos2077
    NLowOption(105, Node002);
    NOption(106, Node003, 4);
    if (not V13KNOWN) then
@@ -277,7 +278,7 @@ procedure Node001 begin
       BOption(110, Node007, 4);
    if (get_westin_flag(WESTIN_ACCEPT_SNUFF) and not get_westin_flag(WESTIN_DEAD)) then
       NOption(111, Node008, 4);
-   NOption(300, Node999, 4); // pbs - added "goodbye" option
+   NOption(300, Node999, 4); // phobos2077 - added "goodbye" option
 end
 
 procedure Node002 begin
@@ -317,9 +318,9 @@ procedure Node006 begin
       set_global_var(GVAR_NCR_TANDI_WORK, 1);
       Reply(124);
    end
-   INJECT_ASK_BOUNTY // pbs
+   INJECT_ASK_BOUNTY // phobos2077
    NOption(125, Node001, 4);
-   
+
    if (good_critter_reaction) then //added by killap
       NOption(133, Node999, 4);  //added by killap
    else  //added by killap
@@ -389,14 +390,14 @@ end
 procedure walkUnLock begin
    reg_anim_clear(self_obj);
    reg_anim_begin();
-   animate_move_to_tile(FRONT_OF_DOOR);
+   self_walk_to_tile(FRONT_OF_DOOR);
    reg_anim_end();
 end
 
 procedure walkBack begin
    reg_anim_clear(self_obj);
    reg_anim_begin();
-   animate_move_to_tile(HOME_POS);
+   self_walk_to_tile(HOME_POS);
    reg_anim_end();
 end
 
@@ -404,14 +405,14 @@ procedure anim_end_call begin
    if (doWalking == 1) then begin
       if (i_cell_door_obj != -1) then begin
          if (openCloseDoor == 0) then begin
-            debug_msg("opening door");
+            ndebug("opening door");
             obj_unlock(i_cell_door_obj);
             if (not obj_is_open(i_cell_door_obj)) then begin
                use_obj(i_cell_door_obj);
             end
             openCloseDoor := 1;
          end else begin
-            debug_msg("closing door");
+            ndebug("closing door");
             if (obj_is_open(i_cell_door_obj)) then begin
                use_obj(i_cell_door_obj);
             end
@@ -423,7 +424,7 @@ procedure anim_end_call begin
          doWalking := 2;
       end
    end else if (doWalking == 2) then begin
-      debug_msg("doWalk == 2");
+      ndebug("doWalk == 2");
       doWalking := 3;
       call walkBack;
       if (openCloseDoor == 0) then

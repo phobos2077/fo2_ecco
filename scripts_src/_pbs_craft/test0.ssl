@@ -1,10 +1,10 @@
-#include "..\_pbs_main\define_lite.h"
-#include "..\_pbs_main\define_extra.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
 #include "learn_craft.h"
 
 #define BATCH_MSG               SCRIPT_TEST0
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 #include "atoi2.ssl"
 #include "custstr2.ssl"

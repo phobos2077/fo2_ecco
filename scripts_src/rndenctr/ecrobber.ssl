@@ -6,16 +6,17 @@
    have been designed.
 */
 
-#include "..\headers\define.h"
-#include "..\headers\bhrnddst.h"
+#define SCRIPT_REALNAME "ecrobber"
+#include "../headers/define.h"
+#include "../headers/bhrnddst.h"
 
 #define NAME                    SCRIPT_ECROBBER
 
-#include "..\headers\command.h"
+#include "../headers/command.h"
 
 // by phobos2077:
 #define _BOUNTY_ECROBBER
-#include "..\_pbs_main\quests_bounty.h"
+#include "..\_pbs_headers\quests_bounty.h"
 // end;
 
 procedure start;
@@ -37,11 +38,11 @@ variable do_once := 0; //added by killap
 
 //added by killap
 procedure combat_p_proc begin
-   if ((dude_elevation == 1) and ((cur_map_index == MAP_RND_CAVERN1) or (cur_map_index == MAP_RND_CAVERN2) or (cur_map_index == MAP_RND_CAVERN3) or (cur_map_index == MAP_RND_CAVERN4) or (cur_map_index == MAP_RND_CAVERN5))) then begin 
+   if ((dude_elevation == 1) and ((cur_map_index == MAP_RND_CAVERN1) or (cur_map_index == MAP_RND_CAVERN2) or (cur_map_index == MAP_RND_CAVERN3) or (cur_map_index == MAP_RND_CAVERN4) or (cur_map_index == MAP_RND_CAVERN5))) then begin
       if (do_once == 0) then begin
          //if (self_item(wep_pid)) then begin
             do_once := 1;
-            if (wep_pid != PID_BRASS_KNUCKLES and 
+            if (wep_pid != PID_BRASS_KNUCKLES and
                 wep_pid != PID_PLATED_BOXING_GLOVES and
                 wep_pid != PID_POWER_FIST and
                 wep_pid != PID_MEGA_POWER_FIST) then begin
@@ -62,13 +63,13 @@ procedure timed_event_p_proc begin
 end
 
 procedure map_enter_p_proc begin
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_RND_ROBBER);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_GUARD);
+   set_self_team(TEAM_RND_ROBBER);
+   set_self_ai(AI_TOUGH_GUARD);
 
    starttile := self_tile;
 
-   if ((elevation(self_obj) != 0) and (not(is_loading_game))) then begin
-      item_caps_adjust(self_obj, Random(5, 15) * dude_luck);
+   if ((self_elevation != 0) and (not(is_loading_game))) then begin
+      self_caps_adjust(Random(5, 15) * dude_luck);
       add_mult_objs_to_inven(self_obj, create_object(PID_STIMPAK, self_tile, 0), 1);
 
       val := Random(1, 5);
@@ -204,7 +205,7 @@ procedure map_enter_p_proc begin
 
    reg_anim_clear(self_obj);
    reg_anim_begin();
-   animate_rotation(Random(0, 5));
+   self_rotate(Random(0, 5));
    reg_anim_end();
 end
 
@@ -214,7 +215,7 @@ end
 procedure critter_p_proc begin
    variable val;
 
-   if (obj_can_see_obj(self_obj, dude_obj)) then begin
+   if (self_can_see_dude) then begin
       attack(dude_obj);
    end
 
@@ -223,12 +224,12 @@ procedure critter_p_proc begin
       if (val == 10) then begin
          reg_anim_clear(self_obj);
          reg_anim_begin();
-         animate_move_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
+         self_walk_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
          reg_anim_end();
       end else if (val == 9) then begin
          reg_anim_clear(self_obj);
          reg_anim_begin();
-         animate_rotation(Random(0, 5));
+         self_rotate(Random(0, 5));
          reg_anim_end();
       end
    end

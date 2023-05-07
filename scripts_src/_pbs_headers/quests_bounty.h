@@ -1,15 +1,14 @@
-#include "define_lite.h"
-#include "command_lite.h"
-#include "mod.h"
-#include "sfall.h"
-#include "lib.strings.h"
-#include "..\headers\teams.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/command_lite.h"
+#include "../sfall/sfall.h"
+#include "../sfall/lib.strings.h"
+#include "../sfall/lib.inven.h"
+#include "../headers/teams.h"
+#include "ecco.h"
 
-#include "lib.inven.h"
+#define _dude_has(pid)  obj_is_carrying_obj_pid(dude_obj, pid)
 
-#define _dude_has(pid)  obj_is_carrying_obj_pid(dude_obj, pid) 
 
-        
 #define _team(obj)      has_trait(TRAIT_OBJECT,obj,OBJECT_TEAM_NUM)
 #define _is_possible_bounty(obj)    (_team(obj) == TEAM_RND_ROBBER)
 
@@ -41,8 +40,8 @@
 		gsay_end;                                   \
 		end_dialogue;                               \
     end
-    
-    
+
+
 #define _is_bounty_outlaw(obj)    (_team(obj) == TEAM_RND_ROGUE and obj_is_carrying_obj_pid(obj, PID_PBS_BONE_AMULET))
 #define _TIMER
 
@@ -76,10 +75,12 @@ procedure bounty_hook_destroy begin
         // first assume this is the boss
         boss := crit;
         maxh := critter_max_hp(crit);
-        foreach othr in list_as_array(LIST_CRITTERS) if (othr) then if (_is_possible_bounty(othr) and critter_max_hp(othr) > maxh) then begin
-            maxh := critter_max_hp(crit);
-            boss := othr;
-        end
+        foreach (othr in list_as_array(LIST_CRITTERS))
+            if (othr and _is_possible_bounty(othr) and critter_max_hp(othr) > maxh) then begin
+                maxh := critter_max_hp(crit);
+                boss := othr;
+            end 
+
         // delete arm if it's not boss or if arm is damaged
         if (is_critter_corpse_badly_damaged(crit)
             or boss != crit) then
@@ -119,9 +120,10 @@ end*/
 
 pure procedure is_bounty_outlaw_on_map begin
     variable obj;
-    foreach obj in list_as_array(LIST_CRITTERS) if (obj) then if (_is_bounty_outlaw(obj)) then begin
-        return true;
-    end
+    foreach (obj in list_as_array(LIST_CRITTERS))
+        if (obj) then if (_is_bounty_outlaw(obj)) then begin
+            return true;
+        end
     return false;
 end
 
@@ -143,7 +145,7 @@ procedure bounty_hook_destroy begin
         item := obj_carrying_pid_obj(self_obj, PID_PBS_BONE_AMULET);
         // ammo count indicates the person which this amulet belongs to
         state := global_var(GVAR_BOUNTY_NCR);
-        if (state == BOUNTY_NCR_TAKEN1) then begin 
+        if (state == BOUNTY_NCR_TAKEN1) then begin
             state := BOUNTY_NCR_KILLED1;
             bountyType := 1;
         end else if (state == BOUNTY_NCR_TAKEN2) then begin
@@ -179,11 +181,11 @@ end
 #define INJECT_ASK_BOUNTY   \
     if (local_var(LVAR_BOUNTY) <= 0) then NOption(401,NodeBountyAsk,004);  \
     else if (global_var(GVAR_BOUNTY_REDDING) == BOUNTY_REDDING_TAKEN) then NOption(404,Node999,004);
-    
+
 // Node002
 #define INJECT_GIVE_PROOF   \
     if (obj_is_carrying_obj_pid(dude_obj, PID_PBS_SEVERED_ARM) > 0) then NOption(402,NodeBountyProof,004);
-    
+
 // Node002
 #define INJECT_BOUNTY_DONE   \
     if (local_var(LVAR_BOUNTY) > 0 and global_var(GVAR_BOUNTY_REDDING) == BOUNTY_REDDING_KILLED) then NOption(403, NodeBountyReward, 004);
@@ -195,7 +197,7 @@ procedure NodeBountyAccept;
 procedure NodeBountyProof;
 //procedure NodeBountyWaiting;
 procedure NodeBountyReward;
-    
+
 procedure NodeBountyAsk begin
     if (dude_level < 10) then begin
         Reply(455);
@@ -304,7 +306,7 @@ end
     if (local_var(LVAR_BOUNTY) == 0) then NOption(201, NodeBountyIntro, 004);  \
     else if (local_var(LVAR_BOUNTY) < 0) then NOption(202, NodeBountyAsk, 004);  \
     else NOption(203, NodeBountyAsk, 004);
-    
+
 // Node
 #define INJECT_BOUNTY_DONE   \
     if (obj_is_carrying_obj_pid(dude_obj, PID_PBS_BONE_AMULET) or (local_var(LVAR_BOUNTY) > 0 and global_var(GVAR_BOUNTY_NCR) <= 0)) then NOption(204, NodeBountyClaim, 004);
@@ -319,7 +321,7 @@ procedure NodeBountyProof;
 procedure NodeBountyClaim;
 procedure NodeBountyClaimFail;
 procedure NodeBountyReward;
-    
+
 procedure NodeBountyIntro begin
     Reply(205);
     NOption(206,NodeBountyAsk,004);
@@ -343,7 +345,7 @@ end*/
 
 procedure NodeBountyAsk begin
     variable minLvl, descMsg, bountyType, bountyAmount, takenState;
-    
+
     if (bounty_status <= 0) then bountyType := -bounty_status + 1;
     else bountyType := bounty_status;
     if (bountyType == 1) then begin
@@ -422,7 +424,7 @@ procedure NodeBountyReward begin
         if (bountyType == 1) then begin
            bountyAmount += _REWARD_1;
            overState := BOUNTY_NCR_REWARD1;
-        end else if (bountyType == 2) then begin 
+        end else if (bountyType == 2) then begin
            bountyAmount += _REWARD_2;
            overState := BOUNTY_NCR_REWARD2;
         end else if (bountyType == 3) then begin
@@ -431,10 +433,10 @@ procedure NodeBountyReward begin
         end
         if (overState > maxState) then maxState := overState;
         // set current bounty quest as finished, only if you brought appropriate item
-        if (bountyType == bounty_status) then begin 
+        if (bountyType == bounty_status) then begin
             give_exp_points(250);
             display_msg(g_mstr(100) + 250 + g_mstr(101));
-            set_bounty_over; 
+            set_bounty_over;
         end
         call remove_item_obj(dude_obj, item);
         item := obj_carrying_pid_obj(dude_obj, PID_PBS_BONE_AMULET);

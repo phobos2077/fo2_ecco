@@ -25,14 +25,15 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "vcdrtroy"
+#include "../headers/define.h"
 
 #define NAME                    SCRIPT_VCDRTROY
 #define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
-#include "..\headers\NewReno.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/newreno.h"
 
 
 /* Standard Script Procedures */
@@ -170,67 +171,66 @@ variable unhealthy_members:=0;
 #define dude_needs_healing                        ( (Is_Injured(dude_obj)) or ( dude_is_poisoned ) or ( dude_is_irradiated ) or ( dude_is_crippled ) )
 #define If_Companion_Needs_Healing                unhealthy_members := 0;         \
                                                    if (Vic_In_Party) then                              \
-                                                      if ((Is_Injured(Vic_Ptr)) or (get_poison(Vic_Ptr) > 0) or (get_critter_stat(Vic_Ptr, STAT_current_rad)) or (Is_Crippled(Vic_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Vic_Ptr)) or (get_poison(Vic_Ptr) > 0) or (get_rads(Vic_Ptr)) or (Is_Crippled(Vic_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Myron_In_Party) then                            \
-                                                      if ((Is_Injured(Myron_Ptr)) or (get_poison(Myron_Ptr) > 0) or (get_critter_stat(Myron_Ptr, STAT_current_rad)) or (Is_Crippled(Myron_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Myron_Ptr)) or (get_poison(Myron_Ptr) > 0) or (get_rads(Myron_Ptr)) or (Is_Crippled(Myron_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Marcus_In_Party) then                           \
-                                                      if ((Is_Injured(Marcus_Ptr)) or (get_poison(Marcus_Ptr) > 0) or (get_critter_stat(Marcus_Ptr, STAT_current_rad)) or (Is_Crippled(Marcus_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Marcus_Ptr)) or (get_poison(Marcus_Ptr) > 0) or (get_rads(Marcus_Ptr)) or (Is_Crippled(Marcus_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (MacRae_In_Party) then                           \
-                                                      if ((Is_Injured(MacRae_Ptr)) or (get_poison(MacRae_Ptr) > 0) or (get_critter_stat(MacRae_Ptr, STAT_current_rad)) or (Is_Crippled(MacRae_Ptr)) ) then                   \
+                                                      if ((Is_Injured(MacRae_Ptr)) or (get_poison(MacRae_Ptr) > 0) or (get_rads(MacRae_Ptr)) or (Is_Crippled(MacRae_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Sulik_In_Party) then                            \
-                                                      if ((Is_Injured(Sulik_Ptr)) or (get_poison(Sulik_Ptr) > 0) or (get_critter_stat(Sulik_Ptr, STAT_current_rad)) or (Is_Crippled(Sulik_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Sulik_Ptr)) or (get_poison(Sulik_Ptr) > 0) or (get_rads(Sulik_Ptr)) or (Is_Crippled(Sulik_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Lenny_In_Party) then                            \
-                                                      if ((Is_Injured(Lenny_Ptr)) or (get_poison(Lenny_Ptr) > 0) or (get_critter_stat(Lenny_Ptr, STAT_current_rad)) or (Is_Crippled(Lenny_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Lenny_Ptr)) or (get_poison(Lenny_Ptr) > 0) or (get_rads(Lenny_Ptr)) or (Is_Crippled(Lenny_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Cyberdog_In_Party) then                         \
-                                                      if ((Is_Injured(Cyberdog_Ptr)) or (get_poison(Cyberdog_Ptr) > 0) or (get_critter_stat(Cyberdog_Ptr, STAT_current_rad)) or (Is_Crippled(Cyberdog_Ptr)) ) then            \
+                                                      if ((Is_Injured(Cyberdog_Ptr)) or (get_poison(Cyberdog_Ptr) > 0) or (get_rads(Cyberdog_Ptr)) or (Is_Crippled(Cyberdog_Ptr)) ) then            \
                                                          unhealthy_members+=1;      \
                                                    if (Doc_In_Party) then                              \
-                                                      if ((Is_Injured(Doc_Ptr)) or (get_poison(Doc_Ptr) > 0) or (get_critter_stat(Doc_Ptr, STAT_current_rad)) or (Is_Crippled(Doc_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Doc_Ptr)) or (get_poison(Doc_Ptr) > 0) or (get_rads(Doc_Ptr)) or (Is_Crippled(Doc_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Goris_In_Party) then                            \
-                                                      if ((Is_Injured(Goris_Ptr)) or (get_poison(Goris_Ptr) > 0) or (get_critter_stat(Goris_Ptr, STAT_current_rad)) or (Is_Crippled(Goris_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Goris_Ptr)) or (get_poison(Goris_Ptr) > 0) or (get_rads(Goris_Ptr)) or (Is_Crippled(Goris_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Davin_In_Party) then                            \
-                                                      if ((Is_Injured(Davin_Ptr)) or (get_poison(Davin_Ptr) > 0) or (get_critter_stat(Davin_Ptr, STAT_current_rad)) or (Is_Crippled(Davin_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Davin_Ptr)) or (get_poison(Davin_Ptr) > 0) or (get_rads(Davin_Ptr)) or (Is_Crippled(Davin_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Miria_In_Party) then                            \
-                                                      if ((Is_Injured(Miria_Ptr)) or (get_poison(Miria_Ptr) > 0) or (get_critter_stat(Miria_Ptr, STAT_current_rad)) or (Is_Crippled(Miria_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Miria_Ptr)) or (get_poison(Miria_Ptr) > 0) or (get_rads(Miria_Ptr)) or (Is_Crippled(Miria_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Laddie_In_Party) then                           \
-                                                      if ((Is_Injured(Laddie_Ptr)) or (get_poison(Laddie_Ptr) > 0) or (get_critter_stat(Laddie_Ptr, STAT_current_rad)) or (Is_Crippled(Laddie_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Laddie_Ptr)) or (get_poison(Laddie_Ptr) > 0) or (get_rads(Laddie_Ptr)) or (Is_Crippled(Laddie_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Robobrain_In_Party) then                        \
-                                                      if ((Is_Injured(Robobrain_Ptr)) or (get_poison(Robobrain_Ptr) > 0) or (get_critter_stat(Robobrain_Ptr, STAT_current_rad)) or (Is_Crippled(Robobrain_Ptr)) ) then              \
+                                                      if ((Is_Injured(Robobrain_Ptr)) or (get_poison(Robobrain_Ptr) > 0) or (get_rads(Robobrain_Ptr)) or (Is_Crippled(Robobrain_Ptr)) ) then              \
                                                          unhealthy_members+=1;      \
                                                    if (Bess_In_Party) then                             \
-                                                      if ((Is_Injured(Bess_Ptr)) or (get_poison(Bess_Ptr) > 0) or (get_critter_stat(Bess_Ptr, STAT_current_rad)) or (Is_Crippled(Bess_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Bess_Ptr)) or (get_poison(Bess_Ptr) > 0) or (get_rads(Bess_Ptr)) or (Is_Crippled(Bess_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Dogmeat_In_Party) then                             \
-                                                      if ((Is_Injured(Dogmeat_Ptr)) or (get_poison(Dogmeat_Ptr) > 0) or (get_critter_stat(Dogmeat_Ptr, STAT_current_rad)) or (Is_Crippled(Dogmeat_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Dogmeat_Ptr)) or (get_poison(Dogmeat_Ptr) > 0) or (get_rads(Dogmeat_Ptr)) or (Is_Crippled(Dogmeat_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (K9_In_Party) then                             \
-                                                      if ((Is_Injured(K9_Ptr)) or (get_poison(K9_Ptr) > 0) or (get_critter_stat(K9_Ptr, STAT_current_rad)) or (Is_Crippled(K9_Ptr)) ) then                   \
+                                                      if ((Is_Injured(K9_Ptr)) or (get_poison(K9_Ptr) > 0) or (get_rads(K9_Ptr)) or (Is_Crippled(K9_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Kitsune_In_Party) then                             \
-                                                      if ((Is_Injured(Kitsune_Ptr)) or (get_poison(Kitsune_Ptr) > 0) or (get_critter_stat(Kitsune_Ptr, STAT_current_rad)) or (Is_Crippled(Kitsune_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Kitsune_Ptr)) or (get_poison(Kitsune_Ptr) > 0) or (get_rads(Kitsune_Ptr)) or (Is_Crippled(Kitsune_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Dex_In_Party) then                             \
-                                                      if ((Is_Injured(Dex_Ptr)) or (get_poison(Dex_Ptr) > 0) or (get_critter_stat(Dex_Ptr, STAT_current_rad)) or (Is_Crippled(Dex_Ptr)) ) then                   \
+                                                      if ((Is_Injured(Dex_Ptr)) or (get_poison(Dex_Ptr) > 0) or (get_rads(Dex_Ptr)) or (Is_Crippled(Dex_Ptr)) ) then                   \
                                                          unhealthy_members+=1;      \
                                                    if (Cat_Jules_In_Party) then                             \
-                                                      if ((Is_Injured(Cat_Jules_Ptr)) or (get_poison(Cat_Jules_Ptr) > 0) or (get_critter_stat(Cat_Jules_Ptr, STAT_current_rad)) or (Is_Crippled(Cat_Jules_Ptr)) ) then           \
+                                                      if ((Is_Injured(Cat_Jules_Ptr)) or (get_poison(Cat_Jules_Ptr) > 0) or (get_rads(Cat_Jules_Ptr)) or (Is_Crippled(Cat_Jules_Ptr)) ) then           \
                                                          unhealthy_members+=1;      \
                                                    if (unhealthy_members > 0)
 
 // by phobos2077:
-#define _LEARN_CRAFT_DRTROY
-#include "learn_craft.h"
+#include "../_pbs_craft/learn_craft_drtroy.h"
 // ;
 
 /* Imported variables from the Map scripts. These should only be
@@ -246,8 +246,8 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_VAULT_CITIZENS);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_VAULT_GUARD);
+   set_self_team(TEAM_VAULT_CITIZENS);
+   set_self_ai(AI_VAULT_GUARD);
 
    if( not( is_loading_game ) ) then begin
       if( global_var( GVAR_DR_TROY_STATUS ) == TROY_EXILED ) then begin
@@ -258,7 +258,7 @@ procedure map_enter_p_proc begin
          // I'm SLEEPING!!!!
          move_to( self_obj, 24886, 1 );
          critter_attempt_placement( self_obj, 24886, 1 );
-         animate_rotation( 3 );
+         self_rotate(3);
          rm_timer_event(self_obj);
          add_timer_event( self_obj, game_ticks(random(10,20)), 1 );
       end
@@ -266,7 +266,7 @@ procedure map_enter_p_proc begin
          // I'm WORKING!!!!
          move_to( self_obj, 13284, 0 ); //edit by killap (expansion) - was 13084
          critter_attempt_placement( self_obj, 13284, 0 ); //edit by killap (expansion) - was 13084
-         animate_rotation( 2 );
+         self_rotate(2);
          rm_timer_event(self_obj);
          add_timer_event( self_obj, game_ticks(random(10,20)), 1 );
       end
@@ -283,7 +283,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ( ( (hostile) or ( global_var( GVAR_ENEMY_VAULT_CITY ) == 1 ) ) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ( ( (hostile) or ( global_var( GVAR_ENEMY_VAULT_CITY ) == 1 ) ) and (self_can_see_dude)) then begin
        attack(dude_obj);
    end
 
@@ -471,7 +471,7 @@ end
 procedure Node005 begin
    Reply(117);
 
-   if (get_critter_stat(dude_obj,STAT_current_hp) < get_critter_stat(dude_obj,STAT_max_hp)) then
+   if (dude_cur_hits < dude_max_hits) then
        NLowOption(118,Node054);
    NLowOption(119,Node054);
    NLowOption(120,Node999); // Seraph's Fix: NLowOption only takes 2 args. Thanks Rob!
@@ -534,7 +534,7 @@ procedure Node010 begin
    if (global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN) then
        NOption(140,Node010a,004);
    if (global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD) then
-        NOption(mstr(141)+obj_name(dude_obj)+mstr(142),Node011,004);
+        NOption(mstr(141)+dude_name+mstr(142),Node011,004);
    NOption(143,Node010a,004);
    NOption(144,Node015,004);
 end
@@ -547,7 +547,7 @@ procedure Node010a begin
 end
 
 procedure Node011 begin
-   Reply(mstr(145)+obj_name(dude_obj)+mstr(146));
+   Reply(mstr(145)+dude_name+mstr(146));
 
    NOption(147,Node999,004);
 end
@@ -613,11 +613,11 @@ procedure Node017 begin
    else
        Reply(167);
 
-   if (obj_is_carrying_obj_pid(dude_obj,PID_JET)) then
+   if (dude_item_count(PID_JET)) then
        NOption(168,Node017a,004);
-   if ((obj_is_carrying_obj_pid(dude_obj,PID_JET)) and (has_skill(dude_obj,SKILL_BARTER) >= 75)) then
+   if ((dude_item_count(PID_JET)) and (has_skill(dude_obj,SKILL_BARTER) >= 75)) then
        NOption(169,Node017b,004);
-   if ((obj_is_carrying_obj_pid(dude_obj,PID_JET)) and (has_skill(dude_obj,SKILL_BARTER) >= 95)) then
+   if ((dude_item_count(PID_JET)) and (has_skill(dude_obj,SKILL_BARTER) >= 95)) then
        NOption(170,Node017c,004);
    NOption(171,Node034,004);
    NOption(172,Node035,004);
@@ -627,17 +627,17 @@ end
 procedure Node017a begin
    variable item;
 
-   item:=obj_carrying_pid_obj(dude_obj,PID_JET);
+   item:=dude_item(PID_JET);
    rm_obj_from_inven(dude_obj,item);
    destroy_object(item);
 
    if (((local_var(LVAR_Flags) bwand 512) != 0) == false) then begin
-     if (item_caps_total(self_obj) >= 1000) then begin
-       item_caps_adjust(self_obj, -1000);
-     end else if (item_caps_total(self_obj) > 0) then begin
-       item_caps_adjust(self_obj, -item_caps_total(self_obj));
+     if (self_caps >= 1000) then begin
+       self_caps_adjust(-1000);
+     end else if (self_caps > 0) then begin
+       self_caps_adjust(-self_caps);
      end
-     item_caps_adjust(dude_obj, 1000);
+     dude_caps_adjust(1000);
    end
    set_local_var(LVAR_Flags, local_var(LVAR_Flags) bwor 512);
 
@@ -650,17 +650,17 @@ end
 procedure Node017b begin
    variable item;
 
-   item:=obj_carrying_pid_obj(dude_obj,PID_JET);
+   item:=dude_item(PID_JET);
    rm_obj_from_inven(dude_obj,item);
    destroy_object(item);
 
    if (((local_var(LVAR_Flags) bwand 512) != 0) == false) then begin
-     if (item_caps_total(self_obj) >= 1200) then begin
-       item_caps_adjust(self_obj, -1200);
-     end else if (item_caps_total(self_obj) > 0) then begin
-       item_caps_adjust(self_obj, -item_caps_total(self_obj));
+     if (self_caps >= 1200) then begin
+       self_caps_adjust(-1200);
+     end else if (self_caps > 0) then begin
+       self_caps_adjust(-self_caps);
      end
-     item_caps_adjust(dude_obj, 1200);
+     dude_caps_adjust(1200);
    end
    set_local_var(LVAR_Flags, local_var(LVAR_Flags) bwor 512);
 
@@ -673,17 +673,17 @@ end
 procedure Node017c begin
    variable item;
 
-   item:=obj_carrying_pid_obj(dude_obj,PID_JET);
+   item:=dude_item(PID_JET);
    rm_obj_from_inven(dude_obj,item);
    destroy_object(item);
 
    if (((local_var(LVAR_Flags) bwand 512) != 0) == false) then begin
-     if (item_caps_total(self_obj) >= 1500) then begin
-       item_caps_adjust(self_obj, -1500);
-     end else if (item_caps_total(self_obj) > 0) then begin
-       item_caps_adjust(self_obj, -item_caps_total(self_obj));
+     if (self_caps >= 1500) then begin
+       self_caps_adjust(-1500);
+     end else if (self_caps > 0) then begin
+       self_caps_adjust(-self_caps);
      end
-     item_caps_adjust(dude_obj, 1500);
+     dude_caps_adjust(1500);
    end
    set_local_var(LVAR_Flags, local_var(LVAR_Flags) bwor 512);
 
@@ -716,7 +716,7 @@ procedure Node020 begin
    //if (global_var(GVAR_VAULT_JET_SOURCE) > 0) then
    if ( jet_source > jet_source_none ) then
        NOption(180,Node022,004);
-   if ((has_trait(TRAIT_TRAIT,dude_obj,TRAIT_drug_addict)) or (drug_influence(dude_obj))) then
+   if ((dude_trait(TRAIT_drug_addict)) or (drug_influence(dude_obj))) then
        NOption(181,Node021,004);
    NOption(182,Node999,004);
 end
@@ -827,7 +827,7 @@ procedure Node029 begin
    set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_GAVE_TROY_FORMULA ) );
    inc_general_rep( REP_BONUS_GAVE_TROY_FORMULA );
    //set_jet_source(jet_source_cure_made);   //added by killap
-   
+
    From_29:=1;
 
    if (global_var(GVAR_VAULT_JET_QUEST) > 0) then
@@ -879,7 +879,7 @@ end
 procedure Node034 begin
    Reply(236);
 
-   if (obj_is_carrying_obj_pid(dude_obj,PID_JET)) then
+   if (dude_item_count(PID_JET)) then
        NOption(237,Node043,004);
    NOption(238,Node037,004);
    NOption(239,Node057,004);
@@ -891,7 +891,7 @@ procedure Node035 begin
 
    NOption(242,Node036,004);
    BOption(243,Node038,005);
-   if (obj_is_carrying_obj_pid(dude_obj,PID_JET)) then
+   if (dude_item_count(PID_JET)) then
        NOption(244,Node043,005);
    NOption(245,Node037,005);
    NOption(246,Node057,005);
@@ -901,7 +901,7 @@ end
 procedure Node036 begin
    Reply(248);
 
-   if (obj_is_carrying_obj_pid(dude_obj,PID_JET)) then
+   if (dude_item_count(PID_JET)) then
        NOption(249,Node043,004);
    NOption(250,Node037,004);
    BOption(251,Node038,004);
@@ -912,7 +912,7 @@ end
 procedure Node037 begin
    Reply(254);
 
-   if (obj_is_carrying_obj_pid(dude_obj,PID_JET)) then
+   if (dude_item_count(PID_JET)) then
        NOption(255,Node043,004);
    BOption(256,Node038,004);
    NOption(257,Node057,004);
@@ -938,8 +938,8 @@ procedure Node039 begin
 end
 
 procedure Node039a begin
-   item_caps_adjust(self_obj,-500);
-   item_caps_adjust(dude_obj,500);
+   self_caps_adjust(-500);
+   dude_caps_adjust(500);
 
    set_local_var(LVAR_Got_Money,1);
    set_local_var(LVAR_Month,get_month);
@@ -950,8 +950,8 @@ end
 
 procedure Node039b begin
    if (has_skill(dude_obj,SKILL_BARTER) >= 75) then begin
-       item_caps_adjust(self_obj,-1000);
-       item_caps_adjust(dude_obj,1000);
+       self_caps_adjust(-1000);
+       dude_caps_adjust(1000);
 
        set_local_var(LVAR_Got_Money,1);
        set_local_var(LVAR_Month,get_month);
@@ -983,7 +983,7 @@ end
 procedure Node042 begin
    Reply(272);
 
-   if (obj_is_carrying_obj_pid(dude_obj,PID_JET)) then
+   if (dude_item_count(PID_JET)) then
        NOption(273,Node043,004);
    NOption(274,Node038,004);
    NOption(275,Node057,004);
@@ -993,17 +993,17 @@ end
 procedure Node043 begin
    variable item;
 
-   item:=obj_carrying_pid_obj(dude_obj,PID_JET);
+   item:=dude_item(PID_JET);
    rm_obj_from_inven(dude_obj,item);
    destroy_object(item);
 
    if (((local_var(LVAR_Flags) bwand 512) != 0) == false) then begin
-     if (item_caps_total(self_obj) >= 1000) then begin
-       item_caps_adjust(self_obj, -1000);
-     end else if (item_caps_total(self_obj) > 0) then begin
-       item_caps_adjust(self_obj, -item_caps_total(self_obj));
+     if (self_caps >= 1000) then begin
+       self_caps_adjust(-1000);
+     end else if (self_caps > 0) then begin
+       self_caps_adjust(-self_caps);
      end
-     item_caps_adjust(dude_obj, 1000);
+     dude_caps_adjust(1000);
    end
    set_local_var(LVAR_Flags, local_var(LVAR_Flags) bwor 512);
 
@@ -1051,7 +1051,7 @@ procedure Node044 begin
    //if ((global_var(GVAR_VAULT_JET_QUEST) < JET_ANTIDOTE_FOUND) and (global_var(GVAR_VAULT_JET_SOURCE) == JET_SOURCE_CURE_KNOWN)) then
    if ((global_var(GVAR_VAULT_JET_QUEST) < JET_ANTIDOTE_FOUND) and (jet_source == jet_source_cure_known)) then
        NOption(291,Node026,004);
-   if ((global_var(GVAR_VAULT_JET_QUEST) == JET_WILL_GET) and (obj_is_carrying_obj_pid(dude_obj,PID_JET))) then
+   if ((global_var(GVAR_VAULT_JET_QUEST) == JET_WILL_GET) and (dude_item_count(PID_JET))) then
        NOption(292,Node044a,004);
    if (global_var(GVAR_VAULT_JET_QUEST) == JET_DECLINED_JOB) then
        NOption(293,Node017,004);
@@ -1112,9 +1112,9 @@ procedure Node050 begin
    set_local_var(LVAR_Month,get_month);
 
    if (local_var(LVAR_Blackmail_Amount) == 500) then
-       item_caps_adjust(dude_obj,500);
+       dude_caps_adjust(500);
    else
-       item_caps_adjust(dude_obj,1000);
+       dude_caps_adjust(1000);
 
    Reply(308);
 
@@ -1179,15 +1179,15 @@ procedure Node054a begin
     set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_KICKED_OUT ) );
     set_global_var(GVAR_VAULT_CITIZENSHIP,0);
     set_global_var(GVAR_DAY_PASS_SHOWN, 0);
-    DayPass_KickOutCount := obj_is_carrying_obj_pid(dude_obj, PID_DAY_PASS);
+    DayPass_KickOutCount := dude_item_count(PID_DAY_PASS);
     if( DayPass_KickOutCount > 0 ) then begin
-        DayPass_KickOutObj := obj_carrying_pid_obj(dude_obj, PID_DAY_PASS);
+        DayPass_KickOutObj := dude_item(PID_DAY_PASS);
         KickOutTemp := rm_mult_objs_from_inven(dude_obj, DayPass_KickOutObj, DayPass_KickOutCount );
         destroy_object(DayPass_KickOutObj); //added by killap
     end
-    CitizenPapers_KickOutCount := obj_is_carrying_obj_pid(dude_obj, PID_FAKE_CITIZENSHIP);
+    CitizenPapers_KickOutCount := dude_item_count(PID_FAKE_CITIZENSHIP);
     if( CitizenPapers_KickOutCount > 0 ) then begin
-        CitizenPapers_KickOutObj := obj_carrying_pid_obj(dude_obj, PID_FAKE_CITIZENSHIP);
+        CitizenPapers_KickOutObj := dude_item(PID_FAKE_CITIZENSHIP);
         KickOutTemp := rm_mult_objs_from_inven(dude_obj, CitizenPapers_KickOutObj, CitizenPapers_KickOutCount );
         destroy_object(CitizenPapers_KickOutObj); //added by killap
     end
@@ -1201,7 +1201,7 @@ procedure Node055 begin
         gfade_out(600);
         gfade_in(600);
     end
-   
+
    set_global_var(GVAR_NEW_RENO_JET_SOURCE,JET_SOURCE_CURE_MADE); //added by killap
    set_global_var(GVAR_VAULT_JET_QUEST,JET_ANTIDOTE_FOUND);
 
@@ -1321,7 +1321,7 @@ procedure Node062 begin
       if (Is_Injured(Vic_Ptr) or Is_Crippled(Vic_Ptr)) then begin
          critter_heal(Vic_Ptr,Injured_How_Much(Vic_Ptr));
          poison(Vic_Ptr,-(get_poison(Vic_Ptr)));
-         radiation_dec(Vic_Ptr,get_critter_stat(Vic_Ptr,STAT_current_rad));
+         radiation_dec(Vic_Ptr,get_rads(Vic_Ptr));
          critter_uninjure(Vic_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1329,7 +1329,7 @@ procedure Node062 begin
       if (Is_Injured(Myron_Ptr) or Is_Crippled(Myron_Ptr)) then begin
          critter_heal(Myron_Ptr,Injured_How_Much(Myron_Ptr));
          poison(Myron_Ptr,-(get_poison(Myron_Ptr)));
-         radiation_dec(Myron_Ptr,get_critter_stat(Myron_Ptr,STAT_current_rad));
+         radiation_dec(Myron_Ptr,get_rads(Myron_Ptr));
          critter_uninjure(Myron_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1337,7 +1337,7 @@ procedure Node062 begin
       if (Is_Injured(Marcus_Ptr) or Is_Crippled(Marcus_Ptr)) then begin
          critter_heal(Marcus_Ptr,Injured_How_Much(Marcus_Ptr));
          poison(Marcus_Ptr,-(get_poison(Marcus_Ptr)));
-         radiation_dec(Marcus_Ptr,get_critter_stat(Marcus_Ptr,STAT_current_rad));
+         radiation_dec(Marcus_Ptr,get_rads(Marcus_Ptr));
          critter_uninjure(Marcus_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1345,7 +1345,7 @@ procedure Node062 begin
       if (Is_Injured(MacRae_Ptr) or Is_Crippled(MacRae_Ptr)) then begin
          critter_heal(MacRae_Ptr,Injured_How_Much(MacRae_Ptr));
          poison(MacRae_Ptr,-(get_poison(MacRae_Ptr)));
-         radiation_dec(MacRae_Ptr,get_critter_stat(MacRae_Ptr,STAT_current_rad));
+         radiation_dec(MacRae_Ptr,get_rads(MacRae_Ptr));
          critter_uninjure(MacRae_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1353,7 +1353,7 @@ procedure Node062 begin
       if (Is_Injured(Sulik_Ptr) or Is_Crippled(Sulik_Ptr)) then begin
          critter_heal(Sulik_Ptr,Injured_How_Much(Sulik_Ptr));
          poison(Sulik_Ptr,-(get_poison(Sulik_Ptr)));
-         radiation_dec(Sulik_Ptr,get_critter_stat(Sulik_Ptr,STAT_current_rad));
+         radiation_dec(Sulik_Ptr,get_rads(Sulik_Ptr));
          critter_uninjure(Sulik_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1361,7 +1361,7 @@ procedure Node062 begin
       if (Is_Injured(Lenny_Ptr) or Is_Crippled(Lenny_Ptr)) then begin
          critter_heal(Lenny_Ptr,Injured_How_Much(Lenny_Ptr));
          poison(Lenny_Ptr,-(get_poison(Lenny_Ptr)));
-         radiation_dec(Lenny_Ptr,get_critter_stat(Lenny_Ptr,STAT_current_rad));
+         radiation_dec(Lenny_Ptr,get_rads(Lenny_Ptr));
          critter_uninjure(Lenny_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1369,7 +1369,7 @@ procedure Node062 begin
       if (Is_Injured(Cyberdog_Ptr) or Is_Crippled(Cyberdog_Ptr)) then begin
          critter_heal(Cyberdog_Ptr,Injured_How_Much(Cyberdog_Ptr));
          poison(Cyberdog_Ptr,-(get_poison(Cyberdog_Ptr)));
-         radiation_dec(Cyberdog_Ptr,get_critter_stat(Cyberdog_Ptr,STAT_current_rad));
+         radiation_dec(Cyberdog_Ptr,get_rads(Cyberdog_Ptr));
          critter_uninjure(Cyberdog_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1377,7 +1377,7 @@ procedure Node062 begin
       if (Is_Injured(Doc_Ptr) or Is_Crippled(Doc_Ptr)) then begin
          critter_heal(Doc_Ptr,Injured_How_Much(Doc_Ptr));
          poison(Doc_Ptr,-(get_poison(Doc_Ptr)));
-         radiation_dec(Doc_Ptr,get_critter_stat(Doc_Ptr,STAT_current_rad));
+         radiation_dec(Doc_Ptr,get_rads(Doc_Ptr));
          critter_uninjure(Doc_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1385,7 +1385,7 @@ procedure Node062 begin
       if (Is_Injured(Goris_Ptr) or Is_Crippled(Goris_Ptr)) then begin
          critter_heal(Goris_Ptr,Injured_How_Much(Goris_Ptr));
          poison(Goris_Ptr,-(get_poison(Goris_Ptr)));
-         radiation_dec(Goris_Ptr,get_critter_stat(Goris_Ptr,STAT_current_rad));
+         radiation_dec(Goris_Ptr,get_rads(Goris_Ptr));
          critter_uninjure(Goris_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1393,7 +1393,7 @@ procedure Node062 begin
       if (Is_Injured(Davin_Ptr) or Is_Crippled(Davin_Ptr)) then begin
          critter_heal(Davin_Ptr,Injured_How_Much(Davin_Ptr));
          poison(Davin_Ptr,-(get_poison(Davin_Ptr)));
-         radiation_dec(Davin_Ptr,get_critter_stat(Davin_Ptr,STAT_current_rad));
+         radiation_dec(Davin_Ptr,get_rads(Davin_Ptr));
          critter_uninjure(Davin_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1401,7 +1401,7 @@ procedure Node062 begin
       if (Is_Injured(Miria_Ptr) or Is_Crippled(Miria_Ptr)) then begin
          critter_heal(Miria_Ptr,Injured_How_Much(Miria_Ptr));
          poison(Miria_Ptr,-(get_poison(Miria_Ptr)));
-         radiation_dec(Miria_Ptr,get_critter_stat(Miria_Ptr,STAT_current_rad));
+         radiation_dec(Miria_Ptr,get_rads(Miria_Ptr));
          critter_uninjure(Miria_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1409,7 +1409,7 @@ procedure Node062 begin
       if (Is_Injured(Robobrain_Ptr) or Is_Crippled(Robobrain_Ptr)) then begin
          critter_heal(Robobrain_Ptr,Injured_How_Much(Robobrain_Ptr));
          poison(Robobrain_Ptr,-(get_poison(Robobrain_Ptr)));
-         radiation_dec(Robobrain_Ptr,get_critter_stat(Robobrain_Ptr,STAT_current_rad));
+         radiation_dec(Robobrain_Ptr,get_rads(Robobrain_Ptr));
          critter_uninjure(Robobrain_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1418,7 +1418,7 @@ procedure Node062 begin
       if (Is_Injured(Dogmeat_Ptr) or Is_Crippled(Dogmeat_Ptr)) then begin
          critter_heal(Dogmeat_Ptr,Injured_How_Much(Dogmeat_Ptr));
          poison(Dogmeat_Ptr,-(get_poison(Dogmeat_Ptr)));
-         radiation_dec(Dogmeat_Ptr,get_critter_stat(Dogmeat_Ptr,STAT_current_rad));
+         radiation_dec(Dogmeat_Ptr,get_rads(Dogmeat_Ptr));
          critter_uninjure(Dogmeat_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1426,7 +1426,7 @@ procedure Node062 begin
       if (Is_Injured(K9_Ptr) or Is_Crippled(K9_Ptr)) then begin
          critter_heal(K9_Ptr,Injured_How_Much(K9_Ptr));
          poison(K9_Ptr,-(get_poison(K9_Ptr)));
-         radiation_dec(K9_Ptr,get_critter_stat(K9_Ptr,STAT_current_rad));
+         radiation_dec(K9_Ptr,get_rads(K9_Ptr));
          critter_uninjure(K9_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1434,7 +1434,7 @@ procedure Node062 begin
       if (Is_Injured(Kitsune_Ptr) or Is_Crippled(Kitsune_Ptr)) then begin
          critter_heal(Kitsune_Ptr,Injured_How_Much(Kitsune_Ptr));
          poison(Kitsune_Ptr,-(get_poison(Kitsune_Ptr)));
-         radiation_dec(Kitsune_Ptr,get_critter_stat(Kitsune_Ptr,STAT_current_rad));
+         radiation_dec(Kitsune_Ptr,get_rads(Kitsune_Ptr));
          critter_uninjure(Kitsune_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1442,7 +1442,7 @@ procedure Node062 begin
       if (Is_Injured(Dex_Ptr) or Is_Crippled(Dex_Ptr)) then begin
          critter_heal(Dex_Ptr,Injured_How_Much(Dex_Ptr));
          poison(Dex_Ptr,-(get_poison(Dex_Ptr)));
-         radiation_dec(Dex_Ptr,get_critter_stat(Dex_Ptr,STAT_current_rad));
+         radiation_dec(Dex_Ptr,get_rads(Dex_Ptr));
          critter_uninjure(Dex_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
@@ -1450,12 +1450,12 @@ procedure Node062 begin
       if (Is_Injured(Cat_Jules_Ptr) or Is_Crippled(Cat_Jules_Ptr)) then begin
          critter_heal(Cat_Jules_Ptr,Injured_How_Much(Cat_Jules_Ptr));
          poison(Cat_Jules_Ptr,-(get_poison(Cat_Jules_Ptr)));
-         radiation_dec(Cat_Jules_Ptr,get_critter_stat(Cat_Jules_Ptr,STAT_current_rad));
+         radiation_dec(Cat_Jules_Ptr,get_rads(Cat_Jules_Ptr));
          critter_uninjure(Cat_Jules_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
       end
    end
    //end added
-   
+
    if ( (dude_cur_hits < dude_max_hits) or ( dude_is_crippled ) ) then //added ( dude_is_crippled ) - killap
        NOption(363,Node064,004);
    if (dude_is_poisoned) then
@@ -1532,7 +1532,7 @@ end
 
 procedure Node065 begin
    poison(dude_obj,-get_poison(dude_obj));
-   radiation_dec(dude_obj,get_critter_stat(dude_obj,STAT_current_rad));
+   radiation_dec(dude_obj,dude_rads);
 
    NMessage(388);
 

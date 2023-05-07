@@ -2,15 +2,16 @@
   ***   Script conwerted to Interplay format by Fallout Script Edytor (by Jargo)  ***
 */
 
-#include "..\HEADERS\define.h"
-//#include "..\HEADERS\<TownMapName.h>"
+#define SCRIPT_REALNAME "epai7"
+#include "../headers/define.h"
+//#include "../headers/<TownMapName.h>"
 
 #define NAME                    SCRIPT_EPAI7          //Script name from scripts.h
 #define TOWN_REP_VAR            GVAR_TOWN_REP_           //Global variable name for this Town
 
-#include "..\HEADERS\command.h"
-#include "..\HEADERS\ModReact.h"
-#include "..\HEADERS\partybkg.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/partybkg.h"
 
 #define LVAR_Herebefore                 (4)
 #define LVAR_Jammed                     (5)
@@ -57,13 +58,13 @@ end
 procedure description_p_proc
 begin
   script_overrides;
-  display_msg(message_str(NAME, 104));
+  display_msg(mstr(104));
 end
 
 procedure look_at_p_proc
 begin
   script_overrides;
-  display_msg(message_str(NAME, 103));
+  display_msg(mstr(103));
 end
 
 procedure use_obj_on_p_proc
@@ -72,7 +73,7 @@ begin
   reg_anim_clear(source_obj);
   LVar1 := obj_pid(obj_being_used_with);
   if (local_var(LVAR_Herebefore) == 1) then
-    display_msg(message_str(NAME, 102));
+    display_msg(mstr(102));
   if ((LVar1 == PID_SECURITY_ROOMS_KEY_CARD) and (local_var(LVAR_Herebefore) != 1)) then
   begin
     script_overrides;
@@ -81,7 +82,7 @@ begin
     end else begin
        obj_unlock(self_obj);
     end
-    display_msg(message_str(NAME, 101));
+    display_msg(mstr(101));
     set_local_var(LVAR_Herebefore, 1);
     
   end else
@@ -92,7 +93,7 @@ begin
        if (local_var(LVAR_Jammed) == 2) then begin
           obj_unlock(self_obj);
           set_local_var(LVAR_Jammed, 0);
-          display_msg(message_str(NAME, 112));
+          display_msg(mstr(112));
           give_xp(EXP_LOCKPICK_NORMAL);
        end else begin
           display_mstr(116);
@@ -111,10 +112,10 @@ begin
     if (local_var(LVAR_Herebefore) == 0) then
     begin
       script_overrides;
-      display_msg(message_str(NAME, 100));
+      display_msg(mstr(100));
     end else if (local_var(LVAR_Jammed) > 0) then begin
       script_overrides;
-      display_msg(message_str(NAME, 110));
+      display_msg(mstr(110));
     end
   end
 end

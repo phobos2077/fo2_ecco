@@ -25,16 +25,17 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\ncr1.h"
+#define SCRIPT_REALNAME "scdocjub"
+#include "../headers/define.h"
+#include "../headers/ncr1.h"
 
 #define NAME                    SCRIPT_SCDOCJUB
 #define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
-#include "..\headers\ncr.h"
+#include "../headers/ncr.h"
 
 
 /* Standard Script Procedures */
@@ -127,9 +128,9 @@ procedure checkItems;
 #define LVAR_Stealing_Pills             (10) //added by killap - RP
 #define LVAR_Pill_Inquiry               (11) //added by killap - RP
 
-// by phobos2077 - bring X quest
-#define _BRINGX_SCDOCJUB
-#include "..\_pbs_main\quests_bringx.h"
+// by phobos2077 - bring X quest TODO:
+//#define _BRINGX_SCDOCJUB
+//#include "..\_pbs_headers\quests_bringx.h"
 // ;
 
 /* Imported variables from the Map scripts. These should only be
@@ -162,9 +163,9 @@ procedure map_update_p_proc begin
   variable count;
   variable tmp;
   if (i_doc_shelf_obj != -1) then begin
-    count := obj_is_carrying_obj_pid(i_doc_shelf_obj, PID_FAKE_HEART_PILLS);
+    count := get_item_count(i_doc_shelf_obj, PID_FAKE_HEART_PILLS);
     if (count and (local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) <= 0) then begin
-      tmp := obj_carrying_pid_obj(i_doc_shelf_obj, PID_FAKE_HEART_PILLS);
+      tmp := get_item(i_doc_shelf_obj, PID_FAKE_HEART_PILLS);
       rm_obj_from_inven(i_doc_shelf_obj, tmp);
       destroy_object(tmp);
       set_westin_flag(WESTIN_DEAD);
@@ -175,7 +176,7 @@ procedure map_update_p_proc begin
       if (global_var(GVAR_NCR_BRAHMIN_QST) == 1) then begin
         set_global_var(GVAR_NCR_BRAHMIN_QST, 2);
         set_felix_seed(FELIX_CRITTERS_DONE);
-      end        
+      end
     end
   end
 end
@@ -189,8 +190,8 @@ procedure map_enter_p_proc begin
 
    Only_Once:=0;
 
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_NCR);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_DOCTOR);
+   set_self_team(TEAM_NCR);
+   set_self_ai(AI_DOCTOR);
 
 /*   if (not self_item(PID_FUZZY_PAINTING) and not local_var(LVAR_Sold_Paint)) then begin
       add_obj_to_inven(self_obj, obj);
@@ -208,7 +209,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -256,7 +257,7 @@ procedure talk_p_proc begin
 
    GetReaction;
 
-   debug_msg("SCDOCJUB: LVAR_Sold_Paint: " + local_var(LVAR_Sold_Paint));
+   ndebug("LVAR_Sold_Paint: " + local_var(LVAR_Sold_Paint));
 
    if ((local_var(LVAR_Westin_Pill_Pickup_Counter) != -1) and (local_var(LVAR_Westin_Pill_Pickup_Counter) == 0) or ((local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) <= 0)) then
       set_local_var(LVAR_Westin_Pill_Pickup_Counter, (GAME_TIME_IN_DAYS + 14));
@@ -371,8 +372,8 @@ end
 procedure Node3Heal begin
    if (dude_caps >= 50) then begin
       call doHeal;
-      item_caps_adjust(dude_obj, -50);
-      item_caps_adjust(self_obj, 50);
+      dude_caps_adjust(-50);
+      self_caps_adjust(50);
       call Node003;
    end else begin
       call Node007;
@@ -436,7 +437,7 @@ procedure Node008 begin
    end else begin
       Reply(127);
    end
-   INJECT_GIVE_X // pbs
+   // TODO: INJECT_GIVE_X // pbs
    if (not V13KNOWN) then
       NLowOption(128, Node011);
    NOption(129, Node011, 4);
@@ -445,7 +446,7 @@ procedure Node008 begin
    if (ncr_global_state(NCR_SALBOB_REF_DOCTOR)) then
       NOption(131, Node010, 4);
    NOption(132, Node016, 4);
-   
+
    // added by killap - RP
    if not(get_westin_flag(WESTIN_DEAD)) then begin
      if (local_var(LVAR_Pill_Inquiry) == 1) then
@@ -454,7 +455,7 @@ procedure Node008 begin
        NOption(311, Node036, 4);
    end
    // end added
-      
+
    if (ncr_rangers_known) then
       NOption(133, Node017, 4);
 
@@ -498,11 +499,13 @@ procedure Node013 begin
    Reply(149);
    NOption(150, Node008, 4);
    NOption(151, Node999, 4);
+   NLowOption(147, Node008); //added by NovaRain
+   NLowOption(120, Node999); //added by NovaRain
 end
 
 procedure NodeSell begin
-   item_caps_adjust(dude_obj, -10000);
-   item_caps_adjust(self_obj, 10000);
+   dude_caps_adjust(-10000);
+   self_caps_adjust(10000);
    add_obj_to_inven(dude_obj, create_object_sid(PID_FUZZY_PAINTING,0,0,SCRIPT_SIPAINT));
    set_local_var(LVAR_Sold_Paint, 1);
    call Node020;
@@ -518,7 +521,7 @@ end
 
 procedure Node015 begin
    Reply(155);
-   
+
    NLowOption(147, Node008); //added by killap
    NLowOption(120, Node999); //added by killap
    NOption(156, Node008, 4);
@@ -527,12 +530,13 @@ end
 
 procedure Node016 begin
    set_global_var(GVAR_NCR_TANDI_WORK, 1);
-   // by phobos2077:
-   if (is_new_monsterparts_enabled) then begin
-	  Reply(400);
-	  INJECT_ASK_BRING
-   end else Reply(158);
-   // end;
+   // by phobos2077: TODO:
+   // if (is_new_monsterparts_enabled) then begin
+	//   Reply(400);
+	//   INJECT_ASK_BRING
+   // end else
+   // by phobos end
+   Reply(158);
    NOption(159, Node008, 4);
    NOption(160, Node999, 4);
 end
@@ -554,7 +558,7 @@ procedure Node019 begin
      if (local_var(LVAR_Stealing_Pills) == 0) then begin
        set_westin_flag(WESTIN_PILLS_KNOW);
        set_local_var(LVAR_Stealing_Pills,CAUGHT_STEALING);
-       force_dialog_start("Node021");
+       force_dialog_start(@Node021);
      end else if (local_var(LVAR_Stealing_Pills) == CAUGHT_STEALING) then begin
        float_msg(self_obj, mstr(167 + Random(0, 2)), FLOAT_MSG_RED);
      end
@@ -586,7 +590,7 @@ procedure Node022 begin
 end
 
 procedure Node022a begin
-   if (has_skill(dude_obj,SKILL_CONVERSANT) >= 65) then
+   if (has_skill(dude_obj,SKILL_SPEECH) >= 65) then
       call Node025;
    else
       call Node026;
@@ -702,9 +706,9 @@ procedure check_poison begin
 
    if (i_doc_shelf_obj != -1) then begin
       if (not skill_success(dude_obj, SKILL_STEAL, 0)) then begin
-         count := obj_is_carrying_obj_pid(i_doc_shelf_obj, POISON_PID); //edit by killap - was dude_obj
+         count := get_item_count(i_doc_shelf_obj, POISON_PID); //edit by killap - was dude_obj
          if (count == 0) then begin
-            tmp := obj_carrying_pid_obj(dude_obj, POISON_PID);
+            tmp := dude_item(POISON_PID);
             rm_obj_from_inven(dude_obj, tmp);
             add_obj_to_inven(i_doc_shelf_obj, tmp);
             return 0;
@@ -719,10 +723,10 @@ procedure check_pills begin
    variable count;
 
    if (i_doc_shelf_obj != -1) then begin
-      count := obj_is_carrying_obj_pid(i_doc_shelf_obj, PILL_PID); //edit by killap - was dude_obj
+      count := get_item_count(i_doc_shelf_obj, PILL_PID); //edit by killap - was dude_obj
       if (not skill_success(dude_obj, SKILL_STEAL, 0)) then begin
          if (count == 0) then begin
-            tmp := obj_carrying_pid_obj(dude_obj, PILL_PID);
+            tmp := dude_item(PILL_PID);
             rm_obj_from_inven(dude_obj, tmp);
             add_obj_to_inven(i_doc_shelf_obj, tmp);
             return 0;
@@ -733,14 +737,14 @@ procedure check_pills begin
             set_local_var(LVAR_Stealing_Pills,STEALING_SUCCESS);
         end else begin
           set_local_var(LVAR_Stealing_Pills,0);
-        end     
+        end
       end
    end
    return 1;
 end
 
 procedure checkItems begin
-   if (obj_can_see_obj(self_obj, dude_obj)) then begin
+   if (self_can_see_dude) then begin
       if (not check_poison) then begin
          call Node018;
       end

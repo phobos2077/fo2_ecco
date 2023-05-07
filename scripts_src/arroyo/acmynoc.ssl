@@ -17,14 +17,15 @@
 */
 
 /* Include Files */
-#include "..\headers\define.h"
-//#include "..\headers\<TownName.h>"
+#define SCRIPT_REALNAME "acmynoc"
+#include "../headers/define.h"
+//#include "../headers/<TownName.h>"
 
 #define NAME                    SCRIPT_ACMYNOC
 #define TOWN_REP_VAR            (GVAR_TOWN_REP_ARROYO)
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
 #define VAULT_KNOWN             vault_13_visible_on_map
 // change both when we have the ability to get the number of times players have visited other towns
@@ -32,7 +33,7 @@
 #define VISITED_TOWN_MULTIPLE_TIMES     ((den_visit) and (klamath_visit))
 
 // added by phobos2077
-#include "learn_craft.h"
+#include "../_pbs_craft/learn_craft.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -135,23 +136,23 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_ARROYO);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_ARROYO_WARRIOR);
+   set_self_team(TEAM_ARROYO);
+   set_self_ai(AI_ARROYO_WARRIOR);
 end
 
 /* Every heartbeat that the critter gets, this procedure will be called. Anything from
    Movement to attacking the player on sight can be placed in here.*/
 procedure critter_p_proc begin
-   if ((local_var(LVAR_Hostile) == 2)and(obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((local_var(LVAR_Hostile) == 2)and(self_can_see_dude)) then begin
       set_local_var(LVAR_Hostile,1);
       attack(dude_obj);
    end
 
-   if ( (REP_ENEMY_ARROYO) and (obj_can_see_obj(self_obj,dude_obj)) ) then begin //added and (obj_can_see_obj(self_obj,dude_obj)) by killap
+   if ( (REP_ENEMY_ARROYO) and (self_can_see_dude) ) then begin //added and (self_can_see_dude) by killap
        attack(dude_obj);
    end
 
-   else if ((global_var(GVAR_TALKED_TO_ELDER) == 0) and (obj_can_see_obj(self_obj,dude_obj)) and (tile_is_visible(tile_num(self_obj)))) then begin
+   else if ((global_var(GVAR_TALKED_TO_ELDER) == 0) and (self_can_see_dude) and (tile_is_visible(self_tile))) then begin
        set_global_var(GVAR_TALKED_TO_ELDER,1);
        floater(500);
    end
@@ -182,7 +183,7 @@ end
 procedure talk_p_proc begin
    GetReaction;
    ReactToLevel; //added by killap
-   
+
 //   if ((REP_ENEMY_ARROYO) or (local_var(LVAR_Personal_Enemy) == 1) or (local_var(LVAR_Hostile)>0)) then begin
 //      call Node009;
 //   end else begin
@@ -252,11 +253,11 @@ procedure Node003 begin
    NOption(159,Node005,004);
    //added by killap - expansion
    if (global_var(GVAR_RND_KAGA_STATE) < 1) then
-      NOption(600,Node038,004); 
+      NOption(600,Node038,004);
    if (kaga_met and not(kaga_bg)) then
       NOption(640,Node041b,004);
    //end added by killap - expansion
-   if (obj_is_carrying_obj_pid(dude_obj,PID_VIC_WATER_FLASK)) then //added by killap
+   if (dude_item_count(PID_VIC_WATER_FLASK)) then //added by killap
       NOption(160,Node006,004);
    NOption(161,Node999,004);
 end
@@ -273,7 +274,7 @@ procedure Node005 begin
 
    Reply(166);
    NOption(167,Node999,004);
-   if (obj_is_carrying_obj_pid(dude_obj,PID_VIC_WATER_FLASK)) then
+   if (dude_item_count(PID_VIC_WATER_FLASK)) then
        NOption(168,Node006,004);
 end
 
@@ -386,7 +387,7 @@ end
 procedure Node022 begin
    Reply(304);
 
-   if (obj_is_carrying_obj_pid(dude_obj,PID_FLINT)) then
+   if (dude_item_count(PID_FLINT)) then
        NOption(305,Node023,004);
    else
        NOption(306,Node999,004);
@@ -395,7 +396,7 @@ end
 procedure Node023 begin
    Reply(307);
 
-   if (obj_is_carrying_obj_pid(dude_obj,PID_SPEAR)) then
+   if (dude_item_count(PID_SPEAR)) then
        NOption(308,Node024,004);
    else
        NOption(309,Node025,004);
@@ -405,11 +406,11 @@ procedure Node024 begin
 /*   variable item;
    variable JunkIt;
 
-   item:=obj_carrying_pid_obj(dude_obj,PID_SPEAR);
+   item:=dude_item(PID_SPEAR);
    JunkIt:=rm_mult_objs_from_inven(dude_obj,item,1);
    destroy_object(item);
 
-   item:=obj_carrying_pid_obj(dude_obj,PID_FLINT);
+   item:=dude_item(PID_FLINT);
    JunkIt:=rm_mult_objs_from_inven(dude_obj,item,1);
    destroy_object(item);
 
@@ -439,25 +440,25 @@ procedure Node026 begin
    variable item2;
    variable JunkIt;
 
-   if (obj_is_carrying_obj_pid(dude_obj,PID_SPEAR)) then begin
-       item:=obj_carrying_pid_obj(dude_obj,PID_SPEAR);
+   if (dude_item_count(PID_SPEAR)) then begin
+       item:=dude_item(PID_SPEAR);
        inven_unwield(dude_obj);
        JunkIt:=rm_mult_objs_from_inven(dude_obj,item,1);
        destroy_object(item);
-       debug_msg("Destroy Spear");
+       ndebug("Destroy Spear");
    end
 
 	// by phobos2077: don't remove flint
-   /*if (obj_is_carrying_obj_pid(dude_obj,PID_FLINT)) then begin //added check by killap
-      item1:=obj_carrying_pid_obj(dude_obj,PID_FLINT);
+   /*if (dude_item_count(PID_FLINT)) then begin //added check by killap
+      item1:=dude_item(PID_FLINT);
       JunkIt:=rm_mult_objs_from_inven(dude_obj,item1,1);
       destroy_object(item1);
-      debug_msg("Destroy Flint");
+      ndebug("Destroy Flint");
    end*/
-   
+
    item2:=create_object(PID_SHARP_SPEAR,0,0);
    add_mult_objs_to_inven(dude_obj,item2,1);
-   debug_msg("Give Sharp Spear");
+   ndebug("Give Sharp Spear");
 
    game_time_advance(30*ONE_GAME_MINUTE);
 
@@ -560,7 +561,7 @@ end
 
 procedure Node040 begin
    Reply(605);
-  
+
    NOption(606,Node999,004);
    NOption(607,Node041,004);
 end
@@ -622,7 +623,7 @@ end
 
 procedure Node049 begin
    Reply(628);
-   
+
    if (kaga_met) and not(kaga_dead) then begin
       NOption(650,Node050,004);
    end else if (kaga_dead) then begin
@@ -631,7 +632,7 @@ procedure Node049 begin
       NOption(629,Node050,004);
       NOption(630,Node050,004);
    end
-   
+
 end
 
 procedure Node050 begin
@@ -658,7 +659,7 @@ procedure Node996 begin
 end
 
 procedure Node997 begin
-   if (get_critter_stat(dude_obj,STAT_iq) <= (0-LOW_IQ)) then begin
+   if (dude_iq <= (0-LOW_IQ)) then begin
       call Node018;
    end
    else if (reached_tl_4) then begin

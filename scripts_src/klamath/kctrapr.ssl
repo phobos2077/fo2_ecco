@@ -28,16 +28,17 @@
    not change the ordering.
         -rwh2   11/13/97
 */
-#include "..\headers\define.h"
-#include "..\headers\kladwtn.h"
+#define SCRIPT_REALNAME "kctrapr"
+#include "../headers/define.h"
+#include "../headers/kladwtn.h"
 
 #define NAME                    SCRIPT_KCTRAPR
 #define TOWN_REP_VAR            (GVAR_TOWN_REP_KLAMATH)
-#define floater(x)		float_msg(self_obj, message_str(NAME,x),FLOAT_MSG_NORMAL)
-#define floater_angry(x)		float_msg(self_obj, message_str(NAME,x),FLOAT_MSG_RED)
+#define floater(x)		float_msg(self_obj, mstr(x),FLOAT_MSG_NORMAL)
+#define floater_angry(x)		float_msg(self_obj, mstr(x),FLOAT_MSG_RED)
 
-#include "..\headers\command.h"
-#include "..\headers\ModReact.h"
+#include "../headers/command.h"
+#include "../headers/modreact.h"
 
 #define Vault_Known             (1)     // Temp Until get command from Jesse
 #define Visited_City            (1)     // Temp Until get command from Jesse
@@ -119,7 +120,7 @@ variable Only_Once:=0;
 variable k;
 
 // by phobos2077 - crafting
-#include "learn_craft.h"
+#include "../_pbs_craft/learn_craft.h"
 
 procedure start begin
 end
@@ -129,14 +130,14 @@ end
    default from the prototype, and needs to be set in scripts. */
 procedure map_enter_p_proc begin
    Only_Once:=0;
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_KLAMATH);
-   critter_add_trait(self_obj,TRAIT_OBJECT,OBJECT_AI_PACKET,AI_TOUGH_CITIZEN);
-   // pbs expansion:
+   set_self_team(TEAM_KLAMATH);
+   set_self_ai(AI_TOUGH_CITIZEN);
+   // by phobos2077:
    if (local_var(LVAR_Teacher) == 0) then begin
       if (is_teacher_pos) then set_local_var(LVAR_Teacher, teacher_yes);
       else set_local_var(LVAR_Teacher, teacher_no);
    end
-   // end;
+   // end by phobos;
 end
 
 
@@ -149,7 +150,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ((local_var(LVAR_Hostile) == 2) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end
@@ -204,11 +205,11 @@ procedure talk_p_proc begin
          call Node004;
       end
    
-      else if (global_var(TOWN_REPUTATION) < 5 and not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) then begin // edit by killap - added not(has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))
+      else if town_rep_worse_than(5) then begin
          call Node001;
       end
    
-      else if (global_var(TOWN_REPUTATION) > 4 or (has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))) then begin // edit by killap - added (has_trait(TRAIT_PERK, dude_obj, PERK_cult_of_personality))
+      else begin
          if (has_skill(dude_obj, SKILL_OUTDOORSMAN) > 30) then
             call Node003;
          else
@@ -267,7 +268,7 @@ procedure Node920 begin
 end
 
 procedure Node995 begin
-   if (get_critter_stat(dude_obj,STAT_ch) >= 7) then begin
+   if (dude_charisma >= 7) then begin
        TopReact;
    end
    else begin
@@ -293,78 +294,19 @@ end
 
 procedure Node001 begin
    floater(random(110,126));
-/*
-   k:=random(1,17);
-   if (k == 1) then floater(110);
-   else if (k == 2) then floater(111);
-   else if (k == 3) then floater(112);
-   else if (k == 4) then floater(113);
-   else if (k == 5) then floater(114);
-   else if (k == 6) then floater(115);
-   else if (k == 7) then floater(116);
-   else if (k == 8) then floater(117);
-   else if (k == 9) then floater(118);
-   else if (k == 10) then floater(119);
-   else if (k == 11) then floater(120);
-   else if (k == 12) then floater(121);
-   else if (k == 13) then floater(122);
-   else if (k == 14) then floater(123);
-   else if (k == 15) then floater(124);
-   else if (k == 16) then floater(125);
-   else if (k == 17) then floater(126);
-*/
 end
 
 procedure Node002 begin
    floater(random(130,148));
-/*
-   k:=random(1,19);
-   if (k == 1) then floater(130);
-   else if (k == 2) then floater(131);
-   else if (k == 3) then floater(132);
-   else if (k == 4) then floater(133);
-   else if (k == 5) then floater(134);
-   else if (k == 6) then floater(135);
-   else if (k == 7) then floater(136);
-   else if (k == 8) then floater(137);
-   else if (k == 9) then floater(138);
-   else if (k == 10) then floater(139);
-   else if (k == 11) then floater(140);
-   else if (k == 12) then floater(141);
-   else if (k == 13) then floater(142);
-   else if (k == 14) then floater(143);
-   else if (k == 15) then floater(144);
-   else if (k == 16) then floater(145);
-   else if (k == 17) then floater(146);
-   else if (k == 18) then floater(147);
-   else if (k == 19) then floater(148);
-*/
 end
 
 procedure Node003 begin
    floater(random(150,162));
-/*
-   k:=random(1,13);
-   if (k == 1) then floater(150);
-   else if (k == 2) then floater(151);
-   else if (k == 3) then floater(152);
-   else if (k == 4) then floater(153);
-   else if (k == 5) then floater(154);
-   else if (k == 6) then floater(155);
-   else if (k == 7) then floater(156);
-   else if (k == 8) then floater(157);
-   else if (k == 9) then floater(158);
-   else if (k == 10) then floater(159);
-   else if (k == 11) then floater(160);
-   else if (k == 12) then floater(161);
-   else if (k == 13) then floater(162);
-*/
 end
 
 procedure Node004 begin
    floater(random(170,181));
 end
-//xxxxxxxxxxxxxxxxxxxx
 
 
 // phobos2077 expansion - teach Skinning begin:
@@ -439,4 +381,4 @@ procedure NodeCraft4 begin
    NOption(542, Node999,004);
 end
 
-// end;
+// teach skinning end;

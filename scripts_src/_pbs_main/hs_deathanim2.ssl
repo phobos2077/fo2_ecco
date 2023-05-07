@@ -1,7 +1,7 @@
 procedure start;
 
-#include "define_lite.h"
-#include "quests_bounty.h"
+#include "../sfall/define_lite.h"
+#include "../_pbs_headers/quests_bounty.h"
 
 procedure start begin
 	variable weaponPID;

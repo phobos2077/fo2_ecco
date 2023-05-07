@@ -18,13 +18,14 @@
 
 
 /* Include Files */
-#include "..\headers\define.h"
+#define SCRIPT_REALNAME "bscomp1"
+#include "../headers/define.h"
 
 #define NAME                    SCRIPT_BSCOMP1
 #define CUR_COMP_SCRIPT         SCRIPT_BSCOMP1
 
-#include "..\headers\command.h"
-#include "..\headers\v15.h"
+#include "../headers/command.h"
+#include "../headers/v15.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -63,8 +64,9 @@ procedure Node001;
 procedure Node002;
 procedure Node999;
 
-#include "learn_craft.h"
-procedure NodeCraft1; // pbs
+// phobos2077: learn crafting
+#include "../_pbs_craft/learn_craft.h"
+procedure NodeCraft1;
 
 /*******************************************************************
    The start procedure is the first procedure called when the map is
@@ -180,10 +182,10 @@ procedure Node001 begin
       set_local_var(LVAR_Got_Info, 1);
       mark_vault_13_on_map
       Reply(103);
-      NOption(200, NodeCraft1, 004); // pbs
+      NOption(200, NodeCraft1, 004); // phobos2077
    end else begin
       Reply(104);
-      ENDOPTION; // pbs
+      ENDOPTION; // phobos2077
    end
    // ENDOPTION;
 end
