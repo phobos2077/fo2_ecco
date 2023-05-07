@@ -1,0 +1,7 @@
+
+procedure start begin
+   variable temp;
+   if temp then begin
+        critter_heal(dude_obj, 1);
+    end else critter_heal(dude_obj, 1);
+end    

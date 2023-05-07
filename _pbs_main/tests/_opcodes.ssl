@@ -1,0 +1,16 @@
+#define use(x) display_msg(x)
+
+procedure NodeWtf(variable x) begin
+   use( x );
+end
+
+procedure start begin
+   variable x;
+   register_hook_proc(5, NodeWtf);
+   use( log(2) );
+   use( exponent(2) );
+   use( 5^x );
+   use( message_str_game(5, 5) );
+   create_spatial(5, 6, 5, 5);
+   use( create_spatial(5, 6, 5, 5) );
+end

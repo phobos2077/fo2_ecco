@@ -1,0 +1,43 @@
+// variable testVar;
+
+procedure start;
+
+//import variable gang_1_member_1;
+export variable gang_1_member_2 := (((-.1231)));
+
+variable bonus;
+
+procedure FirstAid_Code(variable skill, variable use_critter, variable bonus := "WAT");
+procedure Doctor_Code(variable skill, variable use_critter, variable skill_bonus);
+
+procedure start begin
+   // gang_1_member_2 := "1231";
+   variable x;
+   variable y := -10;
+   switch x begin
+      case 100 * 200: display_msg("100");
+      case (-200): display_msg("200");
+      default: display_msg("default");
+   end
+   call FirstAid_Code(1,1);
+end
+
+
+procedure FirstAid_Code(variable skill, variable use_critter, variable skill_bonus) begin
+
+variable perk_bonus, heal_hp, bonus;
+   
+   heal_hp += bonus;
+   
+   return heal_hp;
+end
+
+
+procedure Doctor_Code(variable skill, variable use_critter, variable skill_bonus) begin
+   variable perk_bonus, heal_hp, bonus;
+   
+   heal_hp += bonus;
+   
+   return use_critter * bonus;
+end
+

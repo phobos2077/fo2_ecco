@@ -1,0 +1,116 @@
+
+variable compiler_errors;
+variable test_suite_verbose := false;
+
+procedure assertEquals(variable desc, variable a, variable b) begin
+   if (a != b or typeof(a) != typeof(b)) then begin
+      display_msg("Assertion failed \""+desc+"\": "+a+" != "+b);
+      compiler_errors ++;
+   end else if (test_suite_verbose) then begin
+      display_msg("Assert \""+desc+"\" ok");
+   end
+end
+
+procedure assertNotEquals(variable desc, variable a, variable b) begin
+   if (a == b) then begin
+      display_msg("Assertion failed \""+desc+"\": "+a+" == "+b);
+      compiler_errors ++;
+   end else if (test_suite_verbose) then begin
+      display_msg("Assert \""+desc+"\" ok");
+   end
+end
+
+variable side_effect := false;
+
+procedure sideEff begin
+   side_effect := true;
+   return "effect";
+end
+
+procedure dummyproc begin
+end
+
+procedure usevalue(variable x) begin
+   return x;
+end
+
+procedure BUGBUGBUG begin
+   variable x, y, s;
+   
+   x := 1; y := 4; s := 1;
+   y := x != 0 and y < 5 or s == 5;
+   call assertEquals("logical 1", y, true);
+   x := 1; y := 5; s := 5;
+   y := x != 0 and x == 2 or y < 6 and s == 5;
+   call assertEquals("logical 2", y, true); 
+   
+   side_effect := false; x := 2;
+   y := (sideEff);
+   call assertEquals("side effect 1", side_effect, true); 
+   side_effect := false; x := 2;
+   y := x != 0 or (x > 5 and sideEff);
+   call assertEquals("side effect 2", side_effect, false); 
+   side_effect := false; x := 55;
+   y := not x and sideEff;
+   call assertEquals("side effect 3", side_effect, false); 
+end
+
+// for this tests, need -s parameter and optimization turned off
+procedure compiler_test_suite begin
+   variable i, s, x, y;
+   compiler_errors := 0;
+   display_msg("Testing ternary operators...");
+   y := 5;
+   x := 10 if y < 6 else 5;
+   call assertEquals("basic 1", x, 10);
+   x := 10 if y == 6 else 5;
+   call assertEquals("basic 2", x, 5);
+   side_effect := false;
+   x := sideEff if y == 6 else 2*2;
+   call assertEquals("side effect", x, 2*2);
+   call assertEquals("side effect2", side_effect, false);
+   side_effect := false;
+   call usevalue( sideEff() if y == 5 else 7);
+   call assertEquals("side effect3", side_effect, true);
+   y := 1;
+   x := 10 if y > 0 else 5 if y == 2 else 2;
+   call assertEquals("complex 1", x, 10);
+   y := -1;
+   x := 10 if y > 0 else 5 if y < 0 else 2;
+   call assertEquals("complex 2", x, 5);
+   y := 3;
+   x := 10 if (5 if y == 2 else 2) else 1;
+   call assertEquals("complex 3", x, 10);
+   y := 1;
+   x := 10 if y == "hoy" else 5 if y == 2 else 2;
+   call assertEquals("complex 4", x, 2);
+   
+   display_msg("Short circuit (need -s parameter)...");
+   y := (false or "256");
+   call assertEquals("return value", y, "256");
+   y := true and "good";
+   call assertEquals("return value 2", y, "good");
+   y := "bad" or "very bad";
+   call assertEquals("return value 3", y, "bad");
+   y := 0 and "nothing";
+   call assertEquals("return value 4", y, 0);
+   
+   x := 1; y := 4; s := 1;
+   y := x != 0 and y < 5 or s == 5;
+   call assertEquals("logical 1", y, true);
+   x := 1; y := 5; s := 5;
+   y := x != 0 and x == 2 or y < 6 and s == 5;
+   call assertEquals("logical 2", y, true); 
+   side_effect := false; x := 2;
+   y := (sideEff);
+   call assertEquals("side effect 1", side_effect, true); 
+   side_effect := false; x := 2;
+   y := x != 0 or (x > 5 and sideEff);
+   call assertEquals("side effect 2", side_effect, false); 
+   side_effect := false; x := 55;
+   y := not x and sideEff;
+   call assertEquals("side effect 3", side_effect, false); 
+   
+   display_msg("All tests finished with "+compiler_errors+" errors.");
+end
+

@@ -1,0 +1,27 @@
+variable someglobal := "this is shit";
+variable someothert := -55;
+
+procedure firstproc(variable a := -5, variable b := "sdsd") begin
+   display_msg( a + b / someothert );
+end
+
+procedure somefunc(variable a := 5) begin
+   return a ^ 2;
+end
+
+procedure map_sum_2(variable func, variable aaa, variable b) begin
+   return func(aaa) + func(b);
+end
+
+procedure start begin
+   variable xx, a, b, a1, a2 := -5;
+   debug_msg( map_sum_2(@somefunc, xx, 3) );
+   
+   /*a1:=5;
+   a2:=2;
+   display_msg( a1 + a2);
+   display_msg(123);*/
+   //call secondproc;
+   call firstproc(someglobal);
+   call somefunc( firstproc() );
+end

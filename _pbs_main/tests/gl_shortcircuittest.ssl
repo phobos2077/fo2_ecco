@@ -1,0 +1,23 @@
+export procedure logicaltest(variable x, variable y, variable z);
+
+variable side := false;
+
+procedure side_effect begin
+   side := true;
+   return true;
+end
+
+procedure logicaltest(variable x, variable y, variable z) begin
+    display_msg("Test with "+x+", "+y+", "+z);
+    if (1 or 0 or side_effect) then
+        display_msg("Result: true");
+    else
+        display_msg("Result: false");
+    display_msg("Side is "+side);       
+end
+
+procedure start
+begin
+    display_msg("shortcircuit test");
+end
+

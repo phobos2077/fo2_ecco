@@ -1,0 +1,9 @@
+
+critical procedure first(variable a) begin
+   return "first "+a;
+end
+
+procedure start begin
+   variable func := 1;
+   display_msg(func(11));
+end

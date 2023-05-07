@@ -1,0 +1,21 @@
+procedure proc begin
+
+end
+
+procedure start begin
+   variable i, n, array, index, count;
+   
+   n := len_array(array);
+   if (n <= 0) then return;
+   if (index < 0) then
+      index := n + index;
+   if (count < 0) then
+      count := n - index + count;
+   else if (index + count > n) then
+      count := n - index;
+   for (i := index; i < (n - count); i++) begin
+      array[array_key(array, i)] := array[array_key(array, i + count)];
+   end
+   resize_array(array, n - count);
+   return array;
+end

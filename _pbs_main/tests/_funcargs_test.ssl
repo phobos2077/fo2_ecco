@@ -1,0 +1,19 @@
+procedure NodeXXX(variable a, variable b := 2) begin
+   display_msg( a + b );
+end
+
+procedure NodeXXZ(variable a) begin
+   display_msg( a * a );
+end
+
+procedure NodeXXY begin
+   return 5 * 2;
+end
+
+procedure start begin
+   variable xx, a, b, a1, a2;
+   call NodeXXY();
+   giq_option(4, 1, 3, NodeXXX, NodeXXY * 2);
+   gsay_option(5, 1, NodeXXX , 5);
+end
+

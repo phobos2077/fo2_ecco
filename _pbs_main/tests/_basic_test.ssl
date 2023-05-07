@@ -1,0 +1,12 @@
+#include "_basic.h"
+
+variable abc := 34234234;
+
+procedure test begin
+   return "test";
+end
+
+procedure start begin
+   giq_option(1, 1, test, 1, 1);
+end
+

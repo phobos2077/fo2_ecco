@@ -1,0 +1,8 @@
+procedure start begin
+   variable o;
+   o := create_object_sid(7, 0, 0, -1);
+   add_obj_to_inven(dude_obj, o);
+   o := create_object_sid(12, 0, 0, -1);
+   add_obj_to_inven(dude_obj, o);
+   
+end

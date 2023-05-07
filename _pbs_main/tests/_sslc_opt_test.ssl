@@ -1,0 +1,25 @@
+procedure stuff1 begin
+end
+
+variable not_used2;
+variable used := "wtf";
+variable not_used1;
+
+procedure stuff2 begin
+end
+
+procedure start begin
+   variable k, v, arr2;
+   display_msg(used);
+   
+   display_msg(bwnot 0xFFFF0000);
+   //for (k:=0; k<v; k++)
+   //if (k<v) then
+   foreach (k: v in arr2)
+      arr2[k] := v;
+      
+      call stuff2 when true;
+      
+   return -5;
+   
+end

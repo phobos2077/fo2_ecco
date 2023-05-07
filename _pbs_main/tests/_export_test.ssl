@@ -1,0 +1,8 @@
+import procedure testexport111(variable a, variable b);
+
+import variable wtf;
+
+procedure start begin
+   return testexport111(111, 222);
+end
+

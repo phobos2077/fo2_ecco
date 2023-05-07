@@ -1,0 +1,9 @@
+procedure start begin
+   variable x := "asda\n34243";
+   display_msg(x);
+   display_msg("asda\n34243");
+   
+   x := exponent(5);
+   sfall_func0(sfall_func4(1, 2,5,5,6));
+   x := sfall_func0(1);
+end

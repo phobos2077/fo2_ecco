@@ -1,0 +1,5 @@
+#include "compiler_testcase.ssl"
+
+procedure start begin
+   call BUGBUGBUG;
+end

@@ -1,0 +1,24 @@
+
+procedure start begin
+   variable i;
+   if (i < 25) then begin
+      i := 10;
+   end else if (i > 60) then begin
+      i := 21;
+   end else if (i < 50) then begin
+      i := 25;
+   end
+   
+   i  := 30;
+   
+   if (i < 25) then begin
+      i := 10;
+   end else begin
+      if (i > 60) then begin
+         i := 21;
+      end
+      i := 25;
+   end
+   
+   i := 300;
+end

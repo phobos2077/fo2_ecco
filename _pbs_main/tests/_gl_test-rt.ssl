@@ -1,0 +1,71 @@
+variable key_1;
+
+procedure start;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure map_exit_p_proc;
+
+
+procedure start
+begin
+	variable LVar0 := "";
+	variable LVar1 := 0;
+	variable LVar2 := 0;
+	variable LVar3 := 0;
+	variable LVar4 := 0;
+	variable LVar5 := 0;
+	variable LVar6 := 0;
+	variable LVar7 := 0;
+	variable LVar8 := 0;
+	variable LVar9 := 0;
+	variable LVar10 := 0;
+	if (game_loaded) then begin
+		display_msg("gl_test start (loaded)");
+		LVar0 := "Super cool string!";
+		LVar8 := temp_array(-1, 0) + arrayexpr(5, "what") + arrayexpr(7, "the") + arrayexpr(12, "goodness!");
+		LVar10 := 0;
+		LVar9 := len_array(LVar8);
+		while (LVar10 < LVar9) do begin
+			LVar4 := array_key(LVar8, LVar10);
+			LVar5 := get_array(LVar8, LVar4);
+			display_msg("i begin " + LVar4 + LVar5);
+			if (LVar4 == 7) then begin
+				break;
+			end
+			display_msg("i end " + LVar3);
+			LVar10 := LVar10 + 1;
+		end
+		display_msg("loop end");
+		display_msg("A=" + charcode(""));
+	end
+	else
+	if (key_pressed(2) and ((game_time - key_1) > 50)) then begin
+		key_1 := game_time;
+	end
+	if (key_pressed(29) and key_pressed(60)) then begin
+		if (not(key_1)) then begin
+			LVar6 := tile_num_in_direction(tile_num(dude_obj), 0, 9);
+			LVar3 := 0;
+			while (LVar3 < 6) do begin
+				create_object_sid(16777458, tile_num_in_direction(LVar6, LVar3, random(1, 2)), elevation(dude_obj), -1);
+				LVar3 := LVar3 + 1;
+			end
+			key_1 := 1;
+		end
+	end
+end
+
+procedure map_enter_p_proc
+begin
+	display_msg("Map enter gl_test");
+end
+
+procedure map_update_p_proc
+begin
+end
+
+procedure map_exit_p_proc
+begin
+	display_msg("Map exit gl_test");
+end
+

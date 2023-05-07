@@ -1,0 +1,51 @@
+procedure start begin
+   variable i, k, v;
+   
+   // break/continue test
+   while (1) do begin
+      i := 10;
+      break;
+      while (11) do begin
+         i := 11;
+         break;
+         break;
+         break;
+         i := 12;
+      end
+      i := 25;
+      break;
+      i := 20;
+   end
+   i := 30;
+   while (777) do begin
+      i := 40;
+      if (1) then 
+         continue;
+      else while (555) do begin
+         i := 41;
+         continue;
+         i := 42;
+      end
+      i := 50;
+   end
+   i := 60;
+   
+   // fake for
+   i:=1;
+   while (i<25) do begin
+      if (k == 1) then begin
+         display_msg(1);
+      end else begin
+         display_msg(2);
+      end
+      i:=i+1;
+   end
+   // real for
+   for (i:=1; i<25; i++) begin
+      if (k == 1) then begin
+         display_msg(1);
+         continue;
+      end
+      display_msg(2);
+   end
+end

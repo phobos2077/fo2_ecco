@@ -1,0 +1,92 @@
+procedure stuff;
+procedure start;
+
+
+procedure stuff
+begin
+	variable LVar0 := 0;
+	variable LVar1 := 0;
+	variable LVar2 := 0;
+	variable LVar3 := 0;
+	variable LVar4 := 0;
+	variable LVar5 := 0;
+	variable LVar6 := 0;
+	variable LVar7 := 0;
+	variable LVar8 := 0;
+	variable LVar9 := 0;
+	LVar0 := temp_array(5, 4);
+	while (LVar1 < 555) do begin
+		LVar1 := 10;
+		break;
+		LVar1 := 20;
+	end
+	while (777) do begin
+		LVar1 := 60;
+		continue;
+		LVar1 := 120;
+	end
+	for (LVar1 := 0; LVar1 < 45; display_msg("wtf")) begin
+		LVar2 := 1;
+		break;
+		continue;
+		LVar1 := 34;
+	end
+	LVar5 := 0;
+	for (LVar4 := len_array(LVar0); LVar5 < LVar4; LVar5 := LVar5 + 1) begin
+		LVar6 := array_key(LVar0, LVar5);
+		LVar3 := get_array(LVar0, LVar6);
+		LVar2 := 100;
+		continue;
+		LVar3 := 200;
+	end
+	LVar7 := temp_array(0, 0) + arrayexpr(0, 1) + arrayexpr(1, 2) + arrayexpr(2, 3);
+	LVar9 := 0;
+	for (LVar8 := len_array(LVar7); (LVar9 < LVar8) and (LVar1 < 0); LVar9 := LVar9 + 1) begin
+		LVar2 := array_key(LVar7, LVar9);
+		LVar3 := get_array(LVar7, LVar2);
+		LVar2 := 100;
+		if (LVar1 == -1) then begin
+		end
+		else begin
+			LVar3 := 200;
+		end
+	end
+end
+
+procedure start
+begin
+	variable LVar0 := 0;
+	variable LVar1 := 0;
+	variable LVar2 := 0;
+	variable LVar3 := 0;
+	variable LVar4 := 0;
+	variable LVar5 := 0;
+	variable LVar6 := 0;
+	variable LVar7 := 0;
+	variable LVar8 := 0;
+	variable LVar9 := 0;
+	LVar3 := temp_array(5, 4);
+	LVar5 := temp_array(25, 4);
+	set_array(LVar0, 1, get_ini_setting("asdasdsa"));
+	LVar0 := get_array(get_array(LVar1, 4545), "asasd565");
+	if (cur_map_index != get_array(LVar5, 1)) then begin
+		LVar9 := get_array(get_array(get_array(get_array(get_array(get_array(LVar0, 1), 5), "some"), 5), "very"), "long");
+		set_array(LVar9, "combination", get_array(LVar9, "combination") + 5);
+	end
+	call stuff;
+	LVar5 := temp_array(-1, 0);
+	set_array(LVar5, "id", 3434 % 23);
+	set_array(LVar5, "key", 232);
+	set_array(LVar1, "ccc", get_array(LVar0, "fwfw") + 3434);
+	LVar0 := temp_array(-1, 0) + arrayexpr("fdf", 2) + arrayexpr(6, -1);
+	LVar4 := temp_array(0, 0) + arrayexpr(0, 1) + arrayexpr(1, 2);
+	LVar4 := get_array(LVar0, "fwf") == 0;
+	LVar3 := temp_array(0, 0) + arrayexpr(0, 1 and 2) + arrayexpr(1, -3.14000 * 2) + arrayexpr(2, temp_array(0, 0) + arrayexpr(0, "W") + arrayexpr(1, "T") + arrayexpr(2, "F"));
+	set_array(LVar2, 0, get_array(LVar4, "sfs"));
+	for (LVar8 := 0; LVar8 < 5; LVar8 := LVar8 + 1) begin
+		LVar0 := 1;
+		LVar8 := LVar8 + 1;
+		continue;
+	end
+end
+
