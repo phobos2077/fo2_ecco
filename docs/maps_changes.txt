@@ -60,10 +60,11 @@ Elevation 3:
 
 
 RAIDERS1:
-- Main entrance: now leads directly to front entrance of hideout
-- Secret Entrance: moved manhole inside the house; manhole leads to Trap Caves now
+- Main entrance: now leads directly to front entrance of hideout (m:93 e:3 t:19750)
+- Secret Entrance: moved manhole inside the house; manhole leads to Trap Caves now (m:93 e:0 t:18745)
 
-RAIDERS2:
+
+RAIDERS2 (TODO):
 - redesigned level 0: replaced both entrances with dead ends and ladders (ladder up in bottom to RAIDERS1-level1, ladder down in top to level2)
 - redesigned level 2 main entrance (it leads to RAIDERS1-level0 and looks like moving to a sunshine)
 - large rocks near the secret entrance to hideout: widened the pass so you can't snipe enemies one by one anymore
