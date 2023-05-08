@@ -1,0 +1,500 @@
+#
+# quests.txt
+#
+# format of each line is:
+#
+#   location, description, gvar_index, display_threshold, completed_threshold
+#
+# where:
+#
+#   location is the number of the message in map.msg describing the location
+#
+#   description is the number of the message in quest.msg with the quest description.
+#
+#   gvar_index is the GVAR_* number for the variable controlling the quest.
+#
+#   display_threshold is the minimum value that the gvar must be for this quest
+#     to be displayed in the pipboy.
+#
+#   completed_threshold is the minimum value that the gvar must be for this quest
+#     to be shown as completed in the pipboy.
+#
+
+
+#####
+# Arroyo Quests
+#####
+# Kill the Evil Plants
+# Arroyo, GVAR_KILL_EVIL_PLANTS, Quest_Accepted, Quest_Completed
+1500, 100, 9, 2, 6
+# Sharpen your Spear
+# Arroyo, GVAR_ARROYO_SPEAR, Spear_Get_Flint, Spear Finished
+1500, 110, 183, 1, 3
+# Recover Smoke for Nagor
+# Arroyo, GVAR_ARROYO_DOG, Dog_Accepted, Dog_FInished_Good
+1500, 120, 191, 1, 3
+# Return the GECK
+1500, 130, 480, 0, 1
+# Find Vic
+1500, 140, 619, 1, 2
+
+#####
+# Den Quests
+#####
+# FREE VIC
+1501, 200, 100, 1, 2
+# INFO ON BECKY DRINKS
+1501, 201, 101, 1, 2
+# SABOTAGE STILL
+1501, 202, 101, 2, 3
+# SMITTY CAR PART
+1501, 203, 550, 1, 2
+# ANNA LOCKET
+1501, 204, 551, 1, 2
+# COLLECT MONEY FROM FRED
+1501, 205, 371, 1, 2
+# GET BOOK FROM DAREK
+1501, 206, 371, 3, 4
+# DELIVER SMITTY MEAL
+1501, 207, 450, 1, 2
+# INVESTIGATE CHURCH
+1501, 208, 454, 1, 2
+# METZGER PERMISSION
+1501, 209, 454, 2, 3
+# FIND WEAKNESS
+1501, 210, 454, 4, 5
+# HELP ATTACK
+1501, 211, 454, 6, 7
+# ORPHANAGE
+1501, 212, 728, 1, 3
+
+#####
+# Klamath Quests
+#####
+# Refuel the Still.
+1502, 300, 198, 1, 3
+# Rescue Smiley the Trapper.
+1502, 301, 197, 1, 2
+# Guard the Brahmin.
+1502, 302, 182, 1, 2
+# Rustle the Brahmin.
+1502, 303, 102, 1, 2
+# Kill the rat God.
+1502, 304, 390, 1, 2
+# Rescue Torr.
+1502, 305, 391, 1, 2
+# Find Rustlers
+1502, 306, 734, 1, 2
+
+#####
+# Modoc Quests
+#####
+# WATCH SEED CORNELIUS
+1503, 401, 105, 4, 7
+# WATCH SEED FARREL
+1503, 402, 106, 4, 7
+# JONNY MISSING SEED
+1503, 403, 693, 1, 2
+# JONNY COME HOME SEED
+1503, 404, 693, 3, 4
+# GARDEN SEED
+1503, 405, 110, 4, 7
+# GHOST FARM SEED
+1503, 400, 631, 1, 2
+# DELIVER MESSAGE
+1503, 406, 631, 2, 3
+# FIND KARL/BODY INFO
+1503, 407, 631, 4, 5
+# SEND KARL HOME
+1503, 408, 631, 5, 6
+# GUARD BRAHMIN
+1503, 409, 107, 4, 7
+# bring hides to Balthas, GVAR_BRINGX_HIDES
+1503, 421, 647, 1, 2
+
+#####
+# Vault City Quests
+#####
+# PLOW SEED
+1504, 500, 80, 3, 6
+# MOORE'S BRIEFCASE
+1504, 501, 321, 1, 2
+# JET FOR Dr. TROY
+1504, 502, 85, 2, 3
+# GECKO PLANT PROBLEM
+1504, 503, 82, 2, 8
+# LYNETTE'S HOLODISK TO WESTIN
+1504, 504, 89, 1, 3
+# AMANDA's HUSBAND
+1504, 505, 459, 1, 2
+# BOOTLEG QUEST
+1504, 506, 497, 1, 2
+# VALERIE'S TOOLS
+1504, 507, 493, 1, 2
+# STARK GECKO RECON
+1504, 508, 529, 1, 2
+# STARK NCR RECON
+1504, 509, 529, 5, 6
+# STARK VILLAGE PROBLEM
+1504, 510, 142, 1, 2
+# CONNAR GET WEAPONS
+1504, 511, 143, 1, 3
+# CONNAR GET WEAPONS
+1504, 512, 764, 1, 2
+# STARK BROKEN HILLS RECON
+1504, 513, 529, 3, 4
+
+
+#####
+# Gecko Quests
+#####
+# Solve the powerplant problem
+1505, 600, 82, 1, 8
+# Repair the Power Plant
+1505, 601, 396, 1, 2
+# Optimize the Power Plant
+1505, 602, 397, 1, 2
+# Get the super repair kit
+1505, 604, 393, 1, 2
+# Get the 3-step plasma transformer
+1505, 605, 160, 1, 2
+# Find Woody the Ghoul
+1505, 606, 616, 1, 3
+#Give Econ Disk to McClure
+1505, 603, 158, 1, 3
+
+#####
+# Broken Hills Quests
+#####
+# Chad skimming money
+1506, 700, 300, 1, 6
+# Fix the mine's air supply
+1506, 701, 302, 3, 7
+# Find the missing persons
+1506, 702,305, 2, 9
+# Meet the Mighty Man's challenge
+1506, 703, 306, 2, 5
+# Jail break
+1506, 704, 303, 3, 4
+# The end of the mutants
+1506, 705, 304, 4, 5
+# Eric's Power Quest
+1506, 706, 542, 3, 6
+
+#####
+# New Reno Quests
+#####
+# Recover Corvega
+1507, 800, 348, 1, 2
+# Find who killed Mr. Wright's son.
+1507, 801, 286, 1, 2
+#      suspect: Jagged Jimmy J
+# 1507, 802, 543, 1, 2
+#      suspect: Jules
+# 1507, 803, 544, 1, 2
+#      suspect: Lil' Jesus Mordino
+# 1507, 804, 545, 1, 2
+#      suspect: Renesco
+# 1507, 805, 546, 1, 2
+# Crack Sierra Army Base
+1507, 806, 343, 1, 2
+# Find Pretty Boy Lloyd
+1507, 807, 312, 2, 4
+# Tribute Renesco
+1507, 808, 316, 1, 3
+# Secret Transaction
+1507, 809, 313, 2, 3
+# Cure for Jet
+1507, 810, 370, 3, 4
+# Abolition Movement
+1507, 811, 346, 1, 2
+# Contract Hit: Westin
+1507, 812, 547, 1, 2
+# Contract Hit: Carlson
+1507, 813, 548, 1, 2
+# Gather Cat's Paw magazines.
+1507, 814, 501, 1, 2
+# Find a laser pistol.
+1507, 815, 549, 1, 2
+# deliver package to ramirez
+1507, 816, 354, 1, 2
+# Tribute Renesco
+1507, 817, 355, 1, 3
+# Assassinate Salvatore
+1507, 818, 356, 1, 2
+# Bring Tully Abbey booze
+1507, 819, 731, 2, 4
+
+#####
+# Sierra Army Base Quests
+#####
+#1508, ...
+
+#####
+# Vault 15 Quests
+#####
+#1509, 3200+,
+#Rescue Chrissy,  GVAR_V15_CRISSY_QUEST
+1509, 3200, 473, 1, 2
+#Kill Darion, GVAR_V15_KILL_DARION
+1509, 3201, 474, 1, 2
+#Get NCR Deal, GVAR_V15_NCR_DEAL
+1509, 3202, 475, 1, 2
+#Discovered NCR spy, GVAR_V15_NCR_SPY
+1509, 3203, 476, 1, 2
+
+#####
+# New California Republic Quests
+#####
+# Get Parts or Access for Tandi, GVAR_NCR_TANDI_JOB_ACCEPT
+1510, 1100, 169, 1, 2
+# "Take care of Officer Jack" For Mira, GVAR_NCR_MIRA_STATE
+1510, 1101, 217, 3, 5
+#Redding Brahmin Drive, GVAR_NCR_BRAHMN_QST
+1510, 1102, 481, 1, 2
+#Retrive papers from Doc Henry, GVAR_NCR_DRPAPR_QST
+1510, 1103, 482, 1, 2
+#Test Mutagenic Serum, GVAR_NCR_HENRY_HYPO
+1510, 1104, 237, 1, 2
+#Eliminate Mr. Bishop, GVAR_NCR_ELMBISHOP_QST
+1510, 1105, 483, 1, 2
+#Deliver Holodisk to Lynette, GVAR_NCR_LYNETTE_HOLO_QST
+1510, 1106, 484, 1, 2
+#Retrive Ranger map for Vortis, GVAR_NCR_VORTIS_QUEST_STATE
+1510, 1107, 195, 1, 2
+#Free slaves to become a Ranger, GVAR_NCR_FREE_SLAVES_QST
+1510, 1108, 502, 1, 2
+#Deliver Elronologist's Field Report to Superiors in San Francisco, GVAR_NCR_ENLONE_LETTER_QST
+1510, 1109, 485, 1, 2
+#Kill Elronologist in NCR for Merk, GVAR_NCR_KILL_ELRON_QST
+1510, 1110, 486, 1, 3
+#Stop Brahmin Raids, GVAR_NCR_BRAHMIN_QST
+1510, 1111, 500, 1, 2
+#Wipe out Ranger safe houses, GVAR_NCR_VORTIS_QUEST_STATE
+1510, 1112, 195, 3, 4
+#Wipe out Slaver Camp, GVAR_NCR_ATTACK_SLAVER_CAMP
+1510, 1113, 767, 1, 2
+# phobos2077:
+#Take down a tribal traveling around Modoc, GVAR_BOUNTY_NCR
+1510, 1120, 645, 1, 3
+#Take down a group of villains somewhere east of Broken Hills, GVAR_BOUNTY_NCR
+1510, 1121, 645, 4, 6
+#Eliminate an armed gang last seen to the east of San Francisco, GVAR_BOUNTY_NCR
+1510, 1122, 645, 7, 9
+# bring tentacles to Dr. Henry, GVAR_BRINGX_TENTACLES
+1510, 1123, 646, 1, 2
+
+#####
+# Vault 13 Quests
+#####
+#1511, ...
+#Fix the computer, GVAR_V13_COMP_QST
+1511, 1200, 487, 1, 2
+#Talk to goris, GVAR_V13_GORIS_QST
+1511, 1201, 488, 1, 2
+
+
+#####
+# Military Base Quests
+#####
+#1512
+
+#####
+# Redding Quests
+#####
+#clear out mine
+1513,1398,703,1,2
+# Excavator Chip
+1513,1399,332,1,2
+#Widow Rooney
+1513,1400,702,1,2 
+# Break up Bar Brawl
+1513,1401,380,1,2
+# Whore Cut Seed,
+1513,1402,292,1,2
+# Kill Frog Morton
+1513,1403,385,1,3
+# phobos2077:
+# eliminate robbers
+1513,1411,644,1,3
+
+#####
+# San Francisco Quests
+#####
+#1514, ...
+1514,1500,532,1,2
+1514,1501,533,1,2
+1514,1502,534,1,2
+#kill the emporer
+1514,1503,559,1,2
+#Get plans for Elrons from Navarro
+1514,1504,561,1,2
+#Steal Verti bird plans for the Elrons from the Shi
+1514,1505,557,1,2
+1514,1506,535,1,2
+1514,1507,366,32,64
+#kill oz9
+1514,1508,555,1,2
+#Get plans for the Shi from Navarro
+1514,1509,560,1,2
+#Steal Verti bird plans for the Shi from Elrons
+1514,1510,558,1,2
+1514,1511,536,1,2
+#The dragon wants you to take out lopan
+1514,1512,538,1,2
+#LoPan wants you to take out the dragon.
+1514,1513,537,1,2
+1514,1514,367,1,7
+1514,1515,539,1,2
+#Get the Vertibird plans for the Bos
+1514,1516,565,1,4
+#Disable the Shi Sub
+1514,1517,362,1,5
+#Investigate whereabouts of Dr. Sheng
+1514,1518,782,2,4
+#Bring Dr. Sheng a sample of seeds
+1514,1519,783,1,2
+#Eliminate Dr. Sheng
+1514,1520,785,1,2
+#Deliver the plant seed to Dr. Wong
+1514,1521,784,1,3
+#Eliminate Dr. Wong without alerting the Shi
+1514,1522,786,1,2
+#Clear out Dr. Sheng's lab
+1514,1523,789,1,2
+
+#####
+# Navarro Quests
+#####
+# Deal with the deathclaw.
+1515, 1600, 554, 1, 2
+# Fix K9
+1515, 1601, 513, 1, 3
+# Retrieve the FOB
+1515, 1602, 512, 1, 2
+#####
+# The Enclave Quests
+#####
+#1516, ...
+
+#####
+# The Abbey Quests
+#####
+#1517, ...
+#Kill the beast
+1517,1800,708,1,3
+#Deliver the part
+1517,1801,709,1,2
+#Fix the waterpump
+1517,1802,710,1,4
+#Grave robbing
+1517,1803,711,1,2
+#Tully/Thomas status
+1517,1804,712,2,4
+#Hank Lighter
+1517,1805,732,1,2
+#Botany information
+1517,1806,726,1,4
+#Format Databases
+1517,1807,776,1,2
+#Escort Brother Jason to Gecko
+1517,1808,777,1,2
+
+#####
+# Primitive Tribe Quests
+#####
+#1518, ...
+#Collect weapons for tribe.
+1518, 1900, 713, 1, 2
+#Fix the well
+1518, 1901, 715, 1, 5
+#Shaman Spirit Quest
+1518, 1902, 717, 1, 3
+#Sulik Sister
+1518, 1903, 716, 1, 4
+#Missing Warrior
+1518, 1904, 720, 1, 6
+#Firewood
+1518, 1905, 733, 3, 4
+#Reunite Sulik and his sis
+1518, 1906, 719, 1, 2
+#Merchant Exchange
+1518, 1907, 774, 1, 6
+#Shaman Herbs
+1518, 1908, 781, 1, 2
+
+#####
+# EPA Quests
+#####
+#1519, ...
+#Fix Hologram00000
+1519, 2000, 739, 1, 3 
+#Fix RObot Voice Controller
+1519, 2001, 740, 2, 5 
+#Clear out the plant problem
+1519, 2002, 744, 1, 2 
+#Fix EPA lighting problem
+1519, 2003, 752, 1, 4 
+#Collect Gecko Pelts
+1519, 2004, 759, 1, 2
+#Fix staticing hologram
+1519, 2005, 763, 1, 2
+#Collect widget for Doctor
+1519, 2006, 766, 1, 2   
+#Test Solar Scorcher
+1519, 2007, 775, 1, 2   
+
+#####
+# Ghost Town Quests
+#####
+#1520, ...
+
+#####
+# Car outta Gas Quests
+#####
+#1521, ...
+
+#####
+# Destroyed Arroyo Quests
+#####
+#1522, ...
+
+#####
+# Toxic Caves Quests
+#####
+#1523, ...
+
+#####
+# Den Slave Run Quests
+#####
+#1524, ...
+
+#####
+# Raiders Quests
+#####
+#1525, ...
+
+#####
+# Desert Encounter Quests
+#####
+#1526, ...
+
+#####
+# Mountain Encounter Quests
+#####
+#1527, ...
+
+#####
+# Ruined City Encounter Quests
+#####
+#1528, ...
+
+#####
+# Coast Encounter Quests
+#####
+#1529, ...
+
+#####
+# Golgotha Quests
+#####
+#1530, ...
