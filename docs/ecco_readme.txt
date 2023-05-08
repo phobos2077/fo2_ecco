@@ -1,6 +1,6 @@
 -====================-
 -===   EcCo mod   ===-
--=== v0.6.2 BETA  ===-
+-=== v0.8.0 BETA  ===-
 -====================-
 						by phobos2077
 
@@ -11,7 +11,7 @@ Main goals:
 - add more challenge to the combat, barter and other aspects of the game (but without mandatory hardcore)
 - fix some stuff of the Restoration Project as well as vanilla game which I feel were broken
 - add more variety to the gameplay, mainly to the combat (but in line with original game design, you won't see OP weapons or other unicorns here). 
-- keep everything as modular as possible, so the players can configure everything to their liking and modders can re-use parts of this mod in their own
+- keep things configurable and modular, so the players can tweak mod to their liking and modders can re-use parts of it in their own creations
 
 
 Main Highlights.
@@ -61,30 +61,40 @@ New Quests:
 
 
 Other mods that I used/included:
-- sfall 3.5 DLL for Windows XP SP2+ (included)
-- Party Orders addon (expanded with "Switch ammo" feature)
 - Mr. Fixit (adopted and expanded)
 - Haenlomal's Yet Another Ammo Mod damage formula (with sfall)
 
 
 -=== COMPATIBILITY ===-
 
-ONLY installable above the Killap's Restoration Project 2.3.3
+ONLY installable above the Restoration Project Update v27 (with updated maps from Pixote)
 Following RP options MUST be installed:
-- Party members change appearence when wearing armor
 - New weapon animations (all of them)
 
 Start of a new game is NOT required (but is recommended, as usual...)
 
 -=== INSTALLATION ===-
 
-1) make a backup copy of your entire game installation folder (except master.dat and critter.dat files - those won't be affected)
+1) install RPU v26 on a clean game installation (installer version is recommended):
+https://github.com/BGforgeNet/Fallout2_Restoration_Project/releases/tag/v26
 
-2) use installer with desired options
+2) download the archive and extract it's contents into the folder where you installed RPU in step 1 (should overwrite rpu.dat file)
+https://drive.google.com/file/d/1CgCZjDh0H_zgLk0nQs9qLlUeaZ-zJPjK/view?usp=share_link
 
-3) start Fallout 2 and play
+3) extract the contents of the archive into the game folder, overwriting files
 
-If you won't like the merchant prices or some other aspects, feel free to read and edit the barter.ini and combat.ini as you like.
+4) edit ddraw.ini and change the following:
+  a) Find DamageFormula and set it to 5 (to use YAAM)
+DamageFormula=5
+
+  b) Find and uncomment the following lines:
+PerksFile=sfall\perks.ini
+BooksFile=sfall\books.ini
+
+5) start Fallout 2 and play
+
+If you won't like the merchant prices or some other aspects, feel free to read and edit the barter.ini and combat.ini in mods folder as you like.
+
 
 -=== DETAILS  (WARNING! SPOILERS!!!) ===-
 
@@ -276,238 +286,10 @@ So basically, you get 2x maximum damage with 100% skill, 3x damage with 200% and
 - 3 global scripts are running about 5-10 times in second (gl_stlth, gl_traps, gl_fixit)
 - several hook script are used, refer to !Sources folder for more info
 
--=== CHANGELOG ===-
-
-v***
-- fixed some installer bugs
-- fixed some minor map bug
-- restored single-shot mode for M60 to fix firing sound issue
-- added a few text corrections from Dravean
-
-v0.6.2:
-- moved to latest sfall with new engine features (a lot of refactoring, something might broke)
-- improved quality of trap explosion effects and spike trap kill animation
-- fixed duplicate trap kill EXP bonuses and kill counter increments
-- incendiary projectile weapons now inflict fire damage to secondary targets too
-- strong single-shot energy weapons now spend more than 1 cell round for each shot
-- slightly lowered armor piercing values for some ammo types
-- reverted speed of travel through mountains to vanilla level (was lowered at some point, now I don't think this was a good idea)
-- all hotkeys (crafting menu, set trap, party orders) now work without delays (you don't have to press and hold them now)
-- you can now close crafting menu with Escape key
-- added option to delay Hakunin dreams somewhat
-- nerfed double-barrel shotguns: when duplet mode is installed (which is off by default now), vanilla base damage will be used; 
-still higher damage when duplet mode is disabled
-- added optional AP requirement when using more than 2 drug items from inventory during combat
-- added Traps and Barter skill books to the game
-- doors to a bunch of loot at Bishop's club are better protected
-- removed perk "Bonus rate of fire"
-- no more free loot at Dr. Johnson (his stock is hidden just like any other merchant and he keeps an eye on his room)
-- implemented robust code that fixes invalid ammo counts and calibers for all map objects (on first map enter)
-- expanded melee (throwing, unarmed) combat by adding 4 new mid-game weapons (some craftable, some buyable, some can be found in the world)
-- rebalanced some random encounters a bit (mainly to avoid instagib encounters in early game) and fixed several occasions of people unable to use their weapons (due to lack of animation)
-- added more powerful shotgun shells to craft
-- changed weapon destroy script - it works only for weapons listed in the INI (there were exclusion list before) and weapon destruction is shown in the message log
-
-v0.6.1:
-> Bug fixes:
-- fixed not beign able to push Vic
-- fixed several bugs related to traps
-- mole rat hide now drops from Pinky & Brain
-- fixed wrong ammo types found in guns and wrong ammo amount in the last pack in stacks (will apply when pickup from container or put weapon in hand)
-
-> Balance
-- Salvatore gang members were made tougher
-- Increased number of guards in Vault 15
-- replaced ALL combat armor in SAD with Metal Mk2 (to fight Salvatores)
-- early traps made more appealing: spike traps work in 1 hex radius like sensor traps, skill requirement reduced
-- adjusted some crafting schematics
-- removed ability to steal full stock from Modoc general store
-- added restockable non-stealable money pool to all NR drug dealers
-- Eldrige inventory is reduced upon his death (was gamebreaking loot)
-- reduced range of all shotguns, restored single mode for Pancor
-- reduced laser rifle max damage
-- rearranged loot in 2 rooms at EPA security level; only one room is "jammed" now (with better loot)
-- added "don't touch that" checks to containers at slaver camp
-
-> New features:
-- all geckos and some rats and molerats can now be lured into traps outside of combat using appropriate food
-- changed crafting skill requirements: now some schematics will require a sum of two skills instead of two separate skills. This allows for more flexibility in character development.
-- ability to craft Super Tool Kit at some point
-- changed encounter table for area around Vault Village: now you will encounter Mole rats in accordance to appropriate quest status
-- reduced range at which abbey deathclaws start combat (to be able to use traps)
-- moved tentacles quest from doctor to Henry next door (more appropriate)
-- added trigger to be attacked by bots on S.A.D first floor
-
-
-v0.6:
-> Economy:
-- in all barter price calculations, highest Barter skill in party is now used instead of PC skill only (to conform with vanilla)
-- price koefficients were tweaked: merchant skill affect prices in similar scale to vanilla game
-- one of the trappers in Klamath can now teach you gecko skinning (not free) and leather jacket crafting
-- Loot slightly reduced in S.A.D
-- Loot slightly reduced in Hubologist Stash
-- EPA: added skill-check on two doors leading to locker rooms on security level
-
-> Weapons:
-- laser rifle hold frame switched back to "big gun", now super mutants can use it again...
-- "LE" BB Gun nerfed a bit.. it's rare but was making many other weapons absolete because of accuracy, 4AP cost and enourmous magazine size
-- added 40mm grenade launcher (2 types) with 2 types of grenades
-- added 9mm SMG for flavor (and to use 9mm ammo)
-- two new craftable ammo types: 14mm JHP and 40mm Incendiary grenade
-- rechamber XL70E3 to .223 ammo, now it's a good light alternative to Light Support Weapon; added it to more places in game (still very rare)
-
-> Gameflow:
-- integrated Lujo Gameflow Fixes mod (experimental version): http://www.nma-fallout.com/showthread.php?201429-A-rewiev-of-the-RP-game-progression-experience-and-small-tweak-suggestions
-- Flick and Tubby in Den are now protected better and their on-death loot is reduced 
-- Metzger gang made tougher
-- lowered several EXP rewards in NCR-Vault13 area
-- redesigned Raiders hideout: secret entrance is more challenging now, while front entrance more straightforward (but still features tough fight)
-
-> Misc:
-- included expanded version of Party Orders addon (with Switch Ammo Type feature)
-- all modified game scripts were "re-modified" and recompiled against latest RP source files
-- craftable food (new teacher in Den)
-- crafting menu improvements: changed order of items, more items per page, items split into categories for easier navigation (when there are many available)
-- rearranged crafting teachers (3 new teachers added)
-- text corrections in changed dialogs for better english
-- improved "destroy weapon on death" by excluding rare and unique weapons (they will never be destroyed)
-- added more Ropes and Spears to Maida, added free Junk in Den
-- added more grenades to NPCs in random encounters
-- fixed NPCs not being able to use Throwing Axes and Grenades in several random encounters
-- simplified trap assembling: now you need to place them in hands and use them on the chosen one (or press Ctrl+1)
-
-
-v0.5.2:
-- adopted to RP v2.3.3
-- added russian translation of mod, readme file and installer
-- added new *better* buying price formula (not using vanilla price, but uses all proper variables like perks, discounts, etc.)
-- swapped .223 Pistol and Mauser back to vanilla places; to make .223 rare, removed it from NCR shop and all common encounters
-- changed some weapon distribution in random encounters according to changed weapon stats, added some grenades and throwing axes
-- throwing axe uses knife animation: not much worse than club animation, but allows it to be used by more enemies
-- two identical 9mm ammo types now split into "ball" and "Armor piercing"
-- fixed Mr.Fixit dialog not producing items when using keyboard shortcut (Ctrl+C)
-
-v0.5.1:
-- reduced weight of rope, junk and fish
-- "reduce drugs loot" default setting changed to 50%
-- Algernon must rest before upgrading next weapon, plus weapon retain the amount of ammo it had before upgrade
-- Trappers in random encounters now sell pelts through standard barter dialog only, but with high discount
-- for plow quest in VC you get a little more worthy reward
-- adjust XP values of some monsters to reflect changes in their stats
-- removed Pancor Jackhammer from random encounters and moved M60 around
-- made Molerats a little bit tougher
-- added new lootable monster body parts: Death Claw, Mole Rat Hide, Wanamingo Hand, Mutant Tentacle.
-- added Bounty Hunt quest to Ascorti (Redding)
-- added Bounty Hunt quest line to deputy Karl (NCR)
-- added Bring Tentacles quest to NCR doctor
-- added Bring Molerat Hides quest to Balthas (Modoc)
-- experimental feature: stimpaks radiate on use, booze acts as a weak rad-away (optional)
-
-v0.5:
-- fixed Mr.Fixit dialog skipping craft items
-- fixed getting "trap kill XP" when target not actually killed
-- fixed crash when shooting walls
-- Taser stats improved
-- proper ground image for axe
-- added Hercules drug (Carry Weight bonus)
-- traps changes:
-  - new Proximity mine (junk+battery), 1 tile radius
-  - explosions damage calculation changed, critters at 1 tile from explosion will receive the same damage as in epicenter
-  - easier arming of "customizable" mines (see TRAPS section)
-  - new unique graphics of traps on ground
-  - one spike trap can now be used only twice
-  - possible stability improvements
-- added advanced drugs and leather armor teacher
-- craft menu can now be accessed with hotkey: Ctrl+C
-- source code file structure refactoring
-- micro fusion cell mag size reduced (1 full cell will still charge car with 50% power, so this wasn't affected)
-- some "lesser" critters made tougher (Tough Giant Ant, Large radscorpion, Deathclaws)
-- added loot reducing in corpses
-
-v0.4.4:
-- fixed Smitty dialogue to allow learn crafting after you got a car
-- fixed people drop their fist-weapons on death (how would that be possible?)
-- fixed "window hang" bug in Poison schematic definition
-- new weapon: Taser
-- restore Zip Gun in game (craftable)
-- party NPC skills used in crafting
-- added craftable and installable spike traps (stone plate graphics)
-- added configurable friend-or-foe system for traps
-- implemented gaining experience points for all trap kills
-- slightly reduced 10mm ammo pack size
-
-v0.4.3:
-- installable traps
-- sneak attack and blackjack
-- nerfed slot jinxer perk
-- nerfed gambling dice
-- adjusted weight and size of some items
-- fixed "dancing autofire" death animation occured when using shotgun duplet mode
-
-v0.4.2:
-- learn crafting before use
-- rebalanced craft rules
-- fixed molotov not exploding when miss or hit scenery
-- slight changes to barter price calculation (use round() instead of floor() on final prices)
-- fix bug in installer causing damaged installation
-
-v0.4.1:
-- new items (craftable): 
-  - home-made grenade
-  - Dragon Skin (fire resistance drug)
-  - 12ga slugs
-  - .223 AP
-- improved Mr. Fixit code to support multiple items in one batch
-- added some crafting components to general stores (vanilla items)
-- added more town demand item rules
-- added weapon drop on death (my own version)
-
-v0.4:
-- new barter system
-- added some price diversity for some items
-- Sniper Rifle rechambered "back" to 7.62
-- added some XL70E to stores. Still very rare.
-- added sniper rifle and some axes to NCR store
-- increased money in some stores
-
-v0.3.1:
-- implemented fire damage type for Molotov 
-- adjusted grenades damage
-
-v0.3:
-- created installer
-
-v0.2.2:
-- *slightly* lowered damage and range of most pistols (to balance 5AP->4AP change)
-- Bozar AMR now uses Big Guns skill
-- M60 now has magazine capacity of 100
-- reduced damage for Gauss weapons closely to vanilla state (because even Advanced power armor does not protect against their shots at all)
-- reduced rocket launcher damage with explosive rocket to lightly armored targets (was 50% more than vanilla, now only 30%)
-- increased DR mod for AP Rocket (to penetrate Adv. power armour)
-- reduced 5mm ammo pack size to 40
-- increased weight of 7.62mm and .50 ammo packs to roughly meet RL counterparts
-- slightly reduced amount of .50 ammo in stores
-- minor changes and fixes to some weapon stats
-
-v0.2.1:
-- adopted to RP 2.3.2
-- fixed some upgraded weapons having different specs from basic ones
-- added Mr.Fixit mod (obj_dude script was merged with RP version)
-
-v0.2:
-- adopted to RP 2.3
-- throwing weapons rebalance, added damage bonus formula
-- added Throwing Axe
-- added .50 BMG and changed Bozar to use it
-- made critters armor changes consistent
-- damage changes for Bozar, M60 and LSW
-- improved double-barrel shotguns duplet mode with unique sound and proper animations
-- copy-pasted hs_calcapcost script from WR 2.2
-
 
 -=== CREDITS ===-
 
-mod was created by phobos2077 in 2010-2015
+mod was developed by phobos2077 between 2010 and 2023
 
 additional dialogs, designs, flow fixes: Lujo
 russian translators: Pyran, Drobovik, phobos2077, Frederika, PolarTulip
@@ -524,6 +306,8 @@ many thanks goes to following people, who made this mod possible:
 - pelicano for Party Orders addon
 - people at NMA and nuclear-city forums for useful comments
 - Black Isle for my personal favorite game of all time! :)
+- BGForgeNet and rotators teams for inspiring me to come back to modding
+- NovaRain for his outstanding dedication to keeping sfall project alive and helping me get back on track
 
 
 ::O
