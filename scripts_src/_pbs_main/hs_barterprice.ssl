@@ -1,10 +1,14 @@
 procedure start;
 
 //#include "Perk_Inc.h"
-#include "define_lite.h"
-#include "lib.arrays.h"
-#include "lib.misc.h"
-#include "mod.h"
+#include "../headers/itempid.h"
+#include "../headers/global.h"
+#include "../headers/maps.h"
+
+#include "../sfall/define_lite.h"
+#include "../sfall/lib.arrays.h"
+#include "../sfall/lib.misc.h"
+#include "../_pbs_headers/ecco.h"
 
 procedure get_town_rep;
 procedure remember_town_demand;

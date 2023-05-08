@@ -1,16 +1,15 @@
 procedure start;
 
 //#include "Perk_Inc.h"
-//#include "../headers/scenepid.h"
-#include "define_lite.h"
-#include "command_lite.h"
-#include "lib.strings.h"
-#include "lib.arrays.h"
-#include "mod.h"
-#include "lib.inven.h"
-#include "lib.math.h"
-//#include "quests_bounty.h"
-#include "..\_pbs_craft\learn_craft.h"
+#include "../headers/scenepid.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/command_lite.h"
+#include "../sfall/lib.strings.h"
+#include "../sfall/lib.arrays.h"
+#include "../sfall/lib.inven.h"
+#include "../sfall/lib.math.h"
+#include "../_pbs_craft/learn_craft.h"
+#include "../_pbs_headers/ecco.h"
 
 variable begin 
   ini_destroy_weapon_chance;
@@ -172,8 +171,8 @@ begin
       critter_flags;
       i;
     end
-	critter_flags := get_proto_data(obj_pid(critter), PROTO_CR_CRITTER_FLAGS);
-	if not(critter_flags bwand CFLG_DROP) then begin
+	critter_flags := get_proto_data(obj_pid(critter), PROTO_CR_FLAGS);
+	if not(critter_flags bwand CFLG_NODROP) then begin
 	    i := 1;
 	    while (i <= 2) do begin
 	      weapon := critter_inven_obj(critter, i);

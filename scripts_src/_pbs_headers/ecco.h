@@ -10,6 +10,8 @@
 #include "../sfall/define_extra.h"
 #include "../sfall/lib.misc.h"
 
+#define SCRIPT_TEST2            (4)
+
 #define SGVAR_CRITTERS_SEE_DUDE        ("PBSACSD_")
 #define SGVAR_TRAPS_BY_DUDE            ("PBSTRPS_")
 #define SGVAR_TRAPS_BY_DUDE_LOCAL      ("PBSTRPSL")
@@ -44,7 +46,7 @@
 #define PID_PBS_50_AMMO             (610)
 #define PID_PBS_THROWING_AXE        (611)
 #define PID_PBS_DRAGON_SKIN         (612)
-#define PID_PBS_HOMEMADE_GRENAD     (613)
+#define PID_PBS_HOMEMADE_GRENADE    (613)
 #define PID_PBS_SHOTGUN_SLUGS       (614)
 #define PID_PBS_223_AP              (615)
 #define PID_PBS_TRAP_KIT_MINE       (616)
@@ -125,8 +127,8 @@
 #define critter_dr_by_dmg_type(crit, type)    (get_critter_stat(crit, 24 + type))
 #define critter_max_hp(crit)                  (get_critter_stat(crit, STAT_max_hp))
 #define exp_for_kill_critter_pid(pid)         (get_proto_data(pid, PROTO_CR_KILL_EXP))
-#define critter_flags_by_pid(pid)             (get_proto_data(pid, PROTO_CR_CRITTER_FLAGS))
-#define can_steal_from_critter_pid(pid)       ((critter_flags_by_pid(pid) bwand CFLG_STEAL) == 0)
+#define critter_flags_by_pid(pid)             (get_proto_data(pid, PROTO_CR_FLAGS))
+#define can_steal_from_critter_pid(pid)       ((critter_flags_by_pid(pid) bwand CFLG_NOSTEAL) == 0)
 #define critter_facing_dir(crit)              (has_trait(TRAIT_OBJECT,crit,OBJECT_CUR_ROT))
 
 #define is_critter(obj)      (obj_type(obj) == OBJ_TYPE_CRITTER)

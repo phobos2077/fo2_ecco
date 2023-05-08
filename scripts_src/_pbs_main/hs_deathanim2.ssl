@@ -1,5 +1,7 @@
 procedure start;
 
+#include "../headers/animcomd.h"
+#include "../headers/itempid.h"
 #include "../sfall/define_lite.h"
 #include "../_pbs_headers/quests_bounty.h"
 

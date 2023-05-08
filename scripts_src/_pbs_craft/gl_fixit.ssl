@@ -1,13 +1,14 @@
 procedure start;
 
+#include "..\sfall\sfall.h"
+#include "..\sfall\define_lite.h"
+#include "..\sfall\lib.misc.h"
+#include "..\sfall\dik.h"
 
-#include "..\_pbs_main\sfall.h"
-#define PID_BLOCKING_HEX                    (33554499)
-#define PID_WORKBENCH                    (157)
-#define SCRIPT_TEST0            (2)
+#define PID_BLOCKING_HEX             (33554499)
+#define PID_WORKBENCH                (157)
+#define SCRIPT_TEST0                 (2)
 
-#include "..\_pbs_main\define_lite.h"
-#include "..\_pbs_main\lib.misc.h"
 #include "test0.ssl"
 
 procedure close_dialog;
@@ -16,13 +17,12 @@ procedure show_dialog;
 variable ini_fixit_hotkey;
 
 procedure hotkey_handler begin
-   variable pressed := get_sfall_arg, 
+   variable pressed := get_sfall_arg,
             key := get_sfall_arg;
    if (pressed) then begin
       if (not(get_game_mode) and mode <= 0) then begin
          if (hotkey_pressed_now(ini_fixit_hotkey, key)) then begin
       		call batch_init;
-      		//call show_dialog;
       	end
       end else if (mode > 0) then begin
          if (key == DIK_ESCAPE) then begin
@@ -39,87 +39,9 @@ procedure hotkey_handler begin
 end
 
 procedure start begin
-	variable t;
-	//call create_workbench(tile_num_in_direction(tile_num(dude_obj), 3, 1), elevation(dude_obj));
 	if (game_loaded) then begin
-	   //set_global_script_type(1);
-		//set_global_script_repeat(100);
 		ini_fixit_hotkey := parse_hotkey(cfg_fixit_hotkey);
 		register_hook_proc(HOOK_KEYPRESS, hotkey_handler);
 	end
-end
-
-
-
-procedure butpress begin
-   reg_anim_clear(dude_obj);
-   //play_sfx("IB2P1XX1");
-end
-
-procedure Node001 begin
-end
-
-
-
-procedure close_dialog begin
-   call butpress;
-   deletewin("win1");
-   display_msg("close");
-   //game_ui_enable;
-end
-
-procedure show_dialog begin
-//game_ui_disable;
-   createwin("win1", get_screen_width- 340, get_screen_height- 199, 340, 199);
-   SelectWin("win1");
-   
-   //create window bakground graphics
-   //display("graph_filename.pcx")
-   //file must be in pcx format and have fallout2 standart palette
-   display("pcx\\w_opt.pcx");
-   ShowWin;
-   
-   //Now we will add four buttons to this window
-   //addbutton("nameofbutton",posx,posy,widht,height)
-   // 0,0 point for posx and posy paremeters is left upper corner of a new window.
-   /*AddButton("button1",17,30,16,15);
-   AddButton("button2",17,50,16,15);*/
-   AddButton("button3",17,70,16,15);
-   AddButton("button4",17,90,16,15);
-   
-   //adding graphics to buttons
-   //addbuttongfx("buttonname","buttonpres_file.pcx","buttonrelise_file.pcx","mouse_over_file.pcx")
-   //graph files must be in pcx format and in fallout2 standart color palette
-   /*addbuttongfx("button1","pcx/boxon.pcx","pcx/boxoff.pcx"," ");
-   addbuttongfx("button2","pcx/boxon.pcx","pcx/boxoff.pcx"," ");*/
-   addbuttongfx("button3","pcx/boxon.pcx","pcx/boxoff.pcx"," ");
-   addbuttongfx("button4","pcx\\boxon.pcx","pcx\\boxoff.pcx","pcx\\boxoff.pcx");
-   
-   //adding procedures to buttons
-   //addbuttonproc("nameofbutton",mouse_on_procedure,mouse_out_procedure,buttonpres_procedure,buttonrelase_procedure);)
-   /*AddButtonProc("button1",nullproc,nullproc,butpress,nullproc);
-   AddButtonProc("button2",nullproc,nullproc,butpress,nullproc);*/
-   //AddButtonProc("button3",Node001,Node001,butpress,party_order_x);
-   AddButtonProc("button4",Node001,Node001,butpress,close_dialog);
-   
-   //this command draws sprite on given coordinates in window
-   //displaygfx("filename.pcx",posx,posy,hight,weight)
-   //it draws elevator level arrow
-   //displaygfx("pcx/items/DRUG_BOT.pcx",120,40,92,55);
-   
-   addregion "reg" {0,0,340,0,340,199,0,199};
-   activateregion ("reg", NodeWTF);
-   
-   addregionflag("reg", 0xFFFFFFFF);
-   checkregion;
-   addregionproc("reg", Node001, Node001, butpress, butpress);
-   
-   //This command will redraw curent window
-   
-   ShowWin;
-   
-   
-   display_msg("Dialog "+get_screen_width+"x"+get_Screen_height);
-   
 end
 

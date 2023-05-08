@@ -4,10 +4,10 @@ procedure start;
  Helper global script for stealth aspect
 */
 
-#include "sfall.h"
-#include "define_lite.h"
-#include "lib.arrays.h"
-#include "mod.h"
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/lib.arrays.h"
+#include "../_pbs_headers/ecco.h"
 
 #define obj_in_party(x)                     (party_member_obj(obj_pid(x)) != 0)
 
@@ -28,14 +28,14 @@ procedure start begin
       free_array(tmp);
       set_sfall_global(SGVAR_CRITTERS_SEE_DUDE, 0);
    end
-   
+
 	set_who_see_dude := load_create_array(ARR_CRITTERS_SEE_DUDE, 0);
   end else begin
-  
+
 	if (combat_is_initialized and not(in_combat)) then begin
 		in_combat := true;
-		foreach crit in list_as_array(LIST_CRITTERS) if crit then begin
-			if (crit != dude_obj and obj_can_see_obj(crit, dude_obj)) then begin 
+		foreach (crit in list_as_array(LIST_CRITTERS)) if crit then begin
+			if (crit != dude_obj and obj_can_see_obj(crit, dude_obj)) then begin
 				//display_msg(proto_data(obj_pid(crit),cr_name) + " see.");
 				call add_array_set(set_who_see_dude, crit);
 			end
@@ -46,7 +46,7 @@ procedure start begin
 		// clean set
 		resize_array(set_who_see_dude, 0);
 	end
-	
+
   end
 end
 

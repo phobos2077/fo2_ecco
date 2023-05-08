@@ -1,10 +1,11 @@
 procedure start;
+
 //#include "..\headers\ITEMPID.H"
 //#include "..\headers\SCENEPID.H"
-#include "sfall.h"
-#include "DEFINE_lite.H"
-#include "mod.h"
-#include "lib.arrays.h"
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/lib.arrays.h"
+#include "../_pbs_headers/ecco.h"
 
 #define ATTACK_TYPE_THROW 5
 #define BODYPART_HEAD 0

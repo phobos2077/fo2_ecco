@@ -5,22 +5,25 @@
 #ifndef PBS_TRAPS_H
 #define PBS_TRAPS_H
 
-#include "mod.h"
-#include "sfall.h"
-#include "lib.arrays.h"
-#include "lib.strings.h"
-#include "lib.inven.h"
-#include "lib.math.h"
+
+#include "../sfall/sfall.h"
+#include "../sfall/lib.arrays.h"
+#include "../sfall/lib.strings.h"
+#include "../sfall/lib.inven.h"
+#include "../sfall/lib.math.h"
+#include "../_pbs_headers/ecco.h"
 #include "miscpid.h"
 
-#include "..\headers\ANIMCOMD.H"
+#include "../headers/animcomd.h"
+#include "../headers/itempid.h"
+#include "../headers/scenepid.h"
 
 #define MELEE_TRAP_ARMAMENT_PID		PID_PLANT_SPIKE
 
 #define is_explosive_pid(pid)		(pid == PID_FRAG_GRENADE or pid == PID_PBS_HOMEMADE_GRENADE \
                 or pid == PID_DYNAMITE or pid == PID_PLASTIC_EXPLOSIVES \
                 or pid == PID_PULSE_GRENADE or pid == PID_PLASMA_GRENADE or pid == PID_MOLOTOV_COCKTAIL)
-                
+
 #define is_suited_for_trap_pid(pid)   (is_explosive_pid(pid) or pid == PID_PLANT_SPIKE)
 
 #define get_expected_damage(obj, dmg, dmgType)	((critter_dt_by_dmg_type(obj, dmgType) < dmg)* \
@@ -65,9 +68,9 @@
 
 pure procedure tile_contains_any_trap(variable tile, variable elev) begin
   variable pids, pid;
-  pids := [PID_METAL_FLOOR_TRAP_VISIBLE, PID_METAL_FLOOR_TRAP_DISARMED, PID_METAL_FLOOR_TRAP_DEPRESSED, 
-            PID_CAVE_FLOOR_TRAP_VISIBLE, PID_CAVE_FLOOR_TRAP_DISARMED, PID_CAVE_FLOOR_TRAP_DEPRESSED, 
-            PID_PBS_SPIKE_TRAP_DISARMED, PID_PBS_SPIKE_TRAP, 
+  pids := [PID_METAL_FLOOR_TRAP_VISIBLE, PID_METAL_FLOOR_TRAP_DISARMED, PID_METAL_FLOOR_TRAP_DEPRESSED,
+            PID_CAVE_FLOOR_TRAP_VISIBLE, PID_CAVE_FLOOR_TRAP_DISARMED, PID_CAVE_FLOOR_TRAP_DEPRESSED,
+            PID_PBS_SPIKE_TRAP_DISARMED, PID_PBS_SPIKE_TRAP,
             PID_PBS_MINE_DISARMED, PID_PBS_MINE,
             PID_PBS_SENSOR_MINE_DISARMED, PID_PBS_SENSOR_MINE];
   foreach (pid in pids) begin
@@ -94,7 +97,7 @@ end
 #define trap_charges(x,y) get_array(x, y + TRAPINFO_OFS_CHARGES)
 #define trap_object(x,y)  tile_contains_pid_obj(trap_tile(x,y), trap_elev(x,y), trap_objpid(x,y))
 
-#define is_trap_customizable_type(type)     is_in_array(type, temp_list2(TRAP_TYPE_MINE, TRAP_TYPE_SENSOR))
+#define is_trap_customizable_type(type)     (type == TRAP_TYPE_MINE or type == TRAP_TYPE_SENSOR)
 
 #define TRAP_SPIKE_MINDMG		 (7)
 #define TRAP_SPIKE_MAXDMG		(40)
@@ -113,12 +116,12 @@ end
 
 #define gain_exp_for_trapkill(exp)			give_exp_points(exp); \
 											display_msg(message_str(SCRIPT_TEST2, 2001)+exp+message_str(SCRIPT_TEST2, 2002));
-                      
-                      
+
+
 #define trapkit_pid_by_trap_type(type)    ((type == TRAP_TYPE_SPIKE)*PID_PBS_TRAP_KIT_SPIKE \
                                           +(type == TRAP_TYPE_MINE)*PID_PBS_TRAP_KIT_MINE \
                                           +(type == TRAP_TYPE_SENSOR)*PID_PBS_TRAP_KIT_SENSOR)
-                                          
+
 #define trap_type_by_trapkit_pid(pid)     ((pid == PID_PBS_TRAP_KIT_SPIKE)*TRAP_TYPE_SPIKE \
                                           +(pid == PID_PBS_TRAP_KIT_MINE)*TRAP_TYPE_MINE \
                                           +(pid == PID_PBS_TRAP_KIT_SENSOR)*TRAP_TYPE_SENSOR)
@@ -157,7 +160,7 @@ _EXPORT_VAR(pbs_ini_trap_friendfoe, 1)
 
 #undef _EXPORT_VAR
 
-/* 
+/*
 USE THIS IF EXPORTED VARIABLES WON'T WORK:
 // common variables for all trap system scripts
 variable trapv; // map with all variables (except arrays)
@@ -217,7 +220,7 @@ end
 	@param state  - desired state (TRAP_STATE_..), not linked to global array
 */
 procedure create_trap_object(variable type, variable state, variable tile, variable elev) begin
-	variable begin 
+	variable begin
 		newpid := 0;
 		newobj;
 	end
@@ -287,7 +290,7 @@ procedure arm_trap(variable index, variable pid) begin
 	ar_global[index + TRAPINFO_OFS_ARMPID] := pid;
 	ar_global[index + TRAPINFO_OFS_OBJPID] := obj_pid(newobj);
 	// this will rebuild local array for next run
-	pbs_traps_last_map := -1; 
+	pbs_traps_last_map := -1;
 	if (pbs_ini_trap_is_crime) then begin
 		call react_hostile_action;
 	end
@@ -343,7 +346,7 @@ procedure check_setoff_traps(variable obj, variable arr) begin
   end
   if not(is_critter_dead(obj)
     or (obj == dude_obj and (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_DUDE))
-  	or (obj != dude_obj and obj_in_party(obj) and (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_PARTY))) then 
+  	or (obj != dude_obj and obj_in_party(obj) and (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_PARTY))) then
   begin
     if (arr == 0) then begin
       arr := get_traps_for_map;
@@ -354,9 +357,9 @@ procedure check_setoff_traps(variable obj, variable arr) begin
       if (flag) then begin
         flag := flag and (trap_tile(arr, i) == tile_num(obj));
         // spike or sensor traps go off at 1 hex radius
-        if not(flag) 
+        if not(flag)
           and (trap_type(arr, i) == TRAP_TYPE_SENSOR or trap_type(arr, i) == TRAP_TYPE_SPIKE)
-          and tile_distance(trap_tile(arr, i), tile_num(obj)) == 1 
+          and tile_distance(trap_tile(arr, i), tile_num(obj)) == 1
           and random(0, 99) < TRAP_SENSOR_CHANCE then flag := true;
       end
       if (flag) then begin
@@ -370,7 +373,7 @@ end
 /**
   Make explosion or other damaging effect based on trap PID
   @param pid  - pid of trap
-  @param obj  - trap object 
+  @param obj  - trap object
   @param crit - critter recieving the damage
 */
 procedure trap_setoff_effect(variable pid, variable obj, variable crit) begin
@@ -414,12 +417,12 @@ procedure react_hostile_action begin
   variable crit;
   variable angry_set;
   angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
-  foreach crit in list_as_array(LIST_CRITTERS) if (crit) then begin
-    if (crit != dude_obj 
-    	and not(obj_in_party(crit)) 
+  foreach (crit in list_as_array(LIST_CRITTERS)) if (crit) then begin
+    if (crit != dude_obj
+    	and not(obj_in_party(crit))
     	and tile_distance_objs(crit, dude_obj) <= 15
     	and is_human(crit)
-    	and obj_can_see_obj(crit, dude_obj)) then 
+    	and obj_can_see_obj(crit, dude_obj)) then
     begin
       call add_array_set(angry_set, obj_team(crit));
     end
@@ -439,7 +442,7 @@ procedure manual_trap_explosion(variable tile, variable elev, variable dmgMin, v
   if (pid == 0) then pid := PID_EXPLOSION_1;
   if (sfx == 0) then sfx := "WHN1XXX1";
   debug_msg("manual explosion!");
-  foreach crit in list_as_array(LIST_CRITTERS) if (crit) then begin
+  foreach (crit in list_as_array(LIST_CRITTERS)) if (crit) then begin
     dist := tile_distance(tile, tile_num(crit));
     if (dist <= radius and not(is_critter_dead(crit))) then begin
       // 100% damage if dist is 0 or 1 and reducing down to 50% at point where dist == radius
@@ -450,7 +453,7 @@ procedure manual_trap_explosion(variable tile, variable elev, variable dmgMin, v
          if (not(combat_is_initialized) and not(get_array(pbs_trap_victims, crit))) then begin
       	   exp += exp_for_kill_critter_pid(obj_pid(crit));
       	   mod_kill_counter(critter_kill_type(crit), 1);
-         end     	   
+         end
          set_array(pbs_trap_victims, crit, true);
       end if (pbs_ini_trap_reveals_dude) then begin
         // dude is attacked by victim's team, if he's alive
@@ -522,9 +525,9 @@ end
   variable ar;
   variable i;
   variable j;
-  
+
   i:=0;
-	
+
 end*/
 
 /*

@@ -1,7 +1,7 @@
 procedure start;
 
-#include "..\headers\itempid.h"
-#include "lib.arrays.h"
+#include "../headers/itempid.h"
+#include "../sfall/lib.arrays.h"
 
 export variable pbs_last_burst_size;
 

@@ -4,7 +4,9 @@
 
 #define BATCH_MSG               SCRIPT_TEST0
 
-#include "../headers/command.h"
+#include "../sfall/sfall.h"
+#include "../headers/itempid.h"
+#include "../sfall/lib.inven.h"
 
 #include "atoi2.ssl"
 #include "custstr2.ssl"
@@ -35,7 +37,7 @@
 
 variable begin
     mode;
-    
+
     use_categories := false;
     check_gvars := false;
 
@@ -60,7 +62,7 @@ variable begin
 
 //    pcx_show;
     //startList;
-    
+
     win_x := 0;
     win_y := 0;
 end
@@ -87,7 +89,7 @@ end
     end
     */
 
-procedure display_next_option(variable i, variable text); 
+procedure display_next_option(variable i, variable text);
 
 procedure redraw_win_idle;
 
@@ -158,7 +160,7 @@ procedure batch_init begin
     cur_pos := 0;
     items_avail := 0;
     cur_category := 0;
-    
+
 	win_x := (get_screen_width - 640) / 2;
 	win_y := (get_screen_height - 380) / 2;
 
@@ -174,18 +176,18 @@ procedure batch_init begin
 
     CreateWin("win_dscr", win_x + 1, win_y + 1, 300, 378);
     SelectWin("win_dscr");
-    
+
     /*AddButton("aaa", win_x, win_y, 50, 50);
     AddButtonText("aaa", "TEXT");
     addbuttonproc ("aaa", null_proc, null_proc, null_proc, wtftest);*/
-    
+
     //AddButtonProc(10, 10, 70, 20, wtftest);
     Display("PCX/w_dscr.pcx");
-    
+
     ShowWin;
-    
+
     check_gvars := (cfg_check_gvars > 0);
-    
+
     if (cfg_use_categories == 1) then begin
        use_categories := true;
     end else if (cfg_use_categories == 2) then begin
@@ -194,7 +196,7 @@ procedure batch_init begin
        if (items_avail > ITEMS_PER_SCREEN) then
           use_categories := true;
     end
-      
+
     if (use_categories) then begin
        mode := 5;
     end else begin
@@ -211,7 +213,7 @@ procedure batch_init begin
 //        DeleteWin("win_name");
 //    end
 end
- 
+
 procedure count_items_avail begin
     variable backup;
     backup := cur_section_start;
@@ -276,7 +278,7 @@ procedure display_category_list begin
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_display_list", bstr(210));
-        
+
         call redraw_win_idle;
         //cur_section_start := last_saved_pos;
         cur_category := 0;
@@ -442,7 +444,7 @@ procedure display_next_option(variable i, variable text) begin
         start##NNN := cur_section_start; \
         SayOption(text, item_options_##NNN); \
     end
-        
+
     _ifOpt(0)
     _ifOpt(1)
     _ifOpt(2)
@@ -455,7 +457,7 @@ procedure display_next_option(variable i, variable text) begin
     _ifOpt(9)
     _ifOpt(10)
     _ifOpt(11)
-    
+
     #undef _ifOpt
 end
 
@@ -487,14 +489,14 @@ procedure batch_item(variable num) begin
             c_pid := atoi(word);
             c_quantity := atoim(word, c_pid + ":");
             if (obj_is_carrying_obj_pid(dude_obj, c_pid) >= c_quantity) then begin
-                remove_pid_qty(dude_obj, c_pid, c_quantity * num)
+                call remove_items_pid(dude_obj, c_pid, c_quantity * num);
                 i := len_array(list);
             end
             i++;
         end
         line += 1;
     end
-    give_pid_qty(dude_obj, cur_pid, num * cur_pid_qty)
+    call add_items_pid(dude_obj, cur_pid, num * cur_pid_qty);
     hours := ((cur_time * num) / ONE_GAME_MINUTE) / 60;
     mins  := ((cur_time * num) / ONE_GAME_MINUTE) % 60;
     display_msg(bstr(400) + proto_data(cur_pid, it_name) + bstr(402) + (num * cur_pid_qty) + bstr(403) + hours + bstr(404) + mins + bstr(405));
@@ -522,11 +524,11 @@ procedure undo_batch(variable num) begin
             word := list[0];
             c_pid := atoi(word);
             c_quantity := atoim(word, c_pid + ":");
-            give_pid_qty(dude_obj, c_pid, c_quantity * num)
+            call add_items_pid(dude_obj, c_pid, c_quantity * num);
         end
         line += 1;
     end
-    remove_pid_qty(dude_obj, cur_pid, num * cur_pid_qty)
+    call add_items_pid(dude_obj, cur_pid, num * cur_pid_qty);
     hours := ((cur_time * num) / ONE_GAME_MINUTE) / 60;
     mins  := ((cur_time * num) / ONE_GAME_MINUTE) % 60;
     display_msg(bstr(401) + proto_data(cur_pid, it_name) + bstr(402) + (num * cur_pid_qty) + bstr(403) + hours + bstr(404) + mins + bstr(405));
@@ -568,7 +570,7 @@ procedure draw_item_properties begin
         tool_word;
         has_any;
         i;
-        
+
         str := 0;
         list;
     end
@@ -577,7 +579,7 @@ procedure draw_item_properties begin
     SetTextColor(0.0, 1.0, 0.0);
     str := proto_data(cur_pid, it_name);
     c_quantity := cur_pid_qty;
-    if (proto_data(cur_pid, it_type) == item_type_ammo) then 
+    if (proto_data(cur_pid, it_type) == item_type_ammo) then
         c_quantity := c_quantity * get_proto_data(cur_pid, PROTO_AM_PACK_SIZE);
     if (c_quantity > 1) then str := str + " x" + c_quantity;
     Format(str, 25, display_line, 250, 10, justifycenter);
@@ -762,14 +764,14 @@ procedure parse_skill_name(variable s_name) begin
       skill := -1;
       i := 0;
       while (i < 18 and skill < 0) do begin
-         if (s == skill_def(i)) then 
+         if (s == skill_def(i)) then
             skill := i;
          i += 1;
       end
       lst2[j] := skill;
       j += 1;
    end
-   
+
    return lst2;
 end
 

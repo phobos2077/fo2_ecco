@@ -12,9 +12,9 @@
 
 #define NAME	SCRIPT_TEST2
 
-#include "define_lite.h"
-#include "command_lite.h"
-#include "traps.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/command_lite.h"
+#include "../_pbs_headers/traps.h"
 
 procedure start;
 procedure timed_event_p_proc;

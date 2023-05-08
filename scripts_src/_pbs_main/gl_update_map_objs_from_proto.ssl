@@ -5,7 +5,7 @@
    - weapons loaded with too much rounds
    - ammo packs with too much rounds
 
-   All actions are logged to debug.log   
+   All actions are logged to debug.log
 
 */
 
@@ -15,9 +15,9 @@ procedure check_item(variable obj);
 procedure check_inven(variable obj);
 procedure map_enter_p_proc;
 
-#include "sfall.h"
-#include "define_lite.h"
-#include "mod.h"
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../_pbs_headers/ecco.h"
 
 #define caliber_name(x)    (mstr_proto(300 + x))
 
@@ -27,23 +27,23 @@ end
 
 /*
    Check item for possible inconsistency with PROTO and fix, if needed
-   
+
    returns 1 if object was changed, 2 if destroyed
 */
 procedure check_item(variable item) begin
-   variable 
+   variable
       current,
    	ammoPid,
    	ammoCal,
    	ammoMax,
    	affected := false;
-   	
+
    if (item == 0) then
       return false;
-      
+
    if (obj_item_subtype(item) == item_type_container) then begin
       call check_inven(item);
-   end 
+   end
    else if (obj_item_subtype(item) == item_type_weapon and get_weapon_ammo_pid(item) > 0) then begin
       // fix wrong ammo type and amount loaded in guns
       ammoCal := get_proto_data(obj_pid(item), PROTO_WP_CALIBER); // proper caliber
@@ -61,7 +61,7 @@ procedure check_item(variable item) begin
          debug_msg(obj_name(item)+" had too much ammo ("+current+"), changed to "+ammoMax);
          affected := true;
       end
-   end 
+   end
    else if (obj_item_subtype(item) == item_type_ammo) then begin
       // fix incorrect pack sizes for ammo
       ammoMax := get_proto_data(obj_pid(item), PROTO_AM_PACK_SIZE);
@@ -72,7 +72,7 @@ procedure check_item(variable item) begin
          affected := true;
       end
    end
-   if (affected) then 
+   if (affected) then
       return 1;
    return false;
 end
@@ -83,7 +83,7 @@ end
 */
 procedure check_inven(variable invenobj) begin
    variable obj, i := 0, res, numAffected := 0;
-   
+
    obj := inven_ptr(invenobj, 0);
    while (obj) do begin
       res := check_item(obj);
@@ -106,7 +106,7 @@ procedure map_enter_p_proc begin
       foreach (obj in list_as_array(LIST_CRITTERS)) begin
          totalAffected += check_inven(obj);
       end
-      foreach (obj in list_as_array(LIST_GROUNDITEMS)) begin 
+      foreach (obj in list_as_array(LIST_GROUNDITEMS)) begin
          if (check_item(obj)) then
             totalAffected++;
       end

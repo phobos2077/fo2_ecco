@@ -1,8 +1,8 @@
 procedure start;
-#include "define_lite.h"
-#include "mod.h"
-#include "sfall.h"
 
+#include "../headers/itempid.h"
+#include "../_pbs_headers/miscpid.h"
+#include "../_pbs_headers/ecco.h"
 
 //Runs when retriving the damage rating of the players used weapon. (Which may be their fists.)
 
@@ -79,16 +79,12 @@ procedure start begin
 			         if (attackType >= 0 and attackType <= 3) then
 			         begin
 						// get attack types bits from proto
-						attackModes_8 := get_proto_data(weaponPid, 24) bwand 0x000000FF;
-						//display_msg("byte: "+attackModes_8);
-						attackModes := temp_array(2, 1);
-						attackModes[0] := attackModes_8 bwand 0x0F;
-						attackModes[1] := (attackModes_8 bwand 0xF0) / 16;
+						attackMode := get_proto_data(weaponPid, 24) bwand 0x000000FF;
 						// actual weapon attack type
 						attackMode := attackModes[attackType % 2];
 						//display_msg("0: "+attackModes[0]+", 1: "+attackModes[1]);
 						//display_msg("attack type: "+attackType);
-						if (attackMode == ATTACK_MODE_THROW) then 
+						if (attackMode == ATKMODE_PRI_THROW or attackMode == ATKMODE_SEC_THROW) then 
 						begin
 							skill := has_skill(attacker, SKILL_THROWING);
 							if (skill < 0) then skill := 0;
@@ -102,7 +98,7 @@ procedure start begin
 						 	// dmgMax := dmgMax + agility + (skill / 20);
 						 	// method 3 (combined):
 							//dmgMax := dmgMax + agility + floor(dmgMax * (skill / 100.0));
-						 	//display_msg("bump throw dmg (sk:"+skill+"): "+dmgMin+"-"+dmgMax);
+						 	debug_msg("hs_itemdamage: bump throw dmg (sk:"+skill+"): "+dmgMin+"-"+dmgMax);
 						end
 			         end
 			     end
