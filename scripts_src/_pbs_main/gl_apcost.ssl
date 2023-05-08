@@ -12,10 +12,10 @@
 
 */
 
-#include "sfall.h"
-#include "mod.h"
-#include "lib.inven.h"
-#include "lib.math.h"
+#include "../sfall/sfall.h"
+#include "../sfall/lib.inven.h"
+#include "../sfall/lib.math.h"
+#include "../_pbs_headers/ecco.h"
 
 #define ITEM_USE_COST   (2)
 

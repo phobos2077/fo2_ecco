@@ -77,12 +77,12 @@
 #define PID_PBS_SHOTGUN_BUCKS       (641)
 
 // new scenery
-#define PID_PBS_SPIKE_TRAP_DISARMED  (0x02000000 + 2301)
-#define PID_PBS_SPIKE_TRAP           (0x02000000 + 2302)
-#define PID_PBS_MINE_DISARMED        (0x02000000 + 2303)
-#define PID_PBS_MINE                 (0x02000000 + 2304)
-#define PID_PBS_SENSOR_MINE_DISARMED (0x02000000 + 2305)
-#define PID_PBS_SENSOR_MINE          (0x02000000 + 2306)
+#define PID_PBS_SPIKE_TRAP_DISARMED  (0x02000000 + 2335)
+#define PID_PBS_SPIKE_TRAP           (0x02000000 + 2336)
+#define PID_PBS_MINE_DISARMED        (0x02000000 + 2337)
+#define PID_PBS_MINE                 (0x02000000 + 2338)
+#define PID_PBS_SENSOR_MINE_DISARMED (0x02000000 + 2339)
+#define PID_PBS_SENSOR_MINE          (0x02000000 + 2340)
 // some old scenery
 #define PID_STEAM                   (0x020004A4)
 #define PID_STEAM_2                 (0x0200073B)
