@@ -22,34 +22,42 @@ DENBUS2:
 
 
 SLCAMP:
-- added script NIBIS1LK to shelf and table in the house
+- added script NIBIS2LK to shelves and desk at the house
 - removed chair from the table (to bee seen better when stealing SMG)
 
 
 MODMAIN:
 - add footlocker with "MIJOBOX" script outside of map, remove this script from shelf
 
+
 DEPOLV1 (entrance):
 - grenades in crate 5 => 3
 - removed rocket launcher
 - re-created Sniper Rifle near the entrance
 
+
 DEPOLVA:
+Elevation 1:
 - placed spatial script WSTRPWR2 at tile 26686 with radius 1
-- halfed grenades in crate at upper corner
-- removed laser pistol from one of two similar desks
-- remove 2 assault rifle from 2 lockers at level 3
 - remove 2 first aid books from wall locker in lower-right corner
-- added 1 barter book to red carpet room
 Room with lockers:
 - replace 2 combat armors with 2 metal armors mk2
 - add 2 packs of 5mm JHP
 - add 1 traps book (where Small guns book is)
+
+Elevation 2:
+- halfed grenades in crate at upper corner
 Room with crates:
 - replaced plasma rifle with laser rifle
 - number of rocket launchers crate  2 => 1
 - number of EMP grenades 5 => 3
 - replaced sniper rifle with 3 packs of 7.62mm
+
+Elevation 3:
+- removed laser pistol from one of two similar desks
+- remove 2 assault rifle from 2 lockers at level 3
+- added 1 barter book to red carpet room
+
 
 RAIDERS1:
 - Main entrance: now leads directly to front entrance of hideout

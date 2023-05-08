@@ -74,8 +74,7 @@ end
 **************************************************************************************/
 
 procedure spatial_p_proc begin
-   // TODO: remember what this does
-   // by phobos2077 begin:
+   // by phobos2077 begin: trigger security when entering a room in a corner of first level with an eye, memory module and biomed gel
    if (cur_map_index == MAP_SIERRA_123 and self_elevation == 0) then begin
       if (map_var(MVAR_Security_Level_1) == 0) then begin
          set_map_var(MVAR_Security_Level_1,1);
