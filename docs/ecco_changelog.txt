@@ -1,5 +1,10 @@
 -=== CHANGELOG ===-
 
+v0.8.1
+- added back russian translation
+- rebalanced shotgun shell types to make both crafted types useful
+- removed duplet mode from regular shotgun (reserved for Sawed-off variant)
+
 v0.8.0
 (!) rebuilt the mod from the ground up on the new RPU
 - restored single-shot mode for M60 to fix firing sound issue

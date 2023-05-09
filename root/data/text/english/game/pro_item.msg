@@ -186,8 +186,8 @@
 {9301}{}{An average sized bag. Made from weaved Brahmin hairs.}
 {9400}{}{Shotgun}
 {9401}{}{A Winchester Widowmaker double-barreled 12-gauge shotgun. Short barrel, with mahogany grip. Min ST: 4.}
-{9500}{}{12 ga. Shotgun Shells}
-{9501}{}{Shotgun ammunition. This particular ammo is marked: "12-gauge shells, not for use by children under the age of 3."}
+{9500}{}{12 ga. Shotshells}
+{9501}{}{Shotgun ammunition, #7 bird shot. This particular ammo is marked: "12-gauge shells, not for use by children under the age of 3."}
 {9600}{}{Red Pass Key}
 {9601}{}{An electronic security key, color coded red.}
 {9700}{}{Blue Pass Key}
@@ -1164,7 +1164,7 @@
 {61201}{}{This strange drug makes user invulnerable to fire. Nasty side effects are reported.}
 {61300}{}{Home-made grenade}
 {61301}{}{This grenade was made from junk. However it does its job in dismembering people pretty well. Min ST: 3.}
-{61400}{}{12 ga. Shotgun Slugs}
+{61400}{}{12 ga. Slugs}
 {61401}{}{Shotgun ammunition. Loaded with heavy lead for large game hunting.}
 {61500}{}{.223 AP}
 {61501}{}{A case of .223 caliber ammunition, armor piercing.}
@@ -1218,5 +1218,5 @@
 {63901}{}{Spear with a pneumatic piston built into the end. It is designed to do more impact damage. Min ST: 5.}
 {64000}{}{Deathclaw Gauntlet}
 {64001}{}{A sturdy leather gauntlet with three claws attached to it. Extremely sharp. Min ST: 3.}
-{64100}{}{12 ga. Buckshot Shells}
+{64100}{}{12 ga. Buckshot}
 {64101}{}{Shells with heavy #00 buckshots.}
