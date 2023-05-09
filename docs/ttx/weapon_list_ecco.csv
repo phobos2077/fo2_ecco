@@ -1,0 +1,110 @@
+DMG Type;Caliber;Weapon;Ammo;DMG Min;DMG Max
+Electrical;C Energy Cell;Taser;Small Energy Cell;3;5
+Electrical;C Energy Cell;Cattle Prod;Small Energy Cell;12;20
+Electrical;C Energy Cell;Super Cattle Prod;Small Energy Cell;20;32
+Electrical;C Energy Cell;YK32 Pulse Pistol;Small Energy Cell;32;46
+Electrical;C Energy Cell;Alien Blaster;Small Energy Cell;30;90
+Electrical;D Energy Cell;YK42B Pulse Rifle;Micro Fusion Cell;54;78
+Explode;40mm grenade;Grenade Launcher;40mm HE Grenades;20;40
+Explode;40mm grenade;Grenade Launcher;40mm IC Grenades;20;40
+Explode;40mm grenade;MGL;40mm HE Grenades;25;45
+Explode;40mm grenade;MGL;40mm IC Grenades;25;45
+Explode;Rocket;Robo Rocket Launcher;Explosive Rocket;10;30
+Explode;Rocket;Robo Rocket Launcher;Rocket AP;10;30
+Explode;Rocket;Robo Rocket Launcher;Robo Rocket Ammo;10;30
+Explode;Rocket;Rocket Launcher;Explosive Rocket;45;90
+Explode;Rocket;Rocket Launcher;Rocket AP;45;90
+Explode;Rocket;Rocket Launcher;Robo Rocket Ammo;45;90
+Fire;.40 cal;Improved Flamer;Flamethrower Fuel MKII;50;90
+Fire;Flamethrower Fuel;Flamer;Flamethrower Fuel;50;90
+Laser;C Energy Cell;Laser Pistol;Small Energy Cell;16;22
+Laser;C Energy Cell;Magneto-Laser Pistol;Small Energy Cell;17;23
+Laser;C Energy Cell;Phazer;Small Energy Cell;20;30
+Laser;C Energy Cell;Blaster;Small Energy Cell;30;40
+Laser;D Energy Cell;Gatling Laser;Micro Fusion Cell;20;40
+Laser;D Energy Cell;Laser Rifle;Micro Fusion Cell;30;40
+Laser;D Energy Cell;Laser Rifle (Ext. Cap.);Micro Fusion Cell;30;40
+Normal;.223;Hunting Rifle;.223 FMJ;12;20
+Normal;.223;Hunting Rifle;.223 AP;12;20
+Normal;.223;Scoped Hunting Rifle;.223 FMJ;12;20
+Normal;.223;Scoped Hunting Rifle;.223 AP;12;20
+Normal;.223;XL70E3;.223 FMJ;16;22
+Normal;.223;XL70E3;.223 AP;16;22
+Normal;.223;Heavy Dual Minigun;.223 FMJ;16;24
+Normal;.223;Heavy Dual Minigun;.223 AP;16;24
+Normal;.223;Light Support Weapon;.223 FMJ;18;24
+Normal;.223;Light Support Weapon;.223 AP;18;24
+Normal;.223;.223 Pistol;.223 FMJ;18;26
+Normal;.223;.223 Pistol;.223 AP;18;26
+Normal;.44 cal;Desert Eagle .44;.44 Magnum JHP;10;16
+Normal;.44 cal;Desert Eagle .44;.44 magnum FMJ;10;16
+Normal;.44 cal;Desert Eagle (Exp. Mag.);.44 Magnum JHP;10;16
+Normal;.44 cal;Desert Eagle (Exp. Mag.);.44 magnum FMJ;10;16
+Normal;.44 cal;.44 Magnum Revolver;.44 Magnum JHP;13;20
+Normal;.44 cal;.44 Magnum Revolver;.44 magnum FMJ;13;20
+Normal;.44 cal;.44 Magnum (Speed Load);.44 Magnum JHP;13;20
+Normal;.44 cal;.44 Magnum (Speed Load);.44 magnum FMJ;13;20
+Normal;.45 cal;Tommy Gun;.45 Caliber;9;20
+Normal;.45 cal;"M3A1 ""Grease Gun"" SMG";.45 Caliber;13;23
+Normal;.50 cal;Bozar AMR;.50 BMG;55;90
+Normal;10mm;Zip Gun;10mm JHP;5;9
+Normal;10mm;Zip Gun;10mm AP;5;9
+Normal;10mm;10mm Pistol;10mm JHP;5;12
+Normal;10mm;10mm Pistol;10mm AP;5;12
+Normal;10mm;10mm SMG;10mm JHP;7;12
+Normal;10mm;10mm SMG;10mm AP;7;12
+Normal;10mm;Pipe Rifle;10mm JHP;9;12
+Normal;10mm;Pipe Rifle;10mm AP;9;12
+Normal;10mm;H&K P90c;10mm JHP;12;16
+Normal;10mm;H&K P90c;10mm AP;12;16
+Normal;12-gauge;Shotgun;12 ga. Shotgun Shells;14;24
+Normal;12-gauge;Shotgun;12 ga. Shotgun Slugs;14;24
+Normal;12-gauge;Shotgun;12 ga. Buckshot Shells;14;24
+Normal;12-gauge;Sawed-Off Shotgun;12 ga. Shotgun Shells;12;28
+Normal;12-gauge;Sawed-Off Shotgun;12 ga. Shotgun Slugs;12;28
+Normal;12-gauge;Sawed-Off Shotgun;12 ga. Buckshot Shells;12;28
+Normal;12-gauge;Combat Shotgun;12 ga. Shotgun Shells;15;30
+Normal;12-gauge;Combat Shotgun;12 ga. Shotgun Slugs;15;30
+Normal;12-gauge;Combat Shotgun;12 ga. Buckshot Shells;15;30
+Normal;12-gauge;H&K CAWS;12 ga. Shotgun Shells;18;40
+Normal;12-gauge;H&K CAWS;12 ga. Shotgun Slugs;18;40
+Normal;12-gauge;H&K CAWS;12 ga. Buckshot Shells;18;40
+Normal;12-gauge;Pancor Jackhammer;12 ga. Shotgun Shells;20;42
+Normal;12-gauge;Pancor Jackhammer;12 ga. Shotgun Slugs;20;42
+Normal;12-gauge;Pancor Jackhammer;12 ga. Buckshot Shells;20;42
+Normal;14mm;14mm Pistol;14mm AP;12;22
+Normal;14mm;14mm Pistol;14mm JHP;12;22
+Normal;2mm;PPK12 Gauss Pistol;2mm EC;22;32
+Normal;2mm;M72 Gauss Rifle;2mm EC;35;45
+Normal;4.7mm caseless;H&K G11;4.7mm Caseless;12;18
+Normal;4.7mm caseless;H&K G11E;4.7mm Caseless;13;23
+Normal;4.7mm caseless;Vindicator Minigun;4.7mm Caseless;16;21
+Normal;5mm;Minigun;5mm JHP;9;13
+Normal;5mm;Minigun;5mm AP;9;13
+Normal;5mm;Dual Minigun;5mm JHP;10;14
+Normal;5mm;Dual Minigun;5mm AP;10;14
+Normal;5mm;Assault Rifle;5mm JHP;10;16
+Normal;5mm;Assault Rifle;5mm AP;10;16
+Normal;5mm;Assault Rifle (Exp. Mag.);5mm JHP;10;16
+Normal;5mm;Assault Rifle (Exp. Mag.);5mm AP;10;16
+Normal;5mm;Avenger Minigun;5mm JHP;12;16
+Normal;5mm;Avenger Minigun;5mm AP;12;16
+Normal;7.62mm;FN FAL;7.62mm;20;27
+Normal;7.62mm;FN FAL (Night Sight);7.62mm;20;27
+Normal;7.62mm;FN FAL HPFA;7.62mm;20;28
+Normal;7.62mm;M60;7.62mm;22;30
+Normal;7.62mm;Sniper Rifle;7.62mm;28;38
+Normal;9mm;9mm SMG;9mm ball;5;10
+Normal;9mm;9mm SMG;9mm AP;5;10
+Normal;9mm;9mm Mauser;9mm ball;10;16
+Normal;9mm;9mm Mauser;9mm AP;10;16
+Normal;C Energy Cell;Power Fist;Small Energy Cell;12;24
+Normal;C Energy Cell;Ripper;Small Energy Cell;15;32
+Normal;C Energy Cell;Mega Power Fist;Small Energy Cell;20;40
+Normal;HN needler;Needler Pistol;HN Needler Cartridge;12;20
+Normal;HN needler;Needler Pistol;HN AP Needler Cartridge;12;20
+Plasma;C Energy Cell;Plasma Pistol;Small Energy Cell;20;35
+Plasma;C Energy Cell;Plasma Pistol (Ext. Cap.);Small Energy Cell;20;35
+Plasma;D Energy Cell;Turbo Plasma Rifle;Micro Fusion Cell;40;60
+Plasma;D Energy Cell;End Boss Plasma Gun;Micro Fusion Cell;30;70
+Plasma;D Energy Cell;Plasma Rifle;Micro Fusion Cell;40;70
