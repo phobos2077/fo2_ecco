@@ -1,6 +1,6 @@
 -====================-
 -===   EcCo mod   ===-
--=== v0.8.0 BETA  ===-
+-=== v0.8.1 BETA  ===-
 -====================-
 						by phobos2077
 
@@ -19,7 +19,7 @@ Main Highlights.
 Economy Rebalance:
 - Barter skill now more useful:
 - prices in stores are affected stronger by skill at lower barter levels and less at higher, using arctangent function 
-- selling prices are finally increase as Barter skill increase, they also affected by player charisma and merchant skill
+- selling prices now depend on Barter skill, as well as player charisma merchant skill
 - some items are in greater or lower demand in certain towns, you can trade for profit if you skilled enough
 - prices are highly customizable via INI
 - raise money by selling new types of monster parts or by doing several new quests (see details)
