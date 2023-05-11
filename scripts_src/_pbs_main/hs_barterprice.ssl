@@ -8,7 +8,7 @@ procedure start;
 #include "../sfall/define_lite.h"
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.misc.h"
-#include "../_pbs_headers/ecco.h"
+//#include "../_pbs_headers/ecco.h"
 
 procedure get_town_rep;
 procedure calc_items_demand_mod(variable obj);
@@ -79,8 +79,9 @@ end
 	int     ret1 - the modified value of all offered goods
 */
 
-#define load_setting_int(section, setting) get_ini_setting(INI_ECONOMY + "|" + section + "|" + setting)
-#define load_setting_float(section, setting) atof(get_ini_string(INI_ECONOMY + "|" + section + "|" + setting))
+#define INI_FILE_NAME  "barter.ini"
+#define load_setting_int(section, setting) get_ini_setting(INI_FILE_NAME + "|" + section + "|" + setting)
+#define load_setting_float(section, setting) atof(get_ini_string(INI_FILE_NAME + "|" + section + "|" + setting))
 
 
 procedure start begin
@@ -276,7 +277,7 @@ procedure remember_town_demand begin
 	variable i, j, temp, pairs, pair;
 	town_demand_map := create_array_map;
 	for (i:=0; i <= MaxTown; i++) begin
-		temp := get_ini_string(INI_ECONOMY + "|TOWNDEMAND|" + i);
+		temp := get_ini_string(INI_FILE_NAME + "|TOWNDEMAND|" + i);
 		if (temp != "") then begin
 			pairs := string_split(temp, "|");
 			if (len_array(pairs) > 0) then begin
