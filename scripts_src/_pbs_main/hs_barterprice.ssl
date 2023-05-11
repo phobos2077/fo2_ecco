@@ -11,7 +11,7 @@ procedure start;
 #include "../_pbs_headers/ecco.h"
 
 procedure get_town_rep;
-procedure calc_offered_items_demand_mod(variable obj);
+procedure calc_items_demand_mod(variable obj);
 procedure remember_town_demand;
 procedure get_highest_barter_in_party;
 
@@ -90,6 +90,7 @@ procedure start begin
 		item_caps,
 		offered_caps,
 		base_price := 0.0,
+		item_table,
 		offered_table,
 		offered_price,
 		offered_price_goods,
@@ -138,6 +139,7 @@ procedure start begin
 		if (party_member_obj(obj_pid(merchant)) == 0) then begin
 			merchant := get_sfall_arg_at(1);
 			vanilla_price := get_sfall_arg_at(2);
+			item_table := get_sfall_arg_at(3);
 			item_caps := get_sfall_arg_at(4);
 			base_price := get_sfall_arg_at(5);
 			offered_table := get_sfall_arg_at(6);
@@ -168,8 +170,8 @@ procedure start begin
 			merchant_barter := barter_skill(merchant);
 			barter_mod := gdialog_get_barter_mod;
 			
-			debug_msg("dude_barter: " + dude_barter + "; merchant_barter: " + merchant_barter + "; perk: " + master_trader
-			 	+ "; base_price_goods: " + base_price_goods + "; offered_price_goods: " + offered_price_goods);
+			/*debug_msg("dude_barter: " + dude_barter + "; merchant_barter: " + merchant_barter + "; perk: " + master_trader
+			 	+ "; base_price_goods: " + base_price_goods + "; offered_price_goods: " + offered_price_goods);*/
 			
 			// cap values
 			if (merchant_barter > 300) then
@@ -183,12 +185,15 @@ procedure start begin
 			
 			// modify buy prices
 			if (base_price != 0) then begin
-				vanilla_price_goods := vanilla_price - item_caps;
-				if (Buy_Formula == 0 or Buy_Formula == 1) then begin
-					// VANILLA FORMULA (1 was deprecated and merged into 0)
+				if (Buy_Formula == 0 or Buy_Formula == 1 or Buy_Formula == 2) then begin
+					// VANILLA-based FORMULA (1 was deprecated and merged into 0)
+					vanilla_price_goods := vanilla_price - item_caps;
+					// Adjust demand and compensate for vanilla price multiplier
+					vanilla_price_goods += round(calc_items_demand_mod(item_table) * vanilla_price_goods / base_price_goods);
 					final_price_goods := vanilla_price_goods * Buy_Bias;
-				end else if (Buy_Formula == 2) then begin
-					final_price_goods := vanilla_price_goods * Buy_Bias * (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
+					if (Buy_Formula == 2) then begin
+						final_price_goods *= (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
+					end
 				end else begin
 					// override price (formula 3 or 4)
 					// these two differ only in calculating dude_barter coefficient:
@@ -196,7 +201,9 @@ procedure start begin
 						dude_barter_mult := (1 + dude_barter*Buy_DudeSkillCoef);
 					else
 						dude_barter_mult := (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
-						
+
+					// adjust demand for buy prices
+					base_price_goods += calc_items_demand_mod(item_table);
 					final_price_goods := base_price_goods * Buy_Bias
 						* dude_barter_mult
 						* (1 + merchant_barter*Buy_MerchantSkillCoef)
@@ -238,7 +245,7 @@ procedure start begin
 				if (selling_price_mod > Sell_MaxPriceCoef) then selling_price_mod := Sell_MaxPriceCoef;
 				else if (selling_price_mod < 0) then selling_price_mod := 0;
 
-				offered_price_goods += calc_offered_items_demand_mod(offered_table);
+				offered_price_goods += calc_items_demand_mod(offered_table);
 				set_sfall_return(round(offered_price_goods * selling_price_mod) + offered_caps);
 			end else begin
 				set_sfall_return(0);
@@ -247,7 +254,7 @@ procedure start begin
 	end
 end
 
-procedure calc_offered_items_demand_mod(variable containerObj) begin
+procedure calc_items_demand_mod(variable containerObj) begin
 	variable total, pid, mod, numItems, demand, baseCost, demandMod;
 	total := 0;
 	demand := town_demand_map[cur_town];
@@ -256,7 +263,7 @@ procedure calc_offered_items_demand_mod(variable containerObj) begin
 		if (numItems > 0) then begin
 			baseCost := numItems * proto_data(pid, it_cost);
 			demandMod := round(baseCost * (mod - 1));
-			debug_msg("Demand mod for item(s) " + pid + " = " + demandMod);
+			//debug_msg("Demand mod for item(s) " + pid + " = " + demandMod);
 			total += demandMod;
 		end
 	end
