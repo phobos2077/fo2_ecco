@@ -1,0 +1,2 @@
+@ECHO OFF
+py .\proto_gen.py D:\GAMES\!Arhives\Fallout\MODS\VANILLA\proto\items\*.pro D:\GAMES\!Arhives\Fallout\MODS\VANILLA\proto\items_yaml\ --msg D:\GAMES\!Arhives\Fallout\MODS\VANILLA\text\english\game

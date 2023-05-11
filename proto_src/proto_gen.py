@@ -12,111 +12,116 @@ from fallout_enums import *
 
 CALIBERS = []
 
-def read_file(file_path: str, msgFiles: Dict) -> Dict:
+def flagsAsHex(flags):
+    return hex(flags % (1<<32))
+
+def readFile(file_path: str, msgFiles: Dict) -> Dict:
     with open(file_path, 'rb') as f:
         data = f.read()
         proItemMsg = msgFiles['pro_item']
-        item_proto = struct.unpack('>iiiiiiiiiiiiiic', data[:57])
-        item_proto_data = data[57:]
-        messageId = item_proto[1]
-        item_proto_dict = {
-            'pid': item_proto[0],
+        itemProto = struct.unpack('>iiiiiiiiiiiiiic', data[:57])
+        itemProtoData = data[57:]
+        messageId = itemProto[1]
+        itemProtoDict = {
+            'pid': itemProto[0],
             'messageId': messageId,
             'name': proItemMsg[messageId] if messageId in proItemMsg else '',
             'description': proItemMsg[messageId + 1] if (messageId + 1) in proItemMsg else '',
-            'fid': item_proto[2],
-            'lightDistance': item_proto[3],
-            'lightIntensity': item_proto[4],
-            'flags': hex(item_proto[5]),
-            'extendedFlags': hex(item_proto[6]),
-            'sid': item_proto[7],
-            'type': ITEM_TYPES[item_proto[8]],
-            'material': item_proto[9],
-            'size': item_proto[10],
-            'weight': item_proto[11],
-            'cost': item_proto[12],
-            'inventoryFid': item_proto[13],
-            'soundId': item_proto[14].decode('ascii')
+            'fid': itemProto[2],
+            'lightDistance': itemProto[3],
+            'lightIntensity': itemProto[4],
+            'flags': flagsAsHex(itemProto[5]),
+            'extendedFlags': flagsAsHex(itemProto[6]),
+            'sid': itemProto[7],
+            'type': ITEM_TYPES[itemProto[8]],
+            'material': itemProto[9],
+            'size': itemProto[10],
+            'weight': itemProto[11],
+            'cost': itemProto[12],
+            'inventoryFid': itemProto[13],
+            'soundId': itemProto[14].decode('ascii')
         }
-        if item_proto_dict['type'] == 'ITEM_TYPE_ARMOR':
-            armor_data = struct.unpack('>iiii' + 'i' * 7 * 2, item_proto_data)
-            item_proto_dict['armorData'] = {
-                'armorClass': armor_data[0],
-                'damageResistance': dict(zip(DAMAGE_TYPE_KEYS, list(armor_data[1:8]))),
-                'damageThreshold': dict(zip(DAMAGE_TYPE_KEYS, list(armor_data[8:15]))),
-                'perk': PERKS[armor_data[15]],
-                'maleFid': armor_data[16],
-                'femaleFid': armor_data[17]
+        if itemProtoDict['type'] == 'ITEM_TYPE_ARMOR':
+            armorData = struct.unpack('>iiii' + 'i' * 7 * 2, itemProtoData)
+            perkId = armorData[15]
+            itemProtoDict['armorData'] = {
+                'armorClass': armorData[0],
+                'damageResistance': dict(zip(DAMAGE_TYPE_KEYS, list(armorData[1:8]))),
+                'damageThreshold': dict(zip(DAMAGE_TYPE_KEYS, list(armorData[8:15]))),
+                'perk': PERKS[perkId],
+                'maleFid': armorData[16],
+                'femaleFid': armorData[17]
             }
-        elif item_proto_dict['type'] == 'ITEM_TYPE_CONTAINER':
-            container_data = struct.unpack('>ii', item_proto_data)
-            item_proto_dict['containerData'] = {
-                'maxSize': container_data[0],
-                'openFlags': hex(container_data[1])
+        elif itemProtoDict['type'] == 'ITEM_TYPE_CONTAINER':
+            containerData = struct.unpack('>ii', itemProtoData)
+            itemProtoDict['containerData'] = {
+                'maxSize': containerData[0],
+                'openFlags': flagsAsHex(containerData[1])
             }
-        elif item_proto_dict['type'] == 'ITEM_TYPE_DRUG':
-            drug_data = struct.unpack('>iiiii' + 'iii' * 4, item_proto_data)
-            item_proto_dict['drugData'] = {
-                'stat': [STATS[i] for i in drug_data[:3]],
-                'amount': list(drug_data[3:6]),
-                'duration1': drug_data[6],
-                'amount1': list(drug_data[7:10]),
-                'duration2': drug_data[10],
-                'amount2': list(drug_data[11:14]),
-                'addictionChance': drug_data[14],
-                'withdrawalEffect': drug_data[15],
-                'withdrawalOnset': drug_data[16]
+        elif itemProtoDict['type'] == 'ITEM_TYPE_DRUG':
+            drugData = struct.unpack('>iiiii' + 'iii' * 4, itemProtoData)
+            itemProtoDict['drugData'] = {
+                'stat': [STATS[i] for i in drugData[:3]],
+                'amount': list(drugData[3:6]),
+                'duration1': drugData[6],
+                'amount1': list(drugData[7:10]),
+                'duration2': drugData[10],
+                'amount2': list(drugData[11:14]),
+                'addictionChance': drugData[14],
+                'withdrawalEffect': drugData[15],
+                'withdrawalOnset': drugData[16]
             }
-        elif item_proto_dict['type'] == 'ITEM_TYPE_WEAPON':
-            weapon_data = struct.unpack('>iiiiiii' + ('i' * 9) + 'c', item_proto_data)
-            caliber_id = weapon_data[13]
-            item_proto_dict['weaponData'] = {
-                'animationCode': weapon_data[0],
-                'minDamage': weapon_data[1],
-                'maxDamage': weapon_data[2],
-                'damageType': weapon_data[3],
-                'maxRange1': weapon_data[4],
-                'maxRange2': weapon_data[5],
-                'projectilePid': weapon_data[6],
-                'minStrength': weapon_data[7],
-                'actionPointCost1': weapon_data[8],
-                'actionPointCost2': weapon_data[9],
-                'criticalFailureType': weapon_data[10],
-                'perk': PERKS[weapon_data[11]],
-                'rounds': weapon_data[12],
-                'caliber': CALIBERS[caliber_id] if (caliber_id in CALIBERS) else caliber_id,
-                'ammoTypePid': weapon_data[14],
-                'ammoCapacity': weapon_data[15],
-                'soundCode': weapon_data[16].decode('ascii')
+        elif itemProtoDict['type'] == 'ITEM_TYPE_WEAPON':
+            weaponData = struct.unpack('>iiiiiii' + ('i' * 9) + 'c', itemProtoData)
+            perkId = weaponData[11]
+            caliberId = weaponData[13]
+            itemProtoDict['weaponData'] = {
+                'animationCode': weaponData[0],
+                'minDamage': weaponData[1],
+                'maxDamage': weaponData[2],
+                'damageType': DAMAGE_TYPES[weaponData[3]],
+                'maxRange1': weaponData[4],
+                'maxRange2': weaponData[5],
+                'projectilePid': weaponData[6],
+                'minStrength': weaponData[7],
+                'actionPointCost1': weaponData[8],
+                'actionPointCost2': weaponData[9],
+                'criticalFailureType': weaponData[10],
+                'perk': PERKS[perkId],
+                'rounds': weaponData[12],
+                'caliber': CALIBERS[caliberId] if (caliberId in CALIBERS) else caliberId,
+                'ammoTypePid': weaponData[14],
+                'ammoCapacity': weaponData[15],
+                'soundCode': weaponData[16].decode('ascii')
             }
-        elif item_proto_dict['type'] == 'ITEM_TYPE_AMMO':
-            ammo_data = struct.unpack('>iiiiii', item_proto_data)
-            caliber_id = ammo_data[0]
-            item_proto_dict['ammoData'] = {
-                'caliber': CALIBERS[caliber_id] if (caliber_id in CALIBERS) else caliber_id,
+        elif itemProtoDict['type'] == 'ITEM_TYPE_AMMO':
+            ammo_data = struct.unpack('>iiiiii', itemProtoData)
+            caliberId = ammo_data[0]
+            itemProtoDict['ammoData'] = {
+                'caliber': CALIBERS[caliberId] if (caliberId in CALIBERS) else caliberId,
                 'quantity': ammo_data[1],
                 'armorClassMod': ammo_data[2],
                 'damageResistanceMod': ammo_data[3],
                 'damageMult': ammo_data[4],
                 'damageDiv': ammo_data[5]
             }
-        elif item_proto_dict['type'] == 'ITEM_TYPE_MISC':
-            misc_data = struct.unpack('>iii', item_proto_data)
-            item_proto_dict['miscData'] = {
-                'powerTypePid': misc_data[0],
-                'powerType': misc_data[1],
-                'charges': misc_data[2]
+        elif itemProtoDict['type'] == 'ITEM_TYPE_MISC':
+            miscData = struct.unpack('>iii', itemProtoData)
+            itemProtoDict['miscData'] = {
+                'powerTypePid': miscData[0],
+                'powerType': miscData[1],
+                'charges': miscData[2]
             }
-        elif item_proto_dict['type'] == 'ITEM_TYPE_KEY':
-            key_data = struct.unpack('>i', item_proto_data)
-            item_proto_dict['keyData'] = {
-                'keyCode': key_data[0]
+        elif itemProtoDict['type'] == 'ITEM_TYPE_KEY':
+            keyData = struct.unpack('>i', itemProtoData)
+            itemProtoDict['keyData'] = {
+                'keyCode': keyData[0]
             }
-    return item_proto_dict
+    return itemProtoDict
 
-def write_file(file_path: str, data: Dict):
+def writeFile(file_path: str, data: Dict):
     with open(file_path, 'w') as f:
-        yaml.dump(data, f, sort_keys = False)
+        yaml.dump(data, f, sort_keys = False, default_style = '')
 
 def main(file_pattern: str, output_dir: str, msg_dir: str):
     msgFiles = {
@@ -124,12 +129,15 @@ def main(file_pattern: str, output_dir: str, msg_dir: str):
         'pro_item': parse_msg_file(os.path.join(msg_dir, "pro_item.msg"))
     }
     CALIBERS = read_calibers(msgFiles['proto'])
+    typeToDir = dict(zip(ITEM_TYPES, ['armor', 'container', 'drug', 'weapon', 'ammo', 'misc', 'key']))
     files = glob.glob(file_pattern)
     for file in files:
-        data = read_file(file, msgFiles)
-        file_name = os.path.basename(file)
-        output_file_path = os.path.join(output_dir, f'{file_name}.yml')
-        write_file(output_file_path, data)
+        data = readFile(file, msgFiles)
+        # fileName = "".join(x for x in data['name'] if (x.isalnum() or x in "._- ")) if data['name'] else os.basename(file)
+
+        outputSubdir = os.path.join(output_dir, typeToDir[data['type']])
+        os.makedirs(outputSubdir, exist_ok = True)
+        writeFile(os.path.join(outputSubdir, f'{os.path.splitext(os.path.basename(file))[0]}.yml'), data)
     print("Written " + str(len(files)) + " text files.")
 
 if __name__ == '__main__':
