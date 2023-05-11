@@ -11,6 +11,7 @@ procedure start;
 #include "../_pbs_headers/ecco.h"
 
 procedure get_town_rep;
+procedure calc_offered_items_demand_mod(variable obj);
 procedure remember_town_demand;
 procedure get_highest_barter_in_party;
 
@@ -82,29 +83,29 @@ end
 
 
 procedure start begin
-	variable begin
-		merchant;
-		vanilla_price;
-		vanilla_price_goods;
-		item_caps;
-		offered_caps;
-		base_price := 0.0;
-		offered_table;
-		offered_price;
-		offered_price_goods;
-		base_price_goods;
-		final_price_goods;
-		dude_barter;
-		party_barter;
-		dude_charisma;
-		master_trader;
-		merchant_barter;
-		barter_mod;
-		town_demand_mod;
-		obj;
-		town_rep := 0;
-		selling_price_mod := 1;
-	end
+	variable
+		merchant,
+		vanilla_price,
+		vanilla_price_goods,
+		item_caps,
+		offered_caps,
+		base_price := 0.0,
+		offered_table,
+		offered_price,
+		offered_price_goods,
+		base_price_goods,
+		final_price_goods,
+		dude_barter,
+		party_barter,
+		dude_charisma,
+		master_trader,
+		merchant_barter,
+		barter_mod,
+		town_demand_mod,
+		town_rep := 0,
+		selling_price_mod := 1,
+		dude_barter_mult;
+
 	if (init_hook) then begin
 		/*MaxPID := get_ini_setting("barter.ini|GENERAL|MaxPID");
 		if (MaxPID == 0) then MaxPID := 600;*/
@@ -146,12 +147,6 @@ procedure start begin
 			
 			offered_caps := obj_is_carrying_obj_pid(offered_table, PID_BOTTLE_CAPS);
 			offered_price_goods := offered_price - offered_caps;
-
-			// TODO: recalculate offer item prices with respect to demand for individual PIDs
-			/*foreach (obj in inven_as_array(offered_table)) begin
-			 	obj_cost_barter
-				get_proto_data(obj_ pid, PROTO_IT_COST);
-			end*/
 		
 			if (Sell_TownRepCoef != 0 or Buy_TownRepCoef != 0) then begin
 				town_rep := get_town_rep;
@@ -198,12 +193,12 @@ procedure start begin
 					// override price (formula 3 or 4)
 					// these two differ only in calculating dude_barter coefficient:
 					if (Buy_Formula == 3) then
-						temp := (1 + dude_barter*Buy_DudeSkillCoef);
+						dude_barter_mult := (1 + dude_barter*Buy_DudeSkillCoef);
 					else
-						temp := (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
+						dude_barter_mult := (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
 						
 					final_price_goods := base_price_goods * Buy_Bias
-						* temp
+						* dude_barter_mult
 						* (1 + merchant_barter*Buy_MerchantSkillCoef)
 						* (1 + dude_charisma*Buy_DudeCharismaCoef)
 						* (1 + town_rep*Buy_TownRepCoef)
@@ -243,12 +238,29 @@ procedure start begin
 				if (selling_price_mod > Sell_MaxPriceCoef) then selling_price_mod := Sell_MaxPriceCoef;
 				else if (selling_price_mod < 0) then selling_price_mod := 0;
 
+				offered_price_goods += calc_offered_items_demand_mod(offered_table);
 				set_sfall_return(round(offered_price_goods * selling_price_mod) + offered_caps);
 			end else begin
 				set_sfall_return(0);
 			end
 		end
 	end
+end
+
+procedure calc_offered_items_demand_mod(variable containerObj) begin
+	variable total, pid, mod, numItems, demand, baseCost, demandMod;
+	total := 0;
+	demand := town_demand_map[cur_town];
+	foreach (pid: mod in demand) if mod > 0 and mod != 1 then begin
+		numItems := obj_is_carrying_obj_pid(containerObj, pid);
+		if (numItems > 0) then begin
+			baseCost := numItems * proto_data(pid, it_cost);
+			demandMod := round(baseCost * (mod - 1));
+			debug_msg("Demand mod for item(s) " + pid + " = " + demandMod);
+			total += demandMod;
+		end
+	end
+	return total;
 end
 
 procedure remember_town_demand begin
