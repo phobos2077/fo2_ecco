@@ -28,7 +28,8 @@ procedure get_highest_barter_in_party;
 variable begin
 	//MaxPID;
 	MaxTown;
-	PartyBarterDiffCoef;
+	PartyBonusThreshold;
+	PartyBonusMult;
 
 	Sell_Bias;
 	Sell_DudeSkillCoef;
@@ -112,7 +113,8 @@ procedure start begin
 		if (MaxPID == 0) then MaxPID := 600;*/
 		MaxTown := load_setting_int("GENERAL", "MaxTown");
 		if (MaxTown == 0) then MaxTown := 25;
-		PartyBarterDiffCoef := load_setting_float("GENERAL", "PartyBarterDiffCoef");
+		PartyBonusThreshold := load_setting_float("GENERAL", "PartyBonusThreshold");
+		PartyBonusMult := load_setting_float("GENERAL", "PartyBonusMult");
 	
 		Sell_Bias := load_setting_float("SELL", "Bias");
 		Sell_DudeSkillCoef := load_setting_float("SELL", "DudeSkillCoef");
@@ -161,8 +163,8 @@ procedure start begin
 			
 			dude_barter := barter_skill(dude_obj);
 			party_barter := get_highest_barter_in_party;
-			if party_barter > dude_barter and PartyBarterDiffCoef != 0 then begin
-				dude_barter += (dude_barter - party_barter) * PartyBarterDiffCoef;
+			if party_barter > PartyBonusThreshold and PartyBonusMult > 0 then begin
+				dude_barter += floor((party_barter - PartyBonusThreshold) * PartyBonusMult);
 			end
 			dude_charisma := get_critter_stat(dude_obj, STAT_ch);
 			master_trader := has_trait(TRAIT_PERK, dude_obj, PERK_master_trader);
