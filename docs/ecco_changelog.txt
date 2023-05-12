@@ -1,9 +1,17 @@
 -=== CHANGELOG ===-
 
-v0.8.1
+v0.9.0
 - added back russian translation
+- rebalanced barter prices - buy prices close to vanilla, sell prices differ less between merchants
+- party members with high barter now give flat bonus to barter skill, instead of overriding player skill when higher
+- added more items to town demands
+- reduced price to learn gecko skinning and leather crafting
 - rebalanced shotgun shell types to make both crafted types useful
 - removed duplet mode from regular shotgun (reserved for Sawed-off variant)
+- added Weapon Penetrate to XL70E3
+- reduced prices of some high-tier weapons and armor
+- removed HK G11E & Pulse Pistol from random encounters
+- small adjustments to ammo&weapon stats based on data analysis
 
 v0.8.0
 (!) rebuilt the mod from the ground up on the new RPU

@@ -867,11 +867,11 @@ type_03=ratio:30%, pid:16777463, Script:792                                     
 position=huddle, spacing:2
 
 [Encounter: NAV_Enclave_Patrol]
-type_00=pid:16777466, Item:389(wielded), Item:236 Item:(0-50)41, Script:794, If(Rand(10%))                          ; Enclave Patrol male w/ Avenger Minigun
-type_01=ratio:20%, pid:16777466, Item:24(wielded), Item:(0-50)41, Script:794                              ; Enclave Patrol male w/ Plasma Pistol
-type_02=pid:16777466, Item:391(wielded), Item:(0-50)41, Script:794, If(Rand(10%))                          ; Enclave Patrol male w/ H&K G11E
+type_00=pid:16777466, Item:389(wielded), Item:236 Item:(0-50)41, Script:794, If(Rand(10%))                 ; Enclave Patrol male w/ Avenger Minigun
+type_01=ratio:20%, pid:16777466, Item:24(wielded), Item:(0-50)41, Script:794                               ; Enclave Patrol male w/ Plasma Pistol
+type_02=pid:16777466, Item:352(wielded), Item:(0-50)41, Script:794, If(Rand(10%))                          ; Enclave Patrol male w/ H&K G11
 type_03=ratio:20%, pid:16777467, Item:28(wielded), Item:(0-50)41, Script:794, If(Rand(10%))                ; Enclave Patrol female w/ Gatling Laser
-type_04=ratio:20%, pid:16777467, Item:396(wielded), Item:(0-50)41, Script:794                              ; Enclave Patrol female w/ YK32 Pulse Pistol
+type_04=ratio:20%, pid:16777467, Item:15(wielded), Item:(0-50)41, Script:794                               ; Enclave Patrol female w/ Plasma Rifle
 type_05=ratio:20%, pid:16777467, Item:394(wielded), Item:(0-50)41, Script:794                              ; Enclave Patrol female w/ PPK12 Gauss Pistol
 type_06=ratio:20%, pid:16777467, Item:634(wielded), Item:(0-50)41, Script:794                              ; Enclave Patrol female w/ MGL grenade launcher
 ;position=Surrounding
@@ -884,7 +884,7 @@ position=double_line, spacing:3
 
 
 [Encounter: FRAN_Mercenaries]
-type_00=ratio:25%, pid:16777470, Item:24(wielded), Item:(0-50)41, Script:486                              ; Mercenary male w/ Plasma pistol
+type_00=ratio:25%, pid:16777470, Item:24(wielded), Item:(0-50)41, Script:486                               ; Mercenary male w/ Plasma pistol
 type_01=ratio:10%, pid:16777470, Item:388(wielded), Item:(0-50)41, Script:486                              ; Mercenary male w/ Needler Pistol
 type_02=ratio:15%, pid:16777257, Item:(1-3)26(wielded), Item:(0-50)41, Script:486                          ; Tough Guard female w/ Plasma Grenades
 type_03=ratio:20%, pid:16777471, Item:116(wielded), Item:(0-50)41, Script:486                              ; Merceneary female w/ Ripper
@@ -894,9 +894,9 @@ position=double_line, spacing:2
 
 [Encounter: FRAN_Elronologists]
 type_00=ratio:25%, pid:16777494, Item:235(wielded), Item:(0-50)41, Script:766                             ; Elronologist Male w/ Power Fist
-type_01=ratio:25%, pid:16777494, Item:391(wielded), Item:(0-50)41, Script:766                             ; Elronologist Male w/ Laser Rifle
+type_01=ratio:25%, pid:16777494, Item:352(wielded), Item:(0-50)41, Script:766                             ; Elronologist Male w/ H&K G11
 type_02=ratio:25%, pid:16777257, Item:(1-3)26(wielded), Item:(0-50)41, Script:766                          ; Tough Guard Female w/ Plasma Grenade
-type_03=ratio:25%, pid:16777495, Item:391(wielded), Item:(0-50)41, Script:766                              ; Elronologist Female w/ Flamer
+type_03=ratio:25%, pid:16777495, Item:352(wielded), Item:(0-50)41, Script:766                              ; Elronologist Female w/ H&K G11
 position=huddle, spacing:3
 
 [Encounter: FRAN_Press_Gang]
@@ -1035,7 +1035,7 @@ type_04=ratio:50%, pid:16777403, Item:235(wielded), Item:(2-5)25, Item:40, Item:
 position=Surrounding, Spacing:2, distance:4
 
 [Encounter: Bounty_Hunter_High]
-type_00=pid:16777405, Item:392(wielded), Item:(2-4)40, Item:(40-80)41, Script:836
+type_00=pid:16777405, Item:392(wielded), Item:(2-4)40, Item:(40-80)41, Script:836                       ; Gauss Rifle
 type_01=pid:16777402, Item:118(wielded), Item:39, Item:(1-2)40, Item:(30-70)41, Script:836
 type_02=pid:16777406, Item:116(wielded), Item:(2-4)26, Item:(1-2)40, Item:(35-50)41, Script:836              ; Ripper
 type_03=pid:16777406, Item:15(wielded), Item:(1-2)40, Item:(35-50)41, Script:836, If(Global(1) < 2)       ; plasma pistol

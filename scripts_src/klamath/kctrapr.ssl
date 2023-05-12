@@ -17,7 +17,7 @@
            Created: Febuary 25, 1998
 
            Updated:
-           by phobos2077: added dialogue to teach Gecko skinning
+           - phobos2077: added dialogue to teach Gecko skinning and Leather Crafting
 */
 
 /* Include Files */
@@ -53,8 +53,8 @@
 #define teacher_no      (1)
 #define teacher_yes     (2)
 #define teacher_taught  (3)
-#define TEACHER_PRICE   (300)
-#define CRAFT_PRICE     (300)
+#define TEACHER_PRICE   (200)
+#define CRAFT_PRICE     (200)
 
 
 procedure NodeTeach1;

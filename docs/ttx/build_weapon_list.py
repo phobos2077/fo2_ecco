@@ -17,7 +17,7 @@ def parse_csv_files(weapons_file, ammo_file, output_file):
         reader = csv.DictReader(f, delimiter=';')
         weapons = [row for row in reader]
 
-    print_record(weapons[0])
+    # print_record(weapons[0])
 
     # Read ammo file
     with open(ammo_file, 'r') as f:
@@ -51,7 +51,8 @@ def parse_csv_files(weapons_file, ammo_file, output_file):
                     'Weapon': weapon['NAME'],
                     'Ammo': a['NAME'],
                     'DMG Min': int(weapon['Min Damage']),
-                    'DMG Max': int(weapon['Max Damage'])
+                    'DMG Max': int(weapon['Max Damage']),
+                    'Perk': weapon['Perk']
                 })
 
     # Sort result
@@ -59,7 +60,7 @@ def parse_csv_files(weapons_file, ammo_file, output_file):
 
     # Write result to output file
     with open(output_file, 'w', newline='') as f:
-        fieldnames = ['DMG Type', 'Caliber', 'Weapon', 'Ammo', 'DMG Min', 'DMG Max']
+        fieldnames = ['DMG Type', 'Caliber', 'Weapon', 'Ammo', 'DMG Min', 'DMG Max', 'Perk']
         writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter=';')
         writer.writeheader()
         for row in result:

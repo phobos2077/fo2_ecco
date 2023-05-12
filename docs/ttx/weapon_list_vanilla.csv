@@ -1,89 +1,89 @@
-Caliber;Weapon;Ammo;DMG Min;DMG Max;AC Adj;DR Adj;Dam Mult;Dam Div
-.223;.223 Pistol;.223 FMJ;20;30;-20;-20;1;1
-.223;Bozar;.223 FMJ;25;35;-20;-20;1;1
-.223;Heavy Dual Minigun;.223 FMJ;16;24;-20;-20;1;1
-.223;Hunting Rifle;.223 FMJ;8;20;-20;-20;1;1
-.223;Light Support Weapon;.223 FMJ;20;30;-20;-20;1;1
-.223;Scoped Hunting Rifle;.223 FMJ;8;20;-20;-20;1;1
-.223;Sniper Rifle;.223 FMJ;14;34;-20;-20;1;1
-.44 cal;.44 Magnum (Speed Load);.44 Magnum JHP;12;18;0;20;2;1
-.44 cal;.44 Magnum (Speed Load);.44 magnum FMJ;12;18;0;-20;1;1
-.44 cal;.44 Magnum Revolver;.44 Magnum JHP;12;18;0;20;2;1
-.44 cal;.44 Magnum Revolver;.44 magnum FMJ;12;18;0;-20;1;1
-.44 cal;Desert Eagle (Exp. Mag.);.44 Magnum JHP;10;16;0;20;2;1
-.44 cal;Desert Eagle (Exp. Mag.);.44 magnum FMJ;10;16;0;-20;1;1
-.44 cal;Desert Eagle .44;.44 Magnum JHP;10;16;0;20;2;1
-.44 cal;Desert Eagle .44;.44 magnum FMJ;10;16;0;-20;1;1
-.45 cal;"M3A1 ""Grease Gun"" SMG";.45 Caliber;10;20;0;0;1;1
-.45 cal;Tommy Gun;.45 Caliber;3;20;0;0;1;1
-10mm;10mm Pistol;10mm JHP;5;12;0;25;2;1
-10mm;10mm Pistol;10mm AP;5;12;0;-25;1;2
-10mm;10mm SMG;10mm JHP;5;12;0;25;2;1
-10mm;10mm SMG;10mm AP;5;12;0;-25;1;2
-10mm;H&K P90c;10mm JHP;12;16;0;25;2;1
-10mm;H&K P90c;10mm AP;12;16;0;-25;1;2
-10mm;Pipe Rifle;10mm JHP;5;12;0;25;2;1
-10mm;Pipe Rifle;10mm AP;5;12;0;-25;1;2
-10mm;Zip Gun;10mm JHP;5;12;0;25;2;1
-10mm;Zip Gun;10mm AP;5;12;0;-25;1;2
-12-gauge;Combat Shotgun;12 ga. Shotgun Shells;15;25;-10;0;1;1
-12-gauge;H&K CAWS;12 ga. Shotgun Shells;15;25;-10;0;1;1
-12-gauge;Pancor Jackhammer;12 ga. Shotgun Shells;18;29;-10;0;1;1
-12-gauge;Sawed-Off Shotgun;12 ga. Shotgun Shells;12;24;-10;0;1;1
-12-gauge;Shotgun;12 ga. Shotgun Shells;12;22;-10;0;1;1
-14mm;14mm Pistol;14mm AP;12;22;0;-50;1;2
-2mm;M72 Gauss Rifle;2mm EC;32;43;-30;-20;3;2
-2mm;PPK12 Gauss Pistol;2mm EC;22;32;-30;-20;3;2
-4.7mm caseless;H&K G11;4.7mm Caseless;10;20;-5;-10;3;2
-4.7mm caseless;H&K G11E;4.7mm Caseless;13;23;-5;-10;3;2
-4.7mm caseless;Vindicator Minigun;4.7mm Caseless;14;19;-5;-10;3;2
-5mm;Assault Rifle;5mm JHP;8;16;0;35;2;1
-5mm;Assault Rifle;5mm AP;8;16;0;-35;1;2
-5mm;Assault Rifle (Exp. Mag.);5mm JHP;8;16;0;35;2;1
-5mm;Assault Rifle (Exp. Mag.);5mm AP;8;16;0;-35;1;2
-5mm;Avenger Minigun;5mm JHP;10;14;0;35;2;1
-5mm;Avenger Minigun;5mm AP;10;14;0;-35;1;2
-5mm;Dual Minigun;5mm JHP;10;14;0;35;2;1
-5mm;Dual Minigun;5mm AP;10;14;0;-35;1;2
-5mm;Minigun;5mm JHP;7;11;0;35;2;1
-5mm;Minigun;5mm AP;7;11;0;-35;1;2
-5mm;XL70E3;5mm JHP;12;19;0;35;2;1
-5mm;XL70E3;5mm AP;12;19;0;-35;1;2
-7.62mm;FN FAL;7.62mm;9;18;-5;-10;1;1
-7.62mm;FN FAL (Night Sight);7.62mm;9;18;-5;-10;1;1
-7.62mm;FN FAL HPFA;7.62mm;11;22;-5;-10;1;1
-7.62mm;M60;7.62mm;18;26;-5;-10;1;1
-9mm;9mm Mauser;9mm ball;5;10;0;0;1;1
-9mm;9mm Mauser;9mm;5;10;0;10;1;2
-C Energy Cell;Alien Blaster;Small Energy Cell;30;90;0;0;1;1
-C Energy Cell;Blaster;Small Energy Cell;30;40;0;0;1;1
-C Energy Cell;Cattle Prod;Small Energy Cell;12;20;0;0;1;1
-C Energy Cell;Laser Pistol;Small Energy Cell;10;22;0;0;1;1
-C Energy Cell;Magneto-Laser Pistol;Small Energy Cell;10;22;0;0;1;1
-C Energy Cell;Mega Power Fist;Small Energy Cell;20;40;0;0;1;1
-C Energy Cell;Phazer;Small Energy Cell;20;30;0;0;1;1
-C Energy Cell;Plasma Pistol;Small Energy Cell;15;35;0;0;1;1
-C Energy Cell;Plasma Pistol (Ext. Cap.);Small Energy Cell;15;35;0;0;1;1
-C Energy Cell;Power Fist;Small Energy Cell;12;24;0;0;1;1
-C Energy Cell;Ripper;Small Energy Cell;15;32;0;0;1;1
-C Energy Cell;Super Cattle Prod;Small Energy Cell;20;32;0;0;1;1
-C Energy Cell;YK32 Pulse Pistol;Small Energy Cell;32;46;0;0;1;1
-D Energy Cell;End Boss Plasma Gun;Micro Fusion Cell;30;70;0;0;1;1
-D Energy Cell;Gatling Laser;Micro Fusion Cell;20;40;0;0;1;1
-D Energy Cell;Laser Rifle;Micro Fusion Cell;25;50;0;0;1;1
-D Energy Cell;Laser Rifle (Ext. Cap.);Micro Fusion Cell;25;50;0;0;1;1
-D Energy Cell;Plasma Rifle;Micro Fusion Cell;30;65;0;0;1;1
-D Energy Cell;Turbo Plasma Rifle;Micro Fusion Cell;35;70;0;0;1;1
-D Energy Cell;YK42B Pulse Rifle;Micro Fusion Cell;54;78;0;0;1;1
-Flamethrower Fuel;Flamer;Flamethrower Fuel;45;90;-20;25;1;1
-Flamethrower Fuel;Flamer;Flamethrower Fuel MKII;45;90;-20;0;1;1
-Flamethrower Fuel;Improved Flamer;Flamethrower Fuel;45;90;-20;25;1;1
-Flamethrower Fuel;Improved Flamer;Flamethrower Fuel MKII;45;90;-20;0;1;1
-HN needler;Needler Pistol;HN Needler Cartridge;12;24;-10;0;1;1
-HN needler;Needler Pistol;HN AP Needler Cartridge;12;24;-10;0;2;1
-Rocket;Robo Rocket Launcher;Explosive Rocket;10;30;0;-25;1;1
-Rocket;Robo Rocket Launcher;Rocket AP;10;30;-15;-50;1;1
-Rocket;Robo Rocket Launcher;Robo Rocket Ammo;10;30;0;-25;1;1
-Rocket;Rocket Launcher;Explosive Rocket;35;100;0;-25;1;1
-Rocket;Rocket Launcher;Rocket AP;35;100;-15;-50;1;1
-Rocket;Rocket Launcher;Robo Rocket Ammo;35;100;0;-25;1;1
+DMG Type;Caliber;Weapon;Ammo;DMG Min;DMG Max;Perk
+Electrical;C Energy Cell;Cattle Prod;Small Energy Cell;12;20;Weapon Accurate [59]
+Electrical;C Energy Cell;Super Cattle Prod;Small Energy Cell;20;32;Weapon Accurate [59]
+Electrical;C Energy Cell;YK32 Pulse Pistol;Small Energy Cell;32;46;Weapon Penetrate [60]
+Electrical;C Energy Cell;Alien Blaster;Small Energy Cell;30;90;Weapon Accurate [59]
+Electrical;D Energy Cell;YK42B Pulse Rifle;Micro Fusion Cell;54;78;Weapon Penetrate [60]
+Explode;Rocket;Robo Rocket Launcher;Explosive Rocket;10;30;
+Explode;Rocket;Robo Rocket Launcher;Rocket AP;10;30;
+Explode;Rocket;Robo Rocket Launcher;Robo Rocket Ammo;10;30;
+Explode;Rocket;Rocket Launcher;Explosive Rocket;35;100;Weapon Long Range [58]
+Explode;Rocket;Rocket Launcher;Rocket AP;35;100;Weapon Long Range [58]
+Explode;Rocket;Rocket Launcher;Robo Rocket Ammo;35;100;Weapon Long Range [58]
+Fire;Flamethrower Fuel;Flamer;Flamethrower Fuel;45;90;
+Fire;Flamethrower Fuel;Flamer;Flamethrower Fuel MKII;45;90;
+Fire;Flamethrower Fuel;Improved Flamer;Flamethrower Fuel;45;90;Weapon Flameboy [67]
+Fire;Flamethrower Fuel;Improved Flamer;Flamethrower Fuel MKII;45;90;Weapon Flameboy [67]
+Laser;C Energy Cell;Laser Pistol;Small Energy Cell;10;22;
+Laser;C Energy Cell;Magneto-Laser Pistol;Small Energy Cell;10;22;Weapon Penetrate [60]
+Laser;C Energy Cell;Phazer;Small Energy Cell;20;30;Weapon Accurate [59]
+Laser;C Energy Cell;Blaster;Small Energy Cell;30;40;
+Laser;D Energy Cell;Gatling Laser;Micro Fusion Cell;20;40;Weapon Long Range [58]
+Laser;D Energy Cell;Laser Rifle;Micro Fusion Cell;25;50;Weapon Long Range [58]
+Laser;D Energy Cell;Laser Rifle (Ext. Cap.);Micro Fusion Cell;25;50;Weapon Long Range [58]
+Normal;.223;Hunting Rifle;.223 FMJ;8;20;Weapon Long Range [58]
+Normal;.223;Scoped Hunting Rifle;.223 FMJ;8;20;Weapon Scope Range [64]
+Normal;.223;Heavy Dual Minigun;.223 FMJ;16;24;Weapon Accurate [59]
+Normal;.223;Sniper Rifle;.223 FMJ;14;34;Weapon Long Range [58]
+Normal;.223;.223 Pistol;.223 FMJ;20;30;Weapon Penetrate [60]
+Normal;.223;Light Support Weapon;.223 FMJ;20;30;
+Normal;.223;Bozar;.223 FMJ;25;35;
+Normal;.44 cal;Desert Eagle .44;.44 Magnum JHP;10;16;
+Normal;.44 cal;Desert Eagle .44;.44 magnum FMJ;10;16;
+Normal;.44 cal;Desert Eagle (Exp. Mag.);.44 Magnum JHP;10;16;
+Normal;.44 cal;Desert Eagle (Exp. Mag.);.44 magnum FMJ;10;16;
+Normal;.44 cal;.44 Magnum Revolver;.44 Magnum JHP;12;18;
+Normal;.44 cal;.44 Magnum Revolver;.44 magnum FMJ;12;18;
+Normal;.44 cal;.44 Magnum (Speed Load);.44 Magnum JHP;12;18;Weapon Fast Reload [65]
+Normal;.44 cal;.44 Magnum (Speed Load);.44 magnum FMJ;12;18;Weapon Fast Reload [65]
+Normal;.45 cal;Tommy Gun;.45 Caliber;3;20;
+Normal;.45 cal;"M3A1 ""Grease Gun"" SMG";.45 Caliber;10;20;
+Normal;10mm;10mm Pistol;10mm JHP;5;12;
+Normal;10mm;10mm Pistol;10mm AP;5;12;
+Normal;10mm;10mm SMG;10mm JHP;5;12;
+Normal;10mm;10mm SMG;10mm AP;5;12;
+Normal;10mm;Pipe Rifle;10mm JHP;5;12;
+Normal;10mm;Pipe Rifle;10mm AP;5;12;
+Normal;10mm;Zip Gun;10mm JHP;5;12;
+Normal;10mm;Zip Gun;10mm AP;5;12;
+Normal;10mm;H&K P90c;10mm JHP;12;16;
+Normal;10mm;H&K P90c;10mm AP;12;16;
+Normal;12-gauge;Shotgun;12 ga. Shotgun Shells;12;22;Weapon Accurate [59]
+Normal;12-gauge;Sawed-Off Shotgun;12 ga. Shotgun Shells;12;24;Weapon Accurate [59]
+Normal;12-gauge;Combat Shotgun;12 ga. Shotgun Shells;15;25;Weapon Accurate [59]
+Normal;12-gauge;H&K CAWS;12 ga. Shotgun Shells;15;25;Weapon Accurate [59]
+Normal;12-gauge;Pancor Jackhammer;12 ga. Shotgun Shells;18;29;Weapon Accurate [59]
+Normal;14mm;14mm Pistol;14mm AP;12;22;Weapon Accurate [59]
+Normal;2mm;PPK12 Gauss Pistol;2mm EC;22;32;Weapon Accurate [59]
+Normal;2mm;M72 Gauss Rifle;2mm EC;32;43;Weapon Accurate [59]
+Normal;4.7mm caseless;H&K G11;4.7mm Caseless;10;20;
+Normal;4.7mm caseless;Vindicator Minigun;4.7mm Caseless;14;19;
+Normal;4.7mm caseless;H&K G11E;4.7mm Caseless;13;23;
+Normal;5mm;Minigun;5mm JHP;7;11;Weapon Long Range [58]
+Normal;5mm;Minigun;5mm AP;7;11;Weapon Long Range [58]
+Normal;5mm;Assault Rifle;5mm JHP;8;16;Weapon Long Range [58]
+Normal;5mm;Assault Rifle;5mm AP;8;16;Weapon Long Range [58]
+Normal;5mm;Avenger Minigun;5mm JHP;10;14;
+Normal;5mm;Avenger Minigun;5mm AP;10;14;
+Normal;5mm;Assault Rifle (Exp. Mag.);5mm JHP;8;16;Weapon Long Range [58]
+Normal;5mm;Assault Rifle (Exp. Mag.);5mm AP;8;16;Weapon Long Range [58]
+Normal;5mm;Dual Minigun;5mm JHP;10;14;
+Normal;5mm;Dual Minigun;5mm AP;10;14;
+Normal;5mm;XL70E3;5mm JHP;12;19;
+Normal;5mm;XL70E3;5mm AP;12;19;
+Normal;7.62mm;FN FAL;7.62mm;9;18;
+Normal;7.62mm;FN FAL (Night Sight);7.62mm;9;18;Weapon Night Sight [66]
+Normal;7.62mm;FN FAL HPFA;7.62mm;11;22;
+Normal;7.62mm;M60;7.62mm;18;26;
+Normal;9mm;9mm Mauser;9mm ball;5;10;Weapon Accurate [59]
+Normal;9mm;9mm Mauser;9mm;5;10;Weapon Accurate [59]
+Normal;C Energy Cell;Power Fist;Small Energy Cell;12;24;Weapon Penetrate [60]
+Normal;C Energy Cell;Ripper;Small Energy Cell;15;32;Weapon Penetrate [60]
+Normal;C Energy Cell;Mega Power Fist;Small Energy Cell;20;40;Weapon Penetrate [60]
+Normal;HN needler;Needler Pistol;HN Needler Cartridge;12;24;Weapon Penetrate [60]
+Normal;HN needler;Needler Pistol;HN AP Needler Cartridge;12;24;Weapon Penetrate [60]
+Plasma;C Energy Cell;Plasma Pistol;Small Energy Cell;15;35;
+Plasma;C Energy Cell;Plasma Pistol (Ext. Cap.);Small Energy Cell;15;35;
+Plasma;D Energy Cell;Plasma Rifle;Micro Fusion Cell;30;65;Weapon Long Range [58]
+Plasma;D Energy Cell;End Boss Plasma Gun;Micro Fusion Cell;30;70;
+Plasma;D Energy Cell;Turbo Plasma Rifle;Micro Fusion Cell;35;70;Weapon Long Range [58]
