@@ -1028,7 +1028,7 @@
 {53200}{}{Sam Pritchard's Map}
 {53201}{}{This crudely-drawn map shows the area surrounding New Reno. It looks like there's some sort of military base to the north.}
 {53300}{}{Fire Gecko Pelt}
-{53301}{}{This is the dried and cured hide of a fire gecko. It is badly burned and as a result, has little value.}
+{53301}{}{This is the dried and cured hide of a fire gecko.}
 {53400}{}{Bucket}
 {53401}{}{A medium sized bucket used to haul water from a well.}
 {53500}{}{Scaly Fish}

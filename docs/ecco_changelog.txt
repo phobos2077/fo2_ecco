@@ -2,14 +2,15 @@
 
 v0.9.0
 - added back russian translation
-- rebalanced barter prices - buy prices close to vanilla, sell prices differ less between merchants
+- rebalanced barter - buy prices aligned with vanilla prices, sell prices higher at low skill and differ less between merchants
 - party members with high barter now give simple discount to prices, instead of overriding player skill
 - added more items to town demands
+- reduced base price of some high-tier weapons and armor
+- massively increased base price of pelts, hides and other animal parts to make trapping and hunting more viable
 - reduced price to learn gecko skinning and leather crafting
 - rebalanced shotgun shell types to make both crafted types useful
 - removed duplet mode from regular shotgun (reserved for Sawed-off variant)
 - added Weapon Penetrate to XL70E3
-- reduced prices of some high-tier weapons and armor
 - removed HK G11E & Pulse Pistol from random encounters
 - small adjustments to ammo&weapon stats based on data analysis
 

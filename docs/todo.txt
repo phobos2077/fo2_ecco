@@ -1,2 +1,4 @@
 - add 7.62 AP ammo & rebalance 7.62 weapons
 - add inventory ap mod from EtTu
+- add modified combat damage script from FO2Tweaks
+- remove unused scripts and compile-all script

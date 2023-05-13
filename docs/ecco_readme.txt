@@ -54,6 +54,7 @@ Crafting System:
 Traps System:
 - installable traps: "melee" type spike trap, explosive mine and sensor mine
 - explosive traps are customized by arming them with any type of explosives or grenades
+- become a trapper by luring geckos and rats into your traps using food as bait!
 
 New Quests:
 - a couple of random-encounter-based "Bounty Hunt" quests
