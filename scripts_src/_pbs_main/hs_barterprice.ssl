@@ -8,12 +8,13 @@ procedure start;
 #include "../sfall/define_lite.h"
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.misc.h"
+#include "../sfall/lib.math.h"
 //#include "../_pbs_headers/ecco.h"
 
 procedure get_town_rep;
 procedure calc_items_demand_mod(variable obj);
 procedure remember_town_demand;
-procedure get_highest_barter_in_party;
+procedure get_highest_barter_in_party_except_dude;
 
 
 #define barter_skill(obj)	(has_skill(obj, SKILL_BARTER))
@@ -28,8 +29,6 @@ procedure get_highest_barter_in_party;
 variable begin
 	//MaxPID;
 	MaxTown;
-	PartyBonusThreshold;
-	PartyBonusMult;
 
 	Sell_Bias;
 	Sell_DudeSkillCoef;
@@ -48,6 +47,8 @@ variable begin
 	Buy_TownRepCoef;
 	Buy_PerkCoef;
 	Buy_BarterModCoef;
+	Buy_PartySkillThreshold;
+	Buy_PartySkillCoef;
 	Buy_MinPriceCoef;
 	Buy_ArctanCoef;
 
@@ -114,8 +115,6 @@ procedure start begin
 		if (MaxPID == 0) then MaxPID := 600;*/
 		MaxTown := load_setting_int("GENERAL", "MaxTown");
 		if (MaxTown == 0) then MaxTown := 25;
-		PartyBonusThreshold := load_setting_float("GENERAL", "PartyBonusThreshold");
-		PartyBonusMult := load_setting_float("GENERAL", "PartyBonusMult");
 	
 		Sell_Bias := load_setting_float("SELL", "Bias");
 		Sell_DudeSkillCoef := load_setting_float("SELL", "DudeSkillCoef");
@@ -134,6 +133,8 @@ procedure start begin
 		Buy_TownRepCoef := load_setting_float("BUY", "TownRepCoef");
 		Buy_PerkCoef := load_setting_float("BUY", "PerkCoef");
 		Buy_BarterModCoef := load_setting_float("BUY", "BarterModCoef");
+		Buy_PartySkillThreshold := load_setting_float("BUY", "PartySkillThreshold");
+		Buy_PartySkillCoef := load_setting_float("BUY", "PartySkillCoef");
 		Buy_MinPriceCoef := abs(load_setting_float("BUY", "MinPriceCoef"));
 		Buy_ArctanCoef := load_setting_float("BUY", "ArctanCoef");
 		
@@ -163,10 +164,6 @@ procedure start begin
 			end
 			
 			dude_barter := barter_skill(dude_obj);
-			party_barter := get_highest_barter_in_party;
-			if party_barter > PartyBonusThreshold and PartyBonusMult > 0 then begin
-				dude_barter += floor((party_barter - PartyBonusThreshold) * PartyBonusMult);
-			end
 			dude_charisma := get_critter_stat(dude_obj, STAT_ch);
 			master_trader := has_trait(TRAIT_PERK, dude_obj, PERK_master_trader);
 			
@@ -205,15 +202,18 @@ procedure start begin
 					else
 						dude_barter_mult := (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
 
+					party_barter := get_highest_barter_in_party_except_dude;
+
 					// adjust demand for buy prices
 					base_price_goods += calc_items_demand_mod(item_table);
 					final_price_goods := base_price_goods * Buy_Bias
 						* dude_barter_mult
-						* (1 + merchant_barter*Buy_MerchantSkillCoef)
-						* (1 + dude_charisma*Buy_DudeCharismaCoef)
-						* (1 + town_rep*Buy_TownRepCoef)
-						* (1 + master_trader*Buy_PerkCoef)
-						* (1 + barter_mod*Buy_BarterModCoef);
+						* (1 + merchant_barter * Buy_MerchantSkillCoef)
+						* (1 + dude_charisma * Buy_DudeCharismaCoef)
+						* (1 + town_rep * Buy_TownRepCoef)
+						* (1 + master_trader * Buy_PerkCoef)
+						* (1 + barter_mod * Buy_BarterModCoef)
+						* (1 + max(party_barter - Buy_PartySkillThreshold, 0) * Buy_PartySkillCoef);
 				end
 				
 				// cap value against MinPriceCoef
@@ -237,12 +237,12 @@ procedure start begin
 					or Sell_BarterModCoef != 0)) then begin
 
 				selling_price_mod := Sell_Bias
-					* (1 + dude_barter*Sell_DudeSkillCoef)
-					* (1 + merchant_barter*Sell_MerchantSkillCoef)
-					* (1 + dude_charisma*Sell_DudeCharismaCoef)
-					* (1 + town_rep*Sell_TownRepCoef)
-					* (1 + master_trader*Sell_PerkCoef)
-					* (1 + barter_mod*Sell_BarterModCoef);
+					* (1 + dude_barter * Sell_DudeSkillCoef)
+					* (1 + merchant_barter * Sell_MerchantSkillCoef)
+					* (1 + dude_charisma * Sell_DudeCharismaCoef)
+					* (1 + town_rep * Sell_TownRepCoef)
+					* (1 + master_trader * Sell_PerkCoef)
+					* (1 + barter_mod * Sell_BarterModCoef);
 
 				// cap multiplier
 				if (selling_price_mod > Sell_MaxPriceCoef) then selling_price_mod := Sell_MaxPriceCoef;
@@ -332,13 +332,13 @@ procedure get_town_rep begin
      return 0;
 end
 
-procedure get_highest_barter_in_party begin
+procedure get_highest_barter_in_party_except_dude begin
 	variable i := 0;
 	variable obj, pid, max;
-	max := barter_skill(dude_obj);
+	max := 0;
 	
 	foreach (obj in party_member_list_critters) if (obj) then begin
-		if (barter_skill(obj) > max) then begin
+		if (obj != dude_obj and barter_skill(obj) > max) then begin
 			max := barter_skill(obj);
 		end
 	end

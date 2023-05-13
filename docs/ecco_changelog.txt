@@ -3,7 +3,7 @@
 v0.9.0
 - added back russian translation
 - rebalanced barter prices - buy prices close to vanilla, sell prices differ less between merchants
-- party members with high barter now give flat bonus to barter skill, instead of overriding player skill when higher
+- party members with high barter now give simple discount to prices, instead of overriding player skill
 - added more items to town demands
 - reduced price to learn gecko skinning and leather crafting
 - rebalanced shotgun shell types to make both crafted types useful
