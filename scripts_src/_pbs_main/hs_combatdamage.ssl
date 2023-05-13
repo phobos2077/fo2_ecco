@@ -1,17 +1,4 @@
-procedure start;
-
-//#include "..\headers\ITEMPID.H"
-//#include "..\headers\SCENEPID.H"
-#include "../sfall/sfall.h"
-#include "../sfall/define_lite.h"
-#include "../sfall/lib.arrays.h"
 #include "../_pbs_headers/ecco.h"
-
-#define ATTACK_TYPE_THROW 5
-#define BODYPART_HEAD 0
-#define BODYPART_LEFT_ARM 1
-#define BODYPART_RIGHT_ARM 2
-#define ITEMTYPE_WEAPON (3)
 
 /**
 	Runs whenever the target takes damage in combat. Does not run for misses, or on extra targets when bursting.
@@ -31,12 +18,6 @@ procedure start;
 	int     ret1 - The special effect flags for the attacker
 */
 
-variable begin
-	ini_knockout;
-	ini_knockout_min_skill;
-	ini_knockout_max_skill;
-end
-
 procedure start begin
    variable target;
    variable attacker;
@@ -53,9 +34,7 @@ procedure start begin
    //variable tmp;
    
    if (init_hook) then begin
-      ini_knockout := atoi(get_ini_string("combat.ini|STEALTH|knockout"));
-      ini_knockout_min_skill := atoi(get_ini_string("combat.ini|STEALTH|knockout_min_skill"));
-      ini_knockout_max_skill := atoi(get_ini_string("combat.ini|STEALTH|knockout_max_skill"));
+
    end else
    begin
       target := get_sfall_arg;
@@ -67,22 +46,12 @@ procedure start begin
       weapon := get_sfall_arg;
       body_part := get_sfall_arg;
       
+      // TODO: move weapon stuff to separate script
       if (target and attacker) then begin
          if (obj_type(target) == OBJ_TYPE_CRITTER) then begin
             if (weapon) then weaponPid := obj_pid(weapon);
-            debug_msg("combatdamage: "+target+" (type:"+obj_type(target)+"), wpn: "+weaponPid+", flags: "+target_flags+", part: "+body_part);
-            if (weaponPid and ini_knockout) then begin
-               // knockout people, hitting them in head with a club from behind
-               skill := has_skill(attacker, SKILL_SNEAK);
-               if (using_skill(attacker,SKILL_SNEAK)
-                     and random(ini_knockout_min_skill, ini_knockout_max_skill) < skill
-                     and body_part == BODYPART_HEAD
-                     and is_human(target)
-                     and (is_club_weapon(weapon) or is_hammer_weapon(weapon))
-                     and attacker_behind_target(attacker, target)) then begin
-                  target_flags := target_flags bwor DAM_CRITICAL bwor DAM_KNOCKED_OUT;
-               end
-            end
+            //debug_msg("combatdamage: "+target+" (type:"+obj_type(target)+"), wpn: "+weaponPid+", flags: "+target_flags+", part: "+body_part);
+
             if (weaponPid == PID_PBS_TASER) then begin
                if ((is_human(target) or is_animal(target)) and get_critter_stat(target, STAT_dmg_thresh_electrical) < 10) then begin
                   target_flags := target_flags bwor DAM_LOSE_TURN;
@@ -93,8 +62,6 @@ procedure start begin
             end
          end
       end
-      
-      //debug_msg("combatdamage after, target was "+target);
       
       set_sfall_return(target_damage);
       set_sfall_return(attacker_damage);

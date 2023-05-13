@@ -13,7 +13,7 @@ SET compile=%root%\extra\bin\compile.exe
 cd /d "%root%/scripts_src"
 
 for /r %%i in (*.ssl) do (
-    echo %%~dpi | findstr /v /i /c:"\\tests\\" >nul && (
+    echo %%~dpi | findstr /v /i "\\tests\\ \\wip\\" >nul && (
         cd /d "%%~dpi"
         "%compile%" -l -O2 -p -s -q -n "%%~nxi" -o "%output%/%%~ni.int"
     )

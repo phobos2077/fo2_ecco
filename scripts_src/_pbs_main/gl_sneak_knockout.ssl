@@ -1,0 +1,90 @@
+/**
+   Allow to knock-down people by attacking with a blunt weapon from behind.
+*/
+
+#include "../sfall/sfall.h"
+#include "../_pbs_headers/ecco.h"
+
+variable
+	ini_knockout_min_skill,
+	ini_knockout_max_skill;
+
+
+procedure start;
+procedure combatdamage_handler;
+
+procedure start begin
+   variable tmp;
+
+   if game_loaded then begin
+      if not get_int_from_ini(INI_COMBAT, "STEALTH", "knockout") then begin
+         return;
+      end
+
+      int_from_ini_file(knockout_min_skill, INI_COMBAT, "STEALTH");
+      int_from_ini_file(knockout_max_skill, INI_COMBAT, "STEALTH");
+
+      register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
+   end
+end
+
+
+/*
+   Runs when:
+
+   Game calculates how much damage each target will get. This includes primary target as well as all extras (explosions and bursts). This happens BEFORE the actual attack animation.
+   AI decides whether it is safe to use area attack (burst, grenades), if he might hit friendlies.
+   Does not run for misses, or non-combat damage like dynamite explosions.
+
+   Critter arg0  - The target
+   Critter arg1  - The attacker
+   int     arg2  - The amount of damage to the target
+   int     arg3  - The amount of damage to the attacker
+   int     arg4  - The special effect flags for the target (use bwand DAM_* to check specific flags)
+   int     arg5  - The special effect flags for the attacker (use bwand DAM_* to check specific flags)
+   int     arg6  - The weapon used in the attack
+   int     arg7  - The bodypart that was struck
+   int     arg8  - Damage Multiplier (this is divided by 2, so a value of 3 does 1.5x damage, and 8 does 4x damage. Usually it's 2; for critical hits, the value is taken from the critical table; with Silent Death perk and the corresponding attack conditions, the value will be doubled)
+   int     arg9 - Number of bullets actually hit the target (1 for melee attacks)
+   int     arg10 - The amount of knockback to the target
+   int     arg11 - Attack Type (see ATKTYPE_* constants)
+   mixed   arg12 - computed attack data (see C_ATTACK_* for offsets and use get/set_object_data functions to get/set the data)
+
+   int     ret0 - The damage to the target
+   int     ret1 - The damage to the attacker
+   int     ret2 - The special effect flags for the target
+   int     ret3 - The special effect flags for the attacker
+   int     ret4 - The amount of knockback to the target
+ */
+procedure combatdamage_handler begin
+   variable target, attacker, target_damage, attacker_damage, target_flags, attacker_flags, weapon, body_part;
+   variable skill;
+   
+   target := get_sfall_arg;
+   attacker := get_sfall_arg;
+   target_damage := get_sfall_arg;
+   attacker_damage := get_sfall_arg;
+   target_flags := get_sfall_arg;
+   attacker_flags := get_sfall_arg;
+   weapon := get_sfall_arg;
+   body_part := get_sfall_arg;
+   
+   if (target and attacker and weapon and obj_type(target) == OBJ_TYPE_CRITTER) then begin
+      //debug_msg("combatdamage: "+target+" (type:"+obj_type(target)+"), wpn: "+obj_pid(weapon)+", flags: "+target_flags+", part: "+body_part+", is behind: "+attacker_behind_target(attacker, target));
+      // knockout people, hitting them in head with a club from behind
+      skill := has_skill(attacker, SKILL_SNEAK);
+      if (using_skill(attacker, SKILL_SNEAK)
+            and random(ini_knockout_min_skill, ini_knockout_max_skill) < skill
+            and body_part == BODY_HIT_HEAD
+            and is_human(target)
+            and (is_club_weapon(weapon) or is_hammer_weapon(weapon))
+            and attacker_behind_target(attacker, target)) then begin
+         target_flags := target_flags bwor DAM_CRITICAL bwor DAM_KNOCKED_OUT;
+      end
+   end
+
+   set_sfall_return(target_damage);
+   set_sfall_return(attacker_damage);
+   set_sfall_return(target_flags);
+   set_sfall_return(attacker_flags);
+end

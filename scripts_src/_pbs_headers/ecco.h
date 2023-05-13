@@ -8,7 +8,6 @@
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
-#include "../sfall/lib.misc.h"
 
 #define SCRIPT_TEST2            (4)
 

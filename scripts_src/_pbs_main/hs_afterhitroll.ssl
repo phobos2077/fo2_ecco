@@ -45,7 +45,7 @@ procedure start begin
 		 // TODO: move weapon stuff to global script
          if (target and attacker) then begin
             //display_array(pbs_set_who_see_dude);
-	         debug_msg("afterhitroll: "+willHit+" chance="+hitChance+"%% t="+target+" type="+obj_type(target)+" tpid="+obj_pid(target));
+	         //debug_msg("afterhitroll: "+willHit+" chance="+hitChance+"%% t="+target+" type="+obj_type(target)+" tpid="+obj_pid(target));
 	         // for Molotov:
 	         if (obj_type(target) == OBJ_TYPE_CRITTER and (willHit == 2 or willHit == 3)) then damageType := DMG_fire;
 	         else damageType := DMG_explosion;
