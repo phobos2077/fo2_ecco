@@ -15,6 +15,7 @@
            Created:
 
            Updated:
+           - phobos2077: add food seeking logic for trapping
 */
 
 /* Include Files */
@@ -70,10 +71,7 @@ procedure Node001;
 /* Local variables which do not need to be saved between map changes. */
 variable Only_Once:=0;
 
-// by phobos2077: gecko eat food
-#include "..\_pbs_headers\gecko_hunger.h"
-variable food:=0;
-#define FOOD_DETECT_RADIUS    (15)
+#include "..\_pbs_headers\gecko_hunger.h" // phobos2077
 
 
 procedure start begin
@@ -103,17 +101,7 @@ procedure critter_p_proc begin
    if (random(0,200) == 1) then begin
        self_walk_to_tile(tile_num_in_direction(self_tile,random(0,5),random(3,7)));
    end
-   // by phobos2077: geckos lured by food outside of combat
-   else if (random(0, 50) == 1 and not(food)) then begin
-      food := getNearestFoodForGecko(FOOD_DETECT_RADIUS);
-      if (food) then
-         call anim_go_to(food);
-   end else if (food) then if (should_delete_food(food)) then begin
-      use_obj(food);
-      destroy_object(food);
-      food := 0;
-   end
-   // end;
+   else SEEK_AND_EAT_FOOD_GECKO // phobos2077
 end
 
 procedure combat_p_proc begin
@@ -121,7 +109,7 @@ procedure combat_p_proc begin
 
    variable rads;
 
-   food := 0;   // phobos2077: reset food
+   call forgetFood; // phobos2077
    
    if (fixed_param == COMBAT_SUBTYPE_HIT_SUCCEEDED) then begin
       if (target_obj == dude_obj) then begin

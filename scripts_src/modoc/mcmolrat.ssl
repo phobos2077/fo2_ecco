@@ -12,6 +12,7 @@
            Created: December 02, 1997
 
            Updated:
+           - phobos2077: added food seaking for trapping
 */
 
 /* Include Files */
@@ -48,8 +49,6 @@ procedure map_enter_p_proc;
 
 // by phobos2077: rats eat poofs
 #include "..\_pbs_headers\gecko_hunger.h"
-variable food:=0;
-#define FOOD_DETECT_RADIUS    (15)
 
 procedure start begin
 end
@@ -57,7 +56,7 @@ end
 procedure timed_event_p_proc begin
 variable the_tile;
    if (is_slag_mole_rat) then begin
-      if (not(food) and (combat_is_initialized == false) and ((critter_state(self_obj) bwand DAM_KNOCKED_OUT) == FALSE)) then begin
+      if (not(food) and (combat_is_initialized == false) and ((critter_state(self_obj) bwand DAM_KNOCKED_OUT) == FALSE)) then begin // pbs
          the_tile := tile_num_in_direction(self_tile,random(0,5),random(1,3));
          if (obj_in_mole_rat_cage(the_tile)) then begin
             self_walk_to_tile(the_tile);
@@ -75,21 +74,13 @@ procedure critter_p_proc begin
    end
    
    // by phobos2077:
-   if (not(combat_is_initialized)) then begin
-      if (random(0, 50) == 1 and not(food)) then begin
-         food := getNearestFoodForRat(FOOD_DETECT_RADIUS);
-         if (food) then
-            call anim_go_eat_food(food);
-      end else if (food) then if (should_delete_food(food)) then begin
-         destroy_object(food);
-         food := 0;
-      end
-   end
+   if (not(combat_is_initialized)) then SEEK_AND_EAT_FOOD_RAT
    // phobos end
 end
 
 procedure combat_p_proc begin
-   food := 0; // phobos2077
+   call forgetFood; // phobos2077
+
    if (is_mutated_rat) then begin
       if (fixed_param == COMBAT_SUBTYPE_HIT_SUCCEEDED) then begin
          if (target_obj == dude_obj) then begin

@@ -12,6 +12,7 @@
            Created: December 02, 1997
 
            Updated:
+           - phobos2077: added food seaking for trapping
 */
 
 /* Include Files */
@@ -42,14 +43,12 @@ procedure combat_p_proc; // phobos2077
 
 // by phobos2077: rats eat poofs
 #include "..\_pbs_headers\gecko_hunger.h"
-variable food:=0;
-#define FOOD_DETECT_RADIUS    (15)
 
 procedure start begin
 end
 
 procedure timed_event_p_proc begin
-   if (not(food) and (not(combat_is_initialized)) and ((critter_state(self_obj) bwand DAM_KNOCKED_OUT) == FALSE)) then begin
+   if (not(food) and (not(combat_is_initialized)) and ((critter_state(self_obj) bwand DAM_KNOCKED_OUT) == FALSE)) then begin // pbs
       reg_anim_clear(self_obj);
       reg_anim_begin();
          self_walk_to_tile(tile_num_in_direction(self_tile,random(0,5),random(1,3)));
@@ -65,22 +64,12 @@ procedure critter_p_proc begin
       attack(dude_obj);
    end
    // by phobos2077:
-   if (not(combat_is_initialized)) then begin
-      if (random(0, 30) == 1 and not(food)) then begin
-         food := getNearestFoodForRat(FOOD_DETECT_RADIUS);
-         if (food) then begin
-            call anim_go_eat_food(food);
-         end
-      end else if (food) then if (should_delete_food(food)) then begin
-         destroy_object(food);
-         food := 0;
-      end
-   end
+   if (not(combat_is_initialized)) then SEEK_AND_EAT_FOOD_RAT
    // ;
 end
 
 procedure combat_p_proc begin
-   food := 0; // pbs
+   call forgetFood; // pbs
 end
 
 procedure destroy_p_proc begin
