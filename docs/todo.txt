@@ -2,4 +2,4 @@
 - add inventory ap mod from EtTu
 - add modified combat damage script from FO2Tweaks
 - port "grenades anywhere" script from FO2Tweaks
-- remove unused scripts and compile-all script
+

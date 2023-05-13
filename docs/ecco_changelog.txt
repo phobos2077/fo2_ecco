@@ -13,6 +13,7 @@ v0.9.0
 - added Weapon Penetrate to XL70E3
 - removed HK G11E & Pulse Pistol from random encounters
 - small adjustments to ammo&weapon stats based on data analysis
+- added option to have opening inventory cost no AP, but every action cost 2 AP in combat (replaces "drug free uses")
 
 v0.8.0
 (!) rebuilt the mod from the ground up on the new RPU

@@ -3,10 +3,8 @@
    AP costs mod for fallout 2 by phobos2077
    ----------------------------------------
    
-   - AP are reduced even when using items (eg. stimpaks) from the inventory during combat
-   - first few uses are "free"
    - lower cost for unarmed special attacks
-   - higher reload cost based on weapon type
+   - higher reload cost
    
    Requires sfall 3.5 or higher
 
@@ -17,15 +15,10 @@
 #include "../sfall/lib.math.h"
 #include "../_pbs_headers/ecco.h"
 
-#define ITEM_USE_COST   (2)
 
-//variable last_used_item;
-
-variable 
-   ini_drugs_free_uses,
+variable
    ini_unarmed_special_attacks,
    ini_reload_cost;
-
 
 procedure apcost_handler begin
    variable critter, type, aimed, weapon, normalCost, cost;
@@ -33,8 +26,7 @@ procedure apcost_handler begin
    type := get_sfall_arg;
    aimed := get_sfall_arg;
    normalCost := get_sfall_arg;
-   //display_msg("Crit: "+critter+" type: "+type+" arg3: "+aimed);
-   // abc++;
+
    cost := -1;
    if (ini_unarmed_special_attacks > 0) then begin
       if (type == ATKTYPE_PALMSTRIKE) or (type == ATKTYPE_PIERCINGSTRIKE) or (type == ATKTYPE_JAB) then begin
@@ -59,7 +51,6 @@ procedure apcost_handler begin
 end
 
 
-
 variable 
    useobj_time,
    useobj_ap,
@@ -68,51 +59,10 @@ variable
 
 #define load_ini_int(name)       int_from_ini_file(name, INI_COMBAT, "APCOST")
 
-procedure useobjon_handler begin
-   variable target, critter, item, ap, cost;
-   target := get_sfall_arg;
-   critter := get_sfall_arg;
-   item := get_sfall_arg;
-   
-   if (combat_is_initialized) then begin
-      
-      if ((get_game_mode bwand INVENTORY)) then begin
-         ap := get_critter_current_ap(critter);
-         if (game_time != useobj_time or ap != useobj_ap) then // reset counter on next turn or inventory use
-            useobj_count := 0;
-         if (ini_drugs_free_uses != -1 and useobj_count >= ini_drugs_free_uses) then
-            cost := ITEM_USE_COST; 
-         //else if (last_used_item != item) then
-         //   cost := ITEM_USE_COST - 2;
-         else
-            cost := 0;
-         if (cost > 0) then begin
-            if (ap >= ITEM_USE_COST) then begin
-               ap -= cost;
-               set_critter_current_ap(critter, ap);
-            end else begin
-               //if (cost < ITEM_USE_COST) then
-               //   set_critter_current_ap(critter, ap + ITEM_USE_COST - cost);
-               display_msg(sprintf(mstr_combat(100), cost));
-               set_sfall_return(0);
-            end
-         end
-         useobj_count += 1;
-         useobj_ap := ap;
-         useobj_time := game_time;
-      end
-   end
-   //last_used_item := 0;
-end
-
 procedure start begin
    if game_loaded then begin
-      load_ini_int(drugs_free_uses);
       load_ini_int(unarmed_special_attacks);
       load_ini_int(reload_cost);
-      if (in_range(ini_drugs_free_uses, 0, 999)) then begin
-         register_hook_proc(HOOK_USEOBJON, useobjon_handler);
-      end
       if (ini_unarmed_special_attacks > 0 or ini_reload_cost != -1) then begin
          register_hook_proc(HOOK_CALCAPCOST, apcost_handler);
       end

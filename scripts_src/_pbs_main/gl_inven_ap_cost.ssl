@@ -1,0 +1,74 @@
+/*
+   Inventory AP costs mod
+
+      - Reduces inventory opening costs to 0 action points.
+      - Doing anything in the inventory costs 2 action points.
+      - Limits the Quick Pockets perk to 1 rank.
+      - Enabled by APCOST section in combat.ini
+*/
+
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+#include "../sfall/command_lite.h"
+
+#include "../_pbs_headers/ecco.h"
+
+
+#define ITEM_USE_COST   (2 - dude_perk(PERK_quick_pockets))
+
+procedure check_ap (variable critter, variable item) begin
+   variable ap;
+
+   if (combat_is_initialized) then begin
+      if (get_game_mode bwand INVENTORY) then begin
+         ap := get_critter_current_ap(critter);
+
+         if (ap >= ITEM_USE_COST) then begin
+            set_critter_current_ap(critter, ap - ITEM_USE_COST);
+         end
+         else begin
+            display_msg(sprintf(mstr_combat(100), ITEM_USE_COST)); // You need %d action points.
+            set_sfall_return(0);
+         end
+      end
+   end
+end
+
+procedure useobjon_handler begin
+   variable target, critter, item;
+   target := get_sfall_arg;
+   critter := get_sfall_arg;
+   item := get_sfall_arg;
+
+   call check_ap(critter, item);
+end
+
+procedure inventorymove_handler begin
+   variable target, item, critter, item_replaced;
+   target := get_sfall_arg;
+   item := get_sfall_arg;
+   item_replaced := get_sfall_arg;
+   critter := dude_obj;
+
+   //debug_msg("inventory_move " + target + ", item: " + obj_pid(item) + ", replaced: " + obj_pid(item) if item else 0);
+
+   if (item != item_replaced) then begin
+      call check_ap(critter, item);
+   end
+end
+
+procedure start begin
+   if game_loaded then begin
+      if (get_int_from_ini(INI_COMBAT, "APCOST", "inventory_cost_per_action")) then begin
+
+         register_hook_proc(HOOK_USEOBJON, useobjon_handler);
+         register_hook_proc(HOOK_INVENTORYMOVE, inventorymove_handler);
+
+         // This mod will override the inventory opening ap costs from the ddraw.ini
+         // Also makes it so that the Quick Pockets perk can only be taken once.
+         set_inven_ap_cost(0);
+         set_perk_ranks(PERK_quick_pockets, 1);
+      end
+   end
+end

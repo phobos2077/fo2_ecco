@@ -249,8 +249,13 @@
 
 #define INI_COMBAT         "combat.ini"
 #define INI_ECONOMY        "barter.ini"
-#define int_from_ini_file(name, file, section)    ini_##name := get_ini_setting(file "|" section "|" #name)
-#define str_from_ini_file(name, file, section)    ini_##name := get_ini_string(file "|" section "|" #name)
-#define float_from_ini_file(name, file, section)  ini_##name := atof(get_ini_string(file "|" section "|" #name))
+
+#define get_int_from_ini(name, section, setting)       get_ini_setting(name + "|" + section + "|" + setting)
+#define get_str_from_ini(name, section, setting)       get_ini_string(name + "|" + section + "|" + setting)
+#define get_float_from_ini(name, section, setting)     atof(get_ini_string(name + "|" + section + "|" + setting))
+
+#define int_from_ini_file(name, file, section)    ini_##name := get_int_from_ini(file, section, #name)
+#define str_from_ini_file(name, file, section)    ini_##name := get_str_from_ini(file, section, #name)
+#define float_from_ini_file(name, file, section)  ini_##name := get_float_from_ini(file, section, #name)
 
 #endif
