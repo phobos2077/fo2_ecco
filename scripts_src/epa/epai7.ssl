@@ -1,5 +1,8 @@
 /*
   ***   Script conwerted to Interplay format by Fallout Script Edytor (by Jargo)  ***
+  
+  Updated:
+  - phobos2077: added jammed logic for door leading to a room full of loot
 */
 
 #define SCRIPT_REALNAME "epai7"

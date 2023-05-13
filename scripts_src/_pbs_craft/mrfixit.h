@@ -8,8 +8,8 @@
 #include "../headers/itempid.h"
 #include "../sfall/lib.inven.h"
 
-#include "atoi2.ssl"
-#include "custstr2.ssl"
+#include "atoi2.h"
+#include "custstr2.h"
 
 #define CRAFT_MOD_VERSION		3
 

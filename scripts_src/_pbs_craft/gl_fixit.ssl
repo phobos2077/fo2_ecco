@@ -9,7 +9,7 @@ procedure start;
 #define PID_WORKBENCH                (157)
 #define SCRIPT_TEST0                 (2)
 
-#include "test0.ssl"
+#include "mrfixit.h"
 
 procedure close_dialog;
 procedure show_dialog;
