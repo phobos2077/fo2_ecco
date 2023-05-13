@@ -1,0 +1,115 @@
+/**
+   Sneak attack bonus: grants automatic critical hit if player lands a first attack without being detected.
+*/
+
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/lib.arrays.h"
+#include "../_pbs_headers/ecco.h"
+
+variable
+   in_combat := false,
+   set_who_see_dude,
+   ini_sneak_attack_min_skill,
+   ini_sneak_attack_max_skill;
+
+procedure start;
+procedure afterhitroll_handler;
+procedure gamemodechange_handler;
+
+procedure start begin
+   variable tmp;
+
+   if game_loaded then begin
+      if not get_int_from_ini(INI_COMBAT, "STEALTH", "sneak_attack") then begin
+         return;
+      end
+      // migrate from old array system
+      tmp := get_sfall_global_int(SGVAR_CRITTERS_SEE_DUDE);
+      if (tmp) then begin
+         free_array(tmp);
+         set_sfall_global(SGVAR_CRITTERS_SEE_DUDE, 0);
+      end
+      set_who_see_dude := load_create_array(ARR_CRITTERS_SEE_DUDE, 0);
+
+      int_from_ini_file(sneak_attack_min_skill, INI_COMBAT, "STEALTH");
+      int_from_ini_file(sneak_attack_max_skill, INI_COMBAT, "STEALTH");
+
+      register_hook_proc(HOOK_AFTERHITROLL, afterhitroll_handler);
+      register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
+   end
+end
+
+/**
+   Runs once every time when the game mode was changed, like opening/closing the inventory, character screen, pipboy, etc.
+
+   int     arg0 - event type: 1 - when the player exits the game, 0 - otherwise
+   int     arg1 - the previous game mode
+ */
+procedure gamemodechange_handler begin
+   variable newMode, oldMode, crit;
+
+   newMode := get_game_mode;
+   oldMode := get_sfall_arg_at(1);
+
+   // debug_msg("newMode = "+sprintf("%X", newMode) + "oldMode = "+sprintf("%X", oldMode));
+   if (newMode bwand COMBAT and not (oldMode bwand COMBAT)) then begin
+      // At start of combat, remember critters aware about player. This way his first attack might be a sneak attack even if he's actually "detected" in combat.
+      in_combat := true;
+      foreach (crit in list_as_array(LIST_CRITTERS)) if crit then begin
+         if (crit != dude_obj and obj_can_see_obj(crit, dude_obj)) then begin
+            display_msg(proto_data(obj_pid(crit),cr_name) + " see.");
+            call add_array_set(set_who_see_dude, crit);
+         end
+      end
+   end else if (not (newMode bwand COMBAT) and oldMode bwand COMBAT) then begin
+      in_combat := false;
+      // clean set
+      resize_array(set_who_see_dude, 0);
+   end
+end
+
+/**
+   Runs after Fallout has decided if an attack will hit or miss.
+
+   int     arg0 - If the attack will hit: 0 - critical miss, 1 - miss, 2 - hit, 3 - critical hit
+   Critter arg1 - The attacker
+   Critter arg2 - The target of the attack
+   int     arg3 - The bodypart
+   int     arg4 - The hit chance
+
+   int     ret0 - Override the hit/miss
+   int     ret1 - Override the targeted bodypart
+   Critter ret2 - Override the target of the attack
+ */
+procedure afterhitroll_handler begin
+   variable willHit, attacker, target, bodyPart, hitChance, skill;
+
+   willHit := get_sfall_arg;
+   attacker := get_sfall_arg;
+   target := get_sfall_arg;
+   bodyPart := get_sfall_arg;
+   hitChance := get_sfall_arg;
+
+   if (target and attacker) then begin
+      //debug_msg("afterhitroll: "+willHit+" chance="+hitChance+"%% t="+target+" type="+obj_type(target)+" tpid="+obj_pid(target));
+
+      if (obj_type(target) == OBJ_TYPE_CRITTER and attacker == dude_obj) then begin
+         skill := has_skill(attacker, SKILL_SNEAK);
+         if ((willHit == 2 or willHit == 3)
+            and using_skill(attacker, SKILL_SNEAK)
+            and random(ini_sneak_attack_min_skill, ini_sneak_attack_max_skill) < skill
+            //and (obj_can_see_obj(target,attacker)==0 or attacker_behind_target(attacker,target) )
+            and not(is_in_array(target, set_who_see_dude))) then
+         begin
+            // force critical and display message
+            set_sfall_return(3);
+            if (attacker == dude_obj) then display_msg(combat_mstr(5001));
+         end
+         call add_array_set(set_who_see_dude, target);
+      end else if (target == dude_obj and obj_type(attacker) == OBJ_TYPE_CRITTER) then begin
+         // Add attacker to set_who_see_dude regardless of attack result. If they tried attacking, sneak attack won't make sense afterwards.
+         call add_array_set(set_who_see_dude, attacker);
+      end
+   end
+end
