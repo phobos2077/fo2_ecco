@@ -57,7 +57,7 @@ procedure itemdamage_handler begin
 
       if (damageType == DMG_normal_dam and attackType >= ATKTYPE_LWEP1 and attackType <= ATKTYPE_RWEP2) then begin
          // actual weapon attack mode
-         attackMode := weapon_attack_mode1(weaponPid) if attackType == ATKTYPE_LWEP1 or attackType == ATKTYPE_RWEP1 else weapon_attack_mode2(weaponPid);
+         attackMode := weapon_attack_mode(weaponPid, attackType);
          //debug_msg("atkmode: " + attackMode);
          if (attackMode == ATTACK_MODE_THROW) then begin
             skill := has_skill(attacker, SKILL_THROWING);

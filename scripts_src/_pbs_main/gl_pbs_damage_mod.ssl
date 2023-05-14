@@ -1,0 +1,362 @@
+
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+#include "../sfall/sfall.h"
+
+procedure start;
+procedure combatdamage_handler;
+procedure itemdamage_handler;
+procedure check_damage_formula;
+procedure damage_formula_YAAM(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult, variable difficulty);
+procedure item_w_subtype(variable weapon, variable hit_mode);
+procedure get_ammo_value(variable weapon, variable param);
+procedure map_enter_p_proc;
+procedure round_chance(variable dmg);
+
+variable
+   item_damage_min,
+   item_damage_max,
+   item_damage_weapon,
+   item_damage_attacker;
+
+procedure start begin
+  if game_loaded then begin
+    call check_damage_formula;
+
+    register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
+    register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
+  end
+end
+
+
+/**
+   HOOK_COMBATDAMAGE
+   
+   Runs when:
+
+   Game calculates how much damage each target will get. This includes primary target as well as all extras (explosions and bursts). This happens BEFORE the actual attack animation.
+   AI decides whether it is safe to use area attack (burst, grenades), if he might hit friendlies.
+   Does not run for misses, or non-combat damage like dynamite explosions.
+
+   Critter arg0  - The target
+   Critter arg1  - The attacker
+   int     arg2  - The amount of damage to the target
+   int     arg3  - The amount of damage to the attacker
+   int     arg4  - The special effect flags for the target (use bwand DAM_* to check specific flags)
+   int     arg5  - The special effect flags for the attacker (use bwand DAM_* to check specific flags)
+   int     arg6  - The weapon used in the attack
+   int     arg7  - The bodypart that was struck
+   int     arg8  - Damage Multiplier (this is divided by 2, so a value of 3 does 1.5x damage, and 8 does 4x damage. Usually it's 2; for critical hits, the value is taken from the critical table; with Silent Death perk and the corresponding attack conditions, the value will be doubled)
+   int     arg9 - Number of bullets actually hit the target (1 for melee attacks)
+   int     arg10 - The amount of knockback to the target
+   int     arg11 - Attack Type (see ATKTYPE_* constants)
+   mixed   arg12 - computed attack data (see C_ATTACK_* for offsets and use get/set_object_data functions to get/set the data)
+
+   int     ret0 - The damage to the target
+   int     ret1 - The damage to the attacker
+   int     ret2 - The special effect flags for the target
+   int     ret3 - The special effect flags for the attacker
+   int     ret4 - The amount of knockback to the target
+ */
+procedure combatdamage_handler begin
+   variable dmg_type, weapon_perk, critterDT, critterDR, weapon_subtype, bonus_ranged, difficulty, i, dmg_mult, dmg_div, damage;
+   variable target, flags, knockback, amount;
+
+   variable
+      ctdTarget        := get_sfall_arg,
+      ctdSource        := get_sfall_arg,
+      amountTarget     := get_sfall_arg,
+      amountSource     := get_sfall_arg,
+      flagsTarget      := get_sfall_arg,
+      flagsSource      := get_sfall_arg,
+      weapon           := get_sfall_arg,
+      bodypart         := get_sfall_arg,
+      damageMultiplier := get_sfall_arg,
+      rounds           := get_sfall_arg,
+      amountKnockback  := get_sfall_arg,
+      hit_mode         := get_sfall_arg;
+
+   if (ctdSource != item_damage_attacker or weapon != item_damage_weapon) then begin
+      debug_msg("! ERROR ! damage_mod: Expected attacker and weapon differs!");
+      return;
+   end
+
+   if (flagsSource bwand DAM_HIT) then begin
+      target := ctdTarget;
+      flags := flagsTarget;
+      knockback := 1;
+   end else begin
+      target := ctdSource;
+      flags := flagsSource;
+      knockback := 0;
+   end
+
+   //amount := 0;
+   if target and (obj_type(target) == OBJ_TYPE_CRITTER) then begin
+      if weapon then begin
+         dmg_type := weapon_dmg_type(weapon);
+         weapon_perk := get_proto_data(obj_pid(weapon), PROTO_WP_PERK);
+      end else begin
+         dmg_type := DMG_normal_dam;
+         weapon_perk := -1;
+      end
+
+      critterDT := get_critter_stat(target, STAT_dmg_thresh + dmg_type);
+      critterDR := get_critter_stat(target, STAT_dmg_resist + dmg_type);
+
+      if (flags bwand DAM_BYPASS) and (dmg_type != DMG_emp) then begin
+         critterDT := critterDT * 20 / 100;
+         critterDR := critterDR * 20 / 100;
+      end else begin
+         if (weapon_perk == PERK_weapon_penetrate)
+            or (hit_mode == ATKTYPE_PALMSTRIKE or hit_mode == ATKTYPE_PIERCINGSTRIKE
+            or hit_mode == ATKTYPE_HOOKKICK or hit_mode == ATKTYPE_PIERCINGKICK) then
+            critterDT := critterDT * 20 / 100;
+   
+         if ctdSource == dude_obj and has_trait(TRAIT_TRAIT, ctdSource, TRAIT_finesse) then
+            critterDR += 30;
+      end
+
+      weapon_subtype := item_w_subtype(weapon, hit_mode); // item_w_subtype_
+      if (ctdSource != dude_obj) or (weapon_subtype != WEAPON_TYPE_RANGED) then
+         bonus_ranged := 0;
+      else
+         bonus_ranged := has_trait(TRAIT_PERK, ctdSource, PERK_bonus_ranged_damage) * 2;
+
+      difficulty := 100;
+      if (has_trait(TRAIT_OBJECT, ctdSource, OBJECT_TEAM_NUM) != has_trait(TRAIT_OBJECT, dude_obj, OBJECT_TEAM_NUM)) then begin
+         if (combat_difficulty == 0) then
+            difficulty := 75;
+         else if (combat_difficulty == 2) then
+            difficulty := 125;
+      end
+
+      
+      // F2 default start
+      // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
+      amount := damage_formula_YAAM(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty);
+      /*dmg_resist += get_ammo_value(weapon, PROTO_AM_DR_MOD); // item_w_dr_adjust_ (DR Adjust %)
+      if (dmg_resist < 100) then begin
+         if (dmg_resist < 0) then dmg_resist := 0;
+
+         dmg_mult := damageMultiplier * get_ammo_value(weapon, PROTO_AM_DMG_MULT); // item_w_dam_mult_ (Dmg mod A)
+         dmg_div := get_ammo_value(weapon, PROTO_AM_DMG_DIV); // item_w_dam_div_ (Dmg mod B)
+
+         for (i := 1; i <= rounds; i++) begin
+            damage := (random(item_damage_min, item_damage_max) + bonus_ranged) * dmg_mult; // item_w_damage_ (raw_damage)
+            if dmg_div then damage /= dmg_div;
+
+            damage := (((damage / 2) * difficulty) / 100) - critterDT;
+            if (damage > 0) then begin
+               damage := damage - ((damage * dmg_resist) / 100); // reduce damage by the percentage of DR_armor + DR_Ammo
+               if (damage > 0) then amount += damage;
+            end
+         end
+      end*/
+      // F2 default end
+
+      if (ctdSource == dude_obj) then begin
+         if has_trait(TRAIT_PERK, ctdSource, PERK_living_anatomy_perk) and (critter_kill_type(ctdTarget) != KILL_TYPE_robot_kills)
+            and (critter_kill_type(ctdTarget) != KILL_TYPE_alien_kills) then
+            amount += 5;
+         if has_trait(TRAIT_PERK, ctdSource, PERK_pyromaniac_perk) and (dmg_type == DMG_fire) then
+            amount += 5;
+      end
+
+      if knockback and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)
+         and (dmg_type == DMG_explosion or weapon == 0 or weapon_subtype == WEAPON_TYPE_MELEE)
+         and ((get_proto_data(obj_pid(target), PROTO_CR_FLAGS) bwand CFLG_NOKNOCKDOWN) == 0) then begin // critter_flag_check_
+         damage := 0;
+         if (target == dude_obj) and has_trait(TRAIT_PERK, target, PERK_stonewall_perk) then begin
+            damage := 1;
+            if (random(0, 100) < 50) then knockback := 0;
+         end
+         if knockback then begin
+            if (weapon_perk == PERK_weapon_knockback) then
+               amountKnockback := amount / 5;
+            else
+               amountKnockback := amount / 10;
+
+            if damage then amountKnockback /= 2;
+         end
+      end
+   end
+
+   if (flagsSource bwand DAM_HIT) then begin
+      display_msg("COMBATDAMAGE amountTarget = " + amountTarget+ ", amount = " + amount);
+      amountTarget := amount;
+      flagsTarget := flags;
+   end else begin
+      display_msg("COMBATDAMAGE amountSource = " + amountSource+ ", amount = " + amount);
+      amountSource := amount;
+      flagsSource := flags;
+   end
+
+   set_sfall_return(amountTarget);
+   set_sfall_return(amountSource);
+   set_sfall_return(flagsTarget);
+   set_sfall_return(flagsSource);
+   set_sfall_return(amountKnockback);
+
+   set_sfall_arg(2, amountTarget);
+   set_sfall_arg(3, amountSource);
+   set_sfall_arg(4, flagsTarget);
+   set_sfall_arg(5, flagsSource);
+   set_sfall_arg(10, amountKnockback);
+end
+
+
+
+/*
+   Differences from YAAM:
+   - All calculations are in float and rounded once per bullet using probabilistic rounding.
+   - Critical damage multiplier is only applied to the first "round".
+*/
+procedure damage_formula_YAAM(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult, variable difficulty) begin
+   variable accumulatedDamage, ammoDiv, ammoMult, ammoDT, calcDRMod, calcDT, calcDR, i, rawDamage, resistedDamage, staticMult;
+   if (rounds <= 0) then begin
+      return 0;
+   end
+
+   ammoDiv := get_ammo_value(weapon, PROTO_AM_DMG_DIV);
+   if (ammoDiv == 0) then ammoDiv := 1; // prevent divide by zero
+   ammoMult := get_ammo_value(weapon, PROTO_AM_DMG_MULT);
+
+   // Retrieve ammo DR Mod (we use it as DT)
+   ammoDT := get_ammo_value(weapon, PROTO_AM_DR_MOD);   
+
+   calcDT := targetDT - ammoDT;
+   calcDRMod := calcDT * 10 if calcDT < 0 else 0;
+
+   // DR = armor DR + DT (note that DT should be less than or equal to zero)
+   calcDR := targetDR + calcDRMod;
+   if (calcDR < 0) then begin
+      calcDR := 0;
+   end else if (calcDR >= 100) then begin
+      return 0;
+   end
+
+   criticalMult *= 0.5;
+   staticMult := 0.01 * difficulty * ammoMult / ammoDiv;
+
+   display_msg("YAAM: AmmoDT="+ammoDT+", DT="+calcDT+"/"+targetDT+", DR="+calcDR+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
+   // Start of damage calculation loop
+   for (i := 0; i < rounds; i++) begin
+      rawDamage := random(item_damage_min, item_damage_max) + rangedBonus - calcDT;
+      if (rawDamage <= 0) then
+         continue;
+
+      rawDamage := round_chance(rawDamage * staticMult * (1 - calcDR / 100.0) * (criticalMult if i == 0 else 1));
+
+      if (rawDamage > 0) then begin
+         display_msg("YAAM: Bullet "+i+" dmg="+rawDamage);
+         accumulatedDamage += rawDamage;
+      end
+   end
+   return accumulatedDamage;
+end
+
+/*
+procedure calc_effective_drdt(critterDT, critterDR, bypass) begin
+   if (flags bwand DAM_BYPASS) and (dmg_type != DMG_emp) then begin
+      dmg_thresh := dmg_thresh * 20 / 100;
+      dmg_resist := dmg_resist * 20 / 100;
+   end else begin
+      if (weapon_perk == PERK_weapon_penetrate)
+         or (hit_mode == ATKTYPE_PALMSTRIKE or hit_mode == ATKTYPE_PIERCINGSTRIKE
+         or hit_mode == ATKTYPE_HOOKKICK or hit_mode == ATKTYPE_PIERCINGKICK) then
+         dmg_thresh := dmg_thresh * 20 / 100;
+
+      if ctdSource == dude_obj and has_trait(TRAIT_TRAIT, ctdSource, TRAIT_finesse) then
+         dmg_resist += 30;
+   end
+end
+*/
+
+/*
+   HOOK_ITEMDAMAGE
+   Runs when retrieving the damage rating of the player's used weapon. (Which may be their fists.)
+
+   int     arg0 - The default min damage
+   int     arg1 - The default max damage
+   Item    arg2 - The weapon used (0 if unarmed)
+   Critter arg3 - The critter doing the attacking
+   int     arg4 - The type of attack
+   int     arg5 - non-zero if this is an attack using a melee weapon
+
+   int     ret0 - Either the damage to be used, if ret1 isn't given, or the new minimum damage if it is
+   int     ret1 - The new maximum damage
+*/
+procedure itemdamage_handler begin
+   item_damage_min := get_sfall_arg;
+   item_damage_max := get_sfall_arg;
+   item_damage_weapon := get_sfall_arg;
+   item_damage_attacker := get_sfall_arg;
+      //hit_mode := get_sfall_arg,
+      //isMelee := get_sfall_arg;
+
+   display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max);
+end
+
+procedure item_w_subtype(variable weapon, variable hit_mode) begin
+   variable attack_mode, type := WEAPON_TYPE_UNARMED;
+
+   if weapon and (hit_mode <= ATKTYPE_RWEP2) then begin
+      attack_mode := weapon_attack_mode(obj_pid(weapon), hit_mode);
+      
+      if (attack_mode >= ATTACK_MODE_SINGLE) then
+         type := WEAPON_TYPE_RANGED;
+      else if (attack_mode == ATTACK_MODE_THROW) then
+         type := WEAPON_TYPE_THROWN;
+      else if (attack_mode >= ATTACK_MODE_SWING) then
+         type := WEAPON_TYPE_MELEE;
+      else if (attack_mode == ATTACK_MODE_NONE) then
+         type := WEAPON_TYPE_NONE;
+   end
+
+   return type;
+end
+
+procedure get_ammo_value(variable weapon, variable param) begin
+   variable pid := -1, value := 0; // default DR value
+
+   if weapon then begin
+      pid := get_weapon_ammo_pid(weapon);
+      if (pid > -1) then value := get_proto_data(pid, param);
+   end
+   if (pid == -1 and param != PROTO_AM_DR_MOD) then value := 1; // default value for Mult/Div
+
+   return value;
+end
+
+procedure map_enter_p_proc begin
+   call check_damage_formula;
+end
+
+procedure check_damage_formula begin
+  variable damage_formula = get_ini_setting("ddraw.ini|Misc|DamageFormula");
+  if damage_formula != 0 then begin
+    debug_msg("Damage Formula set to, resetting" + damage_formula);
+    set_ini_setting("ddraw.ini|Misc|DamageFormula", 0);
+    float_msg(dude_obj, "EcCo: damage formula setting in ddraw.ini was incorrect, damage mod failed to load. The setting is fixed now. EXIT AND RE-LAUNCH THE GAME now.", FLOAT_MSG_WARNING);
+    return false;
+  end
+  return true;
+end
+
+
+// 1.2 damage has 20% chance to be rounded up to 2
+// by burn
+procedure round_chance(variable dmg) begin
+   variable base_dmg = floor2(dmg);
+   variable chance = (dmg - base_dmg)*100;
+   variable rnd = random(1, 100);
+   variable final_dmg;
+
+   if dmg < 0 then begin
+      debug_msg("dmg is " + dmg + ", rounded dmg is 0");
+      return 0;
+   end
+   return (base_dmg + 1) if chance > rnd else base_dmg;
+end
+

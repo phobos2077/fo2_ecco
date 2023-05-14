@@ -1,6 +1,10 @@
-- move custom weapon features into one script
+for 0.9:
+- tweak damage formula
+- attempt to change bullet distribution in bursts (ComputeSpray + burst size reduction?)
 - add 7.62 AP ammo & rebalance 7.62 weapons
-- add inventory ap mod from EtTu
-- add modified combat damage script from FO2Tweaks
-- port "grenades anywhere" script from FO2Tweaks
+- review perk/skill reqs for early craft (too high from feedback)
 
+
+for "future":
+- port "grenades anywhere" script from FO2Tweaks
+- add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
