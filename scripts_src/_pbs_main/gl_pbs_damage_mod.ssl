@@ -7,8 +7,11 @@ procedure start;
 procedure combatdamage_handler;
 procedure itemdamage_handler;
 procedure check_damage_formula;
-procedure damage_formula_YAAM(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult, variable difficulty);
-procedure item_w_subtype(variable weapon, variable hit_mode);
+procedure damage_formula_YAAM2(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus,
+   variable criticalMult, variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType);
+procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDT, variable ctdSource, variable bypass,
+   variable weaponPerk, variable attackType);
+procedure item_w_subtype(variable weapon, variable attackType);
 procedure get_ammo_value(variable weapon, variable param);
 procedure map_enter_p_proc;
 procedure round_chance(variable dmg);
@@ -59,7 +62,7 @@ end
    int     ret4 - The amount of knockback to the target
  */
 procedure combatdamage_handler begin
-   variable dmg_type, weapon_perk, critterDT, critterDR, weapon_subtype, bonus_ranged, difficulty, i, dmg_mult, dmg_div, damage;
+   variable dmgType, weaponPerk, critterDT, critterDR, weapon_subtype, bonus_ranged, difficulty, i, dmg_mult, dmg_div, damage;
    variable target, flags, knockback, amount;
 
    variable
@@ -74,7 +77,7 @@ procedure combatdamage_handler begin
       damageMultiplier := get_sfall_arg,
       rounds           := get_sfall_arg,
       amountKnockback  := get_sfall_arg,
-      hit_mode         := get_sfall_arg;
+      attackType         := get_sfall_arg;
 
    if (ctdSource != item_damage_attacker or weapon != item_damage_weapon) then begin
       debug_msg("! ERROR ! damage_mod: Expected attacker and weapon differs!");
@@ -91,94 +94,82 @@ procedure combatdamage_handler begin
       knockback := 0;
    end
 
-   //amount := 0;
-   if target and (obj_type(target) == OBJ_TYPE_CRITTER) then begin
-      if weapon then begin
-         dmg_type := weapon_dmg_type(weapon);
-         weapon_perk := get_proto_data(obj_pid(weapon), PROTO_WP_PERK);
-      end else begin
-         dmg_type := DMG_normal_dam;
-         weapon_perk := -1;
-      end
+   if not target or (obj_type(target) != OBJ_TYPE_CRITTER) then begin
+      return;
+   end
 
-      critterDT := get_critter_stat(target, STAT_dmg_thresh + dmg_type);
-      critterDR := get_critter_stat(target, STAT_dmg_resist + dmg_type);
+   if weapon then begin
+      dmgType := weapon_dmg_type(weapon);
+      weaponPerk := get_proto_data(obj_pid(weapon), PROTO_WP_PERK);
+   end else begin
+      dmgType := DMG_normal_dam;
+      weaponPerk := -1;
+   end
 
-      if (flags bwand DAM_BYPASS) and (dmg_type != DMG_emp) then begin
-         critterDT := critterDT * 20 / 100;
-         critterDR := critterDR * 20 / 100;
-      end else begin
-         if (weapon_perk == PERK_weapon_penetrate)
-            or (hit_mode == ATKTYPE_PALMSTRIKE or hit_mode == ATKTYPE_PIERCINGSTRIKE
-            or hit_mode == ATKTYPE_HOOKKICK or hit_mode == ATKTYPE_PIERCINGKICK) then
-            critterDT := critterDT * 20 / 100;
+   critterDT := get_critter_stat(target, STAT_dmg_thresh + dmgType);
+   critterDR := get_critter_stat(target, STAT_dmg_resist + dmgType);
+
+   weapon_subtype := item_w_subtype(weapon, attackType); // item_w_subtype_
+   if (ctdSource != dude_obj) or (weapon_subtype != WEAPON_TYPE_RANGED) then
+      bonus_ranged := 0;
+   else
+      bonus_ranged := has_trait(TRAIT_PERK, ctdSource, PERK_bonus_ranged_damage) * 2;
+
+   difficulty := 100;
+   if (has_trait(TRAIT_OBJECT, ctdSource, OBJECT_TEAM_NUM) != has_trait(TRAIT_OBJECT, dude_obj, OBJECT_TEAM_NUM)) then begin
+      if (combat_difficulty == 0) then
+         difficulty := 75;
+      else if (combat_difficulty == 2) then
+         difficulty := 125;
+   end
+
    
-         if ctdSource == dude_obj and has_trait(TRAIT_TRAIT, ctdSource, TRAIT_finesse) then
-            critterDR += 30;
-      end
+   // F2 default start
+   // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
+   amount := damage_formula_YAAM2(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
+   /*dmg_resist += get_ammo_value(weapon, PROTO_AM_DR_MOD); // item_w_dr_adjust_ (DR Adjust %)
+   if (dmg_resist < 100) then begin
+      if (dmg_resist < 0) then dmg_resist := 0;
 
-      weapon_subtype := item_w_subtype(weapon, hit_mode); // item_w_subtype_
-      if (ctdSource != dude_obj) or (weapon_subtype != WEAPON_TYPE_RANGED) then
-         bonus_ranged := 0;
-      else
-         bonus_ranged := has_trait(TRAIT_PERK, ctdSource, PERK_bonus_ranged_damage) * 2;
+      dmg_mult := damageMultiplier * get_ammo_value(weapon, PROTO_AM_DMG_MULT); // item_w_dam_mult_ (Dmg mod A)
+      dmg_div := get_ammo_value(weapon, PROTO_AM_DMG_DIV); // item_w_dam_div_ (Dmg mod B)
 
-      difficulty := 100;
-      if (has_trait(TRAIT_OBJECT, ctdSource, OBJECT_TEAM_NUM) != has_trait(TRAIT_OBJECT, dude_obj, OBJECT_TEAM_NUM)) then begin
-         if (combat_difficulty == 0) then
-            difficulty := 75;
-         else if (combat_difficulty == 2) then
-            difficulty := 125;
-      end
+      for (i := 1; i <= rounds; i++) begin
+         damage := (random(item_damage_min, item_damage_max) + bonus_ranged) * dmg_mult; // item_w_damage_ (raw_damage)
+         if dmg_div then damage /= dmg_div;
 
-      
-      // F2 default start
-      // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
-      amount := damage_formula_YAAM(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty);
-      /*dmg_resist += get_ammo_value(weapon, PROTO_AM_DR_MOD); // item_w_dr_adjust_ (DR Adjust %)
-      if (dmg_resist < 100) then begin
-         if (dmg_resist < 0) then dmg_resist := 0;
-
-         dmg_mult := damageMultiplier * get_ammo_value(weapon, PROTO_AM_DMG_MULT); // item_w_dam_mult_ (Dmg mod A)
-         dmg_div := get_ammo_value(weapon, PROTO_AM_DMG_DIV); // item_w_dam_div_ (Dmg mod B)
-
-         for (i := 1; i <= rounds; i++) begin
-            damage := (random(item_damage_min, item_damage_max) + bonus_ranged) * dmg_mult; // item_w_damage_ (raw_damage)
-            if dmg_div then damage /= dmg_div;
-
-            damage := (((damage / 2) * difficulty) / 100) - critterDT;
-            if (damage > 0) then begin
-               damage := damage - ((damage * dmg_resist) / 100); // reduce damage by the percentage of DR_armor + DR_Ammo
-               if (damage > 0) then amount += damage;
-            end
+         damage := (((damage / 2) * difficulty) / 100) - critterDT;
+         if (damage > 0) then begin
+            damage := damage - ((damage * dmg_resist) / 100); // reduce damage by the percentage of DR_armor + DR_Ammo
+            if (damage > 0) then amount += damage;
          end
-      end*/
-      // F2 default end
-
-      if (ctdSource == dude_obj) then begin
-         if has_trait(TRAIT_PERK, ctdSource, PERK_living_anatomy_perk) and (critter_kill_type(ctdTarget) != KILL_TYPE_robot_kills)
-            and (critter_kill_type(ctdTarget) != KILL_TYPE_alien_kills) then
-            amount += 5;
-         if has_trait(TRAIT_PERK, ctdSource, PERK_pyromaniac_perk) and (dmg_type == DMG_fire) then
-            amount += 5;
       end
+   end*/
+   // F2 default end
 
-      if knockback and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)
-         and (dmg_type == DMG_explosion or weapon == 0 or weapon_subtype == WEAPON_TYPE_MELEE)
-         and ((get_proto_data(obj_pid(target), PROTO_CR_FLAGS) bwand CFLG_NOKNOCKDOWN) == 0) then begin // critter_flag_check_
-         damage := 0;
-         if (target == dude_obj) and has_trait(TRAIT_PERK, target, PERK_stonewall_perk) then begin
-            damage := 1;
-            if (random(0, 100) < 50) then knockback := 0;
-         end
-         if knockback then begin
-            if (weapon_perk == PERK_weapon_knockback) then
-               amountKnockback := amount / 5;
-            else
-               amountKnockback := amount / 10;
+   if (ctdSource == dude_obj) then begin
+      if has_trait(TRAIT_PERK, ctdSource, PERK_living_anatomy_perk) and (critter_kill_type(ctdTarget) != KILL_TYPE_robot_kills)
+         and (critter_kill_type(ctdTarget) != KILL_TYPE_alien_kills) then
+         amount += 5;
+      if has_trait(TRAIT_PERK, ctdSource, PERK_pyromaniac_perk) and (dmgType == DMG_fire) then
+         amount += 5;
+   end
 
-            if damage then amountKnockback /= 2;
-         end
+   if knockback and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)
+      and (dmgType == DMG_explosion or weapon == 0 or weapon_subtype == WEAPON_TYPE_MELEE)
+      and ((get_proto_data(obj_pid(target), PROTO_CR_FLAGS) bwand CFLG_NOKNOCKDOWN) == 0) then begin // critter_flag_check_
+      damage := 0;
+      if (target == dude_obj) and has_trait(TRAIT_PERK, target, PERK_stonewall_perk) then begin
+         damage := 1;
+         if (random(0, 100) < 50) then knockback := 0;
+      end
+      if knockback then begin
+         if (weaponPerk == PERK_weapon_knockback) then
+            amountKnockback := amount / 5;
+         else
+            amountKnockback := amount / 10;
+
+         if damage then amountKnockback /= 2;
       end
    end
 
@@ -210,10 +201,12 @@ end
 /*
    Differences from YAAM:
    - All calculations are in float and rounded once per bullet using probabilistic rounding.
-   - Critical damage multiplier is only applied to the first "round".
+   - Critical damage multiplier and armor bypass is only applied to the first "round".
 */
-procedure damage_formula_YAAM(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult, variable difficulty) begin
-   variable accumulatedDamage, ammoDiv, ammoMult, ammoDT, calcDRMod, calcDT, calcDR, i, rawDamage, resistedDamage, staticMult;
+procedure damage_formula_YAAM2(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult,
+      variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType)
+begin
+   variable accumulatedDamage, ammoDiv, ammoMult, ammoDT, calcDRMod, i, rawDamage, staticMult, calcDTDR, bypassArmor;
    if (rounds <= 0) then begin
       return 0;
    end
@@ -221,9 +214,62 @@ procedure damage_formula_YAAM(variable weapon, variable rounds, variable targetD
    ammoDiv := get_ammo_value(weapon, PROTO_AM_DMG_DIV);
    if (ammoDiv == 0) then ammoDiv := 1; // prevent divide by zero
    ammoMult := get_ammo_value(weapon, PROTO_AM_DMG_MULT);
+   ammoDT := get_ammo_value(weapon, PROTO_AM_DR_MOD); // we use DR mod as DT&DR mod
 
-   // Retrieve ammo DR Mod (we use it as DT)
-   ammoDT := get_ammo_value(weapon, PROTO_AM_DR_MOD);   
+   bypassArmor := (flags bwand DAM_BYPASS) and dmgType != DMG_emp;
+
+   // For the first bullet
+   calcDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDT, ctdSource, bypassArmor, weaponPerk, attackType);
+
+   staticMult := 0.01 * difficulty * ammoMult / ammoDiv;
+   criticalMult *= 0.5;
+
+   display_msg("YAAM: AmmoDT="+ammoDT+", DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
+
+   // Start of damage calculation loop
+   for (i := 0; i < rounds; i++) begin
+      // After first bullet, don't allow any more criticals, to make bursts less OP.
+      if (i == 1) then begin
+         if (bypassArmor) then begin
+            calcDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDT, ctdSource, false, weaponPerk, attackType);
+            display_msg("YAAM, consequitive: DT="+calcDTDR[0]+", DR="+calcDTDR[1]);
+         end
+         if (criticalMult > 1) then begin
+            criticalMult := 1;
+         end
+      end
+
+      rawDamage := random(item_damage_min, item_damage_max) + rangedBonus - calcDTDR[0];
+      if (rawDamage <= 0) then
+         continue;
+
+      rawDamage := round_chance(rawDamage * staticMult * (1 - calcDTDR[1] / 100.0) * criticalMult);
+
+      if (rawDamage > 0) then begin
+         display_msg("YAAM: Bullet "+i+" dmg="+rawDamage);
+         accumulatedDamage += rawDamage;
+      end
+   end
+   return accumulatedDamage;
+end
+
+
+procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDT, variable ctdSource, variable bypassArmor,
+   variable weaponPerk, variable attackType)
+begin
+   variable calcDT, calcDR, calcDRMod;
+   if (bypassArmor) then begin
+      targetDT := targetDT * 20 / 100;
+      targetDR := targetDR * 20 / 100;
+   end else begin
+      if (weaponPerk == PERK_weapon_penetrate)
+         or (attackType == ATKTYPE_PALMSTRIKE or attackType == ATKTYPE_PIERCINGSTRIKE
+         or attackType == ATKTYPE_HOOKKICK or attackType == ATKTYPE_PIERCINGKICK) then
+         targetDT := targetDT * 20 / 100;
+
+      if ctdSource == dude_obj and has_trait(TRAIT_TRAIT, ctdSource, TRAIT_finesse) then
+         targetDR += 30;
+   end
 
    calcDT := targetDT - ammoDT;
    calcDRMod := calcDT * 10 if calcDT < 0 else 0;
@@ -235,43 +281,8 @@ procedure damage_formula_YAAM(variable weapon, variable rounds, variable targetD
    end else if (calcDR >= 100) then begin
       return 0;
    end
-
-   criticalMult *= 0.5;
-   staticMult := 0.01 * difficulty * ammoMult / ammoDiv;
-
-   display_msg("YAAM: AmmoDT="+ammoDT+", DT="+calcDT+"/"+targetDT+", DR="+calcDR+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
-   // Start of damage calculation loop
-   for (i := 0; i < rounds; i++) begin
-      rawDamage := random(item_damage_min, item_damage_max) + rangedBonus - calcDT;
-      if (rawDamage <= 0) then
-         continue;
-
-      rawDamage := round_chance(rawDamage * staticMult * (1 - calcDR / 100.0) * (criticalMult if i == 0 else 1));
-
-      if (rawDamage > 0) then begin
-         display_msg("YAAM: Bullet "+i+" dmg="+rawDamage);
-         accumulatedDamage += rawDamage;
-      end
-   end
-   return accumulatedDamage;
+   return [calcDT, calcDR];
 end
-
-/*
-procedure calc_effective_drdt(critterDT, critterDR, bypass) begin
-   if (flags bwand DAM_BYPASS) and (dmg_type != DMG_emp) then begin
-      dmg_thresh := dmg_thresh * 20 / 100;
-      dmg_resist := dmg_resist * 20 / 100;
-   end else begin
-      if (weapon_perk == PERK_weapon_penetrate)
-         or (hit_mode == ATKTYPE_PALMSTRIKE or hit_mode == ATKTYPE_PIERCINGSTRIKE
-         or hit_mode == ATKTYPE_HOOKKICK or hit_mode == ATKTYPE_PIERCINGKICK) then
-         dmg_thresh := dmg_thresh * 20 / 100;
-
-      if ctdSource == dude_obj and has_trait(TRAIT_TRAIT, ctdSource, TRAIT_finesse) then
-         dmg_resist += 30;
-   end
-end
-*/
 
 /*
    HOOK_ITEMDAMAGE
@@ -292,17 +303,17 @@ procedure itemdamage_handler begin
    item_damage_max := get_sfall_arg;
    item_damage_weapon := get_sfall_arg;
    item_damage_attacker := get_sfall_arg;
-      //hit_mode := get_sfall_arg,
+      //attackType := get_sfall_arg,
       //isMelee := get_sfall_arg;
 
    display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max);
 end
 
-procedure item_w_subtype(variable weapon, variable hit_mode) begin
+procedure item_w_subtype(variable weapon, variable attackType) begin
    variable attack_mode, type := WEAPON_TYPE_UNARMED;
 
-   if weapon and (hit_mode <= ATKTYPE_RWEP2) then begin
-      attack_mode := weapon_attack_mode(obj_pid(weapon), hit_mode);
+   if weapon and (attackType <= ATKTYPE_RWEP2) then begin
+      attack_mode := weapon_attack_mode(obj_pid(weapon), attackType);
       
       if (attack_mode >= ATTACK_MODE_SINGLE) then
          type := WEAPON_TYPE_RANGED;
