@@ -1,7 +1,9 @@
 
+#include "../sfall/lib.math.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 #include "../sfall/sfall.h"
+#include "../_pbs_headers/ecco.h"
 
 procedure start;
 procedure combatdamage_handler;
@@ -16,19 +18,24 @@ procedure get_ammo_value(variable weapon, variable param);
 procedure map_enter_p_proc;
 procedure round_chance(variable dmg);
 
+#define INI_SECTION   "DAMAGE"
+
 variable
    item_damage_min,
    item_damage_max,
    item_damage_weapon,
-   item_damage_attacker;
+   item_damage_attacker,
+   ini_burst_critical_fraction;
 
 procedure start begin
-  if game_loaded then begin
-    call check_damage_formula;
-
-    register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
-    register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
-  end
+   if game_loaded then begin
+      call check_damage_formula;
+      float_from_ini_file(burst_critical_fraction, INI_COMBAT, INI_SECTION);
+      ini_burst_critical_fraction := get_clamped(ini_burst_critical_fraction, 0.0, 1.0);
+      
+      register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
+      register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
+   end
 end
 
 
@@ -201,12 +208,12 @@ end
 /*
    Differences from YAAM:
    - All calculations are in float and rounded once per bullet using probabilistic rounding.
-   - Critical damage multiplier and armor bypass is only applied to the first "round".
+   - Critical damage multiplier and armor bypass is only applied to a fraction of rounds, defined by combat.ini|DAMAGE|burst_critical_fraction.
 */
 procedure damage_formula_YAAM2(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult,
       variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType)
 begin
-   variable accumulatedDamage, ammoDiv, ammoMult, ammoDT, calcDRMod, i, rawDamage, staticMult, calcDTDR, bypassArmor;
+   variable accumulatedDamage, ammoDiv, ammoMult, ammoDT, i, rawDamage, staticMult, calcDTDR, bypassArmor, criticalRounds;
    if (rounds <= 0) then begin
       return 0;
    end
@@ -226,10 +233,15 @@ begin
 
    display_msg("YAAM: AmmoDT="+ammoDT+", DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
 
+   if (ini_burst_critical_fraction != 1.0 and (bypassArmor or criticalMult > 1)) then
+      criticalRounds := max(round_chance(ini_burst_critical_fraction * rounds), 1);
+   else
+      criticalRounds := rounds;
+
    // Start of damage calculation loop
    for (i := 0; i < rounds; i++) begin
       // After first bullet, don't allow any more criticals, to make bursts less OP.
-      if (i == 1) then begin
+      if (i == criticalRounds) then begin
          if (bypassArmor) then begin
             calcDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDT, ctdSource, false, weaponPerk, attackType);
             display_msg("YAAM, consequitive: DT="+calcDTDR[0]+", DR="+calcDTDR[1]);
