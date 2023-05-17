@@ -32,7 +32,7 @@ while staying as close as possible to vanilla (the point is not to re-invent wea
 - energy weapons made more effective against lesser armors, and laser weapons made more powerfull
 - new melee weapons for Melee skill to be viable in mid-game
 - throwing weapons expanded and made much more usefull with skill-based damage bonus for blades, much deadlier grenades and new weapons
-- Bozar is now a large caliber sniper rifle (as it should be), firing new rare and expensive .50 rounds
+- Bozar is now a large caliber sniper rifle (per its picture and description), firing new rare and expensive .50 rounds
 - double-barrel shotguns now have proper duplet mode with new sound and single-shot animation (optional)
 - slight ballance changes to armor
 - several critters in the game have much better stats now (like weak types of Deathclaws and large scorpions)
@@ -77,6 +77,7 @@ Start of a new game is NOT required (but is recommended, as usual...)
 -=== INSTALLATION ===-
 
 1) install RPU v26 on a clean game installation (installer version is recommended):
+- IMPORTANT: install Rifle Animations and Wakizashi Animations mods!
 https://github.com/BGforgeNet/Fallout2_Restoration_Project/releases/tag/v26
 
 2) download the archive and extract it's contents into the folder where you installed RPU in step 1 (should overwrite rpu.dat file)
@@ -207,8 +208,8 @@ MFC  - 20 (50)
 - .44 Magnum vs Desert Eagle: first has more power, second is more accurate and long-ranged
 - 14mm Pistol does less damage than legendary .223 Pistol, but has more penetration
 - Laser pistol and 14mm Pistol are comparable but Laser will better penetrate most armour types except metal armor. 14mm ammo is superb against any armor.
-- Assault rifle vs FN FAL: high rate of fire (deadly at close range) vs heavy and piercing 7.62x51 ammo (much more damage than vanilla)
-- HK CAWS vs Pancor Jackhammer: first has more range, fires 3-shot burst (like RL); second is low-range, uneconomical due to larger burst, but extremely deadly
+- Assault rifle vs FN FAL: high rate of fire (deadly at close and medium range) vs powerful 7.62x51 ammo (poor burst accuracy at long range, but better single shoot)
+- HK CAWS vs Pancor Jackhammer: first has more range, fires 3-shot burst; second is low-range, uneconomical due to larger burst, but extremely deadly
 - Light Support Weapon (.223) is less deadly than M60 (7.62mm), but has better accuracy
 
 

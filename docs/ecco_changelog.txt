@@ -15,6 +15,8 @@ v0.9.0
 - small adjustments to ammo&weapon stats based on data analysis
 - added option to have opening inventory cost no AP, but every action cost 2 AP in combat (replaces "drug free uses")
 - new script-based damage formula (based on YAAM with a few tweaks)
+- new spray settings script (different bullet distribution based on weapon type!)
+- revamped bursts: lower burst sizes for most weapons, but damage and spray settings tweaked to compensate
 
 
 v0.8.0

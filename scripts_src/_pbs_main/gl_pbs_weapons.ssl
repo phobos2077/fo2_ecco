@@ -77,7 +77,7 @@ procedure afterhitroll_handler begin
             wpn := critter_inven_obj2(attacker, i);
             if (wpn) then
                if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
-               damageType := DMG_fire;
+                  damageType := DMG_fire;
          end
       end
       set_proto_data(PID_PBS_M79, 48, damageType);
@@ -186,20 +186,21 @@ procedure deathanim2_handler begin
       return;
    end
    
-   // fix for double-barrels duplet mode
+   // For double-barrels duplet mode: prevent animations that suggest burst fire, since we're actually doing duplet.
    if ((weaponPID == PID_SHOTGUN or weaponPID == PID_SAWED_OFF_SHOTGUN) 
       and (animID == ANIM_chunks_of_flesh or animID == ANIM_dancing_autofire)) then
    begin
       animID := ANIM_fall_back;
    end
    
-   // fix for grenade launcher
+   // Grenade Launcher: use fire death animation when using incendiary grenades.
    if (is_critter(attacker)) then begin
-      wpn := critter_inven_obj2(attacker, 1);
+      // Find actual attacker's weapon.
+      wpn := critter_inven_obj(attacker, INVEN_TYPE_RIGHT_HAND);
       if (wpn == 0) then
-         wpn := critter_inven_obj2(attacker, 2);
+         wpn := critter_inven_obj(attacker, INVEN_TYPE_LEFT_HAND);
       else if (obj_pid(wpn) != weaponPID) then
-         wpn := critter_inven_obj2(attacker, 2);
+         wpn := critter_inven_obj(attacker, INVEN_TYPE_LEFT_HAND);
       if (wpn) then if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
       begin
          kt := critter_kill_type(target);
@@ -217,9 +218,10 @@ procedure deathanim2_handler begin
    end
    
    //debug_msg("DEATHANIM "+animID);
+
+   // Save last death anim and critter. This can be used in critter's destroy_p_proc
    set_sfall_global(SGVAR_LAST_DEATHANIM, animID);
    set_sfall_global(SGVAR_LAST_DEATHANIM_CRITTER, target);
-   //call bounty_hook_deathanim2(target, animID);
    
    set_sfall_return(animID);
 end
@@ -276,8 +278,8 @@ procedure itemdamage_handler begin
    if (weapon) then begin
       weaponPid := obj_pid(weapon);
       damageType := get_proto_data(weaponPid, 48);
-      debug_msg("itemdamage: "+dmgMin+"-"+dmgMax+", wpn: "+weaponPid+", type: "+attackType+", dmg typ: "+damageType);
-      // tell engine to make smaller explosion effect
+      //debug_msg("itemdamage: "+dmgMin+"-"+dmgMax+", wpn: "+weaponPid+", type: "+attackType+", dmg typ: "+damageType);
+      // tell engine to make smaller explosion effect for any explosive weapon except rockets
       if not(is_in_array(get_proto_data(weaponPid, PROTO_WP_PROJ_PID), ([PID_PROJ_ROCKET, PID_PROJ_ROBOT_ROCKET]))) then begin
          set_attack_explosion_pattern(1, 0);
       end

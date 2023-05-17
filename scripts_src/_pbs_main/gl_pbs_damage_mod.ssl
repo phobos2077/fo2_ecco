@@ -20,18 +20,22 @@ procedure round_chance(variable dmg);
 
 #define INI_SECTION   "DAMAGE"
 
+#define debug_verbose(msg)    if ini_debug then debug_msg("pbs_damage_mod: "+msg)
+
 variable
    item_damage_min,
    item_damage_max,
    item_damage_weapon,
    item_damage_attacker,
-   ini_burst_critical_fraction;
+   ini_burst_critical_fraction,
+   ini_debug;
 
 procedure start begin
    if game_loaded then begin
       call check_damage_formula;
       float_from_ini_file(burst_critical_fraction, INI_COMBAT, INI_SECTION);
       ini_burst_critical_fraction := get_clamped(ini_burst_critical_fraction, 0.0, 1.0);
+      int_from_ini_file(debug, INI_COMBAT, INI_SECTION);
       
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
@@ -105,6 +109,8 @@ procedure combatdamage_handler begin
       return;
    end
 
+   debug_msg("CombatDamage: "+obj_name(target)+"("+target+"), rounds: "+rounds);
+
    if weapon then begin
       dmgType := weapon_dmg_type(weapon);
       weaponPerk := get_proto_data(obj_pid(weapon), PROTO_WP_PERK);
@@ -133,7 +139,7 @@ procedure combatdamage_handler begin
    
    // F2 default start
    // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
-   amount := damage_formula_YAAM2(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
+   amount := 1;// damage_formula_YAAM2(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
    /*dmg_resist += get_ammo_value(weapon, PROTO_AM_DR_MOD); // item_w_dr_adjust_ (DR Adjust %)
    if (dmg_resist < 100) then begin
       if (dmg_resist < 0) then dmg_resist := 0;
@@ -181,11 +187,11 @@ procedure combatdamage_handler begin
    end
 
    if (flagsSource bwand DAM_HIT) then begin
-      display_msg("COMBATDAMAGE amountTarget = " + amountTarget+ ", amount = " + amount);
+      debug_verbose("amountTarget = " + amountTarget+ ", amount = " + amount);
       amountTarget := amount;
       flagsTarget := flags;
    end else begin
-      display_msg("COMBATDAMAGE amountSource = " + amountSource+ ", amount = " + amount);
+      debug_verbose("amountSource = " + amountSource+ ", amount = " + amount);
       amountSource := amount;
       flagsSource := flags;
    end
@@ -231,7 +237,7 @@ begin
    staticMult := 0.01 * difficulty * ammoMult / ammoDiv;
    criticalMult *= 0.5;
 
-   display_msg("YAAM: AmmoDT="+ammoDT+", DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
+   debug_verbose("AmmoDT="+ammoDT+", DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
 
    if (ini_burst_critical_fraction != 1.0 and (bypassArmor or criticalMult > 1)) then
       criticalRounds := max(round_chance(ini_burst_critical_fraction * rounds), 1);
@@ -244,7 +250,7 @@ begin
       if (i == criticalRounds) then begin
          if (bypassArmor) then begin
             calcDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDT, ctdSource, false, weaponPerk, attackType);
-            display_msg("YAAM, consequitive: DT="+calcDTDR[0]+", DR="+calcDTDR[1]);
+            debug_verbose("consequitive: DT="+calcDTDR[0]+", DR="+calcDTDR[1]);
          end
          if (criticalMult > 1) then begin
             criticalMult := 1;
@@ -258,7 +264,7 @@ begin
       rawDamage := round_chance(rawDamage * staticMult * (1 - calcDTDR[1] / 100.0) * criticalMult);
 
       if (rawDamage > 0) then begin
-         display_msg("YAAM: Bullet "+i+" dmg="+rawDamage);
+         debug_verbose("Bullet "+i+" dmg="+rawDamage);
          accumulatedDamage += rawDamage;
       end
    end
@@ -318,7 +324,7 @@ procedure itemdamage_handler begin
       //attackType := get_sfall_arg,
       //isMelee := get_sfall_arg;
 
-   display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max);
+   //display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max);
 end
 
 procedure item_w_subtype(variable weapon, variable attackType) begin

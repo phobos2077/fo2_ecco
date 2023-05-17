@@ -1,10 +1,12 @@
 for 0.9:
-- tweak damage formula
-- attempt to change bullet distribution in bursts (ComputeSpray + burst size reduction?)
+- attempt to change DR/DT reduction in damage mod
 - add 7.62 AP ammo & rebalance 7.62 weapons
 - review perk/skill reqs for early craft (too high from feedback)
+- remove 9mm SMG and second 9mm ammo type from stores and worldmap
+- review weapon distribution in stores
 
 
 for "future":
+- rewrite weapons mod to be configurable from ini
 - port "grenades anywhere" script from FO2Tweaks
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
