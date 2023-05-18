@@ -58,7 +58,7 @@ procedure gamemodechange_handler begin
       in_combat := true;
       foreach (crit in list_as_array(LIST_CRITTERS)) if crit then begin
          if (crit != dude_obj and obj_can_see_obj(crit, dude_obj)) then begin
-            display_msg(proto_data(obj_pid(crit),cr_name) + " see.");
+            //display_msg(proto_data(obj_pid(crit),cr_name) + " see.");
             call add_array_set(set_who_see_dude, crit);
          end
       end

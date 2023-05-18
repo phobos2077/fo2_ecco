@@ -139,7 +139,7 @@ procedure combatdamage_handler begin
    
    // F2 default start
    // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
-   amount := 1;// damage_formula_YAAM2(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
+   amount := damage_formula_YAAM2(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
    /*dmg_resist += get_ammo_value(weapon, PROTO_AM_DR_MOD); // item_w_dr_adjust_ (DR Adjust %)
    if (dmg_resist < 100) then begin
       if (dmg_resist < 0) then dmg_resist := 0;

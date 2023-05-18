@@ -27,9 +27,9 @@ procedure start begin
          critterPid := 0x01000000 + critterId;
          for (i := DMG_normal_dam; i <= DMG_explosion; i++) begin
             dt := get_proto_data(armorPid, PROTO_AR_DT_NORMAL + i*4);
-            set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_thresh + i*4, dt);
+            set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_thresh*4 + i*4, dt);
             dr := get_proto_data(armorPid, PROTO_AR_DR_NORMAL + i*4);
-            set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_resist + i*4, dr);
+            set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_resist*4 + i*4, dr);
             dtArr[i] := dt;
             drArr[i] := dr;
          end
@@ -40,7 +40,7 @@ procedure start begin
          numApplied++;
       end
 
-      debug_msg("Applied armor stats to "+numApplied+" critters.");
+      debug_msg("gl_critter_armor: Applied armor stats to "+numApplied+" critters.");
 
       //call dump_stats;
    end
