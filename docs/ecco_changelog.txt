@@ -17,6 +17,7 @@ v0.9.0
 - new script-based damage formula (based on YAAM with a few tweaks)
 - new spray settings script (different bullet distribution based on weapon type!)
 - revamped bursts: lower burst sizes for most weapons, but damage and spray settings tweaked to compensate
+- replaced all human NPC armor changes with a script (and fixed several issues of wrong armor being applied)
 
 
 v0.8.0

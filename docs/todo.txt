@@ -1,5 +1,6 @@
 for 0.9:
 - attempt to change DR/DT reduction in damage mod
+- ELSE - tweak armor DT values (esp. for BOSS)
 - add 7.62 AP ammo & rebalance 7.62 weapons
 - review perk/skill reqs for early craft (too high from feedback)
 - remove 9mm SMG and second 9mm ammo type from stores and worldmap

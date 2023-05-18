@@ -1,0 +1,51 @@
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+#include "../sfall/lib.strings.h"
+#include "../sfall/sfall.h"
+
+#define INI_CRITTER_ARMOR   ("critter_armor.ini")
+
+procedure start;
+procedure dump_stats;
+
+variable
+   ini_critter_to_armor_map;
+
+procedure start begin
+   variable section, k, v, i, critterId, critterPid, armorPid, dt, dr, dtArr, drArr, name, armorName, numApplied := 0;
+   if game_loaded then begin
+      section := get_ini_section(INI_CRITTER_ARMOR, "CRITTER_TO_ARMOR");
+      
+      dtArr := temp_array_list(DMG_explosion + 1);
+      drArr := temp_array_list(DMG_explosion + 1);
+      foreach (k: v in section) begin
+         critterId := atoi(k);
+         armorPid := atoi(v);
+         if (critterId == 0 or armorPid == 0) then begin
+            continue;
+         end
+         critterPid := 0x01000000 + critterId;
+         for (i := DMG_normal_dam; i <= DMG_explosion; i++) begin
+            dt := get_proto_data(armorPid, PROTO_AR_DT_NORMAL + i*4);
+            set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_thresh + i*4, dt);
+            dr := get_proto_data(armorPid, PROTO_AR_DR_NORMAL + i*4);
+            set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_resist + i*4, dr);
+            dtArr[i] := dt;
+            drArr[i] := dr;
+         end
+         name := message_str_game(GAME_MSG_PRO_CRIT, critterId * 100);
+         //debug_msg(""+k+"="+v+" ; "+name);
+         armorName := message_str_game(GAME_MSG_PRO_ITEM, armorPid * 100);
+         //debug_msg("Applying stats of armor "+armorName+"("+armorPid+") to critter "+ name +" ("+critterId+"). DT: "+string_join(dtArr,",")+". DR: "+string_join(drArr,","));
+         numApplied++;
+      end
+
+      debug_msg("Applied armor stats to "+numApplied+" critters.");
+
+      //call dump_stats;
+   end
+end
+
+procedure dump_stats begin
+
+end
