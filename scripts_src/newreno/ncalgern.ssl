@@ -158,79 +158,58 @@ end
 procedure Node999 begin
 end
 
-// by phobos2077: upgrade weapons but don't reload them with fresh ammo
-// begin changes
-procedure _upgrade_weapon(variable pid, variable new_pid)
-begin
-	variable ammo := 0;
-    restock_obj := obj_carrying_pid_obj(dude_obj, pid);
-    if (restock_obj) then begin
-        ammo := get_weapon_ammo_count(restock_obj);
-        if ((critter_inven_obj(dude_obj, INVEN_TYPE_LEFT_HAND) == restock_obj) or (critter_inven_obj(dude_obj, INVEN_TYPE_RIGHT_HAND) == restock_obj)) then begin
-            inven_unwield(dude_obj);
-        end
-        restock_amt := rm_mult_objs_from_inven(dude_obj, restock_obj, removed_qty);
-        destroy_object(restock_obj);
-    end
-    restock_amt := 0;
-    restock_obj := create_object_sid(new_pid, 0, 0, -1);
-    set_weapon_ammo_count(restock_obj, ammo);
-    add_mult_objs_to_inven(dude_obj, restock_obj, 1);
-end
-
 procedure Node990 begin
-   call _upgrade_weapon(PID_44_MAGNUM_REVOLVER, PID_44_MAGNUM_SPEEDLOADER);
+   call upgrade_weapon(PID_44_MAGNUM_REVOLVER, PID_44_MAGNUM_SPEEDLOADER);
    call Node008;
 end
 procedure Node989 begin
-   call _upgrade_weapon(PID_DESERT_EAGLE, PID_DESERT_EAGLE_EXT_MAG);
+   call upgrade_weapon(PID_DESERT_EAGLE, PID_DESERT_EAGLE_EXT_MAG);
    call Node008;
 end
 procedure Node988 begin
-   call _upgrade_weapon(PID_LASER_PISTOL, PID_MAGNETO_LASER_PISTOL);
+   call upgrade_weapon(PID_LASER_PISTOL, PID_MAGNETO_LASER_PISTOL);
    call Node008;
 end
 procedure Node987 begin
-   call _upgrade_weapon(PID_PLASMA_PISTOL, PID_PLASMA_PISTOL_EXT_CART);
+   call upgrade_weapon(PID_PLASMA_PISTOL, PID_PLASMA_PISTOL_EXT_CART);
    call Node008;
 end
 procedure Node986 begin
-   call _upgrade_weapon(PID_HUNTING_RIFLE, PID_SCOPED_HUNTING_RIFLE);
+   call upgrade_weapon(PID_HUNTING_RIFLE, PID_SCOPED_HUNTING_RIFLE);
    call Node008;
 end
 procedure Node985 begin
-   call _upgrade_weapon(PID_ASSAULT_RIFLE, PID_ASSAULT_RIFLE_EXT_MAG);
+   call upgrade_weapon(PID_ASSAULT_RIFLE, PID_ASSAULT_RIFLE_EXT_MAG);
    call Node008;
 end
 procedure Node984 begin
-   call _upgrade_weapon(PID_FN_FAL, PID_FN_FAL_NIGHT_SCOPE);
+   call upgrade_weapon(PID_FN_FAL, PID_FN_FAL_NIGHT_SCOPE);
    call Node008;
 end
 procedure Node983 begin
-   call _upgrade_weapon(PID_LASER_RIFLE, PID_LASER_RIFLE_EXT_CAP);
+   call upgrade_weapon(PID_LASER_RIFLE, PID_LASER_RIFLE_EXT_CAP);
    call Node008;
 end
 procedure Node982 begin
-   call _upgrade_weapon(PID_FLAMER, PID_IMPROVED_FLAMETHROWER);
+   call upgrade_weapon(PID_FLAMER, PID_IMPROVED_FLAMETHROWER);
    call Node008;
 end
 procedure Node981 begin
-   call _upgrade_weapon(PID_PLASMA_RIFLE, PID_TURBO_PLASMA_RIFLE);
+   call upgrade_weapon(PID_PLASMA_RIFLE, PID_TURBO_PLASMA_RIFLE);
    call Node008;
 end
 procedure Node980 begin
-   call _upgrade_weapon(PID_FLAMETHROWER_FUEL, PID_FLAMETHROWER_FUEL_MK_II);
+   call upgrade_weapon(PID_FLAMETHROWER_FUEL, PID_FLAMETHROWER_FUEL_MK_II);
    call Node008;
 end
 procedure Node979 begin
-   call _upgrade_weapon(PID_CATTLE_PROD, PID_SUPER_CATTLE_PROD);
+   call upgrade_weapon(PID_CATTLE_PROD, PID_SUPER_CATTLE_PROD);
    call Node008;
 end
 procedure Node978 begin
-   call _upgrade_weapon(PID_POWER_FIST, PID_MEGA_POWER_FIST);
+   call upgrade_weapon(PID_POWER_FIST, PID_MEGA_POWER_FIST);
    call Node008;
 end
-// end of upgrade changes
 
 procedure Node001 begin
    floater_rand(200, 214);
@@ -300,8 +279,8 @@ procedure Node008 begin
       set_know_algernon_weapons;
    gfade_in(ONE_GAME_MINUTE);
    Reply(260);
-   set_local_var(LVAR_Rest_Time, game_time + (random(12,24) * ONE_GAME_HOUR)); // 12 to 24 hours resting time
-   //NOption(261, Node007, 004);
+   set_local_var(LVAR_Rest_Time, game_time + (random(12,24) * ONE_GAME_HOUR)); // pbs: 12 to 24 hours resting time
+   //NOption(261, Node007, 004); // pbs: disabled
    NOption(262, Node999, 004);
 end
 procedure Node009 begin
