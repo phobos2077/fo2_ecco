@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>FO2 Damage Calc</title>
+    <title>FO2 Damage Calculator</title>
 </head>
 <body>
 
-<h1>Damage Calc</h1>
-
 <label for="dataset">DATA SET:</label>
 <select id="dataset">
+</select>
+
+<label for="formula">Formula:</label>
+<select id="formula">
 </select>
 
 <br/><br/>
@@ -36,11 +38,6 @@
 <label for="critBypass">Critical Bypass:</label>
 <input type="checkbox" id="critBypass"></input>
 
-<br/><br/>
-
-<label for="formula">Formula:</label>
-<select id="formula">
-</select>
 
 <label for="mode" style="display: none">Display mode:</label>
 <select id="mode" style="display: none">
@@ -49,7 +46,7 @@
     <option value="dr">Effective DR</option>
 </select>
 
-<h2 id="dmgType"></h2>
+<h3 id="dmgType"></h3>
 <table id="results">
     <thead>
         <tr><th>Armor:</th></tr>
@@ -108,17 +105,15 @@ function updateCheckbox(id) {
 function fillOptions(selectId, arr, defaultVal) {
     const selectEl = document.getElementById(selectId);
     selectEl.innerHTML = "";
+    defaultVal = getLastSetting(selectId) || defaultVal;
     for (let i = 0; i < arr.length; i++) {
         let option = document.createElement("option");
         option.value = typeof(arr[i]) == "object" ? i : arr[i];
         option.textContent = arr[i].name || arr[i];
         selectEl.appendChild(option);
-    }
-    const lastVal = getLastSetting(selectId);
-    if (lastVal) {
-        selectEl.value = lastVal;
-    } else if (defaultVal) {
-        selectEl.value = defaultVal;
+        if (defaultVal && option.value == defaultVal) {
+            selectEl.value = option.value;
+        }
     }
 }
 
@@ -164,6 +159,10 @@ async function loadDataset() {
     updateTable();
 }
 
+function clearGraph() {
+    drawGraph([]);
+}
+
 /**
  * @param {number[]} dataRow
  * @param {number} baseDmg
@@ -171,15 +170,17 @@ async function loadDataset() {
  */
 function drawGraph(dataRow, baseDmg, dmgCtx) {
     //console.log("drawGraph", dmg, dataRow);
-    if (dataRow.length <= 0) return;
     /**
      * @type HTMLCanvasElement
      */
     const canvas = document.getElementById("graph");
+    canvas.width = document.getElementById("results").clientWidth;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const margin = 20;
+    if (dataRow.length <= 0) return;
+
+    const margin = 25;
     const top = margin;
     const left = margin;
     const right = canvas.width - margin;
@@ -205,22 +206,23 @@ function drawGraph(dataRow, baseDmg, dmgCtx) {
 
         ctx.font = "14px arial";
         ctx.strokeStyle = "black";
+        ctx.textAlign = "center";
         ctx.fillText(value, left, y);
     }
     addDmgLine(0);
-    addDmgLine(baseDmg);
-    addDmgLine(dmgCtx.weapon.dmgMin);
-    addDmgLine(dmgCtx.weapon.dmgMax);
+    addDmgLine(baseDmg * dmgCtx.rounds);
+    addDmgLine(dmgCtx.weapon.dmgMin * dmgCtx.rounds);
+    addDmgLine(dmgCtx.weapon.dmgMax * dmgCtx.rounds);
     addDmgLine(dmgCtx.maxFinalDmg);
 
     ctx.beginPath();
     ctx.lineWidth = 2;
     ctx.strokeStyle = "red";
-    let x = left + margin,
+    let x = left + 50,
         y = damageToY(dataRow[0]);
     ctx.moveTo(x, y);
     ctx.arc(x, y, 3, 0, 360);
-    const stepX = width / dataRow.length;
+    const stepX = 50; //width / dataRow.length;
     for (let i = 1; i < dataRow.length; i++) {
         x += stepX;
         y = damageToY(dataRow[i]);
@@ -339,9 +341,15 @@ function updateTable() {
     }
     // Update table body
     let maxFinalDmg = -Infinity;
-    for (let baseDmg = ctx.weapon.dmgMin; baseDmg <= ctx.weapon.dmgMax; baseDmg++) {
+    const dmgMax = ctx.weapon.dmgMax;
+    const dmgMin = ctx.weapon.dmgMin;
+    const step = Math.max(Math.round((dmgMax - dmgMin) / 10), 1);
+    for (let baseDmg = dmgMin;
+        baseDmg <= dmgMax;
+        baseDmg = baseDmg < dmgMax && baseDmg + step > dmgMax ? dmgMax : baseDmg + step
+    ) {
         const row = document.createElement("tr");
-        addBodyCell(row, baseDmg);
+        addBodyCell(row, baseDmg * ctx.rounds);
 
         const dataRow = relevantArmors.map(armor => calculateDamage(baseDmg, armor));
         dataRow.forEach(finalDmg => {
@@ -352,9 +360,14 @@ function updateTable() {
         });
 
         tableBody.appendChild(row);
+        if (tableBody.children.length > 100) {
+            throw "R U OK?";
+        }
         maxFinalDmg = dataRow.reduce((a, b) => Math.max(a, b), maxFinalDmg);
     }
     ctx.maxFinalDmg = maxFinalDmg;
+
+    clearGraph();
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -381,6 +394,8 @@ document.getElementById("dataset").addEventListener("change", loadDataset);
     }
     #results td, #results th {
         max-width: 50px;
+        min-width: 50px;
+        padding: 1px 0;
     }
     #results td {
         text-align: center;
