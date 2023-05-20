@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FO2 Damage Calc</title>
+</head>
+<body>
+
+<h1>Damage Calc</h1>
+<label for="weapon">Weapon:</label>
+<select id="weapon">
+</select>
+
+<label for="ammo">Ammo:</label>
+<select id="ammo">
+</select>
+
+<label for="rounds">Rounds:</label>
+<select id="rounds">
+</select>
+
+<label for="difficulty">Difficulty:</label>
+<select id="difficulty">
+</select>
+
+<label for="critMult">Critical Multiplier:</label>
+<select id="critMult">
+</select>
+
+<label for="critBypass">Critical Bypass:</label>
+<input type="checkbox" id="critBypass"></input>
+
+<br/><br/>
+
+<label for="formula">Formula:</label>
+<select id="formula">
+</select>
+
+<label for="mode">Display mode:</label>
+<select id="mode">
+    <option value="dmg">Damage</option>
+    <option value="dt">Effective DT</option>
+    <option value="dr">Effective DR</option>
+</select>
+
+<h2 id="dmgType"></h2>
+<table id="results">
+    <thead>
+        <tr><th>Armor:</th></tr>
+        <tr><th>DT:</th></tr>
+        <tr><th>DR:</th></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script type="text/javascript" src="damage_calc_formulas.js"></script>
+<script type="text/javascript">
+
+function csvToArrayOfObjects(csvString, sep) {
+    let rows = csvString.split("\n");
+    let headers = rows[0].split(sep).map(s => s.trim());
+    let result = [];
+    for (let i = 1; i < rows.length; i++) {
+        let row = rows[i].split(sep);
+        if (row.length == 1 && !row[0].trim()) continue;
+        let obj = {};
+        for (let j = 0; j < headers.length; j++) {
+            obj[headers[j]] = (row[j] ? row[j].trim() : "");
+        }
+        result.push(obj);
+    }
+    return result;
+}
+
+async function csvFileToArrayOfObjects(file) {
+    let response = await fetch(file);
+    let csvString = await response.text();
+    return csvToArrayOfObjects(csvString, ";");
+}
+
+let armors = [];
+let weapons = [];
+let ammoTypes = [];
+
+let lastCtx = {};
+
+let dummyAmmo = {
+    acAdj: 0,
+    drAdj: 0,
+    dmgMult: 1,
+    dmgDiv: 1,
+}
+
+
+const csvAmmoToArmorDamageTypes = [
+    ["Normal", "Norm"],
+    ["Laser", "Lasr"],
+    ["Fire", "Fire"],
+    ["Plasma", "Plas"],
+    ["Electrical", "Elec"],
+    ["Explode", "Expl"],
+    ["EMP", "EMP"]
+];
+
+const damageTypes = csvAmmoToArmorDamageTypes.map(t => t[0]);
+
+function intRange(min, max) {
+    let arr = [];
+    for (let i = min; i <= max; i++) {
+        arr.push(i);
+    }
+    return arr;
+}
+
+function fillOptions(selectId, arr, defaultIdx) {
+    const selectEl = document.getElementById(selectId);
+    selectEl.innerHTML = "";
+    for (let i = 0; i < arr.length; i++) {
+        let option = document.createElement("option");
+        option.value = typeof(arr[i]) == "object" ? i : arr[i];
+        option.textContent = arr[i].name || arr[i];
+        selectEl.appendChild(option);
+        if (defaultIdx == i) {
+            selectEl.value = option.value;
+        }
+    }
+}
+
+let lastSettings;
+
+function loadSettings() {
+    let selected = sessionStorage.getItem("selected");
+    if (selected) {
+        selected = JSON.parse(selected);
+        //console.log("Loaded", selected);
+        Object.keys(selected).forEach(id => {
+            const el = document.getElementById(id);
+            if (typeof(el.checked) == "boolean"){
+                el.checked = selected[id];
+            } else {
+                el.value = selected[id];
+            }
+        });
+        lastSettings = selected;
+    } else {
+        document.getElementById("critBypass").checked = false;
+    }
+}
+
+function saveSettings() {
+    const selected = ["weapon","formula","critMult","critBypass","mode","difficulty","ammo","rounds"]
+        .reduce((o, id) => {
+            const el = document.getElementById(id);
+            o[id] = typeof(el.checked) == "boolean" ? el.checked : el.value;
+            return o;
+        }, {});
+
+    //console.log("Saving", selected);
+    sessionStorage.setItem("selected", JSON.stringify(selected));
+    lastSettings = selected;
+}
+
+async function loadData() {
+    const ignoreArmorKewords = ["Mutant", "Environmental", "K-9", "Bridgekeeper"];
+    armors = (await csvFileToArrayOfObjects("armor_vanilla.csv")).map(a => ({
+        name: a["NAME"],
+        ac: a["Armor Class"],
+        dt: csvAmmoToArmorDamageTypes.map(t => parseInt(a[t[1]+" DT"])),
+        dr: csvAmmoToArmorDamageTypes.map(t => parseInt(a[t[1]+" DR"])),
+    }))
+        .filter(armor =>
+            ignoreArmorKewords.every(kw => armor.name.indexOf(kw) == -1) &&
+            (armor.dt.some(v => v > 0) || armor.dr.some(v => v > 0)));
+
+    armors.push({
+        name: "None",
+        ac: 0,
+        dt: damageTypes.map(t => 0),
+        dr: damageTypes.map(t => 0),
+    });
+
+    ammoTypes = (await csvFileToArrayOfObjects("ammo_vanilla.csv")).map(a => ({
+        name: a["NAME"],
+        caliber: a["Caliber"],
+        acAdj: parseInt(a["AC Adjust"]),
+        drAdj: parseInt(a["DR Adjust"]),
+        dmgMult: parseInt(a["Dam Mult"]),
+        dmgDiv: parseInt(a["Dam Div"]),
+    }));
+    weapons = (await csvFileToArrayOfObjects("weapon_vanilla.csv")).map(a => ({
+        name: a["NAME"],
+        caliber: parseInt(a["Max Ammo"]) > 0 ? a["Caliber"] : null,
+        dmgType: damageTypes.indexOf(a["Damage Type"]),
+        dmgMin: parseInt(a["Min Damage"]),
+        dmgMax: parseInt(a["Max Damage"]),
+        penetrate: a["Perk"] == "Weapon Penetrate [60]",
+        burst: parseInt(a["Rounds Brust"])
+    }));
+    weapons.sort((a, b) => a.name > b.name);
+
+    //console.log(armors, ammoTypes, weapons);
+    
+    fillOptions("weapon", weapons);
+    fillOptions("formula", damageFormulas);
+    fillOptions("critMult", [2,3,4,6,8]);
+    fillOptions("difficulty", [75,100,125], 1);
+
+    // Default Values:
+    loadSettings();
+
+    updateTable();
+}
+
+function updateTable() {
+    console.log("Updating table...");
+
+    const getSelectValue = id => document.getElementById(id).value;
+    const getSelectValueInt = id => parseInt(getSelectValue(id));
+    const getCheckboxChecked = id => document.getElementById(id).checked;
+
+    const ctx = {
+        weapon: weapons[getSelectValueInt("weapon")],
+        formula: damageFormulas[getSelectValueInt("formula")],
+        difficulty: getSelectValueInt("difficulty"),
+        crit: {
+            mult: getSelectValueInt("critMult"),
+            bypass: getCheckboxChecked("critBypass")
+        },
+        formulaMode: getSelectValue("mode"),
+        bonusRanged: 0,
+    };
+    if (!lastCtx || lastCtx.weapon != ctx.weapon) {
+        ctx.weaponAmmoTypes = ammoTypes.filter(at => at.caliber == ctx.weapon.caliber);
+        fillOptions("ammo", ctx.weaponAmmoTypes, lastSettings ? lastSettings.ammo : 0);
+        fillOptions("rounds", intRange(1, ctx.weapon.burst || 1), lastSettings ? lastSettings.rounds - 1 : 0);
+    } else {
+        ctx.weaponAmmoTypes = lastCtx.weaponAmmoTypes;
+    }
+    ctx.ammo = ctx.weaponAmmoTypes[getSelectValueInt("ammo")];
+    ctx.rounds = getSelectValueInt("rounds");
+
+    //console.log(ctx);
+    if (!ctx.weapon || !ctx.formula || !ctx.difficulty || !ctx.crit.mult || !ctx.formulaMode) return;
+
+    saveSettings();
+
+    lastCtx = ctx;
+    ctx.dmgTypeIdx = ctx.weapon.dmgType;
+
+    document.getElementById("dmgType").textContent = damageTypes[ctx.dmgTypeIdx] + " Damage";
+    
+    const tableElement = document.getElementById("results");
+    const tableBody = tableElement.getElementsByTagName("tbody")[0];
+    tableBody.innerHTML = "";
+    
+    // Update table header
+    let tableHeaderRows = tableElement.getElementsByTagName("thead")[0].rows;
+    
+    // Clear existing header cells
+    for (let i = 0; i < tableHeaderRows.length; i++) {
+        while (tableHeaderRows[i].cells.length > 1) {
+            tableHeaderRows[i].deleteCell(1);
+        }
+    }
+
+    const addHeaderCell = function(row, value) {
+        let cell = document.createElement("th");
+        cell.textContent = value;
+        tableHeaderRows[row].appendChild(cell);
+    }
+    const relevantArmors = armors.slice();
+    relevantArmors.sort((a, b) => a.dr[ctx.dmgTypeIdx] > b.dr[ctx.dmgTypeIdx]);
+    for (let i = 1; i < relevantArmors.length; i++) {
+        if (relevantArmors[i].dt[ctx.dmgTypeIdx] == relevantArmors[i - 1].dt[ctx.dmgTypeIdx] &&
+            relevantArmors[i].dr[ctx.dmgTypeIdx] == relevantArmors[i - 1].dr[ctx.dmgTypeIdx])
+        {
+            relevantArmors.splice(i, 1);
+            i--;
+        }
+    }
+    
+    // Populate header cells based on armor types from array
+    relevantArmors.forEach(armor => {
+        addHeaderCell(0, armor.name);
+        addHeaderCell(1, armor.dt[ctx.dmgTypeIdx]);
+        addHeaderCell(2, armor.dr[ctx.dmgTypeIdx]+"%");
+    });
+
+    // Update table body
+    for (let dmg = ctx.weapon.dmgMin; dmg <= ctx.weapon.dmgMax; dmg++) {
+        let row = document.createElement("tr");
+        let cell = document.createElement("td");
+        cell.textContent = dmg;
+        row.appendChild(cell);
+
+        relevantArmors.forEach(armor => {
+            cell = document.createElement("td");
+            ctx.armor = armor;
+            ctx.rawDmg = dmg;
+            cell.textContent = ctx.formula[ctx.formulaMode](ctx).toFixed(0);
+            row.appendChild(cell);
+        });
+
+        tableBody.appendChild(row);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  loadData();
+});
+
+["weapon","ammo","formula","critMult","critBypass","mode","difficulty","rounds"].forEach(id => {
+    document.getElementById(id).addEventListener("change", updateTable);
+});
+
+
+</script>
+<style>
+    /*#results th {
+        border-width: 0 0 0 0;
+    }*/
+    #results tr:last-child > th {
+        border-bottom: 1px solid;
+    }
+    #results td, #results th {
+        max-width: 50px;
+    }
+    #results td {
+        text-align: center;
+    }
+
+    #results td:first-child, #results th:first-child {
+        font-weight: bold;
+        border-right: 1px solid;
+    }
+</style>
+</body>
+</html>

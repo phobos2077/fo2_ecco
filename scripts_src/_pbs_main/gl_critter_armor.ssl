@@ -6,7 +6,6 @@
 #define INI_CRITTER_ARMOR   ("critter_armor.ini")
 
 procedure start;
-procedure dump_stats;
 
 variable
    ini_critter_to_armor_map;
@@ -41,11 +40,5 @@ procedure start begin
       end
 
       debug_msg("gl_critter_armor: Applied armor stats to "+numApplied+" critters.");
-
-      //call dump_stats;
    end
-end
-
-procedure dump_stats begin
-
 end
