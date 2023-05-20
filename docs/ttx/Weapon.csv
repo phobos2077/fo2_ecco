@@ -1,125 +1,125 @@
-Import;ProFILE;NAME;Damage Type;Min Damage;Max Damage;Range Primary Attack;Range Secondary Attack;AP Cost Primary Attack;AP Cost Secondary Attack;Max Ammo;Rounds Brust;Caliber;Min Strength;Cost;Weight;Perk
-#;00000012.pro;Knife;Normal;2;6;1;1;3;3;0;0;None;2;100;1;
-#;00000009.pro;Club;Normal;1;6;1;0;3;0;0;0;None;3;100;3;
-#;00000005.pro;Sledgehammer;Normal;6;9;2;2;4;5;0;0;None;6;250;12;Weapon Knockback [61]
-#;00000013.pro;Spear;Normal;3;10;2;8;4;6;0;0;None;4;175;4;
-#;00000004.pro;10mm Pistol;Normal;5;12;18;0;4;0;10;1;10mm;3;250;3;
-#;00000002.pro;10mm SMG;Normal;7;12;25;15;5;6;30;10;10mm;4;1000;5;
-#;00000011.pro;Hunting Rifle;Normal;12;20;40;0;5;0;10;0;.223;5;1000;8;Weapon Accurate [59]
-#;00000010.pro;Flamer;Fire;50;90;6;0;6;0;5;1;Flamethrower Fuel;6;2000;18;Weapon Night Sight [66]
-#;00000006.pro;Minigun;Normal;9;13;35;0;6;0;120;40;5mm;7;3400;28;Weapon Long Range [58]
-#;00000007.pro;Rocket Launcher;Explode;45;90;40;0;6;0;1;0;Rocket;6;2500;15;Weapon Long Range [58]
-#;00000015.pro;Plasma Rifle;Plasma;40;70;35;0;5;0;24;0;D Energy Cell;6;4500;12;Weapon Long Range [58]
-#;00000016.pro;Laser Pistol;Laser;16;22;30;0;4;0;12;0;C Energy Cell;3;1500;4;Weapon Accurate [59]
-#;00000018.pro;Desert Eagle .44;Normal;10;16;25;0;4;0;8;0;.44 cal;4;800;4;Weapon Accurate [59]
-#;00000019.pro;Rock;Normal;1;3;15;1;4;3;0;0;None;1;0;1;
-#;00000020.pro;Crowbar;Normal;3;10;1;0;4;0;0;0;None;5;75;5;
-#;00000021.pro;Brass Knuckles;Normal;2;5;1;0;3;0;0;0;None;1;50;1;
-#;00000022.pro;14mm Pistol;Normal;12;22;20;0;4;0;6;0;14mm;4;1800;4;
-#;00000023.pro;Assault Rifle;Normal;10;16;40;35;5;6;30;10;5mm;5;1600;7;Weapon Accurate [59]
-#;00000024.pro;Plasma Pistol;Plasma;20;35;15;0;4;0;16;0;C Energy Cell;4;2750;4;
-#;00000025.pro;Grenade (Frag);Explode;30;70;25;0;4;0;0;0;None;3;150;1;Weapon Accurate [59]
-#;00000026.pro;Grenade (Plasma);Plasma;60;100;25;0;4;0;0;0;None;4;450;1;Weapon Accurate [59]
-#;00000027.pro;Grenade (Pulse);EMP;100;150;25;0;4;0;0;0;None;4;250;1;Weapon Accurate [59]
-#;00000028.pro;Gatling Laser;Laser;20;40;40;0;6;0;30;10;D Energy Cell;6;7500;24;Weapon Long Range [58]
-#;00000045.pro;Throwing Knife;Normal;5;9;22;0;5;0;0;0;None;3;75;1;
-#;00000079.pro;Flare;Normal;1;1;15;0;1;0;0;0;None;0;35;1;Weapon Accurate [59]
-#;00000094.pro;Shotgun;Normal;14;24;16;4;5;6;2;2;12-gauge;4;750;5;
-#;00000115.pro;Super Sledge;Normal;18;36;2;2;4;5;0;0;None;5;3750;12;Weapon Knockback [61]
-#;00000116.pro;Ripper;Normal;15;32;1;1;4;4;10;0;C Energy Cell;4;1400;2;Weapon Penetrate [60]
-#;00000118.pro;Laser Rifle;Laser;30;40;45;20;5;6;10;2;D Energy Cell;5;5000;12;Weapon Long Range [58]
-#;00000120.pro;Alien Blaster;Electrical;30;90;10;0;4;0;30;0;C Energy Cell;2;10000;2;Weapon Accurate [59]
-#;00000122.pro;9mm Mauser;Normal;10;16;25;0;4;0;10;0;9mm;3;650;3;Weapon Accurate [59]
-#;00000143.pro;Sniper Rifle;Normal;28;38;50;0;6;0;6;0;7.62mm;5;2700;8;Weapon Scope Range [64]
-#;00000159.pro;Molotov Cocktail;Explode;20;35;18;0;5;0;0;0;None;3;50;1;Weapon Flameboy [67]
-#;00000160.pro;Cattle Prod;Electrical;12;20;1;1;4;4;20;0;C Energy Cell;4;600;3;Weapon Accurate [59]
-#;00000161.pro;Red Ryder BB Gun;Normal;1;3;22;0;5;0;100;0;None;3;200;5;
-#;00000162.pro;Red Ryder LE BB Gun;Normal;18;25;32;0;5;0;100;0;None;3;3500;5;Weapon Long Range [58]
-#;00000205.pro;Flare;Normal;1;1;15;0;0;0;0;0;None;0;60;1;Weapon Accurate [59]
-#;00000233.pro;Turbo Plasma Rifle;Plasma;40;60;35;0;4;0;24;0;D Energy Cell;6;6500;12;Weapon Long Range [58]
-#;00000234.pro;Spiked Knuckles;Normal;4;10;1;0;3;0;0;0;None;1;250;1;
-#;00000235.pro;Power Fist;Normal;12;24;1;0;3;0;20;0;C Energy Cell;1;2200;7;Weapon Penetrate [60]
-#;00000236.pro;Combat Knife;Normal;4;10;1;1;3;3;0;0;None;2;200;2;
-#;00000241.pro;.223 Pistol;Normal;18;26;20;0;4;0;5;1;.223;5;3500;5;
-#;00000242.pro;Combat Shotgun;Normal;15;30;16;10;5;6;9;3;12-gauge;5;1750;10;Weapon Accurate [59]
-#;00000261.pro;Jonny's BB Gun;Normal;1;3;22;0;5;0;100;0;None;3;200;5;
-#;00000268.pro;H&K CAWS;Normal;18;40;22;14;5;6;9;3;12-gauge;6;3250;9;Weapon Accurate [59]
-#;00000270.pro;Robo Rocket Launcher;Explode;10;30;30;0;3;0;6;0;Rocket;1;0;1;
-#;00000280.pro;Sharpened Spear;Normal;5;12;2;8;4;6;0;0;None;4;225;4;
-#;00000283.pro;Tommy Gun;Normal;9;20;32;16;5;6;50;10;.45 cal;6;1200;7;
-#;00000287.pro;Scoped Hunting Rifle;Normal;12;20;40;0;5;0;10;0;.223;5;1300;9;Weapon Scope Range [64]
-#;00000290.pro;Robo Melee Weapon 1;Electrical;7;15;1;0;3;0;0;0;None;1;0;1;
-#;00000291.pro;Robo Melee Weapon 2;Electrical;15;30;1;0;3;0;0;0;None;1;0;1;
-#;00000292.pro;Boxing Gloves;Normal;1;1;1;0;3;0;0;0;None;1;250;5;Weapon Knockback [61]
-#;00000293.pro;Plated Boxing Gloves;Normal;2;5;1;0;3;0;0;0;None;1;300;10;Weapon Knockback [61]
-#;00000296.pro;H&K P90c;Normal;12;16;30;25;4;5;24;12;10mm;4;2500;8;
-#;00000299.pro;Pipe Rifle;Normal;9;12;20;0;5;0;1;0;10mm;5;200;10;
-#;00000300.pro;Zip Gun;Normal;5;9;15;0;4;0;1;0;10mm;4;150;4;
-#;00000313.pro;.44 Magnum Revolver;Normal;13;20;15;0;4;0;6;0;.44 cal;5;700;5;
-#;00000319.pro;Switchblade;Normal;2;5;1;1;3;3;0;0;None;1;50;1;
-#;00000320.pro;Sharpened Pole;Normal;2;4;2;8;4;6;0;0;None;4;5;3;
-#;00000332.pro;M3A1 "Grease Gun" SMG;Normal;13;23;20;15;4;5;30;8;.45 cal;4;1750;7;
-#;00000350.pro;Bozar AMR;Normal;55;90;50;0;6;0;5;0;.50 cal;7;6000;20;Weapon Scope Range [64]
-#;00000351.pro;FN FAL;Normal;20;27;40;30;5;6;20;4;7.62mm;5;3000;9;Weapon Accurate [59]
-#;00000352.pro;H&K G11;Normal;12;18;35;30;5;6;50;5;4.7mm caseless;5;6500;8;
-#;00000353.pro;XL70E3;Normal;16;22;35;30;5;6;24;8;.223;5;4100;9;Weapon Accurate [59]
-#;00000354.pro;Pancor Jackhammer;Normal;20;42;18;12;5;6;10;5;12-gauge;5;5500;12;Weapon Knockback [61]
-#;00000355.pro;Light Support Weapon;Normal;18;24;45;40;5;6;40;10;.223;6;4000;20;Weapon Accurate [59]
-#;00000365.pro;Plant Spike;Normal;1;2;8;0;4;3;0;0;None;2;0;0;
-#;00000371.pro;Claw;Normal;3;5;1;0;3;0;0;0;None;1;0;1;Weapon Penetrate [60]
-#;00000372.pro;Claw;Normal;5;10;1;0;3;0;0;0;None;1;0;1;Weapon Penetrate [60]
-#;00000383.pro;Shiv;Normal;1;4;1;1;3;3;0;0;None;1;2;1;
-#;00000384.pro;Wrench;Normal;3;6;1;1;3;3;0;0;None;3;65;4;
-#;00000385.pro;Sawed-Off Shotgun;Normal;12;28;7;2;5;6;2;2;12-gauge;4;800;4;Weapon Enhanced Knockout [117]
-#;00000386.pro;Louisville Slugger;Normal;12;24;1;0;3;0;0;0;None;4;2700;4;Weapon Knockback [61]
-#;00000387.pro;M60;Normal;22;30;40;40;5;6;100;10;7.62mm;7;4600;23;
-#;00000388.pro;Needler Pistol;Normal;12;20;20;0;4;0;10;0;HN needler;3;1200;4;Weapon Penetrate [60]
-#;00000389.pro;Avenger Minigun;Normal;12;16;40;0;6;0;120;40;5mm;7;5500;28;Weapon Long Range [58]
-#;00000390.pro;Solar Scorcher;Fire;20;60;20;0;4;0;10;0;None;3;2000;5;
-#;00000391.pro;H&K G11E;Normal;13;23;40;35;5;6;50;7;4.7mm caseless;6;8000;8;Weapon Night Sight [66]
-#;00000392.pro;M72 Gauss Rifle;Normal;35;45;50;0;5;0;10;1;2mm;6;8250;9;Weapon Long Range [58]
-#;00000393.pro;Phazer;Laser;20;30;25;0;4;0;12;0;C Energy Cell;3;7500;4;Weapon Accurate [59]
-#;00000394.pro;PPK12 Gauss Pistol;Normal;22;32;30;0;4;0;10;0;2mm;4;5250;5;Weapon Accurate [59]
-#;00000395.pro;Vindicator Minigun;Normal;16;21;30;0;6;0;100;25;4.7mm caseless;7;14000;28;Weapon Penetrate [60]
-#;00000396.pro;YK32 Pulse Pistol;Electrical;32;46;15;0;4;0;5;0;C Energy Cell;3;12500;5;Weapon Penetrate [60]
-#;00000397.pro;YK42B Pulse Rifle;Electrical;54;78;30;0;5;0;10;1;D Energy Cell;6;17500;9;Weapon Penetrate [60]
-#;00000398.pro;.44 Magnum (Speed Load);Normal;13;20;15;0;4;0;6;0;.44 cal;5;750;5;Weapon Fast Reload [65]
-#;00000399.pro;Super Cattle Prod;Electrical;20;32;1;1;4;4;20;0;C Energy Cell;4;600;3;Weapon Accurate [59]
-#;00000400.pro;Improved Flamer;Fire;50;90;6;0;6;0;5;1;.40 cal;6;2000;19;Weapon Night Sight [66]
-#;00000401.pro;Laser Rifle (Ext. Cap.);Laser;30;40;45;20;5;6;20;2;D Energy Cell;5;5000;12;Weapon Long Range [58]
-#;00000402.pro;Magneto-Laser Pistol;Laser;17;23;35;0;4;0;12;0;C Energy Cell;3;1400;4;Weapon Penetrate [60]
-#;00000403.pro;FN FAL (Night Sight);Normal;20;27;40;30;5;6;20;4;7.62mm;5;3500;10;Weapon Night Sight [66]
-#;00000404.pro;Desert Eagle (Exp. Mag.);Normal;10;16;25;0;4;0;14;0;.44 cal;4;800;4;Weapon Accurate [59]
-#;00000405.pro;Assault Rifle (Exp. Mag.);Normal;10;16;40;35;5;6;60;10;5mm;5;1300;8;Weapon Accurate [59]
-#;00000406.pro;Plasma Pistol (Ext. Cap.);Plasma;20;35;15;0;4;0;32;0;C Energy Cell;4;2750;5;
-#;00000407.pro;Mega Power Fist;Normal;20;40;1;0;3;0;20;0;C Energy Cell;1;2200;7;Weapon Penetrate [60]
-#;00000421.pro;Holy Hand Grenade;Explode;300;500;30;0;4;0;0;0;None;2;1;2;Weapon Long Range [58]
-#;00000423.pro;Gold Nugget;Normal;3;6;10;1;4;3;0;0;None;2;50;10;
-#;00000426.pro;Uranium Ore;Normal;3;6;10;1;4;3;0;0;None;2;0;10;
-#;00000427.pro;Flame Breath;Fire;35;50;5;0;6;0;4;1;None;1;0;1;
-#;00000486.pro;Refined Uranium Ore;Normal;3;6;10;1;4;3;0;0;None;2;0;15;
-#;00000489.pro;Special Boxer Weapon;Normal;1;1;1;1;3;3;0;0;None;1;0;0;
-#;00000496.pro;Boxing Gloves;Normal;1;1;1;0;3;0;0;0;None;1;250;5;
-#;00000497.pro;Plated Boxing Gloves;Normal;2;5;1;0;3;0;0;0;None;1;300;10;
-#;00000498.pro;Dual Plasma Cannon;Plasma;45;90;25;0;5;0;200;0;None;1;0;10;Weapon Long Range [58]
-#;00000500.pro;FN FAL HPFA;Normal;20;28;35;30;5;6;24;6;7.62mm;5;4500;10;Weapon Accurate [59]
-#;00000517.pro;"Little Jesus";Normal;5;14;1;1;3;3;0;0;None;2;200;2;Weapon Penetrate [60]
-#;00000518.pro;Dual Minigun;Normal;10;14;40;0;6;0;800;40;5mm;1;0;10;
-#;00000520.pro;Heavy Dual Minigun;Normal;16;24;40;0;6;0;800;40;.223;1;0;10;Weapon Accurate [59]
-#;00000522.pro;Wakizashi Blade;Normal;8;24;1;1;3;3;0;0;None;2;600;3;Weapon Penetrate [60]
-#;00000530.pro;End Boss Knife;Normal;15;30;1;1;3;3;0;0;None;2;0;1;Weapon Penetrate [60]
-#;00000531.pro;End Boss Plasma Gun;Plasma;30;70;35;30;5;6;50;3;D Energy Cell;0;0;1;
-#;00000574.pro;Lightsaber;Laser;36;76;1;0;3;0;0;0;None;2;12000;2;Weapon Penetrate [60]
-#;00000575.pro;Blaster;Laser;30;40;24;0;3;0;40;0;C Energy Cell;3;800;4;
-#;00000576.pro;Lightsaber;Laser;36;76;1;0;3;0;0;0;None;2;12000;2;Weapon Penetrate [60]
-#;00000583.pro;Plant Spike;Normal;8;12;16;0;4;3;0;0;None;2;0;0;Weapon Penetrate [60]
-#;00000611.pro;Throwing Axe;Normal;12;16;18;1;5;4;0;0;None;5;350;3;Weapon Penetrate [60]
-#;00000613.pro;Home-made grenade;Explode;20;45;15;0;4;0;0;0;None;3;75;1;
-#;00000617.pro;Taser;Electrical;3;5;6;0;4;0;2;0;C Energy Cell;3;500;1;
-#;00000629.pro;9mm SMG;Normal;5;10;20;12;5;6;32;8;9mm;4;700;3;
-#;00000630.pro;Grenade Launcher;Explode;20;40;25;0;5;0;1;0;40mm grenade;5;1800;5;
-#;00000634.pro;MGL;Explode;25;45;40;0;4;0;6;0;40mm grenade;6;6000;14;
-#;00000637.pro;Boomerang;Normal;8;14;28;0;5;0;0;0;None;3;125;1;
-#;00000638.pro;Spiked Sledge;Normal;12;19;2;2;4;5;0;0;None;6;1100;12;Weapon Knockback [61]
-#;00000639.pro;Piston Spear;Normal;15;28;2;8;5;6;0;0;None;5;1900;8;Weapon Penetrate [60]
-#;00000640.pro;Deathclaw Gauntlet;Normal;18;30;1;0;4;0;0;0;None;3;3500;5;Weapon Penetrate [60]
+Import;ProFILE;NAME;Damage Type;Min Damage;Max Damage;Range Primary Attack;Range Secondary Attack;AP Cost Primary Attack;AP Cost Secondary Attack;Max Ammo;Rounds Brust;Caliber;Ammo PID;Min Strength;Critical Fail;Cost;Weight;Size;Perk
+;00000012.pro;Knife;Normal;2;6;1;1;3;3;0;0;None;;2;1;100;1;1;
+;00000009.pro;Club;Normal;1;6;1;0;3;0;0;0;None;;3;1;100;3;2;
+;00000005.pro;Sledgehammer;Normal;6;9;2;2;4;5;0;0;None;;6;1;250;12;4;Weapon Knockback [61]
+;00000013.pro;Spear;Normal;3;10;2;8;4;6;0;0;None;;4;1;175;4;4;
+;00000004.pro;10mm Pistol;Normal;5;12;18;0;4;0;10;1;10mm;10mm JHP [29];3;2;250;3;2;
+;00000002.pro;10mm SMG;Normal;7;12;25;15;5;6;30;6;10mm;10mm JHP [29];4;2;1000;5;3;
+;00000011.pro;Hunting Rifle;Normal;12;20;40;0;5;0;10;0;.223;.223 FMJ [34];5;2;1000;8;4;Weapon Accurate [59]
+;00000010.pro;Flamer;Fire;50;90;6;0;6;0;5;1;Flamethrower Fuel;Flamethrower Fuel [32];6;6;2000;18;6;Weapon Night Sight [66]
+;00000006.pro;Minigun;Normal;9;14;35;0;6;0;120;30;5mm;5mm JHP [35];7;2;3800;28;6;Weapon Long Range [58]
+;00000007.pro;Rocket Launcher;Explode;45;90;40;0;6;0;1;0;Rocket;Explosive Rocket [14];6;5;2500;15;6;Weapon Long Range [58]
+;00000015.pro;Plasma Rifle;Plasma;40;70;35;0;5;0;24;0;D Energy Cell;Micro Fusion Cell [39];6;3;4500;12;5;Weapon Long Range [58]
+;00000016.pro;Laser Pistol;Laser;16;22;30;0;4;0;12;0;C Energy Cell;Small Energy Cell [38];3;3;1500;4;2;Weapon Accurate [59]
+;00000018.pro;Desert Eagle .44;Normal;10;16;25;0;4;0;8;0;.44 cal;.44 Magnum JHP [31];4;2;800;4;2;Weapon Accurate [59]
+;00000019.pro;Rock;Normal;1;3;15;1;4;3;0;0;None;;1;1;0;1;1;
+;00000020.pro;Crowbar;Normal;3;10;1;0;4;0;0;0;None;;5;1;75;5;3;
+;00000021.pro;Brass Knuckles;Normal;2;5;1;0;3;0;0;0;None;;1;0;50;1;1;
+;00000022.pro;14mm Pistol;Normal;12;22;20;0;4;0;6;0;14mm;14mm AP [33];4;2;1800;4;3;
+;00000023.pro;Assault Rifle;Normal;10;16;40;35;5;6;24;8;5mm;5mm JHP [35];5;2;1600;7;5;Weapon Accurate [59]
+;00000024.pro;Plasma Pistol;Plasma;20;35;15;0;4;0;16;0;C Energy Cell;Small Energy Cell [38];4;3;2750;4;2;
+;00000025.pro;Grenade (Frag);Explode;30;70;25;0;4;0;0;0;None;;3;4;150;1;1;Weapon Accurate [59]
+;00000026.pro;Grenade (Plasma);Plasma;60;100;25;0;4;0;0;0;None;;4;4;350;1;1;Weapon Accurate [59]
+;00000027.pro;Grenade (Pulse);EMP;100;150;25;0;4;0;0;0;None;;4;4;250;1;1;Weapon Accurate [59]
+#;00000028.pro;Gatling Laser;Laser;20;40;40;0;6;0;30;10;D Energy Cell;Micro Fusion Cell [39];6;3;7500;24;6;Weapon Long Range [58]
+;00000045.pro;Throwing Knife;Normal;5;9;22;0;5;0;0;0;None;;3;1;75;1;1;
+;00000079.pro;Flare;Normal;1;1;15;0;1;0;0;0;None;;0;0;35;1;1;Weapon Accurate [59]
+;00000094.pro;Shotgun;Normal;14;26;16;4;5;6;2;2;12-gauge;12 ga. Shotshells [95];4;2;750;5;3;
+;00000115.pro;Super Sledge;Normal;18;36;2;2;4;5;0;0;None;;5;1;3750;12;4;Weapon Knockback [61]
+;00000116.pro;Ripper;Normal;15;32;1;1;4;4;10;0;C Energy Cell;Small Energy Cell [38];4;1;1400;2;2;Weapon Penetrate [60]
+;00000118.pro;Laser Rifle;Laser;30;40;45;20;5;6;10;2;D Energy Cell;Micro Fusion Cell [39];5;3;5000;12;5;Weapon Long Range [58]
+#;00000120.pro;Alien Blaster;Electrical;30;90;10;0;4;0;30;0;C Energy Cell;Small Energy Cell [38];2;3;10000;2;2;Weapon Accurate [59]
+;00000122.pro;9mm Mauser;Normal;10;16;25;0;4;0;10;0;9mm;9mm AP [360];3;2;650;3;2;Weapon Accurate [59]
+;00000143.pro;Sniper Rifle;Normal;28;38;50;0;6;0;6;0;7.62mm;7.62mm [363];5;2;2700;8;5;Weapon Scope Range [64]
+;00000159.pro;Molotov Cocktail;Explode;20;35;18;0;5;0;0;0;None;;3;4;50;1;1;Weapon Flameboy [67]
+;00000160.pro;Cattle Prod;Electrical;12;20;1;1;4;4;20;0;C Energy Cell;Small Energy Cell [38];4;1;600;3;2;Weapon Accurate [59]
+;00000161.pro;Red Ryder BB Gun;Normal;1;3;22;0;5;0;100;0;None;BB's [163];3;2;200;5;4;
+;00000162.pro;Red Ryder LE BB Gun;Normal;18;25;32;0;5;0;100;0;None;BB's [163];3;2;3500;5;4;Weapon Long Range [58]
+;00000205.pro;Flare;Normal;1;1;15;0;0;0;0;0;None;;0;0;60;1;1;Weapon Accurate [59]
+;00000233.pro;Turbo Plasma Rifle;Plasma;40;60;35;0;4;0;24;0;D Energy Cell;Micro Fusion Cell [39];6;3;6500;12;5;Weapon Long Range [58]
+#;00000234.pro;Spiked Knuckles;Normal;4;10;1;0;3;0;0;0;None;;1;0;250;1;2;
+;00000235.pro;Power Fist;Normal;12;24;1;0;3;0;20;0;C Energy Cell;Small Energy Cell [38];1;0;2200;7;2;Weapon Penetrate [60]
+;00000236.pro;Combat Knife;Normal;4;10;1;1;3;3;0;0;None;;2;1;200;2;2;
+;00000241.pro;.223 Pistol;Normal;18;26;20;0;4;0;5;1;.223;.223 FMJ [34];5;2;3500;5;4;
+;00000242.pro;Combat Shotgun;Normal;15;30;16;10;5;6;9;3;12-gauge;12 ga. Shotshells [95];5;2;1750;10;5;
+#;00000261.pro;Jonny's BB Gun;Normal;1;3;22;0;5;0;100;0;None;BB's [163];3;2;200;5;4;
+;00000268.pro;H&K CAWS;Normal;18;40;22;14;5;6;9;3;12-gauge;12 ga. Shotshells [95];6;2;3250;9;3;
+#;00000270.pro;Robo Rocket Launcher;Explode;10;30;30;0;3;0;6;0;Rocket;Explosive Rocket [14];1;5;0;1;1;
+;00000280.pro;Sharpened Spear;Normal;5;12;2;8;4;6;0;0;None;;4;1;225;4;4;
+;00000283.pro;Tommy Gun;Normal;9;20;32;16;5;6;50;10;.45 cal;.45 Caliber [357];6;2;1200;9;5;
+;00000287.pro;Scoped Hunting Rifle;Normal;12;20;40;0;5;0;10;0;.223;.223 FMJ [34];5;2;1300;9;4;Weapon Scope Range [64]
+#;00000290.pro;Robo Melee Weapon 1;Electrical;7;15;1;0;3;0;0;0;None;;1;0;0;1;1;
+#;00000291.pro;Robo Melee Weapon 2;Electrical;15;30;1;0;3;0;0;0;None;;1;0;0;1;1;
+#;00000292.pro;Boxing Gloves;Normal;1;1;1;0;3;0;0;0;None;;1;0;250;5;2;Weapon Knockback [61]
+#;00000293.pro;Plated Boxing Gloves;Normal;2;5;1;0;3;0;0;0;None;;1;0;300;10;2;Weapon Knockback [61]
+;00000296.pro;H&K P90c;Normal;12;16;30;25;4;5;24;8;10mm;10mm AP [30];4;2;2500;8;4;
+;00000299.pro;Pipe Rifle;Normal;9;12;20;0;5;0;1;0;10mm;10mm JHP [29];5;2;200;10;4;
+;00000300.pro;Zip Gun;Normal;5;9;15;0;4;0;1;0;10mm;10mm JHP [29];4;2;150;4;2;
+;00000313.pro;.44 Magnum Revolver;Normal;13;20;15;0;4;0;6;0;.44 cal;.44 Magnum JHP [31];5;2;700;5;2;
+#;00000319.pro;Switchblade;Normal;2;5;1;1;3;3;0;0;None;;1;1;50;1;1;
+#;00000320.pro;Sharpened Pole;Normal;2;4;2;8;4;6;0;0;None;;4;1;5;3;4;
+;00000332.pro;M3A1 "Grease Gun" SMG;Normal;13;23;20;15;4;5;30;6;.45 cal;.45 Caliber [357];4;2;1750;7;3;
+;00000350.pro;Bozar AMR;Normal;55;90;50;0;6;0;5;0;.50 cal;.50 BMG [610];7;2;6000;20;10;Weapon Scope Range [64]
+;00000351.pro;FN FAL;Normal;18;26;40;30;5;6;20;5;7.62mm;7.62mm [363];5;2;2000;9;5;Weapon Accurate [59]
+;00000352.pro;H&K G11;Normal;12;18;35;30;5;6;50;5;4.7mm caseless;4.7mm Caseless [359];5;2;4000;8;5;
+;00000353.pro;XL70E3;Normal;16;22;40;30;5;6;24;8;.223;.223 AP [615];5;2;4200;9;5;Weapon Penetrate [60]
+;00000354.pro;Pancor Jackhammer;Normal;20;42;18;12;5;6;10;5;12-gauge;12 ga. Shotshells [95];5;2;5500;12;5;Weapon Knockback [61]
+;00000355.pro;Light Support Weapon;Normal;18;24;45;40;5;6;40;10;.223;.223 FMJ [34];6;2;3000;20;6;Weapon Accurate [59]
+#;00000365.pro;Plant Spike;Normal;1;2;8;0;4;3;0;0;None;;2;1;0;0;1;
+;00000371.pro;Claw;Normal;3;5;1;0;3;0;0;0;None;;1;0;0;1;1;Weapon Penetrate [60]
+#;00000372.pro;Claw;Normal;5;10;1;0;3;0;0;0;None;;1;0;0;1;1;Weapon Penetrate [60]
+#;00000383.pro;Shiv;Normal;1;4;1;1;3;3;0;0;None;;1;1;2;1;1;
+#;00000384.pro;Wrench;Normal;3;6;1;1;3;3;0;0;None;;3;1;65;4;2;
+;00000385.pro;Sawed-Off Shotgun;Normal;14;28;7;4;5;6;2;2;12-gauge;12 ga. Shotshells [95];4;2;800;4;3;Weapon Enhanced Knockout [117]
+;00000386.pro;Louisville Slugger;Normal;12;24;1;0;3;0;0;0;None;;4;1;2700;4;2;Weapon Knockback [61]
+;00000387.pro;M60;Normal;22;30;40;40;5;6;100;10;7.62mm;7.62mm [363];7;2;3600;23;6;
+;00000388.pro;Needler Pistol;Normal;12;20;20;0;4;0;10;0;HN needler;HN Needler Cartridge [361];3;2;1200;4;2;Weapon Penetrate [60]
+;00000389.pro;Avenger Minigun;Normal;12;17;40;0;6;0;120;30;5mm;5mm JHP [35];7;2;5500;28;6;Weapon Long Range [58]
+;00000390.pro;Solar Scorcher;Fire;20;60;20;0;4;0;10;0;None;;3;3;2000;5;2;
+;00000391.pro;H&K G11E;Normal;15;21;40;35;5;6;50;7;4.7mm caseless;4.7mm Caseless [359];6;2;5500;8;5;Weapon Night Sight [66]
+;00000392.pro;M72 Gauss Rifle;Normal;35;45;50;0;5;0;10;1;2mm;2mm EC [358];6;2;5750;9;5;Weapon Long Range [58]
+#;00000393.pro;Phazer;Laser;20;30;25;0;4;0;12;0;C Energy Cell;Small Energy Cell [38];3;3;7500;4;2;Weapon Accurate [59]
+;00000394.pro;PPK12 Gauss Pistol;Normal;22;32;30;0;4;0;10;0;2mm;2mm EC [358];4;2;3750;5;2;Weapon Accurate [59]
+;00000395.pro;Vindicator Minigun;Normal;16;22;30;0;6;0;100;20;4.7mm caseless;4.7mm Caseless [359];7;2;12000;28;6;Weapon Penetrate [60]
+;00000396.pro;YK32 Pulse Pistol;Electrical;32;46;15;0;4;0;5;0;C Energy Cell;Small Energy Cell [38];3;3;7500;5;2;Weapon Penetrate [60]
+;00000397.pro;YK42B Pulse Rifle;Electrical;54;78;30;0;5;0;10;1;D Energy Cell;Micro Fusion Cell [39];6;3;9500;9;5;Weapon Penetrate [60]
+;00000398.pro;.44 Magnum (Speed Load);Normal;13;20;15;0;4;0;6;0;.44 cal;.44 Magnum JHP [31];5;2;750;5;2;Weapon Fast Reload [65]
+#;00000399.pro;Super Cattle Prod;Electrical;20;32;1;1;4;4;20;0;C Energy Cell;Small Energy Cell [38];4;1;600;3;2;Weapon Accurate [59]
+;00000400.pro;Improved Flamer;Fire;50;90;6;0;6;0;5;1;.40 cal;Flamethrower Fuel MKII [382];6;6;2000;19;6;Weapon Night Sight [66]
+;00000401.pro;Laser Rifle (Ext. Cap.);Laser;30;40;45;20;5;6;20;2;D Energy Cell;Micro Fusion Cell [39];5;3;5000;12;5;Weapon Long Range [58]
+;00000402.pro;Magneto-Laser Pistol;Laser;17;23;35;0;4;0;12;0;C Energy Cell;Small Energy Cell [38];3;3;1400;4;2;Weapon Penetrate [60]
+;00000403.pro;FN FAL (Night Sight);Normal;18;26;40;30;5;6;20;5;7.62mm;7.62mm [363];5;2;2500;10;5;Weapon Night Sight [66]
+;00000404.pro;Desert Eagle (Exp. Mag.);Normal;10;16;25;0;4;0;14;0;.44 cal;.44 Magnum JHP [31];4;2;800;4;2;Weapon Accurate [59]
+;00000405.pro;Assault Rifle (Exp. Mag.);Normal;10;16;40;35;5;6;64;8;5mm;5mm JHP [35];5;2;1800;8;5;Weapon Accurate [59]
+;00000406.pro;Plasma Pistol (Ext. Cap.);Plasma;20;35;15;0;4;0;32;0;C Energy Cell;Small Energy Cell [38];4;3;2750;5;2;
+;00000407.pro;Mega Power Fist;Normal;20;40;1;0;3;0;20;0;C Energy Cell;Small Energy Cell [38];1;0;2200;7;2;Weapon Penetrate [60]
+;00000421.pro;Holy Hand Grenade;Explode;300;500;30;0;4;0;0;0;None;;2;4;1;2;1;Weapon Long Range [58]
+#;00000423.pro;Gold Nugget;Normal;3;6;10;1;4;3;0;0;None;;2;1;50;10;1;
+#;00000426.pro;Uranium Ore;Normal;3;6;10;1;4;3;0;0;None;;2;1;0;10;1;
+#;00000427.pro;Flame Breath;Fire;35;50;5;0;6;0;4;1;None;;1;6;0;1;1;
+#;00000486.pro;Refined Uranium Ore;Normal;3;6;10;1;4;3;0;0;None;;2;1;0;15;1;
+#;00000489.pro;Special Boxer Weapon;Normal;1;1;1;1;3;3;0;0;None;;1;0;0;0;1;
+#;00000496.pro;Boxing Gloves;Normal;1;1;1;0;3;0;0;0;None;;1;0;250;5;2;
+#;00000497.pro;Plated Boxing Gloves;Normal;2;5;1;0;3;0;0;0;None;;1;0;300;10;2;
+#;00000498.pro;Dual Plasma Cannon;Plasma;45;90;25;0;5;0;200;0;None;;1;3;0;10;1;Weapon Long Range [58]
+;00000500.pro;FN FAL HPFA;Normal;22;30;35;30;5;6;24;8;7.62mm;7.62mm [363];5;2;3400;10;5;Weapon Accurate [59]
+#;00000517.pro;"Little Jesus";Normal;5;14;1;1;3;3;0;0;None;;2;1;200;2;1;Weapon Penetrate [60]
+;00000518.pro;Dual Minigun;Normal;10;14;40;0;6;0;800;30;5mm;5mm JHP [35];1;2;0;10;1;
+;00000520.pro;Heavy Dual Minigun;Normal;16;24;40;0;6;0;800;30;.223;.223 FMJ [34];1;2;0;10;1;Weapon Accurate [59]
+;00000522.pro;Wakizashi Blade;Normal;8;24;1;1;3;3;0;0;None;;2;2;600;3;1;Weapon Penetrate [60]
+#;00000530.pro;End Boss Knife;Normal;15;30;1;1;3;3;0;0;None;;2;2;0;1;1;Weapon Penetrate [60]
+#;00000531.pro;End Boss Plasma Gun;Plasma;30;70;35;30;5;6;50;3;D Energy Cell;Micro Fusion Cell [39];0;3;0;1;1;
+#;00000574.pro;Lightsaber;Laser;36;76;1;0;3;0;0;0;None;;2;1;12000;2;3;Weapon Penetrate [60]
+#;00000575.pro;Blaster;Laser;30;40;24;0;3;0;40;0;C Energy Cell;Small Energy Cell [38];3;3;800;4;4;
+#;00000576.pro;Lightsaber;Laser;36;76;1;0;3;0;0;0;None;;2;1;12000;2;3;Weapon Penetrate [60]
+#;00000583.pro;Plant Spike;Normal;8;12;16;0;4;3;0;0;None;;2;1;0;0;1;Weapon Penetrate [60]
+;00000611.pro;Throwing Axe;Normal;12;16;18;1;5;4;0;0;None;;5;1;350;3;2;Weapon Penetrate [60]
+;00000613.pro;Home-made grenade;Explode;20;45;15;0;4;0;0;0;None;;3;4;75;1;1;
+;00000617.pro;Taser;Electrical;3;5;6;0;4;0;2;0;C Energy Cell;Small Energy Cell [38];3;2;500;1;1;
+;00000629.pro;9mm SMG;Normal;5;10;20;12;5;6;32;8;9mm;9mm ball [121];4;2;700;3;2;
+;00000630.pro;Grenade Launcher;Explode;20;40;25;0;5;0;1;0;40mm grenade;40mm HE Grenades [631];5;5;1200;5;3;
+;00000634.pro;MGL;Explode;25;45;40;0;4;0;6;0;40mm grenade;40mm HE Grenades [631];6;5;5000;14;6;
+;00000637.pro;Boomerang;Normal;8;14;28;0;5;0;0;0;None;;3;1;125;1;1;
+;00000638.pro;Spiked Sledge;Normal;12;19;2;2;4;5;0;0;None;;6;1;1100;12;4;Weapon Knockback [61]
+;00000639.pro;Piston Spear;Normal;15;28;2;8;5;6;0;0;None;;5;1;1900;8;5;Weapon Penetrate [60]
+;00000640.pro;Deathclaw Gauntlet;Normal;18;30;1;0;4;0;0;0;None;;3;0;3500;5;4;Weapon Penetrate [60]
