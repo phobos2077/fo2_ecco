@@ -16,12 +16,13 @@ function getDtDrAfterVanillaBypass(ctx) {
     return [dt, dr];
 }
 
-let dummyAmmo = {
+dummyAmmo = {
+    name: "None",
     acAdj: 0,
     drAdj: 0,
     dmgMult: 1,
     dmgDiv: 1,
-}
+};
 
 damageFormulas = [
     {

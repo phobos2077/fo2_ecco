@@ -60,9 +60,9 @@
 
 <canvas id="graph" width="700" height="300"></canvas>
 
-<script type="text/javascript" src="damage_calc_datasets.js"></script>
-<script type="text/javascript" src="damage_calc_formulas.js"></script>
-<script type="text/javascript" src="damage_calc_loadcsv.js"></script>
+<script type="text/javascript" src="damage_calc_datasets.js?v=1"></script>
+<script type="text/javascript" src="damage_calc_formulas.js?v=1"></script>
+<script type="text/javascript" src="damage_calc_loadcsv.js?v=1"></script>
 <script type="text/javascript">
 
 /**
@@ -286,6 +286,9 @@ function updateTable() {
     };
     if (!lastCtx || lastCtx.weapon != ctx.weapon) {
         ctx.weaponAmmoTypes = ammoTypes.filter(at => at.caliber == ctx.weapon.caliber);
+        if (ctx.weaponAmmoTypes.length == 0) {
+            ctx.weaponAmmoTypes.push(dummyAmmo);
+        }
         fillOptions("ammo", ctx.weaponAmmoTypes);
         fillOptions("rounds", intRange(1, ctx.weapon.burst || 1));
     } else {
