@@ -1,11 +1,17 @@
 for 0.9:
 - attempt to change DR/DT reduction in damage mod
 - ELSE - tweak armor DT values (esp. for BOSS)
+- take damage type override from ini
 - add 7.62 AP ammo & rebalance 7.62 weapons
-- consider replacing 12ga Buckshot (new) with more interesting variant
+- fitting sprite for Dragon Breath
 - review perk/skill reqs for early craft (too high from feedback)
 - remove 9mm SMG and second 9mm ammo type from stores and worldmap
+- balance pass on pistol progression
+- review armor class for armors
 - review weapon distribution in stores
+- review and update full readme
+- compare text changes to 0.8 and update RU texts
+- update RU readme
 
 
 for "future":

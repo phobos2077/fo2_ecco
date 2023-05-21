@@ -186,8 +186,8 @@
 {9301}{}{An average sized bag. Made from weaved Brahmin hairs.}
 {9400}{}{Shotgun}
 {9401}{}{A Winchester Widowmaker double-barreled 12-gauge shotgun. Short barrel, with mahogany grip. Min ST: 4.}
-{9500}{}{12 ga. Shotshells}
-{9501}{}{Shotgun ammunition, #7 bird shot. This particular ammo is marked: "12-gauge shells, not for use by children under the age of 3."}
+{9500}{}{12 ga. Buckshot}
+{9501}{}{Shotgun ammunition, #00 buckshot. This particular ammo is marked: "12-gauge shells, not for use by children under the age of 3."}
 {9600}{}{Red Pass Key}
 {9601}{}{An electronic security key, color coded red.}
 {9700}{}{Blue Pass Key}
@@ -777,7 +777,7 @@
 {39900}{}{Super Cattle Prod}
 {39901}{}{A Farmer's Best Friend model cattle prod from Wattz Electronics. This model has been upgraded to increase the electrical discharge. Min ST: 4.}
 {40000}{}{Improved Flamer}
-{40001}{}{A Flambe 450 model flamethrower, varmiter variation. Fires a short spray of extremely hot, flammable liquid. Requires specialized fuel to work properly. This model has been modified to fire a hotter mixture which causes greater combustibility. Min ST: 6.}
+{40001}{}{A Flambe 450 model flamethrower, varmiter variation. Fires a spray of extremely hot, flammable liquid. This model has been modified to fire a hotter mixture which causes greater combustibility at range. Min ST: 6.}
 {40100}{}{Laser Rifle (Ext. Cap.)}
 {40101}{}{This Wattz 2000 laser rifle has had its recharging system upgraded and a special recycling chip installed that reduces the drain on the micro fusion cell by 50%. Min ST: 5.}
 {40200}{}{Magneto-Laser Pistol}
@@ -1218,5 +1218,5 @@
 {63901}{}{Spear with a pneumatic piston built into the end. It is designed to do more impact damage. Min ST: 5.}
 {64000}{}{Deathclaw Gauntlet}
 {64001}{}{A sturdy leather gauntlet with three claws attached to it. Extremely sharp. Min ST: 3.}
-{64100}{}{12 ga. Buckshot}
-{64101}{}{Shells with heavy #00 buckshots.}
+{64100}{}{12 ga. Dragon Breath}
+{64101}{}{These incendiary shells pack a fiery punch that can melt armor and flesh alike.}

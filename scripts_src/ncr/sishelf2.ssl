@@ -231,7 +231,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_10MM_JHP, 5, 10, 100)
          check_restock_item(PID_SHOTGUN_SHELLS, 5, 10, 100)
          check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 3, 50)  // pbs
-         check_restock_item(PID_PBS_SHOTGUN_BUCKS, 1, 3, 50)  // pbs
+         check_restock_item(PID_PBS_DRAGON_BREATH, 1, 3, 50)  // pbs
 
          set_local_var(LVAR_Restock_Time, (random(2,4) * ONE_GAME_DAY) + game_time);
       end

@@ -146,18 +146,9 @@ find them on your own. I will only say that they all around northern half of the
 - bring a number of tentacles to NCR doctor
 
 > AMMO:
-- AP and FMJ do less base damage then JHP (unarmored critters), but is very effective against armored targets (thanks to YAAM)
-- Penetrating power of AP ammo in ASCENDING order:
-10mm AP / .223 FMJ
-Small energy cell (energy pistols)
-5mm AP / .44 FMJ
-7.62x51 / Micro-fusion cell (energy rifles and minigun)
-4.7mm caseless
-14mm AP : ignores any armor up to Combat Armor
-.50 BMG
-2mm GAUSS / AP Rocket : make Power Armor user defenceless
-
-- Changed pack size of following ammo types (to balance the total amount of that ammo in game, creating the need of purchase)
+- parameters of all ammo types were carefully edited to fix vanilla issues and add choices
+- AP/FMJ generally do less damage then JHP against unarmored, but is effective against armored targets (thanks to new damage script)
+- Changed pack size of ammo to balance the total amount of that ammo in game, creating the need of purchase:
 [caliber] - [pack size] ([vanilla pack size])
 10mm - 20 (24)
 12ga - 12 (20)
@@ -175,32 +166,33 @@ MFC  - 20 (50)
 - weight and cost was rebalanced as well
 - to further reduce "ammo swimming", all dying critters are stripped from some amount of ammo (optional), see MISC section
 - ammo now occupies space, so you cannot store unlimited ammo in car trunk (increased trunk capacity by 20% to balance that)
-- HE Rocket is extremely powerfull, but AP Rocket penetrates like gauss
-- .50 ammo caliber and ammo type added (used only in new Bozar)
-- new ammo types: 12ga Slugs, .223AP, 14mm JHP (crafting)
+- new "calibers" and ammo types: .50 BMG (for AMR) and 40mm Grenade
+- new ammo types for existing calibers: 12ga Slugs, 12ga Buckshot, .223AP, 14mm JHP (some craftable)
 
 
 > FIREARMS:
 - All shotguns: the max damage is much higher (min dmg is almost the same), wich makes them very deadly against unarmored critters, but cannot penetrate heavy armor and limited in range.
-- 2 barrel shotguns have a duplet (burst) firing mode with single shot animation.
-- All pistols (including energy pistols): cost 4 AP to shoot (That's what pistols are for in real life - shoot faster), but have smaller firing range and not near as powerfull as rifles.
-- Bozar is what it should be - single-shot anti-materiel rifle, uses new .50 BMG ammo (penetrate most armor), need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
-- Sniper Rifle is much more powerful, rechambered "back" to 7.62
-- M60 is a true machinegun: more powerful with 100 rounds ammo capacity (like in RL).
-- Almost every weapon was subjectively improved (main concerns were: more realism, more interesting balance between weapons, taking new ammo behaviour into account, BUT not going too far from vanilla stats, except those weapons mentioned specifically).
+- Sawed off shotgun have a duplet (burst) firing mode with single shot animation.
+- All pistols (including energy pistols): cost 4 AP to shoot, but have smaller firing range and not as powerfull as rifles.
+- Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
+- Sniper Rifle is much more powerful, rechambered "back" to 7.62.
+- M60 is a true machinegun: more powerful with 100 rounds ammo capacity.
+- Bursts rebalanced to differ in bullet spread between weapon types (thanks to sfall). This makes certain guns work in new roles with effective mid-long range bursts.
+- Burst sizes were reduced across the board and rebalanced. This should make bursts viable with the added ammo scarcity.
+- Almost every weapon was subjectively improved (main concerns were: more interesting balance between weapons, taking new ammo behaviour into account, BUT not going too far from vanilla stats, except those weapons mentioned specifically).
 
 
 > NEW WEAPONS:
-- taser
+- Taser (stuns enemies from a short distance)
 - 40mm grenade launchers (two types) with two types of grenades
-- 9mm SMG in some random encounters
+- Late-game non-firearm weapons: one "unarmed", a sprear weapon, a sledge weapon, two throwing weapons
+- A new craftable grenade
 
 
 > ENERGY WEAPONS:
-- all energy weapons has higher penetration (rifles better than pistols), so now only the best armor can provide strong protection against Laser or Plasma rifles
-- Laser weapons are more powerful and armor laser resistance was changed (see below).
+- Laser weapons are now very effective against everything below Combat/Metal Armor.
 - "Real" Turbo Plasma rifle, costs 4 AP for shot (max damage reduced a bit).
-- strong single-shot energy weapons now spend more than 1 cell round for each shot
+- Strong single-shot energy weapons now spend more than 1 cell round for each shot.
 
 
 > Some examples of ballance between some weapons of comparable class:

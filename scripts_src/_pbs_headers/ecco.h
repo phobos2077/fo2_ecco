@@ -73,7 +73,7 @@
 #define PID_PBS_SPIKED_SLEDGE       (638)
 #define PID_PBS_PISTON_SPEAR        (639)
 #define PID_PBS_DEATHCLAW_GAUNTLET  (640)
-#define PID_PBS_SHOTGUN_BUCKS       (641)
+#define PID_PBS_DRAGON_BREATH       (641)
 
 // new scenery
 #define PID_PBS_SPIKE_TRAP_DISARMED  (0x02000000 + 2335)
