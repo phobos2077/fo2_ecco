@@ -62,9 +62,9 @@
 
 <canvas id="graph" width="700" height="300"></canvas>
 
-<script type="text/javascript" src="damage_calc_datasets.js?v=3"></script>
+<script type="text/javascript" src="damage_calc_datasets.js?v=4"></script>
 <script type="text/javascript" src="damage_calc_formulas.js?v=3"></script>
-<script type="text/javascript" src="damage_calc_loadcsv.js?v=3"></script>
+<script type="text/javascript" src="damage_calc_loadcsv.js?v=5"></script>
 <script type="text/javascript" src="damage_calc_graph.js?v=3"></script>
 <script type="text/javascript">
 
@@ -197,9 +197,12 @@ function updateTable() {
 
     saveSettings();
 
+    const shownAmmoTypeIdx = getSelectValueInt("ammo");
+    const ammo = ctx.weaponAmmoTypes[shownAmmoTypeIdx];
+    ctx.calculatedAmmoTypes = ctx.weaponAmmoTypes.filter(at => at.dmgType == ammo.dmgType);
     lastCtx = ctx;
-    ctx.dmgType = damageTypes[ctx.weapon.dmgType];
-    ctx.dmgTypeIdx = ctx.weapon.dmgType;
+    ctx.dmgType = ammo.dmgType || ctx.weapon.dmgType;
+    ctx.dmgTypeIdx = damageTypes.indexOf(ctx.dmgType);
 
     document.getElementById("dmgType").textContent = damageTypes[ctx.dmgTypeIdx] + " Damage";
     
@@ -229,10 +232,7 @@ function updateTable() {
         /*if (b.type == "critter" && b.type != a.type) {
             return -1;
         }*/
-        const dtDiff = a.dt[ctx.dmgTypeIdx] - b.dt[ctx.dmgTypeIdx];
-        return dtDiff != 0
-            ? dtDiff
-            : a.dr[ctx.dmgTypeIdx] - b.dr[ctx.dmgTypeIdx]
+        return ctx.formula.rateArmor(a, ctx) - ctx.formula.rateArmor(b, ctx);
     });
 
     // DAMAGE CALCULATION
@@ -244,7 +244,7 @@ function updateTable() {
         ctx.maxFinalDmg = Math.max(finalDmg, ctx.maxFinalDmg);
         return finalDmg;
     }
-    ctx.calculated = ctx.weaponAmmoTypes.map(ammo => {
+    ctx.calculated = ctx.calculatedAmmoTypes.map(ammo => {
         ctx.ammo = ammo;
         const dmgMin = ctx.weapon.dmgMin;
         const dmgMax = ctx.weapon.dmgMax;
@@ -265,9 +265,8 @@ function updateTable() {
     });
 
     // Show selected ammo info.
-    const shownAmmoTypeIdx = getSelectValueInt("ammo");
-    const ammo = ctx.weaponAmmoTypes[shownAmmoTypeIdx];
-    document.getElementById("ammoInfo").innerHTML = `DMG Mult/Div: <b>${ammo.dmgMult}/${ammo.dmgDiv}</b>, DR Adjust: <b>${ammo.drAdj}</b>, AC Adjust: <b>${ammo.acAdj}</b>`;
+    document.getElementById("ammoInfo").innerHTML =
+        `Ammo DMG: <b>${ammo.dmgMult}/${ammo.dmgDiv}</b>, DR Adj: <b>${ammo.drAdj}</b>, AC Adj: <b>${ammo.acAdj}</b>, Perk: ${ctx.weapon.perk}`;
     
     // Populate header cells based on armor types from array.
     const addHeaderCell = function(rowIdx, value) {
@@ -276,15 +275,16 @@ function updateTable() {
         tableHeaderRows[rowIdx].appendChild(cell);
     }
     ctx.ammo = ammo;
+    const roundDecimals = ctx.formula.decimals || 0;
     relevantArmors.forEach(armor => {
         let dt, dr;
         ctx.armor = armor;
         [dt, dr] = ctx.formula.dtdr(ctx);
         addHeaderCell(0, armor.name);
         addHeaderCell(1, armor.dt[ctx.dmgTypeIdx]);
-        addHeaderCell(2, dt);
+        addHeaderCell(2, dt.toFixed(roundDecimals));
         addHeaderCell(3, armor.dr[ctx.dmgTypeIdx]+"%");
-        addHeaderCell(4, dr+"%");
+        addHeaderCell(4, dr.toFixed(roundDecimals)+"%");
     });
 
     // Update table body.
@@ -295,11 +295,11 @@ function updateTable() {
         return cell;
     }
     let drawnDmg = null;
-    ctx.calculated[shownAmmoTypeIdx].forEach((dmgByArmor, baseDmg) => {
+    ctx.calculated[ctx.calculatedAmmoTypes.indexOf(ammo)].forEach((dmgByArmor, baseDmg) => {
         const row = document.createElement("tr");
         addBodyCell(row, baseDmg * ctx.rounds);
         for (let i = 0; i < dmgByArmor.length; i++) {
-            const cell = addBodyCell(row, dmgByArmor[i].toFixed(ctx.formula.decimals || 0));
+            const cell = addBodyCell(row, dmgByArmor[i].toFixed(roundDecimals));
             const armorIdx = i;
             cell.addEventListener("mouseenter", function () {
                 drawGraph(baseDmg, armorIdx, ctx);

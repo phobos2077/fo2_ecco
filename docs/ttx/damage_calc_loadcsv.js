@@ -28,9 +28,11 @@ const csvNormalToShortDamageTypes = [
     ["Fire", "Fire"],
     ["Plasma", "Plas"],
     ["Electrical", "Elec"],
-    ["Explode", "Expl"],
+    ["Explosion", "Expl"],
     ["EMP", "EMP"]
 ];
+
+const weaponDamageTypeMap = new Map([["Explode", "Explosion"]]);
 
 /**
  * @type string[]
@@ -75,7 +77,7 @@ loadDataFromCsv = async function(dataSet) {
             ignoreArmorKewords.every(kw => armor.name.indexOf(kw) == -1) &&
             (armor.dt.some(v => v > 0) || armor.dr.some(v => v > 0)));
 
-    armors.push({
+    armors.unshift({
         name: "None",
         type: "none",
         ac: 0,
@@ -111,17 +113,20 @@ loadDataFromCsv = async function(dataSet) {
         drAdj: parseInt(a["DR Adjust"]),
         dmgMult: parseInt(a["Dam Mult"]),
         dmgDiv: parseInt(a["Dam Div"]),
+        dmgType: dataSet.ammoDamageType[parseInt(a["ProFILE"])]
     }));
     weapons = (await csvFileToArrayOfObjects(dataSet.getPath("weapon"))).map(a => ({
         name: a["NAME"],
         caliber: parseInt(a["Max Ammo"]) > 0 ? a["Caliber"] : null,
-        dmgType: damageTypes.indexOf(a["Damage Type"]),
+        dmgType: weaponDamageTypeMap.get(a["Damage Type"]) || a["Damage Type"],
         dmgMin: parseInt(a["Min Damage"]),
         dmgMax: parseInt(a["Max Damage"]),
         penetrate: a["Perk"] == "Weapon Penetrate [60]",
-        burst: parseInt(a["Rounds Brust"])
+        burst: parseInt(a["Rounds Brust"]),
+        perk: a["Perk"]
     }));
     weapons.sort((a, b) => a.name > b.name);
+    //console.log(weapons.filter(w => w.dmgType != 0));
 
     console.log(`Loaded ${armors.length} armors, ${ammoTypes.length} ammo types, ${weapons.length} weapons.`);
 }

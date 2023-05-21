@@ -55,7 +55,7 @@ function drawGraph(selectedDmg, selectedArmorIdx, dmgCtx) {
         drawText(value.toFixed(), left, y);
     }
     const colors = ["red", "blue", "green", "purple", "orange"];
-    const dataRows = dmgCtx.calculated.map((mapByDamage, ammoIdx) => mapByDamage.get(selectedDmg));
+    const dataRows = dmgCtx.calculated.map(mapByDamage => mapByDamage.get(selectedDmg));
     //const avgDmg = dataRows.reduce((sum, row) => sum + row.reduce((a, b) => a + b, 0) / row.length, 0) / dataRows.length;
     addDmgLine(0);
     addDmgLine(selectedDmg * dmgCtx.rounds);
@@ -97,7 +97,7 @@ function drawGraph(selectedDmg, selectedArmorIdx, dmgCtx) {
         ctx.moveTo(legendX, legendY);
         ctx.arc(legendX, legendY, 3, 0, 360);
         ctx.lineTo(legendX + legendItemWidth, legendY);
-        drawText(dmgCtx.weaponAmmoTypes[i].name, legendX + legendItemWidth / 2, legendY - 5);
+        drawText(dmgCtx.calculatedAmmoTypes[i].name, legendX + legendItemWidth / 2, legendY - 5);
         legendY += legendInterval;
 
         ctx.stroke();
