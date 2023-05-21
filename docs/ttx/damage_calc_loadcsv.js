@@ -22,7 +22,7 @@ async function csvFileToArrayOfObjects(file) {
     return csvToArrayOfObjects(csvString, ";");
 }
 
-const csvAmmoToArmorDamageTypes = [
+const csvNormalToShortDamageTypes = [
     ["Normal", "Norm"],
     ["Laser", "Lasr"],
     ["Fire", "Fire"],
@@ -35,18 +35,42 @@ const csvAmmoToArmorDamageTypes = [
 /**
  * @type string[]
  */
-damageTypes = csvAmmoToArmorDamageTypes.map(t => t[0]);
+damageTypes = csvNormalToShortDamageTypes.map(t => t[0]);
 
 loadDataFromCsv = async function(dataSet) {
     console.log(`Loading dataset ${dataSet.name}...`);
 
     const ignoreArmorKewords = ["Mutant", "Environmental", "K-9", "Bridgekeeper"];
-    armors = (await csvFileToArrayOfObjects(dataSet.getPath("armor"))).map(ar => ({
-        name: ar["NAME"].replace(/Jacket/i,"Jck").replace(/Hardened/i,"Hrd").replace(/Advanced/i,"Adv").replace(/\s*Armor/i,"").replace(/Mark\s+/i,"MK"),
-        ac: ar["Armor Class"],
-        dt: csvAmmoToArmorDamageTypes.map(t => parseInt(ar[t[1]+" DT"])),
-        dr: csvAmmoToArmorDamageTypes.map(t => parseInt(ar[t[1]+" DR"])),
-    }))
+    function loadDtDrLists(entity) {
+        if (dataSet.splitDtDr) {
+            return [
+                csvNormalToShortDamageTypes.map(t => parseInt(entity[t[1]+" DT"])),
+                csvNormalToShortDamageTypes.map(t => parseInt(entity[t[1]+" DR"]))
+            ]
+        }
+        const dt = [], dr = [];
+        damageTypes.forEach(dmgType => {
+            let values = entity[dmgType + " DT|DR"];
+            if (values) {
+                values = values.split("|").map(v => parseInt(v));
+                dt.push(values[0]);
+                dr.push(values[1]);
+            } else {
+                dt.push(0);
+                dr.push(0);
+            }
+        });
+        return [dt, dr];
+    }
+    armors = (await csvFileToArrayOfObjects(dataSet.getPath("armor"))).map(ar => {
+        const dtDr = loadDtDrLists(ar);
+        return {
+            name: ar["NAME"].replace(/Jacket/i,"Jck").replace(/Hardened/i,"Hrd").replace(/Advanced/i,"Adv").replace(/\s*Armor/i,"").replace(/Mark\s+/i,"MK"),
+            ac: ar["Armor Class"],
+            dt: dtDr[0],
+            dr: dtDr[1],
+        };
+    })
         .filter(armor =>
             ignoreArmorKewords.every(kw => armor.name.indexOf(kw) == -1) &&
             (armor.dt.some(v => v > 0) || armor.dr.some(v => v > 0)));
@@ -67,12 +91,13 @@ loadDataFromCsv = async function(dataSet) {
         var cr = crittersByProto[proto];
         if (!cr) return;
 
+        const dtDr = loadDtDrLists(cr);
         armors.push({
             name: cr["NAME"],
             type: "critter",
             ac: cr["Armor Class"],
-            dt: csvAmmoToArmorDamageTypes.map(t => parseInt(cr[t[1]+" DT"])),
-            dr: csvAmmoToArmorDamageTypes.map(t => parseInt(cr[t[1]+" DR"]))
+            dt: dtDr[0],
+            dr: dtDr[1]
         });
     }
     tryAddCritter("00000288.pro"); // Horrigan

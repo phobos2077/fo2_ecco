@@ -1,0 +1,23 @@
+Import;ProFILE;NAME;Cost;Weight;Armor Class;Normal DT|DR;Laser DT|DR;Fire DT|DR;Plasma DT|DR;Electrical DT|DR;Explosion DT|DR;EMP DT|DR;Perk;Size
+;00000003.pro;Leather Armor;700;8;15;2|25;2|0;0|20;0|10;0|30;0|20;0|500;;10
+;00000001.pro;Metal Armor;1100;35;10;4|30;4|40;4|10;4|20;0|0;4|25;0|500;;10
+;00000014.pro;Power Armor;10000;85;21;12|40;8|70;12|60;10|40;12|40;16|50;0|50;Powered Armor [62];15
+;00000017.pro;Combat Armor;6500;20;20;5|40;4|30;4|30;4|50;2|50;6|40;0|500;Combat Armor [63];10
+;00000074.pro;Leather Jacket;250;5;8;0|20;0|0;0|10;0|10;0|30;0|20;0|500;;7
+;00000113.pro;Robes;90;10;5;0|20;0|10;0|10;0|10;0|40;0|20;0|500;;8
+;00000232.pro;Hardened Power Armor;12000;100;21;13|50;10|70;14|60;13|50;13|50;18|60;0|50;Powered Armor [62];15
+;00000239.pro;Brotherhood Armor;10000;25;22;8|45;6|65;7|50;7|60;6|60;9|45;0|500;Combat Armor [63];11
+;00000240.pro;Tesla Armor;6500;35;15;4|35;12|90;4|15;10|80;12|80;4|30;0|500;Combat Armor [63];10
+;00000265.pro;Combat Leather Jacket;1000;7;18;2|30;2|0;2|25;0|10;0|30;0|20;0|500;;7
+;00000348.pro;Advanced Power Armor;15000;70;25;15|55;16|70;16|70;15|60;15|60;20|65;0|70;Armor Advanced I [68];15
+;00000349.pro;Adv. Power Armor MKII;18000;80;26;18|60;19|90;16|70;18|60;15|65;20|70;0|100;Armor Advanced II [69];15
+;00000379.pro;Leather Armor Mark II;1000;10;20;3|25;1|10;1|25;1|10;1|40;1|25;0|500;;10
+;00000380.pro;Metal Armor Mark II;2000;35;11;4|35;5|70;4|15;4|25;1|10;4|30;0|500;;10
+;00000381.pro;Combat Armor Mark II;8000;25;21;6|45;6|40;5|35;5|50;3|55;9|45;0|500;Combat Armor [63];10
+;00000524.pro;Bridgekeeper's Robes;5;10;20;5|40;8|60;4|30;4|50;2|50;6|40;0|500;;8
+#;00000554.pro;Environmental Armor;0;10;10;4|40;4|40;4|40;3|25;1|10;4|40;1|10;;1
+#;00000588.pro;K-9 Kevlar;0;15;20;1|5;1|0;0|15;0|25;1|40;2|10;0|0;;1
+#;00000590.pro;Mutant Armor;0;100;15;1|0;10|20;0|0;6|10;10|10;2|10;0|0;;1
+#;00000593.pro;Nothing out of the ordinary;0;0;0;0|0;0|0;0|0;0|0;0|0;0|0;0|0;;1
+#;00000594.pro;Nothing out of the ordinary;0;0;0;0|0;0|0;0|0;0|0;0|0;0|0;0|0;;1
+#;00000595.pro;Nothing out of the ordinary;0;0;0;0|0;0|0;0|0;0|0;0|0;0|0;0|0;;1

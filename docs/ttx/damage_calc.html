@@ -160,15 +160,14 @@ async function loadDataset() {
 }
 
 function clearGraph() {
-    drawGraph([]);
+    drawGraph();
 }
 
 /**
- * @param {number[]} dataRow
- * @param {number} baseDmg
+ * @param {number} selectedDmg
  * @param {DamageContext} dmgCtx
  */
-function drawGraph(dataRow, baseDmg, dmgCtx) {
+function drawGraph(selectedDmg, dmgCtx) {
     //console.log("drawGraph", dmg, dataRow);
     /**
      * @type HTMLCanvasElement
@@ -178,18 +177,25 @@ function drawGraph(dataRow, baseDmg, dmgCtx) {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (dataRow.length <= 0) return;
+    if (!selectedDmg || !dmgCtx.calculated) return;
 
     const margin = 25;
     const top = margin;
     const left = margin;
     const right = canvas.width - margin;
-    const bottom = canvas.height - margin;
-    const width = canvas.width - margin * 2;
-    const height = canvas.height - margin * 2;
+    const bottom = canvas.height - margin - 10;
+    const width = right - left;
+    const height = bottom - top;
 
+    const maxDmg = Math.max(dmgCtx.maxFinalDmg, dmgCtx.weapon.dmgMax * dmgCtx.rounds);
     function damageToY(dmg) {
-        return bottom - dmg / dmgCtx.maxFinalDmg * height;
+        return bottom - dmg / maxDmg * height;
+    }
+    function drawText(text, x, y, size, color) {
+        ctx.font = `${size || 12}px arial`;
+        ctx.fillStyle = color || "black";
+        ctx.textAlign = "center";
+        ctx.fillText(text, x, y);
     }
     const dmgLines = [];
     function addDmgLine(value) {
@@ -204,35 +210,61 @@ function drawGraph(dataRow, baseDmg, dmgCtx) {
         ctx.lineTo(right, y);
         ctx.stroke();
 
-        ctx.font = "14px arial";
-        ctx.strokeStyle = "black";
-        ctx.textAlign = "center";
-        ctx.fillText(value, left, y);
+        drawText(value.toFixed(), left, y);
     }
+    const colors = ["red", "blue", "green", "purple", "orange"];
+    const dataRows = dmgCtx.calculated.map((mapByDamage, ammoIdx) => mapByDamage.get(selectedDmg));
+    const avgDmg = dataRows.reduce((sum, row) => sum + row.reduce((a, b) => a + b, 0) / row.length, 0) / dataRows.length;
     addDmgLine(0);
-    addDmgLine(baseDmg * dmgCtx.rounds);
+    addDmgLine(avgDmg);
+    addDmgLine(selectedDmg * dmgCtx.rounds);
     addDmgLine(dmgCtx.weapon.dmgMin * dmgCtx.rounds);
     addDmgLine(dmgCtx.weapon.dmgMax * dmgCtx.rounds);
     addDmgLine(dmgCtx.maxFinalDmg);
+    addDmgLine(maxDmg);
 
-    ctx.beginPath();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "red";
-    let x = left + 50,
-        y = damageToY(dataRow[0]);
-    ctx.moveTo(x, y);
-    ctx.arc(x, y, 3, 0, 360);
-    const stepX = 50; //width / dataRow.length;
-    for (let i = 1; i < dataRow.length; i++) {
-        x += stepX;
-        y = damageToY(dataRow[i]);
+    const legendItemWidth = 50;
+    const legendMargin = 40;
+    const legendWidth = legendItemWidth * dataRows.length + legendMargin * (dataRows.length - 1);
+    let legendX = (canvas.width - legendWidth) / 2;
+    const legendY = canvas.height - 5;
 
-        ctx.lineTo(x, y);
+    // Draw graphs.
+    dataRows.forEach((dataRow, i) => {
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = colors[i % colors.length];
+        let x = left + 50,
+            y = damageToY(dataRow[0]);
+        ctx.moveTo(x, y);
         ctx.arc(x, y, 3, 0, 360);
-        //console.log(margin + stepX * i, damageToY(dataRow[i]));
-    }
-    ctx.stroke();
-    ctx.closePath();
+        const stepX = 50; //width / dataRow.length;
+        for (let i = 1; i < dataRow.length; i++) {
+            x += stepX;
+            y = damageToY(dataRow[i]);
+
+            ctx.lineTo(x, y);
+            ctx.arc(x, y, 3, 0, 360);
+            //console.log(margin + stepX * i, damageToY(dataRow[i]));
+        }
+        // Legend
+        ctx.moveTo(legendX, legendY);
+        ctx.arc(legendX, legendY, 3, 0, 360);
+        ctx.lineTo(legendX + legendItemWidth, legendY);
+        drawText(dmgCtx.weaponAmmoTypes[i].name, legendX + legendItemWidth / 2, legendY - 5);
+        legendX += legendMargin + legendItemWidth;
+
+        ctx.stroke();
+        ctx.closePath();
+    });
+
+    // Draw legend.
+    /*dataRows.forEach((dataRow, i) => {
+        ctx.beginPath();
+        ctx.lineWidth
+        ctx.stroke();
+        ctx.closePath();
+    });*/
 }
 
 function updateTable() {
@@ -259,7 +291,6 @@ function updateTable() {
     } else {
         ctx.weaponAmmoTypes = lastCtx.weaponAmmoTypes;
     }
-    ctx.ammo = ctx.weaponAmmoTypes[getSelectValueInt("ammo")];
     ctx.rounds = getSelectValueInt("rounds");
 
     //console.log(ctx);
@@ -287,34 +318,52 @@ function updateTable() {
         }
     }
 
-    
-    function calculateDamage(dmg, armor) {
-        ctx.armor = armor;
-        ctx.rawDmg = dmg;
-        return ctx.formula.dmg(ctx);
-    }
-    const relevantArmors = armors.slice();
+    // Build list of relevant armor types without duplicate DT/DR for current damage type.
+    const armorsByStats = armors.reduce((o, armor) => {
+        const key = `${armor.dt[ctx.dmgTypeIdx]}_${armor.dr[ctx.dmgTypeIdx]}`;
+        if (!o[key]) o[key] = armor;
+        return o;
+    }, {});
+    const relevantArmors = Object.keys(armorsByStats).map(k => armorsByStats[k]);
+    // Sort armors by stats
     relevantArmors.sort((a, b) => {
         /*if (b.type == "critter" && b.type != a.type) {
             return -1;
         }*/
-        const dmg = ctx.weapon.dmgMin;
-        const dmgDif = calculateDamage(dmg, b) - calculateDamage(dmg, a);
-        return dmgDif != 0
-            ? dmgDif
-            : a.dr[ctx.dmgTypeIdx] - b.dr[ctx.dmgTypeIdx];
+        const dtDiff = a.dt[ctx.dmgTypeIdx] - b.dt[ctx.dmgTypeIdx];
+        return dtDiff != 0
+            ? dtDiff
+            : a.dr[ctx.dmgTypeIdx] - b.dr[ctx.dmgTypeIdx]
     });
-    for (let i = 1; i < relevantArmors.length; i++) {
-        const a = relevantArmors[i], b = relevantArmors[i - 1];
-        const dmgType = ctx.dmgTypeIdx;
-        if (a.dt[dmgType] == b.dt[dmgType] &&
-            a.dr[dmgType] == b.dr[dmgType] &&
-            a.type == b.type)
-        {
-            relevantArmors.splice(i, 1);
-            i--;
-        }
+
+    // DAMAGE CALCULATION
+    let numCalculations = 0;
+    ctx.maxFinalDmg = -Infinity;
+    function calculateDamage() {
+        numCalculations++;
+        const finalDmg = ctx.formula.dmg(ctx);
+        ctx.maxFinalDmg = Math.max(finalDmg, ctx.maxFinalDmg);
+        return finalDmg;
     }
+    ctx.calculated = ctx.weaponAmmoTypes.map(ammo => {
+        ctx.ammo = ammo;
+        const dmgMin = ctx.weapon.dmgMin;
+        const dmgMax = ctx.weapon.dmgMax;
+        const step = Math.max(Math.round((dmgMax - dmgMin) / 6), 1);
+        const mapByDamage = new Map();
+        for (let baseDmg = dmgMin;
+            baseDmg <= dmgMax;
+            baseDmg = baseDmg < dmgMax && baseDmg + step * 2 > dmgMax ? dmgMax : baseDmg + step
+        ) {
+            ctx.rawDmg = baseDmg;
+            const dmgByArmor = relevantArmors.map(armor => {
+                ctx.armor = armor;
+                return calculateDamage();
+            });
+            mapByDamage.set(baseDmg, dmgByArmor);
+        }
+        return mapByDamage;
+    });
     
     const addHeaderCell = function(rowIdx, value) {
         let cell = document.createElement("th");
@@ -340,34 +389,30 @@ function updateTable() {
         return cell;
     }
     // Update table body
-    let maxFinalDmg = -Infinity;
-    const dmgMax = ctx.weapon.dmgMax;
-    const dmgMin = ctx.weapon.dmgMin;
-    const step = Math.max(Math.round((dmgMax - dmgMin) / 10), 1);
-    for (let baseDmg = dmgMin;
-        baseDmg <= dmgMax;
-        baseDmg = baseDmg < dmgMax && baseDmg + step > dmgMax ? dmgMax : baseDmg + step
-    ) {
+    const shownAmmoTypeIdx = getSelectValueInt("ammo");
+    let drawnDmg = null;
+    ctx.calculated[shownAmmoTypeIdx].forEach((dmgByArmor, baseDmg) => {
         const row = document.createElement("tr");
         addBodyCell(row, baseDmg * ctx.rounds);
+        for (let finalDmg of dmgByArmor) {
+            const cell = addBodyCell(row, finalDmg.toFixed());
+            cell.addEventListener("mouseenter", function () {
+                if (baseDmg == drawnDmg) return;
 
-        const dataRow = relevantArmors.map(armor => calculateDamage(baseDmg, armor));
-        dataRow.forEach(finalDmg => {
-            addBodyCell(row, finalDmg.toFixed())
-                .addEventListener("mouseenter", function () {
-                    drawGraph(dataRow, baseDmg, ctx);
-                })
-        });
-
-        tableBody.appendChild(row);
-        if (tableBody.children.length > 100) {
-            throw "R U OK?";
+                drawGraph(baseDmg, ctx);
+                for (let otherRow of tableBody.children) {
+                    otherRow.classList.remove("selected");
+                }
+                row.classList.add("selected");
+                drawnDmg = baseDmg;
+            })
         }
-        maxFinalDmg = dataRow.reduce((a, b) => Math.max(a, b), maxFinalDmg);
-    }
-    ctx.maxFinalDmg = maxFinalDmg;
+        tableBody.appendChild(row);
+    });
 
     clearGraph();
+
+    console.log(`Updated table with ${numCalculations} calculations.`)
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -413,7 +458,7 @@ document.getElementById("dataset").addEventListener("change", loadDataset);
     #results td:first-child, #results th:first-child {
         border-right: 1px solid;
     }
-    #results tr:hover {
+    #results tbody > tr.selected {
         background-color: #ddd;
     }
 </style>
