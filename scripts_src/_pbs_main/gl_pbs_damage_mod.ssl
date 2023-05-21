@@ -299,7 +299,7 @@ begin
    end else if (calcDR >= 100) then begin
       return 0;
    end
-   return [calcDT, calcDR];
+   return [max(calcDT, 0), calcDR];
 end
 
 /*

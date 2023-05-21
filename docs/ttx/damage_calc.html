@@ -60,9 +60,9 @@
 
 <canvas id="graph" width="700" height="300"></canvas>
 
-<script type="text/javascript" src="damage_calc_datasets.js?v=1"></script>
-<script type="text/javascript" src="damage_calc_formulas.js?v=1"></script>
-<script type="text/javascript" src="damage_calc_loadcsv.js?v=1"></script>
+<script type="text/javascript" src="damage_calc_datasets.js?v=2"></script>
+<script type="text/javascript" src="damage_calc_formulas.js?v=2"></script>
+<script type="text/javascript" src="damage_calc_loadcsv.js?v=2"></script>
 <script type="text/javascript">
 
 /**
@@ -172,8 +172,9 @@ function drawGraph(selectedDmg, dmgCtx) {
     /**
      * @type HTMLCanvasElement
      */
+    const legendWidth = 120;
     const canvas = document.getElementById("graph");
-    canvas.width = document.getElementById("results").clientWidth;
+    canvas.width = document.getElementById("results").clientWidth + legendWidth;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -182,8 +183,8 @@ function drawGraph(selectedDmg, dmgCtx) {
     const margin = 25;
     const top = margin;
     const left = margin;
-    const right = canvas.width - margin;
-    const bottom = canvas.height - margin - 10;
+    const right = canvas.width - margin - legendWidth;
+    const bottom = canvas.height - margin;
     const width = right - left;
     const height = bottom - top;
 
@@ -191,10 +192,10 @@ function drawGraph(selectedDmg, dmgCtx) {
     function damageToY(dmg) {
         return bottom - dmg / maxDmg * height;
     }
-    function drawText(text, x, y, size, color) {
+    function drawText(text, x, y, align, size, color) {
         ctx.font = `${size || 12}px arial`;
+        ctx.textAlign = align || "center";
         ctx.fillStyle = color || "black";
-        ctx.textAlign = "center";
         ctx.fillText(text, x, y);
     }
     const dmgLines = [];
@@ -224,10 +225,11 @@ function drawGraph(selectedDmg, dmgCtx) {
     addDmgLine(maxDmg);
 
     const legendItemWidth = 50;
-    const legendMargin = 40;
-    const legendWidth = legendItemWidth * dataRows.length + legendMargin * (dataRows.length - 1);
-    let legendX = (canvas.width - legendWidth) / 2;
-    const legendY = canvas.height - 5;
+    const legendInterval = 30;
+    const legendHeight = legendInterval * dataRows.length;
+    
+    const legendX = canvas.width - legendWidth + margin;
+    let legendY = (canvas.height - legendHeight) / 2;
 
     // Draw graphs.
     dataRows.forEach((dataRow, i) => {
@@ -252,7 +254,7 @@ function drawGraph(selectedDmg, dmgCtx) {
         ctx.arc(legendX, legendY, 3, 0, 360);
         ctx.lineTo(legendX + legendItemWidth, legendY);
         drawText(dmgCtx.weaponAmmoTypes[i].name, legendX + legendItemWidth / 2, legendY - 5);
-        legendX += legendMargin + legendItemWidth;
+        legendY += legendInterval;
 
         ctx.stroke();
         ctx.closePath();
@@ -373,9 +375,11 @@ function updateTable() {
         cell.textContent = value;
         tableHeaderRows[rowIdx].appendChild(cell);
     }
+    const shownAmmoTypeIdx = getSelectValueInt("ammo");
     // Populate header cells based on armor types from array
     relevantArmors.forEach(armor => {
         let dt, dr;
+        ctx.ammo = ctx.weaponAmmoTypes[shownAmmoTypeIdx];
         ctx.armor = armor;
         [dt, dr] = ctx.formula.dtdr(ctx);
         addHeaderCell(0, armor.name);
@@ -392,7 +396,6 @@ function updateTable() {
         return cell;
     }
     // Update table body
-    const shownAmmoTypeIdx = getSelectValueInt("ammo");
     let drawnDmg = null;
     ctx.calculated[shownAmmoTypeIdx].forEach((dmgByArmor, baseDmg) => {
         const row = document.createElement("tr");

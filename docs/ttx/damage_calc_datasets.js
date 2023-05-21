@@ -13,10 +13,10 @@ dataSets = [
         },
         splitDtDr: true
     },
-    {
+    /*{
         name: "ECCO (0.9+)",
         getPath: function(file) {
             return `csv_ecco_09/${file}.csv`;
         }
-    },
+    },*/
 ];
