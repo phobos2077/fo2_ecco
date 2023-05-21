@@ -45,8 +45,10 @@
     <option value="dt">Effective DT</option>
     <option value="dr">Effective DR</option>
 </select>
-
-<h3 id="dmgType"></h3>
+<div class="title">
+    <h3 id="dmgType"></h3>
+    <div id="ammoInfo"></div>
+</div>
 <table id="results">
     <thead>
         <tr><th>Armor:</th></tr>
@@ -60,9 +62,10 @@
 
 <canvas id="graph" width="700" height="300"></canvas>
 
-<script type="text/javascript" src="damage_calc_datasets.js?v=2"></script>
-<script type="text/javascript" src="damage_calc_formulas.js?v=2"></script>
-<script type="text/javascript" src="damage_calc_loadcsv.js?v=2"></script>
+<script type="text/javascript" src="damage_calc_datasets.js?v=3"></script>
+<script type="text/javascript" src="damage_calc_formulas.js?v=3"></script>
+<script type="text/javascript" src="damage_calc_loadcsv.js?v=3"></script>
+<script type="text/javascript" src="damage_calc_graph.js?v=3"></script>
 <script type="text/javascript">
 
 /**
@@ -159,115 +162,6 @@ async function loadDataset() {
     updateTable();
 }
 
-function clearGraph() {
-    drawGraph();
-}
-
-/**
- * @param {number} selectedDmg
- * @param {DamageContext} dmgCtx
- */
-function drawGraph(selectedDmg, dmgCtx) {
-    //console.log("drawGraph", dmg, dataRow);
-    /**
-     * @type HTMLCanvasElement
-     */
-    const legendWidth = 120;
-    const canvas = document.getElementById("graph");
-    canvas.width = document.getElementById("results").clientWidth + legendWidth;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (!selectedDmg || !dmgCtx.calculated) return;
-
-    const margin = 25;
-    const top = margin;
-    const left = margin;
-    const right = canvas.width - margin - legendWidth;
-    const bottom = canvas.height - margin;
-    const width = right - left;
-    const height = bottom - top;
-
-    const maxDmg = Math.max(dmgCtx.maxFinalDmg, dmgCtx.weapon.dmgMax * dmgCtx.rounds);
-    function damageToY(dmg) {
-        return bottom - dmg / maxDmg * height;
-    }
-    function drawText(text, x, y, align, size, color) {
-        ctx.font = `${size || 12}px arial`;
-        ctx.textAlign = align || "center";
-        ctx.fillStyle = color || "black";
-        ctx.fillText(text, x, y);
-    }
-    const dmgLines = [];
-    function addDmgLine(value) {
-        const y = damageToY(value);
-        if (dmgLines.some(ly => Math.abs(y - ly) < 10)) return;
-        dmgLines.push(y);
-
-        ctx.beginPath();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "#bbb";
-        ctx.moveTo(left, y);
-        ctx.lineTo(right, y);
-        ctx.stroke();
-
-        drawText(value.toFixed(), left, y);
-    }
-    const colors = ["red", "blue", "green", "purple", "orange"];
-    const dataRows = dmgCtx.calculated.map((mapByDamage, ammoIdx) => mapByDamage.get(selectedDmg));
-    const avgDmg = dataRows.reduce((sum, row) => sum + row.reduce((a, b) => a + b, 0) / row.length, 0) / dataRows.length;
-    addDmgLine(0);
-    addDmgLine(avgDmg);
-    addDmgLine(selectedDmg * dmgCtx.rounds);
-    addDmgLine(dmgCtx.weapon.dmgMin * dmgCtx.rounds);
-    addDmgLine(dmgCtx.weapon.dmgMax * dmgCtx.rounds);
-    addDmgLine(dmgCtx.maxFinalDmg);
-    addDmgLine(maxDmg);
-
-    const legendItemWidth = 50;
-    const legendInterval = 30;
-    const legendHeight = legendInterval * dataRows.length;
-    
-    const legendX = canvas.width - legendWidth + margin;
-    let legendY = (canvas.height - legendHeight) / 2;
-
-    // Draw graphs.
-    dataRows.forEach((dataRow, i) => {
-        ctx.beginPath();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = colors[i % colors.length];
-        let x = left + 50,
-            y = damageToY(dataRow[0]);
-        ctx.moveTo(x, y);
-        ctx.arc(x, y, 3, 0, 360);
-        const stepX = 50; //width / dataRow.length;
-        for (let i = 1; i < dataRow.length; i++) {
-            x += stepX;
-            y = damageToY(dataRow[i]);
-
-            ctx.lineTo(x, y);
-            ctx.arc(x, y, 3, 0, 360);
-            //console.log(margin + stepX * i, damageToY(dataRow[i]));
-        }
-        // Legend
-        ctx.moveTo(legendX, legendY);
-        ctx.arc(legendX, legendY, 3, 0, 360);
-        ctx.lineTo(legendX + legendItemWidth, legendY);
-        drawText(dmgCtx.weaponAmmoTypes[i].name, legendX + legendItemWidth / 2, legendY - 5);
-        legendY += legendInterval;
-
-        ctx.stroke();
-        ctx.closePath();
-    });
-
-    // Draw legend.
-    /*dataRows.forEach((dataRow, i) => {
-        ctx.beginPath();
-        ctx.lineWidth
-        ctx.stroke();
-        ctx.closePath();
-    });*/
-}
 
 function updateTable() {
     console.log("Updating table...");
@@ -369,17 +263,21 @@ function updateTable() {
         }
         return mapByDamage;
     });
+
+    // Show selected ammo info.
+    const shownAmmoTypeIdx = getSelectValueInt("ammo");
+    const ammo = ctx.weaponAmmoTypes[shownAmmoTypeIdx];
+    document.getElementById("ammoInfo").innerHTML = `DMG Mult/Div: <b>${ammo.dmgMult}/${ammo.dmgDiv}</b>, DR Adjust: <b>${ammo.drAdj}</b>, AC Adjust: <b>${ammo.acAdj}</b>`;
     
+    // Populate header cells based on armor types from array.
     const addHeaderCell = function(rowIdx, value) {
         let cell = document.createElement("th");
         cell.textContent = value;
         tableHeaderRows[rowIdx].appendChild(cell);
     }
-    const shownAmmoTypeIdx = getSelectValueInt("ammo");
-    // Populate header cells based on armor types from array
+    ctx.ammo = ammo;
     relevantArmors.forEach(armor => {
         let dt, dr;
-        ctx.ammo = ctx.weaponAmmoTypes[shownAmmoTypeIdx];
         ctx.armor = armor;
         [dt, dr] = ctx.formula.dtdr(ctx);
         addHeaderCell(0, armor.name);
@@ -389,28 +287,30 @@ function updateTable() {
         addHeaderCell(4, dr+"%");
     });
 
+    // Update table body.
     const addBodyCell = function(row, value) {
         let cell = document.createElement("td");
         cell.textContent = value;
         row.appendChild(cell);
         return cell;
     }
-    // Update table body
     let drawnDmg = null;
     ctx.calculated[shownAmmoTypeIdx].forEach((dmgByArmor, baseDmg) => {
         const row = document.createElement("tr");
         addBodyCell(row, baseDmg * ctx.rounds);
-        for (let finalDmg of dmgByArmor) {
-            const cell = addBodyCell(row, finalDmg.toFixed());
+        for (let i = 0; i < dmgByArmor.length; i++) {
+            const cell = addBodyCell(row, dmgByArmor[i].toFixed(ctx.formula.decimals || 0));
+            const armorIdx = i;
             cell.addEventListener("mouseenter", function () {
-                if (baseDmg == drawnDmg) return;
-
-                drawGraph(baseDmg, ctx);
-                for (let otherRow of tableBody.children) {
-                    otherRow.classList.remove("selected");
+                drawGraph(baseDmg, armorIdx, ctx);
+                if (baseDmg != drawnDmg) {
+                    for (let otherRow of tableBody.children) {
+                        otherRow.classList.remove("selected");
+                    }
+                    row.classList.add("selected");
+                    
+                    drawnDmg = baseDmg;
                 }
-                row.classList.add("selected");
-                drawnDmg = baseDmg;
             })
         }
         tableBody.appendChild(row);
@@ -422,7 +322,7 @@ function updateTable() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  initialize();
+    initialize();
 });
 
 document.getElementById("dataset").addEventListener("change", loadDataset);
@@ -466,6 +366,12 @@ document.getElementById("dataset").addEventListener("change", loadDataset);
     }
     #results tbody > tr.selected {
         background-color: #ddd;
+    }
+    .title > div, .title > h3 {
+        display: inline-block;
+    }
+    .title > h3 {
+        width: 200px;
     }
 </style>
 </body>

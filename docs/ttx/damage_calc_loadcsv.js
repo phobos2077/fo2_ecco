@@ -17,7 +17,7 @@ function csvToArrayOfObjects(csvString, sep) {
 }
 
 async function csvFileToArrayOfObjects(file) {
-    let response = await fetch(file);
+    let response = await fetch(file, {cache: "no-cache"});
     let csvString = await response.text();
     return csvToArrayOfObjects(csvString, ";");
 }
