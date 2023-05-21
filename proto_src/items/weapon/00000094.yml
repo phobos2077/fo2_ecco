@@ -1,0 +1,36 @@
+pid: 94
+messageId: 9400
+name: Shotgun
+description: 'A Winchester Widowmaker double-barreled 12-gauge shotgun. Short barrel,
+  with mahogany grip. Min ST: 4.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 3
+weight: 5
+cost: 750
+inventoryFid: 117440607
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 14
+  maxDamage: 26
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 16
+  maxRange2: 4
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 2
+  caliber: 11
+  ammoTypePid: 95
+  ammoCapacity: 2
+  soundCode: (

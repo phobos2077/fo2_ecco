@@ -1,0 +1,39 @@
+pid: 379
+messageId: 37900
+name: Leather Armor Mark II
+description: An enhanced version of the basic leather armor with extra layers of protection.
+  Finely crafted from tanned brahmin hide.
+fid: 29
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 7
+size: 10
+weight: 10
+cost: 1000
+inventoryFid: 117440762
+soundId: '0'
+armorData:
+  armorClass: 20
+  damageResistance:
+    normal: 25
+    laser: 10
+    fire: 25
+    plasma: 10
+    electrical: 40
+    emp: 500
+    explosion: 20
+  damageThreshold:
+    normal: 3
+    laser: 1
+    fire: 1
+    plasma: 1
+    electrical: 1
+    emp: 0
+    explosion: 1
+  perk: NONE
+  maleFid: 16777228
+  femaleFid: 16777221

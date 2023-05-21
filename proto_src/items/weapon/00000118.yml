@@ -1,0 +1,36 @@
+pid: 118
+messageId: 11800
+name: Laser Rifle
+description: 'A Wattz 2000 Laser Rifle. Uses micro fusion cells for more powerful
+  lasers, and an extended barrel for additional range. Min ST: 5.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 12
+cost: 5000
+inventoryFid: 117440615
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 30
+  maxDamage: 40
+  damageType: DAMAGE_TYPE_LASER
+  maxRange1: 45
+  maxRange2: 20
+  projectilePid: 83886089
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 3
+  perk: PERK_WEAPON_LONG_RANGE
+  rounds: 2
+  caliber: 4
+  ammoTypePid: 39
+  ammoCapacity: 10
+  soundCode: J

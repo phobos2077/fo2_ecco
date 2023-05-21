@@ -1,0 +1,38 @@
+pid: 355
+messageId: 35500
+name: Light Support Weapon
+description: 'This squad-level support weapon has a bullpup design. The bullpup design
+  makes it difficult to use while lying down. Because of this it was remanded to National
+  Guard units. It, however, earned a reputation as a reliable weapon that packs a
+  lot of punch for its size. Min ST: 6.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa376'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 6
+weight: 20
+cost: 3000
+inventoryFid: 117440745
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 18
+  maxDamage: 24
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 45
+  maxRange2: 40
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 10
+  caliber: 5
+  ammoTypePid: 34
+  ammoCapacity: 40
+  soundCode: H

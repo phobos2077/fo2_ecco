@@ -1,0 +1,24 @@
+pid: 33
+messageId: 3300
+name: 14mm AP
+description: Large caliber ammunition. 14mm armor piercing.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xfff0afff'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 125
+inventoryFid: 117440544
+soundId: '0'
+ammoData:
+  caliber: 10
+  quantity: 12
+  armorClassMod: -20
+  damageResistanceMod: -50
+  damageMult: 1
+  damageDiv: 1

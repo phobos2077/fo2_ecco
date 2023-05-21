@@ -1,0 +1,38 @@
+pid: 2
+messageId: 200
+name: Metal Armor
+description: Polished metal plates, crudely forming a suit of armor.
+fid: 33
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 10
+weight: 35
+cost: 1100
+inventoryFid: 117440513
+soundId: '0'
+armorData:
+  armorClass: 10
+  damageResistance:
+    normal: 30
+    laser: 40
+    fire: 10
+    plasma: 20
+    electrical: 0
+    emp: 500
+    explosion: 25
+  damageThreshold:
+    normal: 5
+    laser: 4
+    fire: 4
+    plasma: 4
+    electrical: 0
+    emp: 0
+    explosion: 4
+  perk: NONE
+  maleFid: 16777230
+  femaleFid: 16777223

@@ -1,0 +1,25 @@
+pid: 95
+messageId: 9500
+name: 12 ga. Shotshells
+description: 'Shotgun ammunition, #7 bird shot. This particular ammo is marked: "12-gauge
+  shells, not for use by children under the age of 3."'
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 150
+inventoryFid: 117440603
+soundId: '0'
+ammoData:
+  caliber: 11
+  quantity: 12
+  armorClassMod: -20
+  damageResistanceMod: 30
+  damageMult: 1
+  damageDiv: 1

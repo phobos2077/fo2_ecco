@@ -1,0 +1,25 @@
+pid: 360
+messageId: 36000
+name: 9mm AP
+description: A collection of ancient 9x19mm rounds. Heavy grease to preserve them
+  from the environment. Armor piercing bullets.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 100
+inventoryFid: 117440618
+soundId: '0'
+ammoData:
+  caliber: 12
+  quantity: 20
+  armorClassMod: 0
+  damageResistanceMod: -20
+  damageMult: 1
+  damageDiv: 1

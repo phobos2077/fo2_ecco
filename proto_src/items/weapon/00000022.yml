@@ -1,0 +1,36 @@
+pid: 22
+messageId: 2200
+name: 14mm Pistol
+description: 'A Sig-Sauer 14mm Auto Pistol. Large, single shot handgun. Excellent
+  craftsmanship. Large caliber provides very high penetration. Min ST: 4.'
+fid: 44
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x6'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 3
+weight: 4
+cost: 1800
+inventoryFid: 117440534
+soundId: '0'
+weaponData:
+  animationCode: 6
+  minDamage: 12
+  maxDamage: 22
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 20
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 0
+  caliber: 10
+  ammoTypePid: 33
+  ammoCapacity: 6
+  soundCode: E

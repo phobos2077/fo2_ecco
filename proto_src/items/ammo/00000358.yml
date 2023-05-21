@@ -1,0 +1,24 @@
+pid: 358
+messageId: 35800
+name: 2mm EC
+description: Ammunition.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 250
+inventoryFid: 117440747
+soundId: '0'
+ammoData:
+  caliber: 15
+  quantity: 10
+  armorClassMod: -30
+  damageResistanceMod: -50
+  damageMult: 1
+  damageDiv: 1

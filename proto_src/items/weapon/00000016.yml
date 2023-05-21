@@ -1,0 +1,36 @@
+pid: 16
+messageId: 1600
+name: Laser Pistol
+description: 'A Wattz 1000 Laser Pistol. Civilian model, so the wattage is lower than
+  military or police versions. Uses small energy cells. Min ST: 3.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x6'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 4
+cost: 1500
+inventoryFid: 117440533
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 16
+  maxDamage: 22
+  damageType: DAMAGE_TYPE_LASER
+  maxRange1: 30
+  maxRange2: 0
+  projectilePid: 83886089
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 3
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 3
+  ammoTypePid: 38
+  ammoCapacity: 12
+  soundCode: C

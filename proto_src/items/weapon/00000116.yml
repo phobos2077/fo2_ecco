@@ -1,0 +1,36 @@
+pid: 116
+messageId: 11600
+name: Ripper
+description: 'A Ripper(tm) vibroblade. Powered by a small energy cell, the chainblade
+  rips and tears into it''s target. Min ST: 4.'
+fid: 28
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa043'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 2
+cost: 1400
+inventoryFid: 117440614
+soundId: '0'
+weaponData:
+  animationCode: 1
+  minDamage: 15
+  maxDamage: 32
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 1
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 4
+  criticalFailureType: 1
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 3
+  ammoTypePid: 38
+  ammoCapacity: 10
+  soundCode: '0'

@@ -1,0 +1,37 @@
+pid: 387
+messageId: 38700
+name: M60
+description: 'This relatively light machine gun was prized by militaries around the
+  world for its high rate of fire. This reliable, battlefield-proven design, was used
+  on vehicles and for squad level fire-support. Min ST: 7.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa376'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 6
+weight: 23
+cost: 3600
+inventoryFid: 117440778
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 22
+  maxDamage: 30
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 40
+  maxRange2: 40
+  projectilePid: -1
+  minStrength: 7
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 10
+  caliber: 18
+  ammoTypePid: 363
+  ammoCapacity: 100
+  soundCode: H

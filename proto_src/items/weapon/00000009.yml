@@ -1,0 +1,35 @@
+pid: 5
+messageId: 500
+name: Club
+description: 'A military or police baton. Heavy wood. Min ST: 3.'
+fid: 16
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x3'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 3
+size: 2
+weight: 3
+cost: 100
+inventoryFid: 117440521
+soundId: '0'
+weaponData:
+  animationCode: 2
+  minDamage: 1
+  maxDamage: 6
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 3
+  actionPointCost1: 3
+  actionPointCost2: 0
+  criticalFailureType: 1
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '6'

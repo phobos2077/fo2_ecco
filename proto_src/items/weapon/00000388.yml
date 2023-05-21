@@ -1,0 +1,36 @@
+pid: 388
+messageId: 38800
+name: Needler Pistol
+description: 'You suspect this Bringham needler pistol was once used for scientific
+  field studies. It uses small hard-plastic hypodermic darts as ammo. Min ST: 3.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 4
+cost: 1200
+inventoryFid: 117440782
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 12
+  maxDamage: 20
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 20
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 17
+  ammoTypePid: 361
+  ammoCapacity: 10
+  soundCode: Z

@@ -1,0 +1,25 @@
+pid: 163
+messageId: 16300
+name: BB's
+description: A package of BB's from before the war. In excellent condition. Stainless
+  steel.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 25
+inventoryFid: 117440628
+soundId: '0'
+ammoData:
+  caliber: 0
+  quantity: 50
+  armorClassMod: 0
+  damageResistanceMod: 0
+  damageMult: 1
+  damageDiv: 1

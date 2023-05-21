@@ -1,0 +1,37 @@
+pid: 283
+messageId: 28300
+name: Tommy Gun
+description: 'This Thompson M1928 submachine gun is a sinister looking weapon; every
+  time you hold it, you have an urge to put on a fedora hat and crack your knuckles.
+  The Thompson is well-fed by a large 50 round drum magazine. Min ST: 6.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 9
+cost: 1200
+inventoryFid: 117440691
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 9
+  maxDamage: 20
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 32
+  maxRange2: 16
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 10
+  caliber: 14
+  ammoTypePid: 357
+  ammoCapacity: 50
+  soundCode: H

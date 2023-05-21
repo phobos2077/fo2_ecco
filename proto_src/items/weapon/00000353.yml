@@ -1,0 +1,38 @@
+pid: 353
+messageId: 35300
+name: XL70E3
+description: 'This was an experimental weapon at the time of the war. Manufactured,
+  primarily, from high-strength polymers, the weapon is almost indestructible. It''s
+  light, fast firing, accurate, and can be broken down without the use of any tools.
+  Min ST: 5.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 9
+cost: 4200
+inventoryFid: 117440743
+soundId: '0'
+weaponData:
+  animationCode: 13
+  minDamage: 16
+  maxDamage: 22
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 40
+  maxRange2: 30
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 8
+  caliber: 5
+  ammoTypePid: 615
+  ammoCapacity: 24
+  soundCode: H

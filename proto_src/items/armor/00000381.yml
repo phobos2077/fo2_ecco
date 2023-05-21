@@ -1,0 +1,38 @@
+pid: 381
+messageId: 38100
+name: Combat Armor Mark II
+description: High tech armor, made out of advanced defensive polymers.
+fid: 17
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 10
+weight: 25
+cost: 8000
+inventoryFid: 117440761
+soundId: '0'
+armorData:
+  armorClass: 21
+  damageResistance:
+    normal: 45
+    laser: 40
+    fire: 35
+    plasma: 50
+    electrical: 55
+    emp: 500
+    explosion: 45
+  damageThreshold:
+    normal: 6
+    laser: 6
+    fire: 5
+    plasma: 5
+    electrical: 3
+    emp: 0
+    explosion: 9
+  perk: PERK_COMBAT_ARMOR
+  maleFid: 16777226
+  femaleFid: 16777219

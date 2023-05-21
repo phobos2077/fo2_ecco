@@ -1,0 +1,37 @@
+pid: 332
+messageId: 33200
+name: M3A1 "Grease Gun" SMG
+description: 'This submachine gun filled National Guard arsenals after the Army replaced
+  it with newer weapons. However, the "Grease Gun" was simple and cheap to manufacture
+  so there are still quite a few still in use. Min ST: 4.'
+fid: 44
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa076'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 3
+weight: 7
+cost: 1750
+inventoryFid: 117440732
+soundId: '0'
+weaponData:
+  animationCode: 6
+  minDamage: 13
+  maxDamage: 23
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 20
+  maxRange2: 15
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 5
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 6
+  caliber: 14
+  ammoTypePid: 357
+  ammoCapacity: 30
+  soundCode: D

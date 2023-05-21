@@ -1,0 +1,38 @@
+pid: 268
+messageId: 26800
+name: H&K CAWS
+description: 'The CAWS, short for Close Assault Weapons System, shotgun is a useful
+  tool for close-range combat. The bullpup layout gives the weapon a short, easily
+  handleable, length while still retaining enough barrel length for its high velocity
+  shells. Min ST: 6.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 3
+weight: 9
+cost: 3250
+inventoryFid: 117440677
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 18
+  maxDamage: 40
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 22
+  maxRange2: 14
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 3
+  caliber: 11
+  ammoTypePid: 95
+  ammoCapacity: 9
+  soundCode: R

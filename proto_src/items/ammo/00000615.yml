@@ -1,0 +1,24 @@
+pid: 615
+messageId: 61500
+name: .223 AP
+description: A case of .223 caliber ammunition, armor piercing.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 250
+inventoryFid: 117440921
+soundId: '0'
+ammoData:
+  caliber: 5
+  quantity: 30
+  armorClassMod: -10
+  damageResistanceMod: -50
+  damageMult: 4
+  damageDiv: 5

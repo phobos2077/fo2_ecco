@@ -1,0 +1,38 @@
+pid: 113
+messageId: 11300
+name: Robes
+description: Worn-looking robes.
+fid: 52
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 7
+size: 8
+weight: 10
+cost: 90
+inventoryFid: 117440610
+soundId: '0'
+armorData:
+  armorClass: 5
+  damageResistance:
+    normal: 20
+    laser: 10
+    fire: 10
+    plasma: 10
+    electrical: 40
+    emp: 500
+    explosion: 10
+  damageThreshold:
+    normal: 0
+    laser: 0
+    fire: 0
+    plasma: 0
+    electrical: 0
+    emp: 0
+    explosion: 0
+  perk: NONE
+  maleFid: 16777218
+  femaleFid: 16777218

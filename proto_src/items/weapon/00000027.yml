@@ -1,0 +1,36 @@
+pid: 27
+messageId: 2700
+name: Grenade (Pulse)
+description: 'An electromagnetic pulse grenade, generating an intense magnetic field
+  on detonation. Doesn''t affect biological creatures. Contact fuze. Min ST: 4.'
+fid: 122
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x5'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 250
+inventoryFid: 117440539
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 100
+  maxDamage: 150
+  damageType: DAMAGE_TYPE_EMP
+  maxRange1: 25
+  maxRange2: 0
+  projectilePid: 83886105
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 4
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: Q

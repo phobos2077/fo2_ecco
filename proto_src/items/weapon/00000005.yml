@@ -1,0 +1,36 @@
+pid: 6
+messageId: 600
+name: Sledgehammer
+description: 'A large hammer with big handle. Very popular with the muscular crowd.
+  Min ST: 6.'
+fid: 40
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x243'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 4
+weight: 12
+cost: 250
+inventoryFid: 117440517
+soundId: '0'
+weaponData:
+  animationCode: 3
+  minDamage: 6
+  maxDamage: 9
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 2
+  maxRange2: 2
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 4
+  actionPointCost2: 5
+  criticalFailureType: 1
+  perk: PERK_WEAPON_KNOCKBACK
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '7'

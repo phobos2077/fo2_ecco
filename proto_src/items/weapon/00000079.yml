@@ -1,0 +1,36 @@
+pid: 79
+messageId: 7900
+name: Flare
+description: A flare. Creates light for a short period of time. The paper is a little
+  worn, but otherwise it is in good condition. Twist the top to activate it.
+fid: 46
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa805'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 35
+inventoryFid: 117440571
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 1
+  maxDamage: 1
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 15
+  maxRange2: 0
+  projectilePid: 83886104
+  minStrength: 0
+  actionPointCost1: 1
+  actionPointCost2: 0
+  criticalFailureType: 0
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '4'

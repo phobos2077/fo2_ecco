@@ -1,0 +1,35 @@
+pid: 371
+messageId: 37100
+name: Claw
+description: Claw
+fid: 160
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x800a001'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 0
+inventoryFid: 117440756
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 3
+  maxDamage: 5
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 1
+  actionPointCost1: 3
+  actionPointCost2: 0
+  criticalFailureType: 0
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '0'

@@ -1,0 +1,37 @@
+pid: 401
+messageId: 40100
+name: Laser Rifle (Ext. Cap.)
+description: 'This Wattz 2000 laser rifle has had its recharging system upgraded and
+  a special recycling chip installed that reduces the drain on the micro fusion cell
+  by 50%. Min ST: 5.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 12
+cost: 5000
+inventoryFid: 117440777
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 30
+  maxDamage: 40
+  damageType: DAMAGE_TYPE_LASER
+  maxRange1: 45
+  maxRange2: 20
+  projectilePid: 83886089
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 3
+  perk: PERK_WEAPON_LONG_RANGE
+  rounds: 2
+  caliber: 4
+  ammoTypePid: 39
+  ammoCapacity: 20
+  soundCode: J

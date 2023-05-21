@@ -1,0 +1,36 @@
+pid: 639
+messageId: 63900
+name: Piston Spear
+description: 'Spear with a pneumatic piston built into the end. It is designed to
+  do more impact damage. Min ST: 5.'
+fid: 42
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa004'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 8
+cost: 1900
+inventoryFid: 117440944
+soundId: '0'
+weaponData:
+  animationCode: 4
+  minDamage: 15
+  maxDamage: 28
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 2
+  maxRange2: 8
+  projectilePid: 83886087
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 1
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '8'

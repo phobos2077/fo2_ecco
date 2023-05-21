@@ -1,0 +1,36 @@
+pid: 280
+messageId: 28000
+name: Sharpened Spear
+description: 'A razor tipped polearm. The shaft is wooden, and the tip is sharpened
+  steel. Min ST: 4.'
+fid: 42
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa054'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 3
+size: 4
+weight: 4
+cost: 225
+inventoryFid: 117440688
+soundId: '0'
+weaponData:
+  animationCode: 4
+  minDamage: 5
+  maxDamage: 12
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 2
+  maxRange2: 8
+  projectilePid: 83886087
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 6
+  criticalFailureType: 1
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '8'

@@ -1,0 +1,24 @@
+pid: 14
+messageId: 1400
+name: Explosive Rocket
+description: A rocket with a large explosive warhead.
+fid: 38
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 2
+weight: 3
+cost: 200
+inventoryFid: 117440540
+soundId: '0'
+ammoData:
+  caliber: 1
+  quantity: 1
+  armorClassMod: 0
+  damageResistanceMod: -25
+  damageMult: 4
+  damageDiv: 3

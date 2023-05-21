@@ -1,0 +1,36 @@
+pid: 45
+messageId: 4500
+name: Throwing Knife
+description: 'A knife, balanced specifically for throwing. Made of titanium, and laser
+  sharpened. Min ST: 3.'
+fid: 28
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x5'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 75
+inventoryFid: 117440590
+soundId: '4'
+weaponData:
+  animationCode: 1
+  minDamage: 5
+  maxDamage: 9
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 22
+  maxRange2: 0
+  projectilePid: 83886086
+  minStrength: 3
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 1
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '4'

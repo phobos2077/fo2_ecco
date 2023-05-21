@@ -1,0 +1,38 @@
+pid: 391
+messageId: 39100
+name: H&K G11E
+description: 'This gun revolutionized squad level support weapon design. The gun fires
+  a caseless cartridge consisting of a block of propellant with a bullet buried inside.
+  The resultant weight and space savings allow it to have a very high magazine capacity.
+  Min ST: 6.'
+fid: 44
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 8
+cost: 5500
+inventoryFid: 117440775
+soundId: '0'
+weaponData:
+  animationCode: 6
+  minDamage: 15
+  maxDamage: 21
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 40
+  maxRange2: 35
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: PERK_WEAPON_NIGHT_SIGHT
+  rounds: 7
+  caliber: 16
+  ammoTypePid: 359
+  ammoCapacity: 50
+  soundCode: H

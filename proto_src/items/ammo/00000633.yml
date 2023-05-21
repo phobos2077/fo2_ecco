@@ -1,0 +1,24 @@
+pid: 633
+messageId: 63300
+name: 14mm JHP
+description: Large caliber ammunition. 14mm jacketed hollow-points.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 100
+inventoryFid: 117440939
+soundId: '0'
+ammoData:
+  caliber: 10
+  quantity: 12
+  armorClassMod: 10
+  damageResistanceMod: 10
+  damageMult: 4
+  damageDiv: 3

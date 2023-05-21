@@ -1,0 +1,36 @@
+pid: 613
+messageId: 61300
+name: Home-made grenade
+description: 'This grenade was made from junk. However it does its job in dismembering
+  people pretty well. Min ST: 3.'
+fid: 122
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa005'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 75
+inventoryFid: 117440919
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 20
+  maxDamage: 45
+  damageType: DAMAGE_TYPE_EXPLOSION
+  maxRange1: 15
+  maxRange2: 0
+  projectilePid: 83886105
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 4
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: O

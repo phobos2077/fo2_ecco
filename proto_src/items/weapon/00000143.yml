@@ -1,0 +1,36 @@
+pid: 143
+messageId: 14300
+name: Sniper Rifle
+description: 'A DKS-501 Sniper Rifle. Excellent long range projectile weapon. Chambered
+  for powerful 7.62 caliber. Min ST: 5.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 8
+cost: 2700
+inventoryFid: 117440626
+soundId: '0'
+weaponData:
+  animationCode: 13
+  minDamage: 28
+  maxDamage: 38
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 50
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 6
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_SCOPE_RANGE
+  rounds: 0
+  caliber: 18
+  ammoTypePid: 363
+  ammoCapacity: 6
+  soundCode: G

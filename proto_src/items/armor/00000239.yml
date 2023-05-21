@@ -1,0 +1,39 @@
+pid: 239
+messageId: 23900
+name: Brotherhood Armor
+description: A superior version of Combat Armor. The Brotherhood of Steel have made
+  many improvements over the standard version.
+fid: 17
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 11
+weight: 25
+cost: 10000
+inventoryFid: 117440656
+soundId: '0'
+armorData:
+  armorClass: 22
+  damageResistance:
+    normal: 45
+    laser: 65
+    fire: 50
+    plasma: 60
+    electrical: 60
+    emp: 500
+    explosion: 45
+  damageThreshold:
+    normal: 8
+    laser: 6
+    fire: 7
+    plasma: 7
+    electrical: 6
+    emp: 0
+    explosion: 9
+  perk: PERK_COMBAT_ARMOR
+  maleFid: 16777226
+  femaleFid: 16777219

@@ -1,0 +1,36 @@
+pid: 24
+messageId: 2400
+name: Plasma Pistol
+description: 'Glock 86 Plasma Pistol. Designed by the Gaston Glock AI. Shoots a small
+  bolt of superheated plasma. Powered by a small energy cell. Min ST: 4.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x6'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 4
+cost: 2750
+inventoryFid: 117440536
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 20
+  maxDamage: 35
+  damageType: DAMAGE_TYPE_PLASMA
+  maxRange1: 15
+  maxRange2: 0
+  projectilePid: 83886082
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 3
+  perk: NONE
+  rounds: 0
+  caliber: 3
+  ammoTypePid: 38
+  ammoCapacity: 16
+  soundCode: F

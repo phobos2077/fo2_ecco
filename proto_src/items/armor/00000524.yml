@@ -1,0 +1,41 @@
+pid: 524
+messageId: 52400
+name: Bridgekeeper's Robes
+description: This smelly, filthy garment must be made out of some special fabric in
+  order to have withstood the foulness of the bridgekeeper's body. Oddly enough, it
+  has plasma burns and scorch marks all over it, as if these weapons were used against
+  it... to no effect. You have NO idea why it's purple.
+fid: 52
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 7
+size: 8
+weight: 10
+cost: 5
+inventoryFid: 117440610
+soundId: '0'
+armorData:
+  armorClass: 20
+  damageResistance:
+    normal: 40
+    laser: 60
+    fire: 30
+    plasma: 50
+    electrical: 50
+    emp: 500
+    explosion: 40
+  damageThreshold:
+    normal: 5
+    laser: 8
+    fire: 4
+    plasma: 4
+    electrical: 2
+    emp: 0
+    explosion: 6
+  perk: NONE
+  maleFid: 16777218
+  femaleFid: 16777218

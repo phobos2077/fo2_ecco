@@ -1,0 +1,24 @@
+pid: 32
+messageId: 3200
+name: Flamethrower Fuel
+description: A cylinder containing an extremely flammable liquid fuel for flamethrowers.
+fid: 43
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 3
+weight: 8
+cost: 250
+inventoryFid: 117440586
+soundId: '0'
+ammoData:
+  caliber: 2
+  quantity: 10
+  armorClassMod: -20
+  damageResistanceMod: 25
+  damageMult: 1
+  damageDiv: 1

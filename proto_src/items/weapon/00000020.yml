@@ -1,0 +1,36 @@
+pid: 20
+messageId: 2000
+name: Crowbar
+description: 'A very solid and heavy piece of metal, specially designed to exert leverage.
+  Or pound heads. Min ST: 5.'
+fid: 16
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x3'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 3
+weight: 5
+cost: 75
+inventoryFid: 117440531
+soundId: '0'
+weaponData:
+  animationCode: 2
+  minDamage: 3
+  maxDamage: 10
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 1
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '5'

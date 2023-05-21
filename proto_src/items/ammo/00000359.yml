@@ -1,0 +1,24 @@
+pid: 359
+messageId: 35900
+name: 4.7mm Caseless
+description: 'Ammunition. Caliber: 4.7mm, caseless.'
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 2
+cost: 450
+inventoryFid: 117440749
+soundId: '0'
+ammoData:
+  caliber: 16
+  quantity: 40
+  armorClassMod: -5
+  damageResistanceMod: -20
+  damageMult: 1
+  damageDiv: 1

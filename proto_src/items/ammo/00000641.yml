@@ -1,0 +1,24 @@
+pid: 641
+messageId: 64100
+name: 12 ga. Buckshot
+description: 'Shells with heavy #00 buckshots.'
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 200
+inventoryFid: 117440947
+soundId: '0'
+ammoData:
+  caliber: 11
+  quantity: 12
+  armorClassMod: -20
+  damageResistanceMod: -10
+  damageMult: 5
+  damageDiv: 4

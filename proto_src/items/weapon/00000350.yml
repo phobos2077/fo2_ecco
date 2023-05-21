@@ -1,0 +1,37 @@
+pid: 350
+messageId: 35000
+name: Bozar AMR
+description: 'Anti-materiel rifle. The ultimate refinement of the sniper''s art. Although,
+  somewhat finicky and prone to jamming if not kept scrupulously clean, the big weapon''s
+  accuracy more than makes up for its extra maintenance requirements. Min ST: 7.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa306'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 10
+weight: 20
+cost: 6000
+inventoryFid: 117440740
+soundId: '0'
+weaponData:
+  animationCode: 13
+  minDamage: 55
+  maxDamage: 90
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 50
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 7
+  actionPointCost1: 6
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_SCOPE_RANGE
+  rounds: 0
+  caliber: 19
+  ammoTypePid: 610
+  ammoCapacity: 5
+  soundCode: G

@@ -1,0 +1,25 @@
+pid: 631
+messageId: 63100
+name: 40mm HE Grenades
+description: High-explosive frag grenades. Caliber 40x46 mm. Typically used with M79
+  grenade launcher.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 2
+weight: 3
+cost: 200
+inventoryFid: 117440937
+soundId: '0'
+ammoData:
+  caliber: 20
+  quantity: 3
+  armorClassMod: 0
+  damageResistanceMod: -10
+  damageMult: 1
+  damageDiv: 1

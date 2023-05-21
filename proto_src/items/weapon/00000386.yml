@@ -1,0 +1,36 @@
+pid: 386
+messageId: 38600
+name: Louisville Slugger
+description: 'This all-American, hardwood, baseball bat will knock anything right
+  out of the park. Min ST: 4.'
+fid: 16
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa203'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 3
+size: 2
+weight: 4
+cost: 2700
+inventoryFid: 117440788
+soundId: '0'
+weaponData:
+  animationCode: 2
+  minDamage: 12
+  maxDamage: 24
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 3
+  actionPointCost2: 0
+  criticalFailureType: 1
+  perk: PERK_WEAPON_KNOCKBACK
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '6'

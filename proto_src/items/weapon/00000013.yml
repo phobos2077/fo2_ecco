@@ -1,0 +1,36 @@
+pid: 7
+messageId: 700
+name: Spear
+description: 'A razor tipped polearm. The shaft is wooden, and the tip is worked steel.
+  Min ST: 4.'
+fid: 42
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0xa054'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 3
+size: 4
+weight: 4
+cost: 175
+inventoryFid: 117440525
+soundId: '0'
+weaponData:
+  animationCode: 4
+  minDamage: 3
+  maxDamage: 10
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 2
+  maxRange2: 8
+  projectilePid: 83886087
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 6
+  criticalFailureType: 1
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '8'

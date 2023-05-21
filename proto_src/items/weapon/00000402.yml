@@ -1,0 +1,37 @@
+pid: 402
+messageId: 40200
+name: Magneto-Laser Pistol
+description: 'This Wattz 1000 laser pistol has been upgraded with a magnetic field
+  targeting system that tightens the laser emission, giving this pistol extra penetrating
+  power. Min ST: 3.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 4
+cost: 1400
+inventoryFid: 117440780
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 17
+  maxDamage: 23
+  damageType: DAMAGE_TYPE_LASER
+  maxRange1: 35
+  maxRange2: 0
+  projectilePid: 83886089
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 3
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 3
+  ammoTypePid: 38
+  ammoCapacity: 12
+  soundCode: C

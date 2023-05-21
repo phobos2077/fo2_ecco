@@ -1,0 +1,37 @@
+pid: 11
+messageId: 1100
+name: Flamer
+description: 'A Flambe 450 model flamethrower, varmiter variation. Fires a short spray
+  of extremely hot, flammable liquid. Requires specialized fuel to work properly.
+  Min ST: 6.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x308'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 6
+weight: 18
+cost: 2000
+inventoryFid: 117440522
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 50
+  maxDamage: 90
+  damageType: DAMAGE_TYPE_FIRE
+  maxRange1: 6
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 6
+  actionPointCost2: 0
+  criticalFailureType: 6
+  perk: PERK_WEAPON_NIGHT_SIGHT
+  rounds: 1
+  caliber: 2
+  ammoTypePid: 32
+  ammoCapacity: 5
+  soundCode: I

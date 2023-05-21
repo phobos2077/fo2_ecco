@@ -1,0 +1,37 @@
+pid: 242
+messageId: 24200
+name: Combat Shotgun
+description: 'A Winchester City-Killer 12-gauge combat shotgun, bullpup variant. In
+  excellent condition, it has the optional DesertWarfare environmental sealant modification
+  for extra reliability. Min ST: 5.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 10
+cost: 1750
+inventoryFid: 117440659
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 15
+  maxDamage: 30
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 16
+  maxRange2: 10
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 3
+  caliber: 11
+  ammoTypePid: 95
+  ammoCapacity: 9
+  soundCode: R

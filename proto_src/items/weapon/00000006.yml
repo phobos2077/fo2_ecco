@@ -1,0 +1,36 @@
+pid: 12
+messageId: 1200
+name: Minigun
+description: 'A Rockwell CZ53 Personal Minigun. A multi-barreled chaingun firing 5mm
+  ammunition at over 60,000 RPM. Min ST: 7.'
+fid: 31
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x307'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 6
+weight: 28
+cost: 3800
+inventoryFid: 117440518
+soundId: '0'
+weaponData:
+  animationCode: 9
+  minDamage: 9
+  maxDamage: 14
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 35
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 7
+  actionPointCost1: 6
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_LONG_RANGE
+  rounds: 30
+  caliber: 6
+  ammoTypePid: 35
+  ammoCapacity: 120
+  soundCode: L

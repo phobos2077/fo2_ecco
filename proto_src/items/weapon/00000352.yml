@@ -1,0 +1,38 @@
+pid: 352
+messageId: 35200
+name: H&K G11
+description: 'This gun revolutionized assault weapon design. The weapon fires a caseless
+  cartridge consisting of a block of propellant with a bullet buried inside. The resultant
+  weight and space savings allow this weapon to have a very high magazine capacity.
+  Min ST: 5.'
+fid: 44
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 8
+cost: 4000
+inventoryFid: 117440742
+soundId: '0'
+weaponData:
+  animationCode: 6
+  minDamage: 12
+  maxDamage: 18
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 35
+  maxRange2: 30
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 5
+  caliber: 16
+  ammoTypePid: 359
+  ammoCapacity: 50
+  soundCode: H

@@ -1,0 +1,37 @@
+pid: 394
+messageId: 39400
+name: PPK12 Gauss Pistol
+description: 'Praised for its range and stopping power, the PPK12 Gauss Pistol is
+  of German design. The pistol uses an electromagnetic field to propel rounds at tremendous
+  speed and punch through almost any armor. Min ST: 4.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 5
+cost: 3750
+inventoryFid: 117440774
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 22
+  maxDamage: 32
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 30
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 15
+  ammoTypePid: 358
+  ammoCapacity: 10
+  soundCode: Y

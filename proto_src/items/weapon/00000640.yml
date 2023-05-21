@@ -1,0 +1,36 @@
+pid: 640
+messageId: 64000
+name: Deathclaw Gauntlet
+description: 'A sturdy leather gauntlet with three claws attached to it. Extremely
+  sharp. Min ST: 3.'
+fid: 47
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa001'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 7
+size: 4
+weight: 5
+cost: 3500
+inventoryFid: 117440945
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 18
+  maxDamage: 30
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 0
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '1'

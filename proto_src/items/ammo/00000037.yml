@@ -1,0 +1,25 @@
+pid: 37
+messageId: 3700
+name: Rocket AP
+description: A rocket shell, with a smaller explosive, but designed to pierce armor
+  plating.
+fid: 38
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 2
+weight: 3
+cost: 400
+inventoryFid: 117440520
+soundId: '0'
+ammoData:
+  caliber: 1
+  quantity: 1
+  armorClassMod: -15
+  damageResistanceMod: -50
+  damageMult: 1
+  damageDiv: 1

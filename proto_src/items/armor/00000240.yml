@@ -1,0 +1,40 @@
+pid: 240
+messageId: 24000
+name: Tesla Armor
+description: This shining armor provides superior protection against energy attacks.
+  The three Tesla Attraction Coil Rods disperse a large percentage of directed energy
+  attacks. Superb protection against laser weapons.
+fid: 33
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa066'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 10
+weight: 35
+cost: 6500
+inventoryFid: 117440657
+soundId: '0'
+armorData:
+  armorClass: 15
+  damageResistance:
+    normal: 35
+    laser: 90
+    fire: 15
+    plasma: 80
+    electrical: 80
+    emp: 500
+    explosion: 30
+  damageThreshold:
+    normal: 5
+    laser: 12
+    fire: 4
+    plasma: 10
+    electrical: 12
+    emp: 0
+    explosion: 4
+  perk: PERK_COMBAT_ARMOR
+  maleFid: 16777230
+  femaleFid: 16777223

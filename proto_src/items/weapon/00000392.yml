@@ -1,0 +1,37 @@
+pid: 392
+messageId: 39200
+name: M72 Gauss Rifle
+description: 'The M72 rifle is of German design. It uses an electromagnetic field
+  to propel rounds at tremendous speed... and pierce almost any obstacle. Its range,
+  accuracy and stopping power is almost unparalleled. Min ST: 6.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 9
+cost: 5750
+inventoryFid: 117440779
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 35
+  maxDamage: 45
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 50
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_LONG_RANGE
+  rounds: 1
+  caliber: 15
+  ammoTypePid: 358
+  ammoCapacity: 10
+  soundCode: W

@@ -1,0 +1,36 @@
+pid: 241
+messageId: 24100
+name: .223 Pistol
+description: 'A .223 rifle modified and cut down to a pistol. This is a one-of-a-kind
+  firearm, obviously made with love and skill. Min ST: 5.'
+fid: 44
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 4
+weight: 5
+cost: 3500
+inventoryFid: 117440658
+soundId: '0'
+weaponData:
+  animationCode: 6
+  minDamage: 18
+  maxDamage: 26
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 20
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 1
+  caliber: 5
+  ammoTypePid: 34
+  ammoCapacity: 5
+  soundCode: E

@@ -1,0 +1,38 @@
+pid: 395
+messageId: 39500
+name: Vindicator Minigun
+description: 'The German Rheinmetal AG company created the ultimate minigun. The Vindicator
+  throws over 90,000 caseless shells per minute down its six carbon-polymer barrels.
+  As the pinnacle of Teutonic engineering skill, it is the ultimate hand-held weapon.
+  Min ST: 7.'
+fid: 31
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa307'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 6
+weight: 28
+cost: 12000
+inventoryFid: 117440791
+soundId: '0'
+weaponData:
+  animationCode: 9
+  minDamage: 16
+  maxDamage: 22
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 30
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 7
+  actionPointCost1: 6
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 20
+  caliber: 16
+  ammoTypePid: 359
+  ammoCapacity: 100
+  soundCode: L

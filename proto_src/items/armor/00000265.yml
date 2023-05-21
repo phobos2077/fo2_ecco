@@ -1,0 +1,39 @@
+pid: 265
+messageId: 26500
+name: Combat Leather Jacket
+description: This heavily padded leather jacket is unusual in that it has two sleeves.
+  You'll definitely make a fashion statement whenever, and wherever, you rumble.
+fid: 30
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 7
+size: 7
+weight: 7
+cost: 1000
+inventoryFid: 117440674
+soundId: '0'
+armorData:
+  armorClass: 18
+  damageResistance:
+    normal: 30
+    laser: 0
+    fire: 25
+    plasma: 10
+    electrical: 30
+    emp: 500
+    explosion: 15
+  damageThreshold:
+    normal: 2
+    laser: 2
+    fire: 2
+    plasma: 0
+    electrical: 0
+    emp: 0
+    explosion: 0
+  perk: NONE
+  maleFid: 16777229
+  femaleFid: 16777222

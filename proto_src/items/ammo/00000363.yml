@@ -1,0 +1,24 @@
+pid: 363
+messageId: 36300
+name: 7.62mm
+description: 'Ammunition. Caliber: 7.62mm.'
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 2
+cost: 200
+inventoryFid: 117440753
+soundId: '0'
+ammoData:
+  caliber: 18
+  quantity: 20
+  armorClassMod: -10
+  damageResistanceMod: -10
+  damageMult: 1
+  damageDiv: 1

@@ -1,0 +1,37 @@
+pid: 397
+messageId: 39700
+name: YK42B Pulse Rifle
+description: 'The YK42B is an electrical pulse weapon that was developed by the Yuma
+  Flats Energy Consortium. It is considered a far superior weapon to the YK32 pistol,
+  having a greater charge capacity and range. Min ST: 3.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 9
+cost: 9500
+inventoryFid: 117440786
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 54
+  maxDamage: 78
+  damageType: DAMAGE_TYPE_ELECTRICAL
+  maxRange1: 30
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 3
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 1
+  caliber: 4
+  ammoTypePid: 39
+  ammoCapacity: 10
+  soundCode: X

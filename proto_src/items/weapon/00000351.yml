@@ -1,0 +1,37 @@
+pid: 351
+messageId: 35100
+name: FN FAL
+description: 'This rifle has been more widely used by armed forces than any other
+  rifle in history. It''s a reliable assault weapon for any terrain or tactical situation.
+  Min ST: 5.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 9
+cost: 2000
+inventoryFid: 117440741
+soundId: '0'
+weaponData:
+  animationCode: 13
+  minDamage: 18
+  maxDamage: 26
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 40
+  maxRange2: 30
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 5
+  caliber: 18
+  ammoTypePid: 363
+  ammoCapacity: 20
+  soundCode: H

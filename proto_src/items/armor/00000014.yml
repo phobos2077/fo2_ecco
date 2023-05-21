@@ -1,0 +1,39 @@
+pid: 3
+messageId: 300
+name: Power Armor
+description: A self-contained suit of advanced technology armor. Powered by a micro-fusion
+  reactor, with enough fuel to last a hundred years.
+fid: 35
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 15
+weight: 85
+cost: 10000
+inventoryFid: 117440527
+soundId: '0'
+armorData:
+  armorClass: 21
+  damageResistance:
+    normal: 40
+    laser: 70
+    fire: 60
+    plasma: 40
+    electrical: 40
+    emp: 50
+    explosion: 50
+  damageThreshold:
+    normal: 12
+    laser: 8
+    fire: 12
+    plasma: 10
+    electrical: 12
+    emp: 0
+    explosion: 16
+  perk: PERK_POWERED_ARMOR
+  maleFid: 16777217
+  femaleFid: 16777217

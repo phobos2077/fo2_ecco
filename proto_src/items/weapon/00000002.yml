@@ -1,0 +1,36 @@
+pid: 9
+messageId: 900
+name: 10mm SMG
+description: 'H&K MP9 Submachinegun (10mm variant). A medium-sized SMG, capable of
+  single shot and burst mode. Min ST: 4.'
+fid: 44
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x76'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 3
+weight: 5
+cost: 1000
+inventoryFid: 117440514
+soundId: '0'
+weaponData:
+  animationCode: 6
+  minDamage: 7
+  maxDamage: 12
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 25
+  maxRange2: 15
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 6
+  caliber: 8
+  ammoTypePid: 29
+  ammoCapacity: 30
+  soundCode: D

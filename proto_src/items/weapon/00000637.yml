@@ -1,0 +1,35 @@
+pid: 637
+messageId: 63700
+name: Boomerang
+description: 'Ancient thrown weapon. Min ST: 3.'
+fid: 214
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa005'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 125
+inventoryFid: 117440943
+soundId: '0'
+weaponData:
+  animationCode: 1
+  minDamage: 8
+  maxDamage: 14
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 28
+  maxRange2: 0
+  projectilePid: 83886086
+  minStrength: 3
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 1
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '4'

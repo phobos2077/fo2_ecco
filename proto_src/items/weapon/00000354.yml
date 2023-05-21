@@ -1,0 +1,37 @@
+pid: 354
+messageId: 35400
+name: Pancor Jackhammer
+description: 'The Jackhammer, despite its name, is an easy to control shotgun, even
+  when fired on full automatic. The popular bullpup design, which places the magazine
+  behind the trigger, makes the weapon well balanced & easy to control. Min ST: 5.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 12
+cost: 5500
+inventoryFid: 117440744
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 20
+  maxDamage: 42
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 18
+  maxRange2: 12
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: PERK_WEAPON_KNOCKBACK
+  rounds: 5
+  caliber: 11
+  ammoTypePid: 95
+  ammoCapacity: 10
+  soundCode: R

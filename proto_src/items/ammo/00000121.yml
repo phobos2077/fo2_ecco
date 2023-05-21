@@ -1,0 +1,25 @@
+pid: 121
+messageId: 12100
+name: 9mm ball
+description: A collection of ancient 9x19mm rounds. Heavy grease to preserve them
+  from the environment. Standard bullets.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 50
+inventoryFid: 117440750
+soundId: '0'
+ammoData:
+  caliber: 12
+  quantity: 20
+  armorClassMod: 0
+  damageResistanceMod: 10
+  damageMult: 1
+  damageDiv: 1

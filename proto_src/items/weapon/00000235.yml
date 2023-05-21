@@ -1,0 +1,37 @@
+pid: 235
+messageId: 23500
+name: Power Fist
+description: 'A "Big Frigger" Power Fist from BeatCo. Considered by many to be the
+  ultimate weapon to use in unarmed combat. Others are just scared. Powered by small
+  energy cells. Min ST: 1.'
+fid: 47
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa001'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 7
+cost: 2200
+inventoryFid: 117440653
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 12
+  maxDamage: 24
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 1
+  actionPointCost1: 3
+  actionPointCost2: 0
+  criticalFailureType: 0
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 3
+  ammoTypePid: 38
+  ammoCapacity: 20
+  soundCode: '1'

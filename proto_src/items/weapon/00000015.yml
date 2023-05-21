@@ -1,0 +1,37 @@
+pid: 15
+messageId: 1500
+name: Plasma Rifle
+description: 'A Winchester Model P94 Plasma Rifle. An industrial-grade energy weapon,
+  firing superheated bolts of plasma down a superconducting barrel. Powered by Micro
+  Fusion Cells. Min ST: 6.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 12
+cost: 4500
+inventoryFid: 117440526
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 40
+  maxDamage: 70
+  damageType: DAMAGE_TYPE_PLASMA
+  maxRange1: 35
+  maxRange2: 0
+  projectilePid: 83886082
+  minStrength: 6
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 3
+  perk: PERK_WEAPON_LONG_RANGE
+  rounds: 0
+  caliber: 4
+  ammoTypePid: 39
+  ammoCapacity: 24
+  soundCode: K

@@ -1,0 +1,36 @@
+pid: 611
+messageId: 61100
+name: Throwing Axe
+description: 'Throwing axe. Perfectly balanced and sharpened. Work of a master blacksmith.
+  Min ST: 5.'
+fid: 213
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x35'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 3
+cost: 350
+inventoryFid: 117440917
+soundId: '4'
+weaponData:
+  animationCode: 1
+  minDamage: 12
+  maxDamage: 16
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 18
+  maxRange2: 1
+  projectilePid: 83886086
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 4
+  criticalFailureType: 1
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '4'

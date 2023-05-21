@@ -1,0 +1,35 @@
+pid: 300
+messageId: 30000
+name: Zip Gun
+description: 'A handmade single shot pistol. Min ST: 4.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 4
+cost: 150
+inventoryFid: 117440704
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 5
+  maxDamage: 9
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 15
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 0
+  caliber: 8
+  ammoTypePid: 29
+  ammoCapacity: 1
+  soundCode: V

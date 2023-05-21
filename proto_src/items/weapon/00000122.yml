@@ -1,0 +1,36 @@
+pid: 122
+messageId: 12200
+name: 9mm Mauser
+description: 'A Mauser M/96, in 9x19mm Parabellum. In excellent condition. Extremely
+  accurate. Min ST: 3.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 3
+cost: 650
+inventoryFid: 117440619
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 10
+  maxDamage: 16
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 25
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 12
+  ammoTypePid: 360
+  ammoCapacity: 10
+  soundCode: B

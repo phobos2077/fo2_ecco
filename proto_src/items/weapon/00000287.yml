@@ -1,0 +1,38 @@
+pid: 287
+messageId: 28700
+name: Scoped Hunting Rifle
+description: 'Nothing''s better than seeing that surprised look on your target''s
+  face. The Loophole x20 Scope on this hunting rifle makes it easier than ever before.
+  Accurate from first shot to last, no matter what kind of game you''re gunning for.
+  Min ST: 5.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 4
+weight: 9
+cost: 1300
+inventoryFid: 117440695
+soundId: '0'
+weaponData:
+  animationCode: 13
+  minDamage: 12
+  maxDamage: 20
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 40
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_SCOPE_RANGE
+  rounds: 0
+  caliber: 5
+  ammoTypePid: 34
+  ammoCapacity: 10
+  soundCode: G

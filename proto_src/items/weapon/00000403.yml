@@ -1,0 +1,38 @@
+pid: 403
+messageId: 40300
+name: FN FAL (Night Sight)
+description: 'This rifle has been more widely used by armed forces than any other
+  rifle in history. It''s a reliable assault weapon for any terrain or tactical situation.
+  This weapon has been equipped with a night sight for greater night accuracy. Min
+  ST: 5.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 10
+cost: 2500
+inventoryFid: 117440773
+soundId: '0'
+weaponData:
+  animationCode: 13
+  minDamage: 18
+  maxDamage: 26
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 40
+  maxRange2: 30
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: PERK_WEAPON_NIGHT_SIGHT
+  rounds: 5
+  caliber: 18
+  ammoTypePid: 363
+  ammoCapacity: 20
+  soundCode: H

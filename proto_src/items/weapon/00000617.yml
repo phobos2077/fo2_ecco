@@ -1,0 +1,36 @@
+pid: 617
+messageId: 61700
+name: Taser
+description: 'Police issue X46 Taser. Non-lethal weapon used to temporarily stop the
+  target. Min ST: 3.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 500
+inventoryFid: 117440922
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 3
+  maxDamage: 5
+  damageType: DAMAGE_TYPE_ELECTRICAL
+  maxRange1: 6
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 0
+  caliber: 3
+  ammoTypePid: 38
+  ammoCapacity: 2
+  soundCode: Y

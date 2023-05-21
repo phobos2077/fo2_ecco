@@ -1,0 +1,36 @@
+pid: 19
+messageId: 1900
+name: Rock
+description: 'It''s a rock. The Granite-Inc. model is an upgraded version. Min ST:
+  1.'
+fid: 53
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x15'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 5
+size: 1
+weight: 1
+cost: 0
+inventoryFid: 117440529
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 1
+  maxDamage: 3
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 15
+  maxRange2: 1
+  projectilePid: 83886106
+  minStrength: 1
+  actionPointCost1: 4
+  actionPointCost2: 3
+  criticalFailureType: 1
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '2'

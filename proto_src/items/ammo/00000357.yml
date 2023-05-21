@@ -1,0 +1,24 @@
+pid: 357
+messageId: 35700
+name: .45 Caliber
+description: Ammunition. .45 Caliber.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 2
+cost: 225
+inventoryFid: 117440748
+soundId: '0'
+ammoData:
+  caliber: 14
+  quantity: 50
+  armorClassMod: 0
+  damageResistanceMod: 0
+  damageMult: 1
+  damageDiv: 1

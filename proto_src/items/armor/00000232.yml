@@ -1,0 +1,39 @@
+pid: 232
+messageId: 23200
+name: Hardened Power Armor
+description: A suit of T-51b Power Armor. The hardening process has improved the defensive
+  capability of this high-tech armor system.
+fid: 35
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 15
+weight: 100
+cost: 12000
+inventoryFid: 117440527
+soundId: '0'
+armorData:
+  armorClass: 21
+  damageResistance:
+    normal: 50
+    laser: 70
+    fire: 60
+    plasma: 50
+    electrical: 50
+    emp: 50
+    explosion: 60
+  damageThreshold:
+    normal: 13
+    laser: 10
+    fire: 14
+    plasma: 13
+    electrical: 13
+    emp: 0
+    explosion: 18
+  perk: PERK_POWERED_ARMOR
+  maleFid: 16777217
+  femaleFid: 16777217

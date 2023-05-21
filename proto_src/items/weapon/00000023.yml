@@ -1,0 +1,37 @@
+pid: 23
+messageId: 2300
+name: Assault Rifle
+description: 'An AK-112 5mm Assault Rifle. An old military model, out of use around
+  the time of the war. Can fire single-shot or burst, using the high velocity 5mm
+  rounds. Min ST: 5.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x276'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 7
+cost: 1600
+inventoryFid: 117440523
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 10
+  maxDamage: 16
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 40
+  maxRange2: 35
+  projectilePid: -1
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 8
+  caliber: 6
+  ammoTypePid: 35
+  ammoCapacity: 24
+  soundCode: H

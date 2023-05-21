@@ -1,0 +1,35 @@
+pid: 518
+messageId: 51800
+name: Dual Minigun
+description: Only use for Auto-Cannon critter.
+fid: 184
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa307'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 10
+cost: 0
+inventoryFid: 117440873
+soundId: '0'
+weaponData:
+  animationCode: 9
+  minDamage: 10
+  maxDamage: 14
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 40
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 1
+  actionPointCost1: 6
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 30
+  caliber: 6
+  ammoTypePid: 35
+  ammoCapacity: 800
+  soundCode: L

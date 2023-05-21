@@ -1,0 +1,36 @@
+pid: 13
+messageId: 1300
+name: Rocket Launcher
+description: 'A Rockwell BigBazooka rocket launcher. With the deluxe 3 lb. trigger.
+  Fires AP or Explosive Rockets. Min ST: 6.'
+fid: 37
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x306'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 6
+weight: 15
+cost: 2500
+inventoryFid: 117440519
+soundId: '0'
+weaponData:
+  animationCode: 10
+  minDamage: 45
+  maxDamage: 90
+  damageType: DAMAGE_TYPE_EXPLOSION
+  maxRange1: 40
+  maxRange2: 0
+  projectilePid: 83886081
+  minStrength: 6
+  actionPointCost1: 6
+  actionPointCost2: 0
+  criticalFailureType: 5
+  perk: PERK_WEAPON_LONG_RANGE
+  rounds: 0
+  caliber: 1
+  ammoTypePid: 14
+  ammoCapacity: 1
+  soundCode: N

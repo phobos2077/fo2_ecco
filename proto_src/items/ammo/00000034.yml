@@ -1,0 +1,24 @@
+pid: 34
+messageId: 3400
+name: .223 FMJ
+description: A case of ammunition, .223 caliber, Full Metal Jacket.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xfff0afff'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 150
+inventoryFid: 117440547
+soundId: '0'
+ammoData:
+  caliber: 5
+  quantity: 30
+  armorClassMod: 0
+  damageResistanceMod: -10
+  damageMult: 1
+  damageDiv: 1

@@ -1,0 +1,38 @@
+pid: 296
+messageId: 29600
+name: H&K P90c
+description: 'The Heckler & Koch P90c was just coming into use at the time of the
+  war. The weapon''s bullpup layout, and compact design, make it easy to control.
+  The durable P90c is prized for its reliability, and high firepower in a ruggedly-compact
+  package. Min ST: 4.'
+fid: 44
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa076'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 4
+weight: 8
+cost: 2500
+inventoryFid: 117440702
+soundId: '0'
+weaponData:
+  animationCode: 6
+  minDamage: 12
+  maxDamage: 16
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 30
+  maxRange2: 25
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 5
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 8
+  caliber: 8
+  ammoTypePid: 30
+  ammoCapacity: 24
+  soundCode: H

@@ -1,0 +1,35 @@
+pid: 4
+messageId: 400
+name: Knife
+description: 'A sharp-bladed cutting and stabbing weapon. Min ST: 2.'
+fid: 28
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x43'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 100
+inventoryFid: 117440608
+soundId: '3'
+weaponData:
+  animationCode: 1
+  minDamage: 2
+  maxDamage: 6
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 1
+  projectilePid: -1
+  minStrength: 2
+  actionPointCost1: 3
+  actionPointCost2: 3
+  criticalFailureType: 1
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '3'

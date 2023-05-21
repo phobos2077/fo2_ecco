@@ -1,0 +1,36 @@
+pid: 630
+messageId: 63000
+name: Grenade Launcher
+description: '40mm M79 grenade launcher. Sawed-off for concealed carry. Needs reload
+  after each shot, but still effective against large groups. Min ST: 5.'
+fid: 215
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa306'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 3
+weight: 5
+cost: 1200
+inventoryFid: 117440936
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 20
+  maxDamage: 40
+  damageType: DAMAGE_TYPE_EXPLOSION
+  maxRange1: 25
+  maxRange2: 0
+  projectilePid: 83886106
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 5
+  perk: NONE
+  rounds: 0
+  caliber: 20
+  ammoTypePid: 631
+  ammoCapacity: 1
+  soundCode: )

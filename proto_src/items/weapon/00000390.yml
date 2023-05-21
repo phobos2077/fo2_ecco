@@ -1,0 +1,38 @@
+pid: 390
+messageId: 39000
+name: Solar Scorcher
+description: 'Without the sun''s rays to charge this weapon''s capacitors this gun
+  can''t light a match. However, in full daylight, the experimental photo-electric
+  cells that power the Scorcher allow it to turn almost anything into a crispy critter.
+  Min ST: 3.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 5
+cost: 2000
+inventoryFid: 117440789
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 20
+  maxDamage: 60
+  damageType: DAMAGE_TYPE_FIRE
+  maxRange1: 20
+  maxRange2: 0
+  projectilePid: 83886089
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 3
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 10
+  soundCode: C

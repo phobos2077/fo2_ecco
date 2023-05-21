@@ -1,0 +1,24 @@
+pid: 35
+messageId: 3500
+name: 5mm JHP
+description: 'A brick of small, lightweight ammunition. Caliber: 5mm, jacketed hollow-point.'
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 150
+inventoryFid: 117440551
+soundId: '0'
+ammoData:
+  caliber: 6
+  quantity: 40
+  armorClassMod: 10
+  damageResistanceMod: 35
+  damageMult: 4
+  damageDiv: 3

@@ -1,0 +1,36 @@
+pid: 522
+messageId: 52200
+name: Wakizashi Blade
+description: A short finely crafted knife. The tip seems to be designed to pierce
+  armor.
+fid: 28
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa043'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 3
+cost: 600
+inventoryFid: 117440875
+soundId: '0'
+weaponData:
+  animationCode: 14
+  minDamage: 8
+  maxDamage: 24
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 1
+  projectilePid: -1
+  minStrength: 2
+  actionPointCost1: 3
+  actionPointCost2: 3
+  criticalFailureType: 2
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '3'

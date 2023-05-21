@@ -1,0 +1,37 @@
+pid: 25
+messageId: 2500
+name: Grenade (Frag)
+description: 'A generic fragmentation grenade. Contains a small amount of high explosives,
+  the container itself forming most of the damaging fragments. Explodes on contact.
+  Min ST: 3.'
+fid: 122
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x5'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 150
+inventoryFid: 117440537
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 30
+  maxDamage: 70
+  damageType: DAMAGE_TYPE_EXPLOSION
+  maxRange1: 25
+  maxRange2: 0
+  projectilePid: 83886105
+  minStrength: 3
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 4
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: O

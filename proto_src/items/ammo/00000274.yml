@@ -1,0 +1,24 @@
+pid: 274
+messageId: 27400
+name: Robo Rocket Ammo
+description: Only used by rocket equipped robots.
+fid: 138
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x800a000'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 0
+weight: 10
+cost: 0
+inventoryFid: 117440683
+soundId: '0'
+ammoData:
+  caliber: 1
+  quantity: 6
+  armorClassMod: 0
+  damageResistanceMod: -25
+  damageMult: 1
+  damageDiv: 1

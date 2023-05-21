@@ -1,0 +1,24 @@
+pid: 36
+messageId: 3600
+name: 5mm AP
+description: A brick of small caliber ammunition. 5mm armor piercing.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xfff0afff'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 1
+cost: 200
+inventoryFid: 117440550
+soundId: '0'
+ammoData:
+  caliber: 6
+  quantity: 40
+  armorClassMod: -10
+  damageResistanceMod: -35
+  damageMult: 1
+  damageDiv: 1

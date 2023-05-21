@@ -1,0 +1,37 @@
+pid: 404
+messageId: 40400
+name: Desert Eagle (Exp. Mag.)
+description: 'An ancient Desert Eagle pistol, in .44 magnum. Interest in late 20th
+  century films made this one of the most popular handguns of all times. This one
+  has been equipped with an expanded magazine for longer fun and games! Min ST: 4.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa006'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 4
+cost: 800
+inventoryFid: 117440768
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 10
+  maxDamage: 16
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 25
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 9
+  ammoTypePid: 31
+  ammoCapacity: 14
+  soundCode: B

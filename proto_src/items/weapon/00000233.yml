@@ -1,0 +1,36 @@
+pid: 233
+messageId: 23300
+name: Turbo Plasma Rifle
+description: 'A modified Winchester P94 plasma rifle. The plasma bolt chamber has
+  been hotwired to accelerate the bolt formation process. Min ST: 6.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 12
+cost: 6500
+inventoryFid: 117440655
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 40
+  maxDamage: 60
+  damageType: DAMAGE_TYPE_PLASMA
+  maxRange1: 35
+  maxRange2: 0
+  projectilePid: 83886082
+  minStrength: 6
+  actionPointCost1: 4
+  actionPointCost2: 0
+  criticalFailureType: 3
+  perk: PERK_WEAPON_LONG_RANGE
+  rounds: 0
+  caliber: 4
+  ammoTypePid: 39
+  ammoCapacity: 24
+  soundCode: K

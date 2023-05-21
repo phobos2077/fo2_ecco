@@ -1,0 +1,41 @@
+pid: 349
+messageId: 34900
+name: Adv. Power Armor MKII
+description: This powered armor appears to be composed of entirely of lightweight
+  ceramic composites rather than the usual combination of metal and ceramic plates.
+  It seems as though it should give even more protection than the standard Advanced
+  Power Armor.
+fid: 152
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 15
+weight: 80
+cost: 18000
+inventoryFid: 117440739
+soundId: '0'
+armorData:
+  armorClass: 26
+  damageResistance:
+    normal: 60
+    laser: 90
+    fire: 70
+    plasma: 60
+    electrical: 65
+    emp: 100
+    explosion: 70
+  damageThreshold:
+    normal: 18
+    laser: 19
+    fire: 16
+    plasma: 18
+    electrical: 15
+    emp: 0
+    explosion: 20
+  perk: PERK_ARMOR_ADVANCED_II
+  maleFid: 16777287
+  femaleFid: 16777287

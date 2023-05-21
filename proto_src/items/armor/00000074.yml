@@ -1,0 +1,38 @@
+pid: 74
+messageId: 7400
+name: Leather Jacket
+description: A black, heavy leather jacket.
+fid: 30
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 7
+size: 7
+weight: 5
+cost: 250
+inventoryFid: 117440589
+soundId: '0'
+armorData:
+  armorClass: 8
+  damageResistance:
+    normal: 20
+    laser: 0
+    fire: 10
+    plasma: 10
+    electrical: 30
+    emp: 500
+    explosion: 20
+  damageThreshold:
+    normal: 0
+    laser: 0
+    fire: 0
+    plasma: 0
+    electrical: 0
+    emp: 0
+    explosion: 0
+  perk: NONE
+  maleFid: 16777229
+  femaleFid: 16777222

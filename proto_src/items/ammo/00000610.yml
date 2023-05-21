@@ -1,0 +1,25 @@
+pid: 610
+messageId: 61000
+name: .50 BMG
+description: Large caliber ammunition 12.7x99 armour piercing. This bullets can penetrate
+  a tank.
+fid: 1
+lightDistance: 0
+lightIntensity: 0
+flags: '0xfff0afff'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_AMMO
+material: 1
+size: 1
+weight: 2
+cost: 250
+inventoryFid: 117440916
+soundId: '0'
+ammoData:
+  caliber: 19
+  quantity: 5
+  armorClassMod: -10
+  damageResistanceMod: -50
+  damageMult: 1
+  damageDiv: 1

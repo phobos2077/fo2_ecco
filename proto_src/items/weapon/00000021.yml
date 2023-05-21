@@ -1,0 +1,36 @@
+pid: 21
+messageId: 2100
+name: Brass Knuckles
+description: 'Hardened knuckle grip that is actually made out of steel. They protect
+  your hand, and do more damage, in unarmed combat. Min ST: 1.'
+fid: 47
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x1'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 1
+weight: 1
+cost: 50
+inventoryFid: 117440652
+soundId: '0'
+weaponData:
+  animationCode: 0
+  minDamage: 2
+  maxDamage: 5
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 1
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 1
+  actionPointCost1: 3
+  actionPointCost2: 0
+  criticalFailureType: 0
+  perk: NONE
+  rounds: 0
+  caliber: 0
+  ammoTypePid: -1
+  ammoCapacity: 0
+  soundCode: '1'
