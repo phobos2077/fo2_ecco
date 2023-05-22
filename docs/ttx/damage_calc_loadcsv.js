@@ -113,7 +113,7 @@ loadDataFromCsv = async function(dataSet) {
         drAdj: parseInt(a["DR Adjust"]),
         dmgMult: parseInt(a["Dam Mult"]),
         dmgDiv: parseInt(a["Dam Div"]),
-        dmgType: dataSet.ammoDamageType[parseInt(a["ProFILE"])]
+        dmgType: dataSet.ammoDamageType && dataSet.ammoDamageType[parseInt(a["ProFILE"])]
     }));
     weapons = (await csvFileToArrayOfObjects(dataSet.getPath("weapon"))).map(a => ({
         name: a["NAME"],
