@@ -256,5 +256,6 @@
 #define int_from_ini_file(name, file, section)    ini_##name := get_int_from_ini(file, section, #name)
 #define str_from_ini_file(name, file, section)    ini_##name := get_str_from_ini(file, section, #name)
 #define float_from_ini_file(name, file, section)  ini_##name := get_float_from_ini(file, section, #name)
+#define float_from_ini_file_clamped(name, file, section, min, max)  ini_##name := get_clamped(get_float_from_ini(file, section, #name), min, max)
 
 #endif

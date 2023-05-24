@@ -6,12 +6,14 @@
 #include "../_pbs_headers/ecco.h"
 
 procedure start;
+procedure load_damage_types_from_ini;
 procedure combatdamage_handler;
 procedure itemdamage_handler;
 procedure check_damage_formula;
-procedure damage_formula_YAAM2(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus,
+procedure get_weapon_final_damage_type(variable weapon);
+procedure calc_damage(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus,
    variable criticalMult, variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType);
-procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDT, variable ctdSource, variable bypass,
+procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypass,
    variable weaponPerk, variable attackType);
 procedure item_w_subtype(variable weapon, variable attackType);
 procedure get_ammo_value(variable weapon, variable param);
@@ -19,8 +21,12 @@ procedure map_enter_p_proc;
 procedure round_chance(variable dmg);
 
 #define INI_SECTION   "DAMAGE"
+#define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 
 #define debug_verbose(msg)    if ini_debug then debug_msg("pbs_damage_mod: "+msg)
+
+#define DT_MODE_ADD   (1)
+#define DT_MODE_MULT  (2)
 
 variable
    item_damage_min,
@@ -28,17 +34,40 @@ variable
    item_damage_weapon,
    item_damage_attacker,
    ini_burst_critical_fraction,
+   ini_dt_mode_positive,
+   ini_dt_mode_negative,
+   ini_dt_mult_positive,
+   ini_dt_mult_negative,
+   ini_damage_types,
    ini_debug;
 
 procedure start begin
    if game_loaded then begin
       call check_damage_formula;
-      float_from_ini_file(burst_critical_fraction, INI_COMBAT, INI_SECTION);
-      ini_burst_critical_fraction := get_clamped(ini_burst_critical_fraction, 0.0, 1.0);
+      float_from_ini_file_clamped(burst_critical_fraction, INI_COMBAT, INI_SECTION, 0.0, 1.0);
+      int_from_ini_file(dt_mode_positive, INI_COMBAT, INI_SECTION);
+      int_from_ini_file(dt_mode_negative, INI_COMBAT, INI_SECTION);
+      float_from_ini_file_clamped(dt_mult_positive, INI_COMBAT, INI_SECTION, 0.0, 10);
+      float_from_ini_file_clamped(dt_mult_negative, INI_COMBAT, INI_SECTION, 0.0, 10);
       int_from_ini_file(debug, INI_COMBAT, INI_SECTION);
-      
+
+      call load_damage_types_from_ini;
+
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
+   end
+end
+
+procedure load_damage_types_from_ini begin
+   variable section, k, v, pid, dmgType;
+   ini_damage_types = create_array_map;
+   section = get_ini_section(INI_COMBAT, INI_DAMAGE_TYPE_SECTION);
+   foreach (k: v in section) begin
+      pid := atoi(k);
+      dmgType := atoi(v);
+      if (pid > 0 and dmgType >= DMG_normal_dam and dmgType <= DMG_explosion) then begin
+         ini_damage_types[pid] := dmgType + 1; // to distinguish normal damage from non-existing key...
+      end
    end
 end
 
@@ -112,7 +141,7 @@ procedure combatdamage_handler begin
    debug_msg("CombatDamage: "+obj_name(target)+"("+target+"), rounds: "+rounds);
 
    if weapon then begin
-      dmgType := weapon_dmg_type(weapon);
+      dmgType := get_weapon_final_damage_type(weapon);
       weaponPerk := get_proto_data(obj_pid(weapon), PROTO_WP_PERK);
    end else begin
       dmgType := DMG_normal_dam;
@@ -136,10 +165,9 @@ procedure combatdamage_handler begin
          difficulty := 125;
    end
 
-   
    // F2 default start
    // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
-   amount := damage_formula_YAAM2(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
+   amount := calc_damage(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
    /*dmg_resist += get_ammo_value(weapon, PROTO_AM_DR_MOD); // item_w_dr_adjust_ (DR Adjust %)
    if (dmg_resist < 100) then begin
       if (dmg_resist < 0) then dmg_resist := 0;
@@ -209,17 +237,31 @@ procedure combatdamage_handler begin
    set_sfall_arg(10, amountKnockback);
 end
 
-
+procedure get_weapon_final_damage_type(variable weapon) begin
+   variable dmgType, ammoPid;
+   // First, check override for ammo.
+   ammoPid := get_weapon_ammo_pid(weapon);
+   if (ammoPid and ini_damage_types[ammoPid]) then begin
+      dmgType := ini_damage_types[ammoPid] - 1;
+      debug_verbose("Overriding damage type from ammo "+ammoPid+": "+dmgType);
+   end else if (ini_damage_types[obj_pid(weapon)]) then begin  // check override for weapon
+      dmgType := ini_damage_types[obj_pid(weapon)] - 1;
+      debug_verbose("Overriding damage type from weapon "+ammoPid+": "+dmgType);
+   end else begin
+      dmgType := weapon_dmg_type(weapon);
+   end
+   return dmgType;
+end
 
 /*
    Differences from YAAM:
    - All calculations are in float and rounded once per bullet using probabilistic rounding.
    - Critical damage multiplier and armor bypass is only applied to a fraction of rounds, defined by combat.ini|DAMAGE|burst_critical_fraction.
 */
-procedure damage_formula_YAAM2(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult,
+procedure calc_damage(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult,
       variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType)
 begin
-   variable accumulatedDamage, ammoDiv, ammoMult, ammoDT, i, rawDamage, staticMult, calcDTDR, bypassArmor, criticalRounds;
+   variable accumulatedDamage, ammoDiv, ammoMult, ammoDR, i, baseDamage, bulletDamage, staticMult, calcDTDR, bypassArmor, criticalRounds;
    if (rounds <= 0) then begin
       return 0;
    end
@@ -227,29 +269,29 @@ begin
    ammoDiv := get_ammo_value(weapon, PROTO_AM_DMG_DIV);
    if (ammoDiv == 0) then ammoDiv := 1; // prevent divide by zero
    ammoMult := get_ammo_value(weapon, PROTO_AM_DMG_MULT);
-   ammoDT := get_ammo_value(weapon, PROTO_AM_DR_MOD); // we use DR mod as DT&DR mod
+   ammoDR := get_ammo_value(weapon, PROTO_AM_DR_MOD); // we use DR mod as DT&DR mod
 
    bypassArmor := (flags bwand DAM_BYPASS) and dmgType != DMG_emp;
 
    // For the first bullet
-   calcDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDT, ctdSource, bypassArmor, weaponPerk, attackType);
+   calcDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDR, ctdSource, bypassArmor, weaponPerk, attackType);
 
    staticMult := 0.01 * difficulty * ammoMult / ammoDiv;
    criticalMult *= 0.5;
 
-   debug_verbose("AmmoDT="+ammoDT+", DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
+   debug_verbose("ammoDR="+ammoDR+", DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
 
    if (ini_burst_critical_fraction != 1.0 and (bypassArmor or criticalMult > 1)) then
-      criticalRounds := max(round_chance(ini_burst_critical_fraction * rounds), 1);
+      criticalRounds := math_max(round_chance(ini_burst_critical_fraction * rounds), 1);
    else
       criticalRounds := rounds;
 
    // Start of damage calculation loop
    for (i := 0; i < rounds; i++) begin
-      // After first bullet, don't allow any more criticals, to make bursts less OP.
+      // After a fraction of bullets, don't allow any more criticals, to make bursts less OP.
       if (i == criticalRounds) then begin
          if (bypassArmor) then begin
-            calcDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDT, ctdSource, false, weaponPerk, attackType);
+            calcDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDR, ctdSource, false, weaponPerk, attackType);
             debug_verbose("consequitive: DT="+calcDTDR[0]+", DR="+calcDTDR[1]);
          end
          if (criticalMult > 1) then begin
@@ -257,25 +299,63 @@ begin
          end
       end
 
-      rawDamage := random(item_damage_min, item_damage_max) + rangedBonus - calcDTDR[0];
-      if (rawDamage <= 0) then
+      baseDamage := random(item_damage_min, item_damage_max);
+      bulletDamage := baseDamage + rangedBonus - calcDTDR[0];
+      if (bulletDamage <= 0) then
          continue;
 
-      rawDamage := round_chance(rawDamage * staticMult * (1 - calcDTDR[1] / 100.0) * criticalMult);
+      bulletDamage := round_chance(bulletDamage * staticMult * (1 - calcDTDR[1] / 100.0) * criticalMult);
 
-      if (rawDamage > 0) then begin
-         debug_verbose("Bullet "+i+" dmg="+rawDamage);
-         accumulatedDamage += rawDamage;
+      if (bulletDamage > 0) then begin
+         debug_verbose("Bullet "+i+" dmg="+bulletDamage+"/"+baseDamage);
+         accumulatedDamage += bulletDamage;
       end
    end
    return accumulatedDamage;
 end
 
+/*
+procedure calc_dtdr_yaam(variable targetDT, variable targetDR, variable ammoDR) begin
+   variable calcDT, calcDR, calcDRMod;
+   calcDT := targetDT - ammoDR;
+   calcDRMod := calcDT * 10 if calcDT < 0 else 0;
 
-procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDT, variable ctdSource, variable bypassArmor,
+   // DR = armor DR + DT (note that DT should be less than or equal to zero)
+   calcDR := targetDR + calcDRMod;
+   if (calcDR < 0) then begin
+      calcDR := 0;
+   end else if (calcDR >= 100) then begin
+      return 0;
+   end
+   return [max(calcDT, 0), calcDR];
+end
+*/
+
+procedure calc_dtdr_vanilla_plus(variable targetDT, variable targetDR, variable ammoDR) begin
+   variable calcDRMod, dtMult, dtMode;
+
+   // Use separate mode and multiplier for positive and negative DR Adjust.
+   if (ammoDR > 0) then begin
+      dtMode := ini_dt_mode_positive;
+      dtMult := ini_dt_mult_positive;
+   end else begin
+      dtMode := ini_dt_mode_negative;
+      dtMult := ini_dt_mult_negative;
+   end
+   switch dtMode begin
+      case DT_MODE_ADD:  targetDT += 0.1 * ammoDR * dtMult;
+      case DT_MODE_MULT: targetDT *= 1.0 + 0.01 * ammoDR * dtMult;
+   end
+
+   // No change to DR calculation.
+   targetDR += ammoDR;
+   
+   return [math_max(targetDT, 0), math_max(math_min(targetDR, 100), 0)];
+end
+
+procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypassArmor,
    variable weaponPerk, variable attackType)
 begin
-   variable calcDT, calcDR, calcDRMod;
    if (bypassArmor) then begin
       targetDT := targetDT * 20 / 100;
       targetDR := targetDR * 20 / 100;
@@ -289,17 +369,7 @@ begin
          targetDR += 30;
    end
 
-   calcDT := targetDT - ammoDT;
-   calcDRMod := calcDT * 10 if calcDT < 0 else 0;
-
-   // DR = armor DR + DT (note that DT should be less than or equal to zero)
-   calcDR := targetDR + calcDRMod;
-   if (calcDR < 0) then begin
-      calcDR := 0;
-   end else if (calcDR >= 100) then begin
-      return 0;
-   end
-   return [max(calcDT, 0), calcDR];
+   return calc_dtdr_vanilla_plus(targetDT, targetDR, ammoDR);
 end
 
 /*

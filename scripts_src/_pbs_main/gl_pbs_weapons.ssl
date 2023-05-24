@@ -277,7 +277,7 @@ procedure itemdamage_handler begin
    
    if (weapon) then begin
       weaponPid := obj_pid(weapon);
-      damageType := get_proto_data(weaponPid, 48);
+      damageType := get_proto_data(weaponPid, PROTO_WP_DMG_TYPE);
       //debug_msg("itemdamage: "+dmgMin+"-"+dmgMax+", wpn: "+weaponPid+", type: "+attackType+", dmg typ: "+damageType);
       // tell engine to make smaller explosion effect for any explosive weapon except rockets
       if not(is_in_array(get_proto_data(weaponPid, PROTO_WP_PROJ_PID), ([PID_PROJ_ROCKET, PID_PROJ_ROBOT_ROCKET]))) then begin
@@ -286,7 +286,7 @@ procedure itemdamage_handler begin
       //display_msg("t:"+get_last_target(attacker)+", isMelee:"+isMelee);
       // tell engine to remove knockback for incendiary weapons
       if ((weaponPid == PID_MOLOTOV_COCKTAIL or get_weapon_ammo_pid(weapon) == PID_PBS_40MM_IC)
-            and get_proto_data(weaponPid, 48) == DMG_fire) then
+            and get_proto_data(weaponPid, PROTO_WP_DMG_TYPE) == DMG_fire) then
       begin
          set_weapon_knockback(weapon, 0, 0);
          set_attack_is_explosion_fire;

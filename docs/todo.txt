@@ -1,11 +1,9 @@
 for 0.9:
-- attempt to change DR/DT reduction in damage mod
-- ELSE - tweak armor DT values (esp. for BOSS)
-- take damage type override from ini
 - add 7.62 AP ammo & rebalance 7.62 weapons
 - fitting sprite for Dragon Breath
 - review perk/skill reqs for early craft (too high from feedback)
 - remove 9mm SMG and second 9mm ammo type from stores and worldmap
+- make .223 pistol a unique gun (remove everywhere, only keep at Eldridge)
 - balance pass on pistol progression
 - review armor class for armors
 - review weapon distribution in stores
@@ -15,6 +13,7 @@ for 0.9:
 
 
 for "future":
+- add weapons to utilize .44 and 14mm calibers (Carbine/SMG)
 - rewrite weapons mod to be configurable from ini
 - port "grenades anywhere" script from FO2Tweaks
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
