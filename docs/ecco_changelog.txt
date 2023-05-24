@@ -1,15 +1,18 @@
 -=== CHANGELOG ===-
 
 v0.9.0
-- added back russian translation
+> Economy:
 - rebalanced barter - buy prices aligned with vanilla prices, sell prices higher at low skill and differ less between merchants
 - party members with high barter now give simple discount to prices, instead of overriding player skill
-- new script-based damage formula (based on vanilla, with few important improvements)
-- armor and ammo stats revamped to use the new formula
 - added more items to town demands
 - reduced base price of some high-tier weapons and armor
 - massively increased base price of pelts, hides and other animal parts to make trapping and hunting more viable
 - reduced price to learn gecko skinning and leather crafting
+
+> Combat:
+- new script-based damage formula (based on vanilla, with few important improvements):
+- armor and ammo stats revamped for new formula: AP ammo will now do better against late game armor
+- nerfed burst criticals: only a fraction of bullets will retain critical effects (optional)
 - rebalanced shotgun shell types to make both crafted types useful and changed third type to incendiary buckshot
 - removed duplet mode from regular shotgun (reserved for Sawed-off variant)
 - added Weapon Penetrate to XL70E3
@@ -18,8 +21,11 @@ v0.9.0
 - added option to have opening inventory cost no AP, but every action cost 2 AP in combat (replaces "drug free uses")
 - new spray settings script (different bullet distribution based on weapon type!)
 - revamped bursts: lower burst sizes for most weapons, but damage and spray settings tweaked to compensate
-- replaced all human NPC armor changes with a script (and fixed several issues of wrong armor being applied)
 - reverted flamers to use both fuel types and rebalanced them
+
+> Other:
+- added back russian translation
+- replaced all human NPC armor changes with a script (and fixed several issues of wrong armor being applied)
 
 
 v0.8.0

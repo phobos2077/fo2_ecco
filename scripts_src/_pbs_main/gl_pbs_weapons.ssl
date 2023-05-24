@@ -7,9 +7,15 @@
 #include "../_pbs_headers/ecco.h"
 #include "../_pbs_headers/miscpid.h"
 
+#define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
+
+
 // These are used in custom door script.
 export variable pbs_last_burst_size;
 export variable pbs_last_hit_roll_result;
+
+variable 
+   ini_damage_types;
 
 procedure start;
 procedure afterhitroll_handler;
@@ -17,15 +23,45 @@ procedure ammocost_handler;
 procedure combatdamage_handler;
 procedure deathanim2_handler;
 procedure itemdamage_handler;
+procedure load_damage_types_from_ini;
+procedure get_weapon_damage_type_override(variable weapon);
 
 procedure start begin
    if game_loaded then begin
-       register_hook_proc(HOOK_AFTERHITROLL, afterhitroll_handler);
-       register_hook_proc(HOOK_AMMOCOST, ammocost_handler);
-       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
-       register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
-       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
+      call load_damage_types_from_ini;
+
+      //register_hook_proc(HOOK_AFTERHITROLL, afterhitroll_handler);
+      register_hook_proc(HOOK_AMMOCOST, ammocost_handler);
+      register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
+      register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
+      register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
    end
+end
+
+
+procedure load_damage_types_from_ini begin
+   variable section, k, v, pid, dmgType;
+   ini_damage_types = create_array_map;
+   section = get_ini_section(INI_COMBAT, INI_DAMAGE_TYPE_SECTION);
+   foreach (k: v in section) begin
+      pid := atoi(k);
+      dmgType := atoi(v);
+      if (pid > 0 and dmgType >= DMG_normal_dam and dmgType <= DMG_explosion) then begin
+         ini_damage_types[pid] := dmgType + 1; // to distinguish normal damage from non-existing key...
+      end
+   end
+end
+
+procedure get_weapon_damage_type_override(variable weapon) begin
+   variable dmgType, ammoPid;
+   // First, check override for ammo.
+   ammoPid := get_weapon_ammo_pid(weapon);
+   if (ammoPid and ini_damage_types[ammoPid]) then begin
+      return ini_damage_types[ammoPid] - 1;
+   end else if (ini_damage_types[obj_pid(weapon)]) then begin  // check override for weapon
+      return ini_damage_types[obj_pid(weapon)] - 1;
+   end
+   return -1;
 end
 
 
@@ -227,26 +263,7 @@ procedure deathanim2_handler begin
 end
 
 procedure ammocost_handler begin
-   variable weapon, rounds, roundsVanilla, type;
-
-   weapon := get_sfall_arg;
-   rounds := get_sfall_arg;
-   roundsVanilla := get_sfall_arg;
-   type := get_sfall_arg;
-   
-   pbs_last_burst_size := rounds;
-
-   //debug_msg("ammocost: wpn: "+weapon+" rounds "+rounds+" type "+type );
-   if (weapon) then begin
-      variable pid, mult;
-      pid := obj_pid(weapon);
-      mult := 1;
-      // Increased ammo cost for single-shot energy weapons.
-      if (pid == PID_LASER_RIFLE or pid == PID_LASER_RIFLE_EXT_CAP or PID == PID_PLASMA_PISTOL) then mult := 2;
-      else if (pid == PID_PLASMA_RIFLE or PID == PID_TURBO_PLASMA_RIFLE) then mult := 3;
-      
-      if (mult > 1) then set_sfall_return(rounds * mult);
-   end
+   pbs_last_burst_size := get_sfall_arg_at(1);
 end
 
 

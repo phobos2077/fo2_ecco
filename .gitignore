@@ -10,3 +10,5 @@
 *.code-workspace
 __pycache__/
 .~lock*
+
+maps_txt/*
