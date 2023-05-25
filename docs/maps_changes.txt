@@ -101,6 +101,7 @@ NEWRCS:
 HUBSTASH:
 Level 1:
 - remove Tesla Armor
+- replaced .223 Pistol with 14mm
 Level 3:
 - remove Guns and Repair books from shelf, add 1 Traps and 1 Barter
 - remove 2 psycho from locker
@@ -115,5 +116,6 @@ Level 3:
  
 Level2:
 - add Vault City Patrol (combat armor) with 14mm pistol in NW corner room
+- (same room) replaced .223 Pistol & ammo with 2 pcs of 14mm AP ammo
 - add lone Bounty Hunter female with Desert Eagle and throwing hatchets at far north room
 - add 2 male Bounty Hunter with Combat shotgun & Hunting rifle talking near second room from NW

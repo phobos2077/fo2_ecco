@@ -3,7 +3,7 @@
 */
 
 /******************************************************************************************
-        Item: Gun merchant Table
+        Item: Lao Chou's Tables
         Description:
 
         Log:
@@ -18,16 +18,14 @@
 
 
 /* Include Files */
-#define SCRIPT_REALNAME "figuntbl"
+#define SCRIPT_REALNAME "filaotbl"
 #include "../headers/define.h"
 
-#define NAME                    SCRIPT_FIGUNTBL
-#define CUR_COMP_SCRIPT         SCRIPT_FIGUNTBL
+#define NAME                    SCRIPT_FILAOTBL
+#define CUR_COMP_SCRIPT         SCRIPT_FILAOTBL
 
 #include "../headers/command.h"
 #include "../headers/sanfran.h"
-
-#include "../_pbs_headers/ecco.h"   // by phobos2077
 
 /* Standard Script Procedures */
 procedure start;
@@ -47,15 +45,15 @@ procedure validHandle(variable handle);
    prepended by LVAR_
 *****************************************************************/
 #define LVAR_Restock_Time                         (0)
-#define LVAR_Restock_Time_Fix                     (1)
+#define LVAR_Restock_Time_Fix                     (1) //added by killap
 
 /*******************************************************************
    Imported variables from the Map scripts. These should only be
    pointers and variables that need not be saved. If a variable
    Needs to be saved, make it a map variable (MVAR_)
 *******************************************************************/
-import variable i_table_swap;
-import variable i_gun_merchant;
+import variable i_lao_table_swap;
+import variable i_lao_merchant;
 
 /*******************************************************************
    Local variables which do not need to be saved between map changes.
@@ -65,8 +63,8 @@ import variable i_gun_merchant;
 /*******************************************************************
 *******                         PROCEDURES                   *******
 *******************************************************************/
-#define TABLE_1 26858
-#define TABLE_2 28058
+#define TABLE_1 24719
+#define TABLE_2 25519
 
 /*******************************************************************
    The start procedure is the first procedure called when the map is
@@ -75,7 +73,7 @@ import variable i_gun_merchant;
 *******************************************************************/
 
 procedure start begin
-   i_table_swap := self_obj;
+   i_lao_table_swap := self_obj;
 end
 
 procedure timed_event_p_proc begin
@@ -85,10 +83,10 @@ end
 ********************************************************************/
 
 procedure use_p_proc begin
-   if (validHandle(i_gun_merchant)) then begin
+   if (validHandle(i_lao_merchant)) then begin
       script_overrides;
-      i_table_swap := self_obj;
-      add_timer_event(i_gun_merchant, 0, TIMER_USE_TABLE);
+      i_lao_table_swap := self_obj;
+      add_timer_event(i_lao_merchant, 0, TIMER_USE_TABLE);
    end
 end
 
@@ -100,7 +98,6 @@ end
 
 procedure look_at_p_proc begin
 end
-
 
 /**********************************************************************************
 **********************************************************************************/
@@ -114,7 +111,7 @@ end
 **********************************************************************************/
 
 procedure use_skill_on_p_proc begin
-   if (validHandle(i_gun_merchant)) then begin
+   if (validHandle(i_lao_merchant)) then begin
       call use_p_proc;
    end
 end
@@ -127,7 +124,7 @@ end
 **********************************************************************************/
 
 procedure use_obj_on_p_proc begin
-   if (validHandle(i_gun_merchant)) then begin
+   if (validHandle(i_lao_merchant)) then begin
       call use_p_proc;
    end
 end
@@ -145,93 +142,101 @@ end
 ***************************************************************************************/
 
 procedure map_enter_p_proc begin
-   variable tmp;
-   variable special_item;
+   variable tmp_box;
 
-   if (validHandle(i_gun_merchant)) then begin
-      ndebug("self_tile: " + self_tile);
+   if (validHandle(i_lao_merchant)) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
          if (self_tile == TABLE_1) then begin //Armor table
-            ndebug("table 1 set");
-            //Used to be on Table 3
-            check_restock_item(PID_BOTTLE_CAPS, 1000, 8000, 100)   // by phobos2077 - max increased from 2000 to 8000 
-            check_restock_item(PID_FLAMER, 1, 2, 60)
-            check_restock_item(PID_MINIGUN, 1, 3, 65)
-            check_restock_item(PID_ROCKET_LAUNCHER, 1, 3, 30)
-            check_restock_item(PID_LASER_PISTOL, 2, 4, 30)
-            check_restock_item(PID_FRAG_GRENADE, 3, 7, 45)
-            check_restock_item(PID_PLASMA_GRENADE, 1, 2, 20)
-            check_restock_item(PID_GATLING_LASER, 1, 1, 50)
-            check_restock_item(PID_THROWING_KNIFE, 5, 7, 60)
-            check_restock_item(PID_PBS_THROWING_AXE, 5, 7, 60)  // pbs
-            check_restock_item(PID_SUPER_SLEDGE, 1, 2, 70)
-            check_restock_item(PID_RIPPER, 2, 4, 50)
-            check_restock_item(PID_LASER_RIFLE, 1, 3, 65)
-            check_restock_item(PID_MOLOTOV_COCKTAIL, 5, 10, 60)
-            check_restock_item(PID_SPIKED_KNUCKLES, 1, 7, 30)
-            check_restock_item(PID_POWER_FIST, 1, 2, 60)
-            check_restock_item(PID_COMBAT_KNIFE, 1, 3, 90)
-            // check_restock_item(PID_223_PISTOL, 1, 2, 35) // phobos2077: removed on purpose
-            check_restock_item(PID_INDEPENDENT, 1, 2, 35) // pbs
-            check_restock_item(PID_PBS_MGL, 1, 2, 30) // pbs
-            //Used to be on Table 3
+            tmp_box := move_critical_items();
 
-            check_restock_item(PID_COMBAT_ARMOR, 1, 2, 50)
-            check_restock_item(PID_CURED_LEATHER_ARMOR, 1, 2, 50)
-            check_restock_item(PID_TESLA_ARMOR, 2, 4, 40)
-            check_restock_item(PID_METAL_ARMOR, 2, 4, 50)
-            check_restock_item(PID_LEATHER_JACKET, 2, 4, 60)
-            check_restock_item(PID_POWERED_ARMOR, 1, 3, 30)
-            check_restock_item(PID_LEATHER_ARMOR_MK_II, 1, 2, 40)
-            check_restock_item(PID_METAL_ARMOR_MK_II, 1, 3, 35)
-            check_restock_item(PID_COMBAT_ARMOR_MK_II, 1, 1, 30)
-         end else if (self_tile == TABLE_2) then begin //Ammo table
-            ndebug("table 2 set");
-
-            //Used to be on table 3
-            check_restock_item(PID_HK_CAWS, 1, 5, 40)
+//used to be table 3
+            check_restock_item(PID_ROCKET_LAUNCHER, 1, 2, 40)
+            check_restock_item(PID_LASER_PISTOL, 1, 3, 40)
+            check_restock_item(PID_SPIKED_KNUCKLES, 1, 3, 80)
+            // check_restock_item(PID_223_PISTOL, 1, 1, 40) // phobos2077: removed on purpose
             check_restock_item(PID_HK_P90C, 1, 2, 55)
-            check_restock_item(PID_44_MAGNUM_REVOLVER, 1, 3, 46)
-            check_restock_item(PID_BOZAR, 1, 1, 30)
-            check_restock_item(PID_LIGHT_SUPPORT_WEAPON, 1, 1, 45)
-            check_restock_item(PID_FN_FAL_HPFA, 1, 3, 50)
-            check_restock_item(PID_HK_G11, 1, 4, 75)
-            check_restock_item(PID_PANCOR_JACKHAMMER, 1, 2, 45)
-            check_restock_item(PID_AVENGER_MINIGUN, 1, 1, 35)
-            check_restock_item(PID_HK_G11E, 1, 1, 30)
-            check_restock_item(PID_M72_GAUSS_RIFLE, 1, 1, 30)
-            check_restock_item(PID_PK12_GAUSS_PISTOL, 1, 1, 30)
-            check_restock_item(PID_VINDICATOR_MINIGUN, 1, 1, 30)
-            check_restock_item(PID_MEGA_POWER_FIST, 1, 2, 40)
-            //Used to be on table 3
+            check_restock_item(PID_M60, 1, 2, 45)
+            check_restock_item(PID_LASER_RIFLE_EXT_CAP, 1, 1, 40)
+            check_restock_item(PID_MAGNETO_LASER_PISTOL, 1, 1, 40)
 
-            check_restock_item(PID_EXPLOSIVE_ROCKET, 1, 3, 100)
-            check_restock_item(PID_10MM_JHP, 5, 10, 100)
-            check_restock_item(PID_10MM_AP, 5, 10, 100)
-            check_restock_item(PID_9MM_AMMO, 1, 5, 100)
-            check_restock_item(PID_7_62MM_AMMO, 3, 7, 100)
-            check_restock_item(PID_FLAMETHROWER_FUEL_MK_II, 1, 5, 100)
-            check_restock_item(PID_MICRO_FUSION_CELL, 3, 7, 50)
-            check_restock_item(PID_SMALL_ENERGY_CELL, 5, 9, 50)
-            check_restock_item(PID_ROCKET_AP, 4, 6, 100)
-            check_restock_item(PID_5MM_AP, 5, 10, 75)
-            check_restock_item(PID_5MM_JHP, 5, 10, 75)
+//Used to be table 3
+
+//Used to be table 5
+            check_restock_item(PID_SHOVEL, 2, 5, 30)
+            check_restock_item(PID_SUPER_TOOL_KIT, 1, 7, 25)
+            check_restock_item(PID_BLUE_CONDOM, 6, 10, 78)
+            check_restock_item(PID_GREEN_CONDOM, 8, 10, 90)
+//Used to be table 5
+
+            check_restock_item(PID_TESLA_ARMOR, 2, 3, 60)
+            check_restock_item(PID_LEATHER_JACKET, 2, 4, 60)
+            check_restock_item(PID_POWERED_ARMOR, 1, 2, 60)
+            check_restock_item(PID_METAL_ARMOR_MK_II, 1, 2, 65)
+
+            call restore_critical_items(tmp_box);
+         end else if (self_tile == TABLE_2) then begin //Ammo table
+            tmp_box := move_critical_items();
+
+//used to be table 4
+            check_restock_item(PID_CROWBAR, 1, 1, 100)
+            check_restock_item(PID_SHIV, 1, 2, 80)
+            check_restock_item(PID_WRENCH, 1, 2, 50)
+            check_restock_item(PID_STIMPAK, 3, 7, 100)
+            check_restock_item(PID_FIRST_AID_KIT, 1, 2, 60)
+            check_restock_item(PID_ANTIDOTE, 2, 4, 80)
+            check_restock_item(PID_RADAWAY, 3, 7, 60)
+            check_restock_item(PID_MENTATS, 4, 8, 50)
+            check_restock_item(PID_MUTATED_FRUIT, 4, 8, 60)
+            check_restock_item(PID_BUFFOUT, 4, 8, 50)
+            check_restock_item(PID_DOCTORS_BAG, 1, 3, 40)
+            check_restock_item(PID_RAD_X, 2, 7, 60)
+            check_restock_item(PID_PSYCHO, 4, 8, 50)
+            check_restock_item(PID_SUPER_STIMPAK, 6, 7, 30)
+//          check_restock_item(PID_JET_ANTIDOTE, 1, 3, 30)
+            check_restock_item(PID_BROC_FLOWER, 2, 5, 40)
+            check_restock_item(PID_XANDER_ROOT, 3, 7, 30)
+            check_restock_item(PID_HEALING_POWDER, 3, 7, 35)
+            check_restock_item(PID_MEAT_JERKY, 4, 5, 45)
+            check_restock_item(PID_FIELD_MEDIC_KIT, 1, 2, 30)
+//used to be table 4
+
+//Used to be table 5
+            check_restock_item(PID_BIG_BOOK_OF_SCIENCE, 1, 2, 40)
+            check_restock_item(PID_DEANS_ELECTRONICS, 2, 3, 30)
+            check_restock_item(PID_FIRST_AID_BOOK, 2, 4, 40)
+            check_restock_item(PID_SCOUT_HANDBOOK, 2, 4, 40)
+            check_restock_item(PID_GUNS_AND_BULLETS, 1, 2, 30)
+            check_restock_item(PID_TECHNICAL_MANUAL, 2, 5, 40)
+            check_restock_item(PID_CHEMISTRY_MANUAL, 2, 3, 40)
+            check_restock_item(PID_DYNAMITE, 2, 6, 33)
+            check_restock_item(PID_GEIGER_COUNTER, 1, 2, 30)
+            check_restock_item(PID_MOTION_SENSOR, 2, 4, 40)
+            check_restock_item(PID_MULTI_TOOL, 2, 3, 50)
+            check_restock_item(PID_ELECTRONIC_LOCKPICKS, 2, 5, 20)
+            check_restock_item(PID_LOCKPICKS, 2, 4, 30)
+            check_restock_item(PID_PLASTIC_EXPLOSIVES, 2, 4, 60)
+            check_restock_item(PID_ROPE, 1, 5, 50)
+            check_restock_item(PID_EXP_LOCKPICK_SET, 2, 6, 40)
+            check_restock_item(PID_ELEC_LOCKPICK_MKII, 0, 1, 35)
+            check_restock_item(PID_BOX_OF_NOODLES, 3, 7, 30)
+//Used to be table 5
+
+            check_restock_item(PID_7_62MM_AMMO, 3, 4, 50)
+            check_restock_item(PID_FLAMETHROWER_FUEL_MK_II, 1, 3, 50)
+            check_restock_item(PID_MICRO_FUSION_CELL, 2, 4, 50)
+            check_restock_item(PID_ROCKET_AP, 1, 4, 50)
+            check_restock_item(PID_14MM_AP, 2, 3, 100)
+            check_restock_item(PID_FLAMETHROWER_FUEL, 2, 4, 50)
+            check_restock_item(PID_45_CALIBER_AMMO, 3, 5, 50)
+            check_restock_item(PID_HN_NEEDLER_CARTRIDGE, 1, 5, 65)
+            check_restock_item(PID_HN_AP_NEEDLER_CARTRIDGE, 1, 3, 50)
+            check_restock_item(PID_10MM_JHP, 2, 5, 100)
+            check_restock_item(PID_10MM_AP, 2, 5, 100)
+            check_restock_item(PID_9MM_AMMO, 1, 5, 50)
             check_restock_item(PID_223_FMJ, 5, 10, 100)
-            check_restock_item(PID_PBS_223_AP, 3, 6, 50) // pbs
-            check_restock_item(PID_14MM_AP, 1, 5, 100)
-            check_restock_item(PID_FLAMETHROWER_FUEL, 3, 5, 100)
-            check_restock_item(PID_44_MAGNUM_JHP, 3, 5, 100)
-            check_restock_item(PID_44_FMJ_MAGNUM, 3, 5, 100)
-            check_restock_item(PID_45_CALIBER_AMMO, 4, 7, 100)
-            check_restock_item(PID_HN_NEEDLER_CARTRIDGE, 1, 10, 75)
-            check_restock_item(PID_HN_AP_NEEDLER_CARTRIDGE, 1, 10, 75)
-            check_restock_item(PID_SHOTGUN_SHELLS, 5, 7, 100)
-            check_restock_item(PID_4_7MM_CASELESS, 1, 4, 33)
-            check_restock_item(PID_2MM_EC_AMMO, 1, 4, 33)
-            check_restock_item(PID_PBS_50_AMMO, 1, 4, 33) // by phobos2077
-            check_restock_item(PID_PBS_40MM_HE, 2, 6, 100) // pbs
-            check_restock_item(PID_PBS_40MM_IC, 1, 3, 100) // pbs
+
+            call restore_critical_items(tmp_box);
          end
          set_local_Var(LVAR_Restock_Time, game_time + (ONE_GAME_DAY * Random(2, 4)));
       end

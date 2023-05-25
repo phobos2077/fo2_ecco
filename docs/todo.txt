@@ -3,8 +3,6 @@ for 0.9:
 - fitting sprite for Dragon Breath
 - review perk/skill reqs for early craft (too high from feedback)
 - remove 9mm SMG and second 9mm ammo type from stores and worldmap
-- make .223 pistol a unique gun (remove everywhere, only keep at Eldridge)
-- balance pass on pistol progression
 - review armor class for armors
 - review weapon distribution in stores
 - review and update full readme

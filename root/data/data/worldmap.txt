@@ -1114,7 +1114,7 @@ position=huddle, spacing:2
 
 ; put to the east of Broken Hills - Brok_M
 [Encounter: BOUNTY_Outlaws_Mid]
-type_00=pid:16777403, Item:626, Item:241, Item:25(wielded), Item:615, Item:234, Item:259, Item:(2-5)40, Item:(0-300)41, Script:772   ; Bounty Hunter Male (13-18) w/ Frag, .223 Pistol and stuff
+type_00=pid:16777403, Item:626, Item:22, Item:25(wielded), Item:615, Item:234, Item:259, Item:(2-5)40, Item:(0-300)41, Script:772   ; Bounty Hunter Male (13-18) w/ Frag, 14mm Pistol and stuff
 type_01=ratio:20%, pid:16777264, Item:355(wielded), Item:(1-3)34, Item:(0-2)40, Script:772                      ; Big gun guard w/ Light Support Weapon
 type_02=ratio:25%, pid:16777474, Item:23(wielded), Item:(1-2)36, Item:(0-2)40, Item:259, Script:772             ; Tough Ghoul w/ Assault Rifle
 type_03=ratio:25%, pid:16777475, Item:283(wielded), Item:357, Script:772                                        ; Mobster w/ Tommy Gun

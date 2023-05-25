@@ -1,0 +1,5538 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Broken Hills Random Desert Map Script
+        Location: Broken Hills Caravan Route
+        Description: This is the Map Script for the Village of Broken Hills
+
+        Log:
+
+           Created: July 2, 1998
+
+           Updated: July 15, 1998
+                Notes: Rewrote this file to accept any caravan encounter type. All of the
+                       random encounter tables are taken from the world map random encounter
+                       tables.  -- rwh2
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "bhrnddst"
+#include "../headers/define.h"
+#include "../headers/broken.h"
+#include "../headers/ncr.h"
+#include "../headers/updatmap.h"
+#include "../headers/caravan.h"
+#include "../headers/bhrnddst.h"
+
+#define NAME                    SCRIPT_BHRNDDST
+
+#include "../headers/command.h"
+
+#define START_HEX               (22097)
+
+#define REDDING_ENT_HEX         (26098)
+#define NCR_ENT_HEX             (18467) //(10715)
+#define VAULT_CITY_ENT_HEX      (27704) //(28108)
+#define NEW_RENO_ENT_HEX        (27306)
+#define GECKO_ENT_HEX           (22901) //(22097)
+#define BROKEN_HILLS_ENT_HEX    (22097)
+
+#define check_area                      if (WM_In_EPA(worldmap_xpos,worldmap_ypos)) then                        \
+                                            call Redding_EPA_Encounter;                                         \
+                                        else if (WM_In_New_Reno(worldmap_xpos,worldmap_ypos)) then              \
+                                            call Redding_Reno_Encounter;                                        \
+                                        else if (WM_In_SRNRRN(worldmap_xpos,worldmap_ypos)) then                \
+                                            call Redding_SRNRRN_Encounter;                                      \
+                                        else if (WM_In_Brok(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Broken_Hills_Brok_Encounter;                                   \
+                                        else if (WM_In_NCR(worldmap_xpos,worldmap_ypos)) then                   \
+                                            call Broken_Hills_NCR_Encounter;                                    \
+                                        else if (WM_In_Band(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Redding_Band_Encounter;                                        \
+                                        else if (WM_In_Redding(worldmap_xpos,worldmap_ypos)) then               \
+                                            call Redding_Red_Encounter;                                         \
+                                        else if (WM_In_VPat(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Broken_Hills_VPAT_Encounter;                                   \
+                                        else if (WM_In_NRNR(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Redding_NRNR_Encounter;                                        \
+                                        else if (WM_In_DNRV(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Redding_DNRV_Encounter;                                        \
+                                        else if (WM_In_DVMV(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Redding_DVMV_Encounter;                                        \
+                                        else if (WM_In_VNNB(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Broken_Hills_VNNB_Encounter;                                   \
+                                        else if (WM_In_RDRC(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Broken_Hills_RDRC_Encounter;                                   \
+                                        else if (WM_In_DMRV(worldmap_xpos,worldmap_ypos)) then                  \
+                                            call Redding_DMRV_Encounter;                                        \
+                                        else ndebug("warning: can't find encounter: xpos=" + worldmap_xpos + ", ypos=" + worldmap_ypos)
+
+
+// Basic Scripts information
+procedure start;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure map_exit_p_proc;
+
+// Caravans
+procedure Broken_Hills_Caravan;
+procedure Broken_VC_Encounters;
+procedure Broken_Gecko_Encounters;
+procedure Broken_NCR_Encounters;
+procedure Broken_Hills_Brok_Encounter;
+procedure Broken_Hills_VPat_Encounter;
+procedure Broken_Hills_RDRC_Encounter;
+procedure Broken_Hills_VNNB_Encounter;
+procedure Broken_Hills_NCR_Encounter;
+
+procedure Redding_Caravan;
+procedure Red_VC_Encounters;
+procedure Red_Reno_Encounters;
+procedure Red_NCR_Encounters;
+procedure VC_Red_Encounters;
+procedure Reno_Red_Encounters;
+procedure NCR_Red_Encounters;
+procedure Redding_DNRV_Encounter;
+procedure Redding_DMRV_Encounter;
+procedure Redding_Band_Encounter;
+procedure Redding_DVMV_Encounter;
+procedure Redding_Red_Encounter;
+procedure Redding_SRNRRN_Encounter;
+procedure Redding_EPA_Encounter;
+procedure Redding_Reno_Encounter;
+procedure Redding_NRNR_Encounter;
+procedure Redding_NCR_Encounter;
+
+procedure NCR_Cattle_Drive;
+
+procedure Default_Caravan;
+
+procedure Build_Caravan_Team;
+procedure Build_Grey_Caravan;
+procedure Add_Mysterious_Stranger;
+
+// Encounters
+procedure Brok_Rogues;
+procedure Red_Wolves;
+procedure DMRV_Scorpions;
+procedure ARRO_Spore_Plants;
+procedure Brok_Unity_Patrol;
+procedure VPat_Strong_Slavers;
+procedure DVMV_Wild_Dogs;
+procedure DMRV_Golden_Geckos;
+procedure VPat_Patrol;
+procedure RDRC_Raiders;
+procedure DNRV_Vault_Caravan;
+procedure RDRC_Broken_Hills_Caravan;
+procedure RDRC_Gecko_Caravan;
+procedure NCR_Marauders;
+procedure DNRV_Reno_Caravan;
+procedure DNRV_Redding_Caravan;
+procedure NCR_Caravan;
+procedure V15_Caravan;
+procedure New_Traveler;
+procedure NCR_Masters_Army;
+procedure NCR_Rangers;
+procedure KLA_Farmers;
+procedure DNRV_Den_Caravan;
+procedure DVMV_Highwaymen;
+procedure DVMV_Robbers;
+procedure DMRV_Caravan;
+procedure DMRV_Highwaymen;
+procedure DMRV_Robbers;
+procedure DVMV_Mantis_Swarm;
+procedure DVMV_Caravan;
+procedure Red_Claim_Jumper;
+procedure Red_Prospector;
+procedure Red_Bootlegger;
+procedure Red_Trappers;
+procedure Red_Homesteaders;
+procedure EPA_Deathclaws;
+procedure EPA_Fire_Geckos;
+procedure EPA_Centaurs;
+procedure EPA_Floaters;
+procedure Fran2_San_Fran_Caravan;
+procedure EPA_Special_Alien;
+procedure EPA_Floater_Centaurs;
+procedure EPA_Special_Fire_Geckos;
+procedure New_Yakuza;
+procedure New_Gang;
+procedure New_Mobsters;
+procedure EPA_Alien;
+procedure Klad_Mole_Pig_Rat;
+
+variable Encounter_Counter;
+variable Encounter_Rotation;
+variable Critter;
+variable Combat1:=0;
+variable Combat2:=0;
+
+procedure start begin
+end
+
+procedure map_enter_p_proc begin
+   variable Encounter_Number;
+   Encounter_Number:=total_encounters - encounters_left;
+   ndebug("Total Encounters == "+total_encounters+". Encounters Left == "+encounters_left+". On Encounter "+Encounter_Number);
+   ndebug("caravan_brahmin_left = " + caravan_brahmin_left);
+   if (map_first_run) then begin
+       Combat1:=0;
+       Combat2:=0;
+       set_map_var(MVAR_Hostile_Total,0);
+
+       if (global_var(GVAR_MEDICINE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           call Redding_Caravan;
+           ndebug("Redding Medicine Caravan.");
+       end
+       else if (global_var(GVAR_CATTLE_DRIVE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           call Redding_Caravan;
+           ndebug("Redding Cattle Drive.");
+       end
+       else if (global_var(GVAR_JET_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           call Redding_Caravan;
+           ndebug("Redding Jet Caravan.");
+       end
+       else if (global_var(GVAR_BH_CARAVAN) == CARAVAN_STATUS_ON_JOB) then begin
+           call Broken_Hills_Caravan;
+           ndebug("Broken Hills Caravan.");
+       end
+       else if (cattle_drive(CATTLE_ON)) then begin
+           call NCR_Cattle_Drive;
+           ndebug("NCR Cattle Drive.");
+       end
+       else begin
+           call Default_Caravan;
+           ndebug("Default Caravan.");
+       end
+
+       Encounter_Number:=total_encounters - encounters_left;
+       ndebug("Total Encounters == "+total_encounters+". Encounters Left == "+encounters_left+". On Encounter "+Encounter_Number);
+       made_encounter;
+
+       if ((Combat1 != 0) and (Combat2 != 0)) then begin
+           attack_setup(Combat1,Combat2);
+           ndebug("Having "+Combat1+" fighting "+Combat2+".");
+       end
+   end                     // End of map_first_run
+
+   Lighting;
+
+//   if ((global_var(GVAR_PLAYER_GOT_CAR) != 0) and (map_first_run)) then begin                  // need to fix this querry
+//       Create_Car(CAR_RANDOM_DESERT_HEX,CAR_RANDOM_DESERT_ELEV)
+//   end
+
+   set_global_var(GVAR_LOAD_MAP_INDEX,0);
+end
+
+procedure map_update_p_proc begin
+   variable dude_start_hex;
+   variable dude_facing;
+
+   Lighting;
+
+   if (map_var(MVAR_Hostile_Total) <= 0) then begin   //edit by killap (incase you drop below zero, things will still run)
+       if (encounters_left == 0) then begin
+           ndebug("Caravan_End == "+caravan_end);
+           if (caravan_end == CARAVAN_REDDING) then begin
+               set_exit_grids(0,MAP_REDDING_MINE_ENT,0,REDDING_ENT_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_VAULT_CITY) then begin
+               set_exit_grids(0,MAP_VAULTCITY_COURTYARD,0,VAULT_CITY_ENT_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_NEW_RENO) then begin
+               set_exit_grids(0,MAP_NEW_RENO_1,0,NEW_RENO_ENT_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_NCR) then begin
+               set_exit_grids(0,MAP_NCR_BAZAAR,0,NCR_ENT_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_THE_DEN) then begin
+               set_exit_grids(0,MAP_DEN_ENTRANCE,0,START_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_BROKEN_HILLS) then begin
+               set_exit_grids(0,MAP_BROKEN_HILLS1,0,BROKEN_HILLS_ENT_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_GECKO) then begin
+               set_exit_grids(0,MAP_GECKO_SETTLEMENT,0,GECKO_ENT_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_SAN_FRANCISCO) then begin
+               set_exit_grids(0,MAP_SAN_FRAN_CHINATOWN,0,START_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_MODOC) then begin
+               set_exit_grids(0,MAP_MODOC_MAINSTREET,0,START_HEX,0);
+           end
+           else if (caravan_end == CARAVAN_KLAMATH) then begin
+               set_exit_grids(0,MAP_KLAMATH_1,0,START_HEX,0);
+           end
+
+           if (global_var(GVAR_MEDICINE_CARAVAN) == REDDING_CARAVAN_ABANDONED) then begin
+               set_global_var(GVAR_MEDICINE_CARAVAN,REDDING_CARAVAN_AVERAGE_SUCCESS);
+           end
+           else if (global_var(GVAR_CATTLE_DRIVE_CARAVAN) == REDDING_CARAVAN_ABANDONED) then begin
+               set_global_var(GVAR_CATTLE_DRIVE_CARAVAN,REDDING_CARAVAN_AVERAGE_SUCCESS);
+           end
+           else if (global_var(GVAR_JET_CARAVAN) == REDDING_CARAVAN_ABANDONED) then begin
+               set_global_var(GVAR_JET_CARAVAN,REDDING_CARAVAN_AVERAGE_SUCCESS);
+           end
+           else if (cattle_drive(CATTLE_FAIL)) then begin
+               unset_cattle_drive(CATTLE_FAIL);
+           end
+           else if (global_var(GVAR_BH_CARAVAN) == CARAVAN_STATUS_FAILED) then begin
+               set_global_var(GVAR_BH_CARAVAN,CARAVAN_STATUS_SUCCESS);
+           end
+       end
+
+       else begin
+           dude_facing:=random(0,5);
+           dude_start_hex:=tile_num_in_direction(START_HEX,dude_facing,random(3,8));
+           set_exit_grids(0,MAP_BH_RND_DESERT,0,dude_start_hex,dude_facing);
+       end
+
+       if (global_var(GVAR_MEDICINE_CARAVAN) == REDDING_CARAVAN_ABANDONED) then begin
+           set_global_var(GVAR_MEDICINE_CARAVAN,REDDING_CARAVAN_ON_CARAVAN);
+       end
+       else if (global_var(GVAR_CATTLE_DRIVE_CARAVAN) == REDDING_CARAVAN_ABANDONED) then begin
+           set_global_var(GVAR_CATTLE_DRIVE_CARAVAN,REDDING_CARAVAN_ON_CARAVAN);
+       end
+       else if (global_var(GVAR_JET_CARAVAN) == REDDING_CARAVAN_ABANDONED) then begin
+           set_global_var(GVAR_JET_CARAVAN,REDDING_CARAVAN_ON_CARAVAN);
+       end
+       else if (cattle_drive(CATTLE_FAIL)) then begin
+           set_cattle_drive(CATTLE_ON);
+       end
+       else if (global_var(GVAR_BH_CARAVAN) == CARAVAN_STATUS_FAILED) then begin
+           set_global_var(GVAR_BH_CARAVAN,CARAVAN_STATUS_ON_JOB);
+       end
+   end
+
+   else begin
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       mark_world_subtile_visited(worldmap_xpos, worldmap_ypos, 1);
+   end
+end
+
+procedure map_exit_p_proc begin
+   variable timer;
+
+   if (encounters_left == 0) then begin
+       if (caravan_end == CARAVAN_REDDING) then begin
+           if (caravan_start == CARAVAN_NCR) then begin
+               timer:=3+(11-get_day);
+               if (timer > 0) then
+                   game_time_advance(timer*ONE_GAME_DAY);
+               else
+                   game_time_advance(3*ONE_GAME_DAY);
+           end
+           else if (caravan_start == CARAVAN_NEW_RENO) then begin
+               timer:=10-get_day;
+               if (timer > 0) then
+                   game_time_advance(timer*ONE_GAME_DAY);
+               else
+                   game_time_advance(1*ONE_GAME_DAY);
+           end
+           else begin
+               timer:=26-get_day;
+               if (timer > 0) then
+                   game_time_advance(timer*ONE_GAME_DAY);
+               else
+                   game_time_advance(1*ONE_GAME_DAY);
+           end
+       end
+       else if (caravan_end == CARAVAN_VAULT_CITY) then begin
+           timer:=26-get_day;
+           if (timer > 0) then
+               game_time_advance(timer*ONE_GAME_DAY);
+           else
+               game_time_advance(1*ONE_GAME_DAY);
+       end
+       else if (caravan_end == CARAVAN_NEW_RENO) then begin
+           timer:=10-get_day;
+           if (timer > 0) then
+               game_time_advance(timer*ONE_GAME_DAY);
+           else
+               game_time_advance(1*ONE_GAME_DAY);
+       end
+       else if (caravan_end == CARAVAN_NCR) then begin
+           timer:=3+(11-get_day);
+           if (timer > 0) then
+               game_time_advance(timer*ONE_GAME_DAY);
+           else
+               game_time_advance(3*ONE_GAME_DAY);
+       end
+       else if (caravan_end == CARAVAN_THE_DEN) then begin
+       end
+       else if (caravan_end == CARAVAN_BROKEN_HILLS) then begin
+       end
+       else if (caravan_end == CARAVAN_GECKO) then begin
+       end
+       else if (caravan_end == CARAVAN_SAN_FRANCISCO) then begin
+       end
+       else if (caravan_end == CARAVAN_MODOC) then begin
+       end
+       else if (caravan_end == CARAVAN_KLAMATH) then begin
+       end
+   end
+end
+
+procedure Broken_Hills_Caravan begin
+   call Build_Caravan_Team;
+
+   if (global_var(GVAR_BH_CARAVAN) == CARAVAN_STATUS_ON_JOB) then begin
+       if (caravan_end == CARAVAN_VAULT_CITY) then begin
+           call Broken_VC_Encounters;
+       end
+
+       else if (caravan_end == CARAVAN_GECKO) then begin
+           call Broken_Gecko_Encounters;
+       end
+
+       else if (caravan_end == CARAVAN_NCR) then begin
+           call Broken_NCR_Encounters;
+       end
+
+       if (map_var(MVAR_Hostile_Total) > 0) then begin
+           set_global_var(GVAR_BH_CARAVAN,CARAVAN_STATUS_FAILED);
+       end
+    end
+
+end
+
+procedure Redding_Caravan begin
+   variable Encounter_Number;
+
+   call Build_Caravan_Team;
+
+   if (global_var(GVAR_MEDICINE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+       ndebug("In Medicine Caravan Encounter Setup.");
+       if (caravan_start == CARAVAN_REDDING) then
+           call Red_VC_Encounters;
+       else
+           call VC_Red_Encounters;
+
+       if (map_var(MVAR_Hostile_Total) > 0) then begin
+           set_global_var(GVAR_MEDICINE_CARAVAN,REDDING_CARAVAN_ABANDONED);
+       end
+   end
+
+   else if (global_var(GVAR_CATTLE_DRIVE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+       ndebug("In Cattle Drive Encounter Setup.");
+       if (caravan_start == CARAVAN_REDDING) then
+           call Red_NCR_Encounters;
+       else
+           call NCR_Red_Encounters;
+
+       if (map_var(MVAR_Hostile_Total) > 0) then begin
+           set_global_var(GVAR_CATTLE_DRIVE_CARAVAN,REDDING_CARAVAN_ABANDONED);
+       end
+   end
+
+   else if (global_var(GVAR_JET_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+       ndebug("In Jet Caravan Encounter Setup.");
+       if (caravan_start == CARAVAN_REDDING) then
+           call Red_Reno_Encounters;
+       else
+           call Reno_Red_Encounters;
+
+       if (map_var(MVAR_Hostile_Total) > 0) then begin
+           set_global_var(GVAR_JET_CARAVAN,REDDING_CARAVAN_ABANDONED);
+       end
+   end
+
+end
+
+procedure NCR_Cattle_Drive begin
+   variable Encounter_Number;
+
+   call Build_Caravan_Team;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (cattle_drive(CATTLE_ON)) then begin
+       call NCR_Red_Encounters;
+
+       if (map_var(MVAR_Hostile_Total) > 0) then begin
+           set_cattle_drive(CATTLE_FAIL);
+       end
+   end
+end
+
+procedure Default_Caravan begin
+   variable Encounter_Number;
+
+   call Build_Caravan_Team;
+end
+
+procedure Build_Caravan_Team begin
+   variable dude_start_hex;
+   variable dude_facing;
+   variable Master_Counter:=0;
+   variable Caravan_Counter:=0;
+   variable Brahmin_Counter:=0;
+   variable Driver_Counter:=0;
+   variable Guard_Counter:=0;
+   variable Critter;
+   variable Critter_Tile;
+   variable Brahmin_Tile;
+   variable Driver_Tile;
+   variable Critter_Rotation;
+   variable Brahmin_Rotation;
+   variable Driver_Rotation;
+   variable item;
+   variable Weapon_Roll;
+   variable val;
+
+
+   // Place the Player
+   dude_facing:=random(0,5);
+   dude_start_hex:=tile_num_in_direction(START_HEX,dude_facing,random(3,8));
+   override_map_start_hex(dude_start_hex,0,random(0,5));
+   dude_rotate(dude_facing);
+
+   call Add_Mysterious_Stranger;
+
+   // Place the Caravan Master
+   // initializing out of the loop, because caravan master might be dead, and in that case brahmin placement would start at hex 0
+   Critter_Rotation:=(dude_facing + 3) % 6;
+   Critter_Tile:=tile_num_in_direction(dude_start_hex,Critter_Rotation,random(5,7));
+   while (Master_Counter < caravan_masters_left) do begin
+       Master_Counter+=1;
+
+       if (global_var(GVAR_MEDICINE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           Critter:=create_object_sid(PID_MALE_VAULT_CITIZEN,0,0,SCRIPT_RCWADE);
+           add_obj_to_inven(Critter, create_object(PID_NEEDLER_PISTOL,0,0));
+       end
+       else if (global_var(GVAR_CATTLE_DRIVE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           Critter:=create_object_sid(PID_AGILE_GUARD_MALE,0,0,SCRIPT_RCSTANWL);
+           add_obj_to_inven(Critter, create_object(PID_NEEDLER_PISTOL,0,0));
+       end
+       else if (global_var(GVAR_JET_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           Critter:=create_object_sid(PID_GUN_THUG_MALE,0,0,SCRIPT_RCSAVINE);
+           add_obj_to_inven(Critter, create_object(PID_COMBAT_SHOTGUN,0,0));
+       end
+       else if (global_var(GVAR_BH_CARAVAN) == CARAVAN_STATUS_ON_JOB) then begin
+           Critter:=create_object_sid(PID_MELEE_THUG_MALE,0,0,SCRIPT_HCCHAD);
+       end
+       else if (cattle_drive(CATTLE_ON) and not(cattle_drive(HAL_DEAD))) then begin
+           Critter:=create_object_sid(PID_MALE_NCR_RANGER,0,0,SCRIPT_SCHAL);
+           add_obj_to_inven(Critter, create_object(PID_PANCOR_JACKHAMMER,0,0));
+           add_obj_to_inven(Critter, create_object(PID_SHOTGUN_SHELLS,0,0));
+       end
+       else begin
+           Critter:=create_object(PID_GRAND_MASTER_TRADER_FEMALE,0,0);        // need to fix this later
+       end
+
+       val := set_team(Critter,TEAM_PLAYER);
+       critter_attempt_placement(Critter,Critter_Tile,0);
+//       critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+       give_money(Critter,random(10,30));
+       obj_rotate(Critter,rotation_to_tile(tile_num(Critter),dude_tile));
+   end
+
+   // Place the Caravan, Driver and Brahmin
+   while (too_many_carts) do begin
+       rm_caravan_carts(1);
+   end
+
+   ndebug("adding carts");
+   ndebug("Caravan_Counter = " + Caravan_Counter);
+   ndebug("caravan_carts_left = " + caravan_carts_left);
+    while (Caravan_Counter < caravan_carts_left) do begin
+       Caravan_Counter+=1;
+
+       Critter_Tile = tile_num_in_direction(Critter_Tile,Critter_Rotation,8);
+       // don't let dude get stuck in caravan
+       if tile_distance(dude_start_hex, Critter_Tile) < 3 then begin
+           ndebug("caravan too close to dude, moving");
+            Critter_Tile = tile_num_in_direction(Critter_Tile,Critter_Rotation,8);
+       end
+
+       if (random(0,99) < 50) then begin
+           Create_EW_Red_Caravan(Critter_Tile,0)
+       end
+       else begin
+           Create_EW_Grey_Caravan(Critter_Tile,0)
+       end
+
+       ndebug("adding brahmin 1");
+       ndebug("Brahmin_Counter = " + Brahmin_Counter);
+       ndebug("caravan_brahmin_left = " + caravan_brahmin_left);
+
+       Brahmin_Tile:=tile_num_in_direction(Critter_Tile,0,1);
+       Critter:=create_object_sid(PID_BRAHMIN,0,0,SCRIPT_ECCRTBRA);
+       critter_attempt_placement(Critter,Critter_Tile,0);
+       val := set_team(Critter,TEAM_PLAYER);
+//       critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+       obj_rotate(Critter,1);
+       Brahmin_Counter+=1;
+
+       if (Brahmin_Counter < caravan_brahmin_left) then begin
+           Brahmin_Tile:=tile_num_in_direction(Critter_Tile,2,2);
+           Critter:=create_object_sid(PID_BRAHMIN,0,0,SCRIPT_ECCRTBRA);
+           critter_attempt_placement(Critter,Brahmin_Tile,0);
+           val := set_team(Critter,TEAM_PLAYER);
+//           critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+           obj_rotate(Critter,1);
+           Brahmin_Counter+=1;
+       end
+
+       if (Driver_Counter < caravan_drivers_left) then begin
+           Driver_Counter+=1;
+
+           if (global_var(GVAR_MEDICINE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+               if (random(0,99) < 50) then
+                   Critter:=create_object_sid(PID_MALE_VAULT_CITIZEN,0,0,SCRIPT_RCCVNDRV);           // will need to add script
+               else
+                   Critter:=create_object_sid(PID_FEMALE_VAULT_CITIZEN,0,0,SCRIPT_RCCVNDRV);         // will need to add script
+           end
+
+           else if (global_var(GVAR_CATTLE_DRIVE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+               if (random(0,99) < 50) then
+                   Critter:=create_object_sid(PID_NCR_GUARD_MALE,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+               else
+                   Critter:=create_object_sid(PID_NCR_GUARD_FEMALE,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+           end
+
+           else if (global_var(GVAR_JET_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+               if (random(0,99) < 50) then
+                   Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+               else
+                   Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+           end
+
+           else if (global_var(GVAR_BH_CARAVAN) == CARAVAN_STATUS_ON_JOB) then begin
+               if (random(0,99) < 50) then
+                   Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+               else
+                   Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+           end
+
+           else if (cattle_drive(CATTLE_ON)) then begin
+               if (random(0,99) < 50) then
+                   Critter:=create_object_sid(PID_MALE_NCR_RANGER,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+               else
+                   Critter:=create_object_sid(PID_FEMALE_NCR_RANGER,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+
+               Weapon_Roll:=random(0,99);
+               if (Weapon_Roll < 33) then
+                   item:=create_object(PID_GREASE_GUN,0,0);
+               else if (Weapon_Roll < 66) then
+                   item:=create_object(PID_HK_CAWS,0,0);
+               else if (Weapon_Roll < 99) then
+                   item:=create_object(PID_LASER_RIFLE,0,0);
+           end
+
+           else begin
+               if (random(0,99) < 50) then
+                   Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+               else
+                   Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+           end
+
+           Driver_Tile:=tile_num_in_direction(Critter_Tile,1,3);
+           critter_attempt_placement(Critter,Driver_Tile,0);
+           val := set_team(Critter,TEAM_PLAYER);
+//           critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+           give_money(Critter,random(5,20));
+           obj_rotate(Critter,1);
+       end
+
+   end
+
+
+   // Place the Brahmin
+   Brahmin_Rotation:=(Critter_Rotation+1) % 6;
+   Brahmin_Tile:=tile_num_in_direction(dude_start_hex,Brahmin_Rotation,random(7,10));
+   ndebug("adding brahmin 2");
+   ndebug("Brahmin_Counter = " + Brahmin_Counter);
+   ndebug("caravan_brahmin_left = " + caravan_brahmin_left);
+   while (Brahmin_Counter < caravan_brahmin_left) do begin
+       Brahmin_Counter+=1;
+
+       Brahmin_Tile:=tile_num_in_direction(Brahmin_Tile,random(0,5),random(2,5));
+       Critter:=create_object_sid(PID_BRAHMIN,0,0,SCRIPT_ECCRTBRA);
+       critter_attempt_placement(Critter,Brahmin_Tile,0);
+       val := set_team(Critter,TEAM_PLAYER);
+//       critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+       obj_rotate(Critter,random(0,5));
+
+   end
+
+   // Place the Caravan Drivers
+   Driver_Rotation:=(Critter_Rotation+1) % 6;
+   Driver_Tile:=tile_num_in_direction(dude_start_hex,Driver_Rotation,random(7,10));
+
+   while (Driver_Counter < caravan_drivers_left) do begin
+       Driver_Counter+=1;
+
+       if (global_var(GVAR_MEDICINE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_MALE_VAULT_CITIZEN,0,0,SCRIPT_RCCVNDRV);           // will need to add script
+           else
+               Critter:=create_object_sid(PID_FEMALE_VAULT_CITIZEN,0,0,SCRIPT_RCCVNDRV);         // will need to add script
+       end
+
+       else if (global_var(GVAR_CATTLE_DRIVE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_NCR_GUARD_MALE,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_NCR_GUARD_FEMALE,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+       end
+
+       else if (global_var(GVAR_JET_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+       end
+
+       else if (global_var(GVAR_BH_CARAVAN) == CARAVAN_STATUS_ON_JOB) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+       end
+
+       else if (cattle_drive(CATTLE_ON)) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_MALE_NCR_RANGER,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_FEMALE_NCR_RANGER,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+
+           Weapon_Roll:=random(0,99);
+           if (Weapon_Roll < 33) then
+                 item:=create_object(PID_GREASE_GUN,0,0);
+           else if (Weapon_Roll < 66) then
+                 item:=create_object(PID_HK_CAWS,0,0);
+           else if (Weapon_Roll < 99) then
+                 item:=create_object(PID_LASER_RIFLE,0,0);
+       end
+
+       else begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNDRV);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNDRV);             // will need to add script
+       end
+
+       Driver_Tile:=tile_num_in_direction(Driver_Tile,1,3);
+       critter_attempt_placement(Critter,Driver_Tile,0);
+       val := set_team(Critter,TEAM_PLAYER);
+//       critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+       give_money(Critter,random(5,20));
+       obj_rotate(Critter,random(0,5));
+
+   end
+
+   // Place the Caravan Guards
+   Critter_Rotation-=1;
+   FixRotationArc(Critter_Rotation);
+   Critter_Tile:=tile_num_in_direction(dude_start_hex,Critter_Rotation,random(7,10));
+
+   while (Guard_Counter < caravan_guards_left) do begin
+       Guard_Counter+=1;
+
+       if (global_var(GVAR_MEDICINE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_GUN_GUARD_MALE,0,0,SCRIPT_RCCVNGRD);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_GUN_GUARD_FEMALE,0,0,SCRIPT_RCCVNGRD);             // will need to add script
+
+           Weapon_Roll:=random(0,99);
+           if (Weapon_Roll < 50) then
+               item:=create_object(PID_COMBAT_SHOTGUN,0,0);
+           else if (Weapon_Roll < 99) then
+               item:=create_object(PID_ASSAULT_RIFLE,0,0);
+       end
+
+       else if (global_var(GVAR_CATTLE_DRIVE_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_NCR_GUARD_MALE,0,0,SCRIPT_RCCVNGRD);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_NCR_GUARD_FEMALE,0,0,SCRIPT_RCCVNGRD);             // will need to add script
+
+           Weapon_Roll:=random(0,99);
+           if (Weapon_Roll < 50) then
+               item:=create_object(PID_HK_G11,0,0);
+           else if (Weapon_Roll < 99) then
+               item:=create_object(PID_FN_FAL,0,0);
+       end
+
+       else if (global_var(GVAR_JET_CARAVAN) == REDDING_CARAVAN_ON_CARAVAN) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNGRD);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNGRD);             // will need to add script
+
+           Weapon_Roll:=random(0,99);
+           if (Weapon_Roll < 50) then
+               item:=create_object(PID_HK_CAWS,0,0);
+           else if (Weapon_Roll < 99) then
+               item:=create_object(PID_TOMMY_GUN,0,0);
+       end
+
+       else if (global_var(GVAR_BH_CARAVAN) == CARAVAN_STATUS_ON_JOB) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNGRD);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNGRD);             // will need to add script
+
+           Weapon_Roll:=random(0,99);
+           if (Weapon_Roll < 50) then
+               item:=create_object(PID_GREASE_GUN,0,0);
+           else if (Weapon_Roll < 99) then
+               item:=create_object(PID_HK_CAWS,0,0);
+       end
+
+       else if (cattle_drive(CATTLE_ON)) then begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_MALE_NCR_RANGER,0,0,SCRIPT_RCCVNGRD);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_FEMALE_NCR_RANGER,0,0,SCRIPT_RCCVNGRD);             // will need to add script
+
+           Weapon_Roll:=random(0,99);
+           if (Weapon_Roll < 33) then
+                 item:=create_object(PID_GREASE_GUN,0,0);
+           else if (Weapon_Roll < 66) then
+                 item:=create_object(PID_HK_CAWS,0,0);
+           else if (Weapon_Roll < 99) then
+                 item:=create_object(PID_LASER_RIFLE,0,0);
+       end
+
+       else begin
+           if (random(0,99) < 50) then
+               Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCCVNGRD);               // will need to add script
+           else
+               Critter:=create_object_sid(PID_BOUNTY_FEMALE_7_12,0,0,SCRIPT_RCCVNGRD);             // will need to add script
+
+           Weapon_Roll:=random(0,99);
+           if (Weapon_Roll < 50) then
+               item:=create_object(PID_NEEDLER_PISTOL,0,0);
+           else if (Weapon_Roll < 99) then
+               item:=create_object(PID_PANCOR_JACKHAMMER,0,0);
+       end
+
+       Critter_Tile:=tile_num_in_direction(Critter_Tile,random(0,5),random(2,4));
+       critter_attempt_placement(Critter,Critter_Tile,0);
+       give_money(Critter,random(10,20));
+       val := set_team(Critter,TEAM_PLAYER);
+//       critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+       obj_rotate(Critter,dude_cur_rot);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+
+       if (random(0,99) < 50) then begin
+          item:=create_object(PID_STIMPAK,0,0);
+          add_obj_to_inven(Critter,item);
+       end
+
+   end
+end
+
+procedure Add_Mysterious_Stranger begin
+   variable Critter;
+   variable Critter_Tile;
+   variable Die_Roll;
+   variable Stranger_Chance;
+   variable val;
+
+   Die_Roll:=random(0,99);
+   Stranger_Chance:=30 + (2 * dude_luck);
+
+   if ((map_first_run) and (not(get_stranger_flag(STRANGER_DEAD))) and (Die_Roll < Stranger_Chance) and ((dude_perk(PERK_mysterious_stranger)))) then begin
+       if (not(get_stranger_flag(STRANGER_GENDER))) then begin
+           set_stranger_flag(STRANGER_GENDER);
+           if (random(0,99) < 50) then
+               set_stranger_flag(STRANGER_FEMALE);
+       end
+       if (get_stranger_flag(STRANGER_FEMALE)) then
+           Critter:=create_object_sid(PID_MYSTERIOUS_STRANGER_FEMALE,0,0,SCRIPT_ECMSTSTR);
+       else
+           Critter:=create_object_sid(PID_MYSTERIOUS_STRANGER_MALE,0,0,SCRIPT_ECMSTSTR);
+       Critter_Tile:=tile_num_in_direction(dude_tile,random(0,5),random(5,10));
+       critter_attempt_placement(Critter,Critter_Tile,dude_elevation);
+       val := set_team(Critter,TEAM_PLAYER);
+//       critter_add_trait(Critter,TRAIT_OBJECT,OBJECT_TEAM_NUM,TEAM_PLAYER);
+       give_money(Critter,random(30,60));
+       obj_rotate(Critter,dude_cur_rot);
+   end
+end
+
+// Broken Hills Encounter Determination Area
+
+// Broken Hills --> Vault City
+procedure Broken_VC_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Broken_VC_1_1_x,Broken_VC_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       game_time_advance(7*ONE_GAME_DAY);
+       check_area;
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_VC_2_1_x,Broken_VC_2_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_VC_2_2_x,Broken_VC_2_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_VC_3_1_x,Broken_VC_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_VC_3_2_x,Broken_VC_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Broken_VC_3_3_x,Broken_VC_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_VC_4_1_x,Broken_VC_4_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_VC_4_2_x,Broken_VC_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Broken_VC_4_3_x,Broken_VC_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Broken_VC_4_4_x,Broken_VC_4_4_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+// Broken Hills --> Gecko
+procedure Broken_Gecko_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Broken_Gecko_1_1_x,Broken_Gecko_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       game_time_advance(7*ONE_GAME_DAY);
+       check_area;
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_Gecko_2_1_x,Broken_Gecko_2_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_Gecko_2_2_x,Broken_Gecko_2_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_Gecko_3_1_x,Broken_Gecko_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_Gecko_3_2_x,Broken_Gecko_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Broken_Gecko_3_3_x,Broken_Gecko_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_Gecko_4_1_x,Broken_Gecko_4_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_Gecko_4_2_x,Broken_Gecko_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Broken_Gecko_4_3_x,Broken_Gecko_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Broken_Gecko_4_4_x,Broken_Gecko_4_4_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+
+// Broken Hills --> NCR
+procedure Broken_NCR_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Broken_NCR_1_1_x,Broken_NCR_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       game_time_advance(7*ONE_GAME_DAY);
+       check_area;
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_NCR_2_1_x,Broken_NCR_2_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_NCR_2_2_x,Broken_NCR_2_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_NCR_3_1_x,Broken_NCR_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_NCR_3_2_x,Broken_NCR_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Broken_NCR_3_3_x,Broken_NCR_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Broken_NCR_4_1_x,Broken_NCR_4_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Broken_NCR_4_2_x,Broken_NCR_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Broken_NCR_4_3_x,Broken_NCR_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Broken_NCR_4_4_x,Broken_NCR_4_4_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+
+// Redding Encounter Determination Area
+
+// Redding --> Vault City
+procedure Red_VC_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Red_VC_1_1_x,Red_VC_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       game_time_advance(16*ONE_GAME_DAY);
+       check_area;
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_VC_2_1_x,Red_VC_2_1_y+25);       //added +25 -killap
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_VC_2_2_x,Red_VC_2_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(11*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_VC_3_1_x,Red_VC_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_VC_3_2_x,Red_VC_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(7*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_VC_3_3_x,Red_VC_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(9*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_VC_4_1_x,Red_VC_4_1_y-50);       //added -50 -killap
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_VC_4_2_x,Red_VC_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_VC_4_3_x,Red_VC_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Red_VC_4_4_x,Red_VC_4_4_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+// Vault City --> Redding
+procedure VC_Red_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Red_VC_1_1_x,Red_VC_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       game_time_advance(14*ONE_GAME_DAY);
+       check_area;
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_VC_2_2_x,Red_VC_2_2_y+50);       //added +50 -killap
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(11*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_VC_2_1_x,Red_VC_2_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_VC_3_3_x,Red_VC_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(9*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_VC_3_2_x,Red_VC_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(7*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_VC_3_1_x,Red_VC_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_VC_4_4_x,Red_VC_4_4_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_VC_4_3_x,Red_VC_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_VC_4_2_x,Red_VC_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Red_VC_4_1_x,Red_VC_4_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+// Redding --> New Reno
+procedure Red_Reno_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Red_Reno_1_1_x,Red_Reno_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       game_time_advance(6*ONE_GAME_DAY);
+       check_area;
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_Reno_2_1_x,Red_Reno_2_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_Reno_2_2_x,Red_Reno_2_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_Reno_3_1_x,Red_Reno_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_Reno_3_2_x,Red_Reno_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_Reno_3_3_x,Red_Reno_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_Reno_4_1_x,Red_Reno_4_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_Reno_4_2_x,Red_Reno_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_Reno_4_3_x,Red_Reno_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(2*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Red_Reno_4_4_x,Red_Reno_4_4_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+// New Reno --> Redding
+procedure Reno_Red_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Red_Reno_1_1_x,Red_Reno_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       check_area;
+       game_time_advance(6*ONE_GAME_DAY);
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_Reno_2_2_x,Red_Reno_2_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_VC_2_1_x,Red_Reno_2_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(4*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_Reno_3_3_x,Red_Reno_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_Reno_3_2_x,Red_Reno_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_Reno_3_1_x,Red_Reno_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(3*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_Reno_4_4_x,Red_Reno_4_4_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_Reno_4_3_x,Red_Reno_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_Reno_4_2_x,Red_Reno_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Red_Reno_4_1_x,Red_Reno_4_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+// Redding --> NCR
+procedure Red_NCR_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Red_NCR_1_1_x,Red_NCR_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       game_time_advance(16*ONE_GAME_DAY);
+       check_area;
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_NCR_2_1_x,Red_NCR_2_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(10*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_NCR_2_2_x,Red_NCR_2_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(10*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_NCR_3_1_x,Red_NCR_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_NCR_3_2_x,Red_NCR_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_NCR_3_3_x,Red_NCR_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_NCR_4_1_x,Red_NCR_4_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_NCR_4_2_x,Red_NCR_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_NCR_4_3_x,Red_NCR_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Red_NCR_4_4_x,Red_NCR_4_4_y-25);     // -25 by killap
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+// NCR --> Redding
+procedure NCR_Red_Encounters begin
+   variable Encounter_Number;
+
+   Encounter_Number:=total_encounters - encounters_left;
+
+   if (total_encounters == 1) then begin
+       set_caravan_pos(Red_NCR_1_1_x,Red_NCR_1_1_y);
+       set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
+       game_time_advance(16*ONE_GAME_DAY);
+       check_area;
+   end
+
+   else if (total_encounters == 2) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_NCR_2_2_x-25,Red_NCR_2_2_y-875); //added -25, -875 -killap
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(10*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_NCR_2_1_x,Red_NCR_2_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(10*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 3) then begin
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_NCR_3_3_x,Red_NCR_3_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_NCR_3_2_x,Red_NCR_3_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_NCR_3_1_x,Red_NCR_3_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(8*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+
+   else if (total_encounters == 4) then begin
+       ndebug("Encounter_Number = "+Encounter_Number);
+       if (Encounter_Number == 0) then begin                    // this is the first encounter
+           set_caravan_pos(Red_NCR_4_4_x,Red_NCR_4_4_y-25);     // -25 by killap
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+       
+       else if (Encounter_Number == 1) then begin               // this is the second encounter
+           set_caravan_pos(Red_NCR_4_3_x,Red_NCR_4_3_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 2) then begin               // this is the third encounter
+           set_caravan_pos(Red_NCR_4_2_x,Red_NCR_4_2_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(6*ONE_GAME_DAY);
+           check_area;
+       end
+
+       else if (Encounter_Number == 3) then begin               // this is the forth encounter
+           set_caravan_pos(Red_NCR_4_1_x,Red_NCR_4_1_y);
+           set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
+           game_time_advance(5*ONE_GAME_DAY);
+           check_area;
+       end
+   end
+end
+
+
+
+// Broken Hill Caravan Encounters
+
+// Brok Encounter Table
+//      enc_00=Chance:10%,Enc:(7-10) BROK_Rogues AND (3-5) RED_Wolves AMBUSH Player
+//      enc_01=Chance:20%,Enc:(8-12) BROK_Rogues AMBUSH Player
+//      enc_02=Chance:10%,Enc:(6-10) RED_Wolves AMBUSH Player
+//      enc_03=Chance:10%,Enc:(6-12) DMRV_Scorpions AMBUSH Player
+//      enc_04=Chance:10%,Enc:(8-14) ARRO_Spore_Plants AMBUSH Player
+//      enc_05=Chance:10%,Enc:(6-10) BROK_Unity_Patrol FIGHTING (6-10) BROK_Rogues
+//      enc_06=Chance:10%,Enc:(5-8) BROK_Unity_Patrol FIGHTING (8-12) RED_Wolves
+//      enc_07=Chance:20%,Enc:(8-12) BROK_Unity_Patrol
+procedure Broken_Hills_Brok_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 10) then begin
+       ndebug("Brok_Encounter Table, Encounter 00");
+       display_msg(mstr(100));
+       Encounter_Counter:=random(7,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call Brok_Rogues;
+
+       Encounter_Counter:=random(3,5);
+       Encounter_Rotation:=(dude_cur_rot+3)%6;
+       call Red_Wolves;
+   end
+   // enc_01
+   else if (Encounter < 30) then begin
+       ndebug("Brok_Encounter Table, Encounter 01");
+       display_msg(mstr(101));
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=(dude_cur_rot+random(0,3))%6;
+       call Brok_Rogues;
+   end
+   // enc_02
+   else if (Encounter < 40) then begin
+       ndebug("Brok_Encounter Table, Encounter 02");
+       display_msg(mstr(102));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=(dude_cur_rot+2)%6;
+       call Red_Wolves;
+   end
+   // enc_03
+   else if (Encounter < 50) then begin
+       ndebug("Brok_Encounter Table, Encounter 03");
+       display_msg(mstr(103));
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=(dude_cur_rot);
+       call DMRV_Scorpions;
+   end
+   // enc_04
+   else if (Encounter < 60) then begin
+       ndebug("Brok_Encounter Table, Encounter 04");
+       display_msg(mstr(104));
+       Encounter_Counter:=random(8,14);
+       Encounter_Rotation:=random(0,5);
+       call ARRO_Spore_PLants;
+   end
+   // enc_05
+   else if (Encounter < 70) then begin
+       ndebug("Brok_Encounter Table, Encounter 05");
+       display_msg(mstr(105));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(3,5);
+       call Brok_Unity_Patrol;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,2);
+       call Brok_Rogues;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 80) then begin
+       ndebug("Brok_Encounter Table, Encounter 06");
+       display_msg(mstr(106));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,2);
+       call Brok_Unity_Patrol;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=random(0,2);
+       call Red_Wolves;
+       Combat2:=Critter;
+   end
+   // enc_07
+   else if (Encounter < 100) then begin
+       ndebug("Brok_Encounter Table, Encounter 07");
+       display_msg(mstr(107));
+       Encounter_Counter:=random(8,14);
+       Encounter_Rotation:=random(0,5);
+       call Brok_Unity_Patrol;   //added by killap - (According to the message, you should see a Unity Patrol, no spore plants and wolves.
+ //      call ARRO_Spore_PLants;
+
+ //      Encounter_Counter:=random(8,12);
+ //      Encounter_Rotation:=random(0,2);
+ //      call Red_Wolves;
+   end
+end
+
+// VPat Encounter Table
+//      enc_00=Chance:10%,Enc:(4-7) VPAT_Strong_Slavers AND (6-8) DVMV_Wild_Dogs AMBUSH Player
+//      enc_01=Chance:10%,Enc:(5-8) VPAT_Strong_Slavers AMBUSH Player
+//      enc_02=Chance:10%,Enc:(6-12) DMRV_Golden_Geckos AMBUSH Player
+//      enc_03=Chance:10%,Enc:(8-14) DVMV_Wild_Dogs AMBUSH Player
+//      enc_04=Chance:10%,Enc:(3-6) VPAT_Patrol AND (2-4) DVMV_Wild_Dogs FIGHTING (8-12) VPAT_Strong_Slavers
+//      enc_05=Chance:10%,Enc:(4-7) VPAT_Strong_Slavers FIGHTING (6-12) DMRV_Golden_Geckos
+//      enc_06=Chance:10%,Enc:(5-8) VPAT_Patrol FIGHTING (6-10) VPAT_Strong_Slavers
+//      enc_07=Chance:10%,Enc:(3-5) VPAT_Patrol FIGHTING (6-12) DMRV_Golden_Geckos
+//      enc_08=Chance:10%,Enc:(3-5) VPAT_Patrol FIGHTING (8-12) DVMV_Wild_Dogs
+//      enc_09=Chance:10%,Enc:(5-8) VPAT_Patrol
+procedure Broken_Hills_VPat_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 10) then begin
+       ndebug("VPat_Encounter Table, Encounter 00");
+       display_msg(mstr(150));
+       Encounter_Counter:=random(4,7);
+       Encounter_Rotation:=random(0,5);
+       call VPat_Strong_Slavers;
+
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Wild_Dogs;
+   end
+   // enc_01
+   else if (Encounter < 20) then begin
+       ndebug("VPat_Encounter Table, Encounter 01");
+       display_msg(mstr(151));
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=(dude_cur_rot);
+       call VPat_Strong_Slavers;
+   end
+   // enc_02
+   else if (Encounter < 30) then  begin
+       ndebug("VPat_Encounter Table, Encounter 02");
+       display_msg(mstr(152));
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=random(3,5);
+       call DMRV_Golden_Geckos;
+   end
+   // enc_03
+   else if (Encounter < 40) then begin
+       ndebug("VPat_Encounter Table, Encounter 03");
+       display_msg(mstr(153));
+       Encounter_Counter:=random(8,14);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Wild_Dogs;
+   end
+   // enc_04
+   else if (Encounter < 50) then begin
+       ndebug("VPat_Encounter Table, Encounter 04");
+       display_msg(mstr(154));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(0,2);
+       call VPat_Patrol;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(2,4);
+       Encounter_Rotation:=random(3,5);
+       call DVMV_Wild_Dogs;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=random(3,5);
+       call VPat_Strong_Slavers;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 60) then begin
+       ndebug("VPat_Encounter Table, Encounter 05");
+       display_msg(mstr(155));
+       Encounter_Counter:=random(4,7);
+       Encounter_Rotation:=dude_cur_rot;
+       call VPat_Strong_Slavers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=(dude_cur_rot + 1) % 6;
+       call DMRV_Golden_Geckos;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 70) then begin
+       ndebug("VPat_Encounter Table, Encounter 06");
+       display_msg(mstr(156));
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call VPat_Patrol;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=dude_inv_rot;
+       call VPat_Strong_Slavers;
+       Combat2:=Critter;
+   end
+   // enc_07
+   else if (Encounter < 80) then begin
+       ndebug("VPat_Encounter Table, Encounter 07");
+       display_msg(mstr(157));
+       Encounter_Counter:=random(3,5);
+       Encounter_Rotation:=2;
+       call VPat_Patrol;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=3;
+       call DMRV_Golden_Geckos;
+       Combat2:=Critter;
+   end
+   // enc_08
+   else if (Encounter < 90) then begin
+       ndebug("VPat_Encounter Table, Encounter 08");
+       display_msg(mstr(158));
+       Encounter_Counter:=random(3,5);
+       Encounter_Rotation:=random(2,5);
+       call VPat_Patrol;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=(Encounter_Rotation + 3) % 6;
+       call DVMV_Wild_Dogs;
+       Combat2:=Critter;
+   end
+   // enc_09
+   else if (Encounter < 100) then begin
+       ndebug("VPat_Encounter Table, Encounter 09");
+       display_msg(mstr(159));
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=3;
+       call VPat_Patrol;   //added by killap - message says you encounter a Patrol, not geckos and dogs
+//       call DMRV_Golden_Geckos;
+
+ //      Encounter_Counter:=random(8,12);
+//       Encounter_Rotation:=(Encounter_Rotation + 3) % 6;
+ //      call DVMV_Wild_Dogs;
+   end
+end
+
+// RDRC Encounter Table
+//      enc_00=Chance:25%,Enc:(7-12) RDRC_Raiders AMBUSH Player
+//      enc_01=Chance:15%,Enc:(8-14) Red_Wolves AMBUSH Player
+//      enc_02=Chance:9%,Enc:(6-10) DNRV_Vault_Caravan FIGHTING (8-14) RDRC_Raiders
+//      enc_03=Chance:9%,Enc:(4-6) DNRV_Reno_Caravan FIGHTING (8-12) RDRC_Raiders
+//      enc_04=Chance:9%,Enc:(6-8) RDRC_Broken_Hills_Caravan FIGHTING (8-12) RDRC_Raiders
+//      enc_05=Chance:9%,Enc:(6-10) RDRC_Gecko_Caravan FIGHTING (10-14) RDRC_Raiders
+//      enc_06=Chance:6%,Enc:(6-10) DNRV_Vault_Caravan
+//      enc_07=Chance:6%,Enc:(6-10) DNRV_Reno_Caravan
+//      enc_08=Chance:6%,Enc:(6-10) RDRC_Broken_Hills_Caravan
+//      enc_09=Chance:6%,Enc:(6-10) RDRC_Gecko_Caravan
+procedure Broken_Hills_RDRC_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 25) then begin
+       ndebug("RDRC_Encounter Table, Encounter 00");
+       display_msg(mstr(200));
+       Encounter_Counter:=random(7,12);
+       Encounter_Rotation:=(dude_cur_rot);
+       call RDRC_Raiders;
+   end
+   // enc_01
+   else if (Encounter < 40) then begin
+       ndebug("RDRC_Encounter Table, Encounter 01");
+       display_msg(mstr(201));
+       Encounter_Counter:=random(8,14);
+       Encounter_Rotation:=random(0,5);
+       call Red_Wolves;
+   end
+   // enc_02
+   else if (Encounter < 49) then begin
+       ndebug("RDRC_Encounter Table, Encounter 02");
+       display_msg(mstr(202));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=2;
+       call DNRV_Vault_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,14);
+       Encounter_Rotation:=1;
+       call RDRC_Raiders;
+       Combat2:=Critter;
+   end
+   // enc_03
+   else if (Encounter < 58) then begin
+       ndebug("RDRC_Encounter Table, Encounter 03");
+       display_msg(mstr(203));
+       Encounter_Counter:=random(4,6);
+       Encounter_Rotation:=3;
+       call DNRV_Reno_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=4;
+       call RDRC_Raiders;
+       Combat2:=Critter;
+   end
+   // enc_04
+   else if (Encounter < 67) then begin
+       ndebug("RDRC_Encounter Table, Encounter 04");
+       display_msg(mstr(204));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=4;
+       call RDRC_Broken_Hills_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=3;
+       call RDRC_Raiders;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 76) then begin
+       ndebug("RDRC_Encounter Table, Encounter 05");
+       display_msg(mstr(205));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=5;
+       call RDRC_Gecko_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(10,14);
+       Encounter_Rotation:=4;
+       call RDRC_Raiders;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 82) then begin
+       ndebug("RDRC_Encounter Table, Encounter 06");
+       display_msg(mstr(206));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=2;
+       call DNRV_Vault_Caravan;
+   end
+   // enc_07
+   else if (Encounter < 88) then begin
+       ndebug("RDRC_Encounter Table, Encounter 07");
+       display_msg(mstr(207));
+       Encounter_Counter:=random(4,6);
+       Encounter_Rotation:=3;
+       call DNRV_Reno_Caravan;
+   end
+   // enc_08
+   else if (Encounter < 94) then begin
+       ndebug("RDRC_Encounter Table, Encounter 08");
+       display_msg(mstr(208));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=4;
+       call RDRC_Broken_Hills_Caravan;
+   end
+   // enc_09
+   else if (Encounter < 100) then begin
+       ndebug("RDRC_Encounter Table, Encounter 09");
+       display_msg(mstr(209));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=5;
+       call RDRC_Gecko_Caravan;
+   end
+end
+
+// VNNB Encounter Table
+//      enc_00=Chance:20%,Enc:(8-14) NCR_Marauders AMBUSH Player
+//      enc_01=Chance:10%,Enc:(8-15) RED_Wolves
+//      enc_02=Chance:10%,Enc:(7-12) DMRV_Scorpions AMBUSH Player
+//      enc_03=Chance:8%,Enc:(5-9) RDRC_Broken_Hills_Caravan FIGHTING (3-9) NCR_Marauders
+//      enc_04=Chance:8%,Enc:(6-9) DNRV_Reno_Caravan FIGHTING (5-9) NCR_Marauders
+//      enc_05=Chance:8%,Enc:(5-10) NCR_Caravan FIGHTING (8-12) RED_Wolves
+//      enc_06=Chance:8%,Enc:(4-8) V15_Caravan FIGHTING (4-9) DMRV_Scorpions
+//      enc_07=Chance:5%,Enc:(5-9) RDRC_Broken_Hills_Caravan
+//      enc_08=Chance:5%,Enc:(6-9) DNRV_Reno_Caravan
+//      enc_09=Chance:5%,Enc:(5-10) NCR_Caravan
+//      enc_10=Chance:5%,Enc:(4-8) V15_Caravan
+//      enc_11=Chance:8%,Enc:(1-2) New_Traveller
+procedure Broken_Hills_VNNB_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 20) then begin
+       ndebug("VNNB_Encounter Table, Encounter 00");
+       display_msg(mstr(250));
+       Encounter_Counter:=random(8,14);
+       Encounter_Rotation:=dude_cur_rot;
+       call NCR_Marauders;
+   end
+   // enc_01
+   else if (Encounter < 30) then begin
+       ndebug("VNNB_Encounter Table, Encounter 01");
+       display_msg(mstr(251));
+       Encounter_Counter:=random(8,15);
+       Encounter_Rotation:=random(0,5);
+       call Red_Wolves;
+   end
+   // enc_02
+   else if (Encounter < 40) then begin
+       ndebug("VNNB_Encounter Table, Encounter 02");
+       display_msg(mstr(252));
+       Encounter_Counter:=random(7,12);
+       Encounter_Rotation:=random(0,5);
+       call DMRV_Scorpions;
+   end
+   // enc_03
+   else if (Encounter  < 48) then begin
+       ndebug("VNNB_Encounter Table, Encounter 03");
+       display_msg(mstr(253));
+       Encounter_Counter:=random(5,9);
+       Encounter_Counter:=random(2,4);
+       call RDRC_Broken_Hills_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(3,9);
+       Encounter_Rotation:=(Encounter_Rotation + 2) % 6;
+       call NCR_Marauders;
+       Combat2:=Critter;
+   end
+   // enc_04
+   else if (Encounter < 56) then begin
+       ndebug("VNNB_Encounter Table, Encounter 04");
+       display_msg(mstr(254));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=random(1,3);
+       call DNRV_Reno_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,9);
+       Encounter_Rotation:=(Encounter_Rotation + 2) % 6;
+       call NCR_Marauders;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 64) then begin
+       ndebug("VNNB_Encounter Table, Encounter 05");
+       display_msg(mstr(255));
+       Encounter_Counter:=random(5,10);
+       Encounter_Rotation:=2;
+       call NCR_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=2;
+       call Red_Wolves;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 72) then begin
+       ndebug("VNNB_Encounter Table, Encounter 06");
+       display_msg(mstr(256));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=3;
+       call V15_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(4,9);
+       Encounter_Rotation:=4;
+       call DMRV_Scorpions;
+       Combat2:=Critter;
+   end
+   // enc_07
+   else if (Encounter < 77) then begin
+       ndebug("VNNB_Encounter Table, Encounter 07");
+       display_msg(mstr(257));
+       Encounter_Counter:=random(5,9);
+       Encounter_Counter:=random(2,4);
+       call RDRC_Broken_Hills_Caravan;
+   end
+   // enc_08
+   else if (Encounter < 82) then begin
+       ndebug("VNNB_Encounter Table, Encounter 08");
+       display_msg(mstr(258));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=random(1,3);
+       call DNRV_Reno_Caravan;
+   end
+   // enc_09
+   else if (Encounter < 87) then begin
+       ndebug("VNNB_Encounter Table, Encounter 09");
+       display_msg(mstr(259));
+       Encounter_Counter:=random(5,10);
+       Encounter_Rotation:=2;
+       call NCR_Caravan;
+   end
+   // enc_10
+   else if (Encounter < 92) then begin
+       ndebug("VNNB_Encounter Table, Encounter 10");
+       display_msg(mstr(260));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=3;
+       call V15_Caravan;
+   end
+   // enc_11
+   else if (Encounter < 100) then begin
+       ndebug("VNNB_Encounter Table, Encounter 11");
+       display_msg(mstr(261));
+       Encounter_Counter:=random(1,2);
+       Encounter_Rotation:=random(0,5);
+       call New_Traveler;
+   end
+end
+
+// NCR Encounter Table
+//      enc_00=Chance:15%,Enc:(6-9) NCR_Masters_Army AMBUSH Player
+//      enc_01=Chance:15%,Enc:(8-14) NCR_Marauders AMBUSH Player
+//      enc_02=Chance:10%,Enc:(5-9) NCR_Rangers FIGHTING (5-9) NCR_Masters_Army
+//      enc_03=Chance:10%,Enc:(5-10) NCR_Rangers FIGHTING (8-12) NCR_Marauders
+//      enc_04=Chance:10%,Enc:(2-6) KLA_Farmers FIGHTING (5-9) NCR_Masters_Army
+//      enc_05=Chance:10%,Enc:(3-6) KLA_Farmers FIGHTING (6-9) NCR_Marauders
+//      enc_06=Chance:20%,Enc:(6-10) NCR_Rangers
+//      enc_07=Chance:10%,Enc:(3-5) KLA_Farmers
+procedure Broken_Hills_NCR_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 15) then begin
+       ndebug("NCR_Encounter Table, Encounter 00");
+       display_msg(mstr(300));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=random(0,5);
+       call NCR_Masters_Army;
+   end
+   // enc_01
+   else if (Encounter < 30) then begin
+       ndebug("NCR_Encounter Table, Encounter 01");
+       display_msg(mstr(301));
+       Encounter_Counter:=random(8,14);
+       Encounter_Rotation:=random(2,5);
+       call NCR_Marauders;
+   end
+   // enc_02
+   else if (Encounter < 40) then begin
+       ndebug("NCR_Encounter Table, Encounter 02");
+       display_msg(mstr(302));
+       Encounter_Counter:=random(5,9);
+       Encounter_Rotation:=2;
+       call NCR_Rangers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,9);
+       Encounter_Rotation:=2;
+       call NCR_Masters_Army;
+       Combat2:=Critter;
+   end
+   // enc_03
+   else if (Encounter < 50) then begin
+       ndebug("NCR_Encounter Table, Encounter 03");
+       display_msg(mstr(303));
+       Encounter_Counter:=random(5,10);
+       Encounter_Rotation:=4;
+       call NCR_Rangers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=5;
+       call NCR_Marauders;
+       Combat2:=Critter;
+   end
+   // enc_04
+   else if (Encounter < 60) then begin
+       ndebug("NCR_Encounter Table, Encounter 04");
+       display_msg(mstr(304));
+       Encounter_Counter:=random(2,6);
+       Encounter_Rotation:=random(2,4);
+       call Kla_Farmers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,9);
+       Encounter_Rotation:=Encounter_Rotation;          // done on purpose rwh2
+       call NCR_Masters_Army;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 70) then begin
+       ndebug("NCR_Encounter Table, Encounter 05");
+       display_msg(mstr(305));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(2,5);
+       call Kla_Farmers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=(Encounter_Rotation + 3) % 6;
+       call NCR_Marauders;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 90) then begin
+       ndebug("NCR_Encounter Table, Encounter 06");
+       display_msg(mstr(306));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,5);
+       call NCR_Rangers;
+   end
+   // enc_07
+   else if (Encounter < 100) then begin
+       ndebug("NCR_Encounter Table, Encounter 07");
+       display_msg(mstr(307));
+       Encounter_Counter:=random(3,5);
+       Encounter_Rotation:=random(0,5);
+       call Kla_Farmers;
+   end
+end
+
+// Redding Caravan Encounter
+
+// DNRV Encounter Table
+//      enc_00=Chance:10%,Enc:(7-12) DNRV_Den_Caravan AMBUSH Player
+//      enc_01=Chance:10%,Enc:(6-8) DVMV_Highwaymen AND (5-8) DVMV_Robbers AMBUSH Player
+//      enc_02=Chance:10%,Enc:(8-12) DVMV_Highwaymen AMBUSH Player
+//      enc_03=Chance:10%,Enc:(6-12) DVMV_Robbers AMBUSH Player
+//      enc_04=Chance:3%,Enc:(6-10) DNRV_Redding_Caravan FIGHTING (8-12) DVMV_Highwaymen
+//      enc_05=Chance:5%,Enc:(4-8) DNRV_Reno_Caravan FIGHTING (6-10) DVMV_Robbers
+//      enc_06=Chance:10%,Enc:(4-8) DNRV_Den_Caravan FIGHTING (6-10) DVMV_Highwaymen
+//      enc_07=Chance:10%,Enc:(8-12) DVMV_Robbers FIGHTING (4-7) DNRV_Vault_Caravan
+//      enc_08=Chance:10%,Enc:(4-8) DNRV_Den_Caravan FIGHTING (4-8) DNRV_Vault_Caravan
+//      enc_09=Chance:10%,Enc:(6-8) DVMV_Highwaymen FIGHTING (6-10) DVMV_Robbers
+//      enc_10=Chance:5%,Enc:(6-8) DNRV_Vault_Caravan
+//      enc_11=Chance:7%,Enc:(4-8) DNRV_Den_Caravan
+procedure Redding_DNRV_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 10) then begin
+       ndebug("DNRV_Encounter Table, Encounter 00");
+       display_msg(mstr(350));
+       Encounter_Counter:=random(7,12);
+       Encounter_Rotation:=random(0,4);
+       call DNRV_Den_Caravan;
+   end
+   // enc_01
+   else if (Encounter < 20) then begin
+       ndebug("DNRV_Encounter Table, Encounter 01");
+       display_msg(mstr(351));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=random(0,3);
+       call DVMV_Highwaymen;
+
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=random(1,4);
+       call DVMV_Robbers;
+   end
+   // enc_02
+   else if (Encounter < 30) then begin
+       ndebug("DNRV_Encounter Table, Encounter 02");
+       display_msg(mstr(352));
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Highwaymen;
+   end
+   // enc_03
+   else if (Encounter < 40) then begin
+       ndebug("DNRV_Encounter Table, Encounter 03");
+       display_msg(mstr(353));
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Robbers;
+   end
+   // enc_04
+   else if (Encounter < 43) then begin
+       ndebug("DNRV_Encounter Table, Encounter 04");
+       display_msg(mstr(354));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=3;
+       call DNRV_Redding_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=4;
+       call DVMV_Highwaymen;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 48) then begin
+       ndebug("DNRV_Encounter Table, Encounter 05");
+       display_msg(mstr(355));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=random(0,4);
+       call DNRV_Reno_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call DVMV_Robbers;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 58) then begin
+       ndebug("DNRV_Encounter Table, Encounter 06");
+       display_msg(mstr(356));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=random(3,5);
+       call DNRV_Den_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=Encounter_Rotation;          // This is done on purpose
+       call DVMV_Highwaymen;
+       Combat2:=Critter;
+   end
+   // enc_07
+   else if (Encounter < 68) then begin
+       ndebug("DNRV_Encounter Table, Encounter 07");
+       display_msg(mstr(357));
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Robbers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(4,7);
+       Encounter_Rotation:=random(3,5);
+       call DNRV_Vault_Caravan;
+       Combat2:=Critter;
+   end
+   // enc_08
+   else if (Encounter < 78) then begin
+       ndebug("DNRV_Encounter Table, Encounter 08");
+       display_msg(mstr(358));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=3;
+       call DNRV_Den_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=4;
+       call DNRV_Vault_Caravan;
+       Combat2:=Critter;
+   end
+   // enc_09
+   else if (Encounter < 88) then begin
+       ndebug("DNRV_Encounter Table, Encounter 09");
+       display_msg(mstr(359));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=random(3,5);
+       call DVMV_Highwaymen;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call DVMV_Robbers;
+       Combat2:=Critter;
+   end
+   // enc_10
+   else if (Encounter < 93) then begin
+       ndebug("DNRV_Encounter Table, Encounter 10");
+       display_msg(mstr(360));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=4;
+       call DNRV_Vault_Caravan;
+   end
+   // enc_11
+   else if (Encounter < 100) then begin
+       ndebug("DNRV_Encounter Table, Encounter 11");
+       display_msg(mstr(361));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=3;
+       call DNRV_Den_Caravan;
+   end
+end
+
+// DMRV Encounter Table
+//      enc_00=Chance:7%,Enc:(6-9) DMRV_Highwaymen AMBUSH Player
+//      enc_01=Chance:7%,Enc:(6-9) DMRV_Robbers AMBUSH Player
+//      enc_02=Chance:7%,Enc:(3-6) DMRV_Robbers AND (3-6) DMRV_Highwaymen AMBUSH Player
+//      enc_03=Chance:7%,Enc:(3-6) DMRV_Golden_Geckos AND (3-6) DMRV_Scorpions AMBUSH Player
+//      enc_04=Chance:7%,Enc:(5-8) DMRV_Golden_Geckos AMBUSH Player
+//      enc_05=Chance:7%,Enc:(6-9) KLAD_Mole_Pig_Rat AMBUSH Player
+//      enc_06=Chance:7%,Enc:(5-10) DMRV_Scorpions AMBUSH Player
+//      enc_07=Chance:7%,Enc:(10-15) ARRO_Spore_Plants AMBUSH Player
+//      enc_08=Chance:7%,Enc:(5-8) DMRV_Robbers FIGHTING (5-8) DMRV_Highwaymen
+//      enc_09=Chance:5%,Enc:(6-8) DMRV_Caravan FIGHTING (6-10) DMRV_Highwaymen
+//      enc_10=Chance:5%,Enc:(6-8) DMRV_Caravan FIGHTING (6-10) DMRV_Robbers
+//      enc_11=Chance:5%,Enc:(6-8) DMRV_Caravan FIGHTING (6-10) DMRV_Scorpions
+//      enc_12=Chance:7%,Enc:(5-8) DMRV_Golden_Geckos FIGHTING (5-8) DMRV_Scorpions
+//      enc_13=Chance:15%,Enc:(6-8) DMRV_Caravan
+procedure Redding_DMRV_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 7) then begin
+       ndebug("DMRV_Encounter Table, Encounter 00");
+       display_msg(mstr(400));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=random(0,5);
+       call DMRV_Highwaymen;
+   end
+   // enc_01
+   else if (Encounter < 14) then begin
+       ndebug("DMRV_Encounter Table, Encounter 01");
+       display_msg(mstr(401));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=random(0,5);
+       call DMRV_Robbers;
+   end
+   // enc_02
+   else if (Encounter < 21) then begin
+       ndebug("DMRV_Encounter Table, Encounter 02");
+       display_msg(mstr(402));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(0,2);
+       call DMRV_Robbers;
+
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(3,5);
+       call DMRV_Highwaymen;
+   end
+   // enc_03
+   else if (Encounter < 28) then begin
+       ndebug("DMRV_Encounter Table, Encounter 03");
+       display_msg(mstr(403));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(2,5);
+       call DMRV_Golden_Geckos;
+
+       Encounter_Counter:=random(3,6);
+       Encounter_Counter:=random(0,3);
+       call DMRV_Scorpions;
+   end
+   // enc_04
+   else if (Encounter < 35) then begin
+       ndebug("DMRV_Encounter Table, Encounter 04");
+       display_msg(mstr(404));
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Golden_Geckos;
+   end
+   // enc_05
+   else if (Encounter < 42) then begin
+       ndebug("DMRV_Encounter Table, Encounter 05");
+       display_msg(mstr(405));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=random(0,4);
+       call Klad_Mole_Pig_Rat;
+   end
+   // enc_06
+   else if (Encounter < 49) then begin
+       ndebug("DMRV_Encounter Table, Encounter 06");
+       display_msg(mstr(406));
+       Encounter_Counter:=random(5,10);
+       Encounter_Rotation:=random(2,4);
+       call DMRV_Scorpions;
+   end
+   // enc_07
+   else if (Encounter < 56) then begin
+       ndebug("DMRV_Encounter Table, Encounter 07");
+       display_msg(mstr(407));
+       Encounter_Counter:=random(10,15);
+       Encounter_Rotation:=random(0,5);
+       call ARRO_Spore_Plants;
+   end
+   // enc_08
+   else if (Encounter < 63) then begin
+       ndebug("DMRV_Encounter Table, Encounter 08");
+       display_msg(mstr(408));
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=random(2,5);
+       call DMRV_Robbers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=random(0,2);
+       call DMRV_Highwaymen;
+       Combat2:=Critter;
+   end
+   // enc_09
+   else if (Encounter < 68) then begin
+       ndebug("DMRV_Encounter Table, Encounter 09");
+       display_msg(mstr(409));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=(dude_cur_rot + 1) % 6;
+       call DMRV_Highwaymen;
+       Combat2:=Critter;
+   end
+   // enc_10
+   else if (Encounter < 73) then begin
+       ndebug("DMRV_Encounter Table, Encounter 10");
+       display_msg(mstr(410));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Counter:=(dude_cur_rot + 1) % 6;
+       call DMRV_Robbers;
+       Combat2:=Critter;
+   end
+   // enc_11
+   else if (Encounter < 78) then begin
+       ndebug("DMRV_Encounter Table, Encounter 11");
+       display_msg(mstr(411));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(1,5);
+       call DMRV_Scorpions;
+       Combat2:=Critter;
+   end
+   // enc_12
+   else if (Encounter < 85) then begin
+       ndebug("DMRV_Encounter Table, Encounter 12");
+       display_msg(mstr(412));
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=random(0,4);
+       call DMRV_Golden_Geckos;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=random(1,5);
+       call DMRV_Scorpions;
+       Combat2:=Critter;
+   end
+   // enc_13
+   else if (Encounter < 100) then begin
+       ndebug("DMRV_Encounter Table, Encounter 13");
+       display_msg(mstr(413));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Caravan;
+   end
+end
+
+// Band Encounter Table
+//      enc_00=Chance:10%,Enc:(3-6) DMRV_Highwaymen AND (4-7) DMRV_Robbers AMBUSH Player
+//      enc_01=Chance:10%,Enc:(3-6) DMRV_Highwaymen AND (6-10) DMRV_Golden_Geckos AMBUSH Player
+//      enc_02=Chance:10%,Enc:(6-10) DMRV_Golden_Geckos AMBUSH Player
+//      enc_03=Chance:10%,Enc:(6-8) DMRV_Scorpions AND (6-12) ARRO_Spore_Plants AMBUSH Player
+//      enc_04=Chance:10%,Enc:(4-6) DMRV_Robbers FIGHTING (8-12) DMRV_Scorpions
+//      enc_05=Chance:10%,Enc:(6-8) DMRV_Scorpions FIGHTING (4-6) DMRV_Robbers
+//      enc_06=Chance:10%,Enc:(4-5) DMRV_Caravan FIGHTING (6-8) DMRV_Highwaymen
+//      enc_07=Chance:10%,Enc:(4-5) DMRV_Caravan FIGHTING (5-9) DMRV_Robbers
+//      enc_08=Chance:10%,Enc:(3-6) DMRV_Highwaymen FIGHTING (6-12) ARRO_Spore_Plants
+//      enc_09=Chance:10%,Enc:(4-5) DMRV_Caravan
+procedure Redding_Band_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 10) then begin
+       ndebug("Band_Encounter Table, Encounter 00");
+       display_msg(mstr(450));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(2,5);
+       call DMRV_Highwaymen;
+
+       Encounter_Counter:=random(4,7);
+       Encounter_Rotation:=random(0,3);
+       call DMRV_Robbers;
+   end
+   // enc_01
+   else if (Encounter < 20) then begin
+       ndebug("Band_Encounter Table, Encounter 01");
+       display_msg(mstr(451));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(3,5);
+       call DMRV_Highwaymen;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,2);
+       call DMRV_Golden_Geckos;
+   end
+   // enc_02
+   else if (Encounter < 30) then begin
+       ndebug("Band_Encounter Table, Encounter 02");
+       display_msg(mstr(452));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Golden_Geckos;
+   end
+   // enc_03
+   else if (Encounter < 40) then begin
+       ndebug("Band_Encounter Table, Encounter 03");
+       display_msg(mstr(453));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=random(2,4);
+       call DMRV_Scorpions;
+
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=random(1,5);
+       call Arro_Spore_Plants;
+   end
+   // enc_04
+   else if (Encounter < 50) then begin
+       ndebug("Band_Encounter Table, Encounter 04");
+       display_msg(mstr(454));
+       Encounter_Counter:=random(4,6);
+       Encounter_Rotation:=random(3,5);
+       call DMRV_Robbers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(8,12);
+       Encounter_Rotation:=(Encounter_Rotation + 2) % 6;
+       call DMRV_Scorpions;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 60) then begin
+       ndebug("Band_Encounter Table, Encounter 05");
+       display_msg(mstr(455));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_inv_rot;
+       call DMRV_Scorpions;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(4,6);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Robbers;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 70) then begin
+       ndebug("Band_Encounter Table, Encounter 06");
+       display_msg(mstr(456));
+       Encounter_Counter:=random(4,5);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=random(3,5);
+       call DMRV_Highwaymen;
+       Combat2:=Critter;
+   end
+   // enc_07
+   else if (Encounter < 80) then begin
+       ndebug("Band_Encounter Table, Encounter 07");
+       display_msg(mstr(457));
+       Encounter_Counter:=random(4,5);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,9);
+       Encounter_Rotation:=random(0,3);
+       call DMRV_Robbers;
+       Combat2:=Critter;
+   end
+   // enc_08
+   else if (Encounter < 90) then begin
+       ndebug("Band_Encounter Table, Encounter 08");
+       display_msg(mstr(458));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(0,4);
+       call DMRV_Highwaymen;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=random(0,5);
+       call Arro_Spore_Plants;
+       Combat2:=Critter;
+   end
+   // enc_09
+   else if (Encounter < 100) then begin
+       ndebug("Band_Encounter Table, Encounter 09");
+       display_msg(mstr(459));
+       Encounter_Counter:=random(4,5);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Caravan;
+   end
+end
+
+// DVMV Encounter Table
+//      enc_00=Chance:8%,Enc:(6-9) DVMV_Highwaymen AND (6-10) DVMV_Wild_Dogs AMBUSH Player
+//      enc_01=Chance:8%,Enc:(5-10) DVMV_Robbers AND (3-6) DVMV_Wild_Dogs AMBUSH Player
+//      enc_02=Chance:8%,Enc:(7-11) DVMV_Robbers AMBUSH Player
+//      enc_03=Chance:8%,Enc:(7-11) DVMV_Highwaymen AMBUSH Player
+//      enc_04=Chance:8%,Enc:(8-13) DVMV_Mantis_Swarm AND (6-8) ARRO_Spore_Plants AMBUSH Player
+//      enc_05=Chance:8%,Enc:(6-8) DVMV_Wild_Dogs AND (6-8) ARRO_Spore_Plants AMBUSH Player
+//      enc_06=Chance:8%,Enc:(10-15) DVMV_Mantis_Swarm AMBUSH Player
+//      enc_07=Chance:8%,Enc:(6-12) DVMV_Wild_Dogs AMBUSH Player
+//      enc_08=Chance:8%,Enc:(6-9) DVMV_Robbers FIGHTING (6-12) DVMV_Wild_Dogs
+//      enc_09=Chance:7%,Enc:(6-8) DVMV_Caravan FIGHTING (10-14) DVMV_Wild_Dogs
+//      enc_10=Chance:7%,Enc:(6-8) DVMV_Caravan FIGHTING (6-10) DVMV_Robbers
+//      enc_11=Chance:7%,Enc:(6-8) DVMV_Caravan FIGHTING (6-8) DVMV_Highwaymen
+//      enc_12=Chance:10%,Enc:(6-8) DVMV_Caravan
+procedure Redding_DVMV_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 8) then begin
+       ndebug("DVMV_Encounter Table, Encounter 00");
+       display_msg(mstr(500));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=random(0,3);
+       call DVMV_Highwaymen;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(2,5);
+       call DVMV_Wild_Dogs;
+   end
+   // enc_01
+   else if (Encounter < 16) then begin
+       ndebug("DVMV_Encounter Table, Encounter 01");
+       display_msg(mstr(501));
+       Encounter_Counter:=random(5,10);
+       Encounter_Rotation:=random(2,4);
+       call DVMV_Robbers;
+
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=Encounter_Rotation;                                  // This is done on purpose
+       call DVMV_Wild_Dogs;
+   end
+   // enc_02
+   else if (Encounter < 24) then begin
+       ndebug("DVMV_Encounter Table, Encounter 02");
+       display_msg(mstr(502));
+       Encounter_Counter:=random(7,11);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Robbers;
+   end
+   // enc_03
+   else if (Encounter < 32) then begin
+       ndebug("DVMV_Encounter Table, Encounter 03");
+       display_msg(mstr(503));
+       Encounter_Counter:=random(7,11);
+       Encounter_Rotation:=random(2,5);
+       call DVMV_Highwaymen;
+   end
+   // enc_04
+   else if (Encounter < 40) then begin
+       ndebug("DVMV_Encounter Table, Encounter 04");
+       display_msg(mstr(504));
+       Encounter_Counter:=random(8,13);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Mantis_Swarm;
+
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=random(0,5);
+       call Arro_Spore_Plants;
+   end
+   // enc_05
+   else if (Encounter < 48) then begin
+       ndebug("DVMV_Encounter Table, Encounter 05");
+       display_msg(mstr(505));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=random(1,4);
+       call DVMV_Wild_Dogs;
+
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call Arro_Spore_Plants;
+   end
+   // enc_06
+   else if (Encounter < 56) then begin
+       ndebug("DVMV_Encounter Table, Encounter 06");
+       display_msg(mstr(506));
+       Encounter_Counter:=random(10,15);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Mantis_Swarm;
+   end
+   // enc_07
+   else if (Encounter < 64) then begin
+       ndebug("DVMV_Encounter Table, Encounter 07");
+       display_msg(mstr(507));
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=random(0,5);
+       call DVMV_Wild_Dogs;
+   end
+   // enc_08
+   else if (Encounter < 72) then begin
+       ndebug("DVMV_Encounter Table, Encounter 08");
+       display_msg(mstr(508));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=random(3,5);
+       call DVMV_Robbers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=(Encounter_Rotation + 3) % 6;
+       call DVMV_Wild_Dogs;
+       Combat2:=Critter;
+   end
+   // enc_09
+   else if (Encounter < 79) then begin
+       ndebug("DVMV_Encounter Table, Encounter 09");
+       display_msg(mstr(508));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DVMV_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(10,14);
+       Encounter_Rotation:=(Encounter_Rotation + 3) % 6;
+       call DVMV_Wild_Dogs;
+       Combat2:=Critter;
+   end
+   // enc_10
+   else if (Encounter < 86) then begin
+       ndebug("DVMV_Encounter Table, Encounter 10");
+       display_msg(mstr(510));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DVMV_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call DVMV_Robbers;
+       Combat2:=Critter;
+   end
+   // enc_11
+   else if (Encounter < 93) then begin
+       ndebug("DVMV_Encounter Table, Encounter 11");
+       display_msg(mstr(511));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=(dude_cur_rot + 1) % 6;
+       call DVMV_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call DVMV_Highwaymen;
+       Combat2:=Critter;
+   end
+   // enc_12
+   else if (Encounter < 100) then begin
+       ndebug("DVMV_Encounter Table, Encounter 12");
+       display_msg(mstr(512));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DVMV_Caravan;
+   end
+end
+
+// Red Encounter Table
+//      enc_00=Chance:10%,Enc:(7-12) DMRV_Golden_Geckos AND (5-8) RED_Wolves AMBUSH Player
+//      enc_01=Chance:10%,Enc:(7-10) RED_Claim_Jumper AMBUSH Player
+//      enc_02=Chance:10%,Enc:(7-12) RED_Wolves AMBUSH Player
+//      enc_03=Chance:10%,Enc:(7-12) DMRV_Golden_Geckos AMBUSH Player
+//      enc_04=Chance:5%,Enc:(3-5) RED_Prospector FIGHTING (4-7) RED_Claim_Jumper
+//      enc_05=Chance:10%,Enc:(3-5) RED_Trappers FIGHTING (6-12) DMRV_Golden_Geckos
+//      enc_06=Chance:10%,Enc:(2-4) RED_Bootlegger FIGHTING (5-8) RED_Wolves
+//      enc_07=Chance:10%,Enc:(2-4) RED_Homesteaders FIGHTING (6-8) RED_Claim_Jumper
+//      enc_08=Chance:5%,Enc:(4-6) RED_Homesteaders FIGHTING (6-10) RED_Wolves
+//      enc_09=Chance:10%,Enc:(4-8) RED_Bootlegger
+//      enc_10=Chance:10%,Enc:(6-8) RED_Trappers
+//      enc_11=Chance:10%,Enc:(3-6) RED_Prospector
+procedure Redding_Red_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 10) then begin
+       ndebug("Red_Encounter Table, Encounter 00");
+       display_msg(mstr(550));
+       Encounter_Counter:=random(7,12);
+       Encounter_Rotation:=random(0,5);
+       call DMRV_Golden_Geckos;
+
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=(Encounter_Rotation + 3) % 6;
+       call Red_Wolves;
+   end
+   // enc_01
+   else if (Encounter < 20) then begin
+       ndebug("Red_Encounter Table, Encounter 01");
+       display_msg(mstr(551));
+       Encounter_Counter:=random(7,10);
+       Encounter_Rotation:=random(1,3);
+       call Red_Claim_Jumper;
+   end
+   // enc_02
+   else if (Encounter < 30) then begin
+       ndebug("Red_Encounter Table, Encounter 02");
+       display_msg(mstr(552));
+       Encounter_Counter:=random(7,12);
+       Encounter_Rotation:=random(0,5);
+       call Red_Wolves;
+   end
+   // enc_03
+   else if (Encounter < 35) then begin
+       ndebug("Red_Encounter Table, Encounter 03");
+       display_msg(mstr(553));
+       Encounter_Counter:=random(7,12);
+       Encounter_Rotation:=random(0,4);
+       call DMRV_Golden_Geckos;
+   end
+   // enc_04
+   else if (Encounter < 45) then begin
+       ndebug("Red_Encounter Table, Encounter 04");
+       display_msg(mstr(554));
+       Encounter_Counter:=random(3,5);
+       Encounter_Rotation:=random(1,3);
+       call Red_Prospector;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(4,7);
+       Encounter_Rotation:=random(2,5);
+       call Red_Claim_Jumper;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 55) then begin
+       ndebug("Red_Encounter Table, Encounter 05");
+       display_msg(mstr(555));
+       Encounter_Counter:=random(3,5);
+       Encounter_Rotation:=dude_inv_rot;
+       call Red_Trappers;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,12);
+       Encounter_Rotation:=dude_cur_rot;
+       call DMRV_Golden_Geckos;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 65) then begin
+       ndebug("Red_Encounter Table, Encounter 06");
+       display_msg(mstr(556));
+       Encounter_Counter:=random(2,4);
+       Encounter_Rotation:=random(0,3);
+       call Red_Bootlegger;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=(Encounter_Rotation + 2) % 6;
+       call Red_Wolves;
+       Combat2:=Critter;
+   end
+   // enc_07
+   else if (Encounter < 70) then begin
+       ndebug("Red_Encounter Table, Encounter 07");
+       display_msg(mstr(557));
+       Encounter_Counter:=random(2,4);
+       Encounter_Rotation:=random(2,4);
+       call Red_Homesteaders;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=(Encounter_Rotation + 2) % 6;
+       call Red_Claim_Jumper;
+       Combat2:=Critter;
+   end
+   // enc_08
+   else if (Encounter < 75) then begin
+       ndebug("Red_Encounter Table, Encounter 08");
+       display_msg(mstr(558));
+       Encounter_Counter:=random(4,6);
+       Encounter_Rotation:=random(1,3);
+       call Red_Homesteaders;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=Encounter_Rotation;          // This is done on purpose
+       call Red_Wolves;
+       Combat2:=Critter;
+   end
+   // enc_09
+   else if (Encounter < 83) then begin
+       ndebug("Red_Encounter Table, Encounter 09");
+       display_msg(mstr(559));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call Red_Bootlegger;
+   end
+   // enc_10
+   else if (Encounter < 91) then begin
+       ndebug("Red_Encounter Table, Encounter 10");
+       display_msg(mstr(560));
+       Encounter_Counter:=random(6,8);
+       Encounter_Rotation:=random(0,4);
+       call Red_Trappers;
+   end
+   // enc_11
+   else if (Encounter < 100) then begin
+       ndebug("Red_Encounter Table, Encounter 11");
+       display_msg(mstr(561));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(0,5);
+       call Red_Prospector;
+   end
+end
+
+// SRNRRN Encounter Table
+//      enc_00=Chance:18%,Enc:(5-10) EPA_Deathclaws AMBUSH Player
+//      enc_01=Chance:18%,Enc:(5-10) EPA_Fire_Geckos AMBUSH Player
+//      enc_02=Chance:8%,Enc:(6-9) DNRV_Reno_Caravan FIGHTING (3-5) EPA_Deathclaws
+//      enc_03=Chance:8%,Enc:(6-10) FRAN2_San_Fran_Caravan FIGHTING (4-7) EPA_Deathclaws
+//      enc_04=Chance:8%,Enc:(5-8) DNRV_Redding_Caravan FIGHTING (4-6) EPA_Fire_Geckos
+//      enc_05=Chance:8%,Enc:(7-11) NCR_Caravan FIGHTING (3-7) EPA_Fire_Geckos
+//      enc_06=Chance:8%,Enc:(6-10) FRAN2_San_Fran_Caravan
+//      enc_07=Chance:8%,Enc:(5-8) DNRV_Redding_Caravan
+//      enc_08=Chance:8%,Enc:(6-9) DNRV_Reno_Caravan
+//      enc_09=Chance:8%,Enc:(7-11) NCR_Caravan
+procedure Redding_SRNRRN_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 18) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 00");
+       display_msg(mstr(600));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(0,5);
+       call EPA_Deathclaws;
+   end
+   // enc_01
+   else if (Encounter < 36) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 01");
+       display_msg(mstr(601));
+       Encounter_Counter:=random(5,10);
+       Encounter_Rotation:=random(0,4);
+       call EPA_Fire_Geckos;
+   end
+   // enc_02
+   else if (Encounter < 44) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 02");
+       display_msg(mstr(602));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=dude_cur_rot;
+       call DNRV_Reno_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(3,5);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call EPA_Deathclaws;
+       Combat2:=Critter;
+   end
+   // enc_03
+   else if (Encounter < 52) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 03");
+       display_msg(mstr(603));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call Fran2_San_Fran_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(4,7);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call EPA_Deathclaws;
+       Combat2:=Critter;
+   end
+   // enc_04
+   else if (Encounter < 60) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 04");
+       display_msg(mstr(604));
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DNRV_Redding_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(4,6);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call EPA_Fire_Geckos;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 68) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 05");
+       display_msg(mstr(605));
+       Encounter_Counter:=random(7,11);
+       Encounter_Rotation:=dude_cur_rot;
+       call NCR_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(3,7);
+       Encounter_Rotation:=random(0,3);
+       call EPA_Fire_Geckos;
+       Combat2:=Critter;
+   end
+   // enc_06
+   else if (Encounter < 76) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 06");
+       display_msg(mstr(606));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call Fran2_San_Fran_Caravan;
+   end
+   // enc_07
+   else if (Encounter < 84) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 07");
+       display_msg(mstr(607));
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call DNRV_Redding_Caravan;
+   end
+   // enc_08
+   else if (Encounter < 92) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 08");
+       display_msg(mstr(608));
+       Encounter_Counter:=random(6,9);
+       Encounter_Rotation:=dude_cur_rot;
+       call DNRV_Reno_Caravan;
+   end
+   // enc_09
+   else if (Encounter < 100) then begin
+       ndebug("SRNRRN_Encounter Table, Encounter 09");
+       display_msg(mstr(609));
+       Encounter_Counter:=random(7,11);
+       Encounter_Rotation:=dude_cur_rot;
+       call NCR_Caravan;
+   end
+end
+
+// EPA Encounter Table
+//      enc_00=Chance:4%,Enc:(5-8) EPA_Special_Alien AND (5-8) EPA_Deathclaws AMBUSH Player
+//      enc_01=Chance:12%,Enc:(10-18) EPA_Floater_Centaurs AMBUSH Player
+//      enc_02=Chance:12%,Enc:(8-16) EPA_Special_Fire_Geckos AMBUSH Player
+//      enc_03=Chance:12%,Enc:(6-12) EPA_Special_Alien AMBUSH Player
+//      enc_04=Chance:12%,Enc:(5-10) EPA_Deathclaws AMBUSH Player
+//      enc_05=Chance:12%,Enc:(8-16) EPA_Fire_Geckos AMBUSH Player
+//      enc_06=Chance:12%,Enc:(6-12) EPA_Alien AMBUSH Player
+//      enc_07=Chance:12%,Enc:(6-15) EPA_Centaurs AMBUSH Player
+//      enc_08=Chance:12%,Enc:(8-16) EPA_Floaters AMBUSH Player
+procedure Redding_EPA_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 4) then begin
+       ndebug("EPA_Encounter Table, Encounter 00");
+       display_msg(mstr(650));
+       Encounter_Counter:=random(5,8);
+       Encounter_Rotation:=random(0,3);
+       call EPA_Special_Alien;
+
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(3,5);
+       call EPA_Deathclaws;
+   end
+   // enc_01
+   else if (Encounter < 16) then begin
+       ndebug("EPA_Encounter Table, Encounter 01");
+       display_msg(mstr(651));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,5);
+       call EPA_Floater_Centaurs;
+   end
+   // enc_02
+   else if (Encounter < 28) then begin
+       ndebug("EPA_Encounter Table, Encounter 02");
+       display_msg(mstr(652));
+       Encounter_Counter:=random(8,10);
+       Encounter_Rotation:=random(0,3);
+       call EPA_Special_Fire_Geckos;
+   end
+   // enc_03
+   else if (Encounter < 40) then begin
+       ndebug("EPA_Encounter Table, Encounter 03");
+       display_msg(mstr(653));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,5);
+       call EPA_Special_Alien;
+   end
+   // enc_04
+   else if (Encounter < 52) then begin
+       ndebug("EPA_Encounter Table, Encounter 04");
+       display_msg(mstr(654));
+       Encounter_Counter:=random(3,6);
+       Encounter_Rotation:=random(0,5);
+       call EPA_Deathclaws;
+   end
+   // enc_05
+   else if (Encounter < 64) then begin
+       ndebug("EPA_Encounter Table, Encounter 05");
+       display_msg(mstr(655));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,5);
+       call EPA_Fire_Geckos;
+   end
+   // enc_06
+   else if (Encounter < 76) then begin
+       ndebug("EPA_Encounter Table, Encounter 06");
+       display_msg(mstr(656));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,5);
+       call EPA_Alien;
+   end
+   // enc_07
+   else if (Encounter < 88) then begin
+       ndebug("EPA_Encounter Table, Encounter 07");
+       display_msg(mstr(657));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=random(0,5);
+       call EPA_Centaurs;
+   end
+   // enc_08
+   else if (Encounter < 100) then begin
+       ndebug("EPA_Encounter Table, Encounter 08");
+       display_msg(mstr(658));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,5);
+       call EPA_Floaters;
+   end
+end
+
+// New Encounter Table
+//      enc_00=Chance:15%,Enc:(6-10) NEW_Yakuza AMBUSH Player
+//      enc_01=Chance:15%,Enc:(7-12) NEW_Gang AMBUSH Player
+//      enc_02=Chance:10%,Enc:(7-10) RED_Wolves AMBUSH Player
+//      enc_03=Chance:15%,Enc:(4-8) NEW_Mobsters FIGHTING (5-9) NEW_Yakuza
+//      enc_04=Chance:15%,Enc:(4-8) NEW_Mobsters FIGHTING (6-10) NEW_Gang
+//      enc_05=Chance:20%,Enc:(4-8) NEW_Mobsters
+//      enc_06=Chance:10%,Enc:(1-2) NEW_Traveller
+procedure Redding_Reno_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 15) then begin
+       ndebug("Reno_Encounter Table, Encounter 00");
+       display_msg(mstr(700));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=random(0,5);
+       call New_Yakuza;
+   end
+   // enc_01
+   else if (Encounter < 30) then begin
+       ndebug("Reno_Encounter Table, Encounter 01");
+       display_msg(mstr(701));
+       Encounter_Counter:=random(7,12);
+       Encounter_Rotation:=random(0,3);
+       call New_Gang;
+   end
+   // enc_02
+   else if (Encounter < 40) then begin
+       ndebug("Reno_Encounter Table, Encounter 02");
+       display_msg(mstr(702));
+       Encounter_Counter:=random(7,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call Red_Wolves;
+   end
+   // enc_03
+   else if (Encounter < 55) then begin
+       ndebug("Reno_Encounter Table, Encounter 03");
+       display_msg(mstr(703));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=random(0,3);
+       call New_Mobsters;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,9);
+       Encounter_Rotation:=(Encounter_Rotation + 3) % 6;
+       call New_Yakuza;
+       Combat2:=Critter;
+   end
+   // enc_04
+   else if (Encounter < 70) then begin
+       ndebug("Reno_Encounter Table, Encounter 04");
+       display_msg(mstr(704));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=random(3,5);
+       call New_Mobsters;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=Encounter_Rotation;                  // this was done on purpose
+       call New_Gang;
+       Combat2:=Critter;
+   end
+   // enc_05
+   else if (Encounter < 90) then begin
+       ndebug("Reno_Encounter Table, Encounter 05");
+       display_msg(mstr(705));
+       Encounter_Counter:=random(4,8);
+       Encounter_Rotation:=dude_cur_rot;
+       call New_Mobsters;
+   end
+   // enc_06
+   else if (Encounter < 100) then begin
+       ndebug("Reno_Encounter Table, Encounter 06");
+       display_msg(mstr(706));
+       Encounter_Counter:=random(1,2);
+       Encounter_Rotation:=dude_inv_rot;
+       call New_Traveler;
+   end
+end
+
+// NRNR Encounter Table
+//      enc_00=Chance:21%,Enc:(6-10) NCR_Caravan FIGHTING (7-12) NCR_Masters_Army
+//      enc_01=Chance:20%,Enc:(6-10) DNRV_Reno_Caravan FIGHTING (7-11) NCR_Masters_Army
+//      enc_02=Chance:20%,Enc:(6-10) DNRV_Redding_Caravan FIGHTING (5-9) EPA_Deathclaws
+//      enc_03=Chance:13%,Enc:(6-10) DNRV_Redding_Caravan
+//      enc_04=Chance:13%,Enc:(6-10) DNRV_Reno_Caravan
+//      enc_05=Chance:13%,Enc:(6-10) NCR_Caravan
+procedure Redding_NRNR_Encounter begin
+   variable Encounter;
+
+   Encounter:=random(0,99);
+
+   // enc_00
+   if (Encounter < 21) then begin
+       ndebug("NRNR_Encounter Table, Encounter 00");
+       display_msg(mstr(750));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call NCR_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(7,12);
+       Encounter_Rotation:=(Encounter_Rotation + 2) % 6;
+       call NCR_Masters_Army;
+       Combat2:=Critter;
+   end
+   // enc_01
+   else if (Encounter < 41) then begin
+       ndebug("NRNR_Encounter Table, Encounter 01");
+       display_msg(mstr(751));
+       Encounter_Counter:=random(6,10);
+       Encounter_Counter:=dude_cur_rot;
+       call DNRV_Reno_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(7,11);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call NCR_Masters_Army;
+       Combat2:=Critter;
+   end
+   // enc_02
+   else if (Encounter < 61) then begin
+       ndebug("NRNR_Encounter Table, Encounter 02");
+       display_msg(mstr(752));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call DNRV_Redding_Caravan;
+       Combat1:=Critter;
+
+       Encounter_Counter:=random(5,9);
+       Encounter_Rotation:=(Encounter_Rotation + 1) % 6;
+       call EPA_Deathclaws;
+       Combat2:=Critter;
+   end
+   // enc_03
+   else if (Encounter < 74) then begin
+       ndebug("NRNR_Encounter Table, Encounter 03");
+       display_msg(mstr(753));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call DNRV_Redding_Caravan;
+   end
+   // enc_04
+   else if (Encounter < 87) then begin
+       ndebug("NRNR_Encounter Table, Encounter 04");
+       display_msg(mstr(754));
+       Encounter_Counter:=random(6,10);
+       Encounter_Counter:=dude_cur_rot;
+       call DNRV_Reno_Caravan;
+   end
+   // enc_05
+   else if (Encounter < 100) then begin
+       ndebug("NRNR_Encounter Table, Encounter 05");
+       display_msg(mstr(755));
+       Encounter_Counter:=random(6,10);
+       Encounter_Rotation:=dude_cur_rot;
+       call NCR_Caravan;
+   end
+end
+
+// Copy of the NCR Encounter Table (see above)
+procedure Redding_NCR_Encounter begin
+   call Broken_Hills_NCR_Encounter;
+end
+
+
+procedure Brok_Rogues begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+//   variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_MALE,PID_NEEDLER_PISTOL,SCRIPT_ECROGUE);              // need to give him a script
+       inc_map_var(MVAR_Hostile_Total);
+       give_money(Critter,random(5,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_FEMALE,PID_PANCOR_JACKHAMMER,SCRIPT_ECROGUE);         // need to give him a script
+       inc_map_var(MVAR_Hostile_Total);
+       give_money(Critter,random(5,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BIG_GUN_THUG_FEMALE,PID_FLAMER,SCRIPT_ECROGUE);         // need to give him a script
+       inc_map_var(MVAR_Hostile_Total);
+       give_money(Critter,random(5,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BIG_GUN_THUG_MALE,PID_HK_CAWS,SCRIPT_ECROGUE);         // need to give him a script
+       inc_map_var(MVAR_Hostile_Total);
+       give_money(Critter,random(5,20));
+   end
+
+end
+
+procedure Red_Wolves begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/1;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_WILD_DOG,-1,SCRIPT_ECWLDDOG);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DMRV_Scorpions begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/1;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_LARGE_RADSCORPION,-1,SCRIPT_ECSCORP);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure ARRO_Spore_Plants begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/1;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_SPORE_PLANT,-1,SCRIPT_ECPLANT);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure Brok_Unity_Patrol begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+   variable item2;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_NIGHTKIN,PID_MINIGUN,SCRIPT_ECUNIPAT);
+       give_money(Critter,random(4,14));
+   end
+
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_GHOUL,PID_COMBAT_SHOTGUN,SCRIPT_ECUNIPAT);
+       give_money(Critter,random(3,10));
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_GHOUL,PID_ASSAULT_RIFLE,SCRIPT_ECUNIPAT);
+       give_money(Critter,random(4,10));
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/20;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BIG_GUN_GUARD_MALE,PID_ASSAULT_RIFLE,SCRIPT_ECUNIPAT);
+       give_money(Critter,random(10,25));
+   end
+
+   Critter_Total:=Encounter_Counter/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BIG_GUN_GUARD_FEMALE,PID_ASSAULT_RIFLE,SCRIPT_ECUNIPAT);
+       give_money(Critter,random(10,25));
+       item2:=create_object(PID_EXPLOSIVE_ROCKET,0,0);
+       add_mult_objs_to_inven(Critter,item2,random(2,5));
+   end
+
+end
+
+procedure VPat_Strong_Slavers begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_STRONG_SLAVER_MALE,PID_10MM_SMG,SCRIPT_ECSLAVER);
+       give_money(Critter,random(10,30));
+       inc_map_var(MVAR_Hostile_Total);
+       item:=create_object(PID_MOLOTOV_COCKTAIL,0,0);
+       add_mult_objs_to_inven(Critter,item,2);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_STRONG_SLAVER_FEMALE,PID_SHARP_SPEAR,SCRIPT_ECSLAVER);
+       give_money(Critter,random(20,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       //Create_Enemy(PID_STRONG_SLAVER_MALE,PID_HK_CAWS,SCRIPT_ECSLAVER); //killap
+       Create_Enemy(PID_BIG_GUN_THUG_MALE,PID_HK_CAWS,SCRIPT_ECSLAVER);
+       give_money(Critter,random(10,20));
+       item:=create_object(PID_JET,0,0);
+       add_mult_objs_to_inven(Critter,item,1);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_STRONG_SLAVER_FEMALE,PID_COMBAT_KNIFE,SCRIPT_ECSLAVER);
+       give_money(Critter,random(15,30));
+       item:=create_object(PID_JET,0,0);
+       add_mult_objs_to_inven(Critter,item,1);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DVMV_Wild_Dogs begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/1;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_WILD_DOG,-1,SCRIPT_ECWLDDOG);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DMRV_Golden_Geckos begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*7)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_GOLDEN_GECKO,-1,SCRIPT_ECGECKO);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Total:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GOLDEN_GECKO,-1,SCRIPT_ECGECKO);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure VPat_Patrol begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_VC_PATROL_MALE,PID_ASSAULT_RIFLE,SCRIPT_ECVLTPAT);
+       give_money(Critter,random(30,40));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_mult_objs_to_inven(Critter,item,1);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_VC_PATROL_FEMALE,PID_ASSAULT_RIFLE,SCRIPT_ECVLTPAT);
+       give_money(Critter,random(20,40));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_mult_objs_to_inven(Critter,item,1);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_VC_PATROL_MALE,PID_DESERT_EAGLE,SCRIPT_ECVLTPAT);
+       give_money(Critter,random(20,40));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_mult_objs_to_inven(Critter,item,1);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_VC_PATROL_FEMALE,PID_DESERT_EAGLE,SCRIPT_ECVLTPAT);
+       give_money(Critter,random(15,30));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_mult_objs_to_inven(Critter,item,1);
+   end
+end
+
+procedure RDRC_Raiders begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_RAIDER_MALE,PID_ASSAULT_RIFLE,SCRIPT_ECRAIDER);
+       give_money(Critter,random(14,23));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_RAIDER_MALE,PID_COMBAT_SHOTGUN,SCRIPT_ECRAIDER);
+       give_money(Critter,random(20,26));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_RAIDER_FEMALE,PID_HK_CAWS,SCRIPT_ECRAIDER);
+       give_money(Critter,random(13,21));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_RAIDER_FEMALE,PID_GREASE_GUN,SCRIPT_ECRAIDER);
+       give_money(Critter,random(15,28));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DNRV_Vault_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18);
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_AVERAGE_MERCHANT_MALE,-1,SCRIPT_ECMSTVC);
+   give_money(Critter,random(50,90));
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_GUARD_MALE,PID_HUNTING_RIFLE,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_GUARD_FEMALE,PID_10MM_PISTOL,SCRIPT_ECGUARD);
+       give_money(Critter,random(15,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_GUARD_MALE,PID_10MM_SMG,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_GUARD_FEMALE,PID_DESERT_EAGLE,SCRIPT_ECGUARD);
+       give_money(Critter,random(12,22));
+   end
+end
+
+procedure RDRC_Broken_Hills_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //new addition - april 2006 - killap (was 14)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_MASTER_TRADER_FEMALE,PID_HK_CAWS,SCRIPT_ECMSTBRO);
+   give_money(Critter,random(100,130));
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BIG_GUN_GUARD_MALE,PID_MINIGUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(30,50));
+   end
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BIG_GUN_GUARD_FEMALE,PID_MINIGUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(25,45));
+   end
+end
+
+procedure RDRC_Gecko_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //new addition - april 2006 - killap (was 13)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_GENERIC_GHOUL,PID_SHOTGUN,SCRIPT_ECMSTGEC);
+   give_money(Critter,random(30,50));
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_REACTOR_GHOUL,PID_HUNTING_RIFLE,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,20));
+   end
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_REACTOR_GHOUL,PID_ASSAULT_RIFLE,SCRIPT_ECGUARD);
+       give_money(Critter,random(15,25));
+   end
+end
+
+procedure NCR_Marauders begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       //Create_Enemy(PID_MALE_MAURADER,PID_HK_CAWS,SCRIPT_ECMARADR); //killap
+       Create_Enemy(PID_BIG_GUN_THUG_MALE,PID_HK_CAWS,SCRIPT_ECMARADR);
+       give_money(Critter,random(10,40));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_MAURADER,PID_HK_P90C,SCRIPT_ECMARADR);
+       give_money(Critter,random(10,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_MAURADER,PID_SHARP_SPEAR,SCRIPT_ECMARADR);
+       give_money(Critter,random(10,40));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_MAURADER,PID_COMBAT_KNIFE,SCRIPT_ECMARADR);
+       give_money(Critter,random(10,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DNRV_Redding_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //new addition - april 2006 - killap (was 13)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_MASTER_TRADER_FEMALE,-1,SCRIPT_ECMSTRED);
+   give_money(Critter,random(40,100));
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_GUARD_MALE,PID_ASSAULT_RIFLE,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BIG_GUN_GUARD_MALE,PID_MINIGUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_GUARD_FEMALE,PID_14MM_PISTOL,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_GUARD_FEMALE,PID_GREASE_GUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,30));
+   end
+end
+
+procedure DNRV_Reno_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,random(18,20)); //new addition - april 2006 - killap (was 13,16)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_AVERAGE_MERCHANT_FEMALE,-1,SCRIPT_ECMSTNEW);
+   give_money(Critter,random(20,40));
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_GUARD_MALE,PID_14MM_PISTOL,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_GUARD_FEMALE,PID_ASSAULT_RIFLE,SCRIPT_ECGUARD);
+       give_money(Critter,random(8,18));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MELEE_GUARD_MALE,PID_SUPER_SLEDGE,SCRIPT_ECGUARD);
+       give_money(Critter,random(5,15));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Total:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_AGILE_GUARD_FEMALE,PID_SAWED_OFF_SHOTGUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(13,23));
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_mult_objs_to_inven(Critter,item,2);
+   end
+end
+
+procedure NCR_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //new addition - april 2006 - killap (was dude_perception*2)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_MASTER_TRADER_FEMALE,PID_HK_CAWS,SCRIPT_ECMSTNCR);
+   give_money(Critter,random(50,100));
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_NCR_RANGER,PID_COMBAT_SHOTGUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_NCR_RANGER,PID_FLAMER,SCRIPT_ECGUARD);
+       give_money(Critter,random(25,45));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_NCR_RANGER,PID_HK_CAWS,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_NCR_RANGER,PID_GREASE_GUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+end
+
+procedure V15_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //new addition - april 2006 - killap (was dude_perception*2)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_MASTER_TRADER_FEMALE,PID_GREASE_GUN,SCRIPT_ECMSTV15);
+   give_money(Critter,random(50,100));
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_NCR_RANGER,PID_COMBAT_SHOTGUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_NCR_RANGER,PID_FLAMER,SCRIPT_ECGUARD);
+       give_money(Critter,random(25,45));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_NCR_RANGER,PID_HK_CAWS,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_NCR_RANGER,PID_GREASE_GUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+end
+
+procedure New_Traveler begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   if (random(0,99) < 50) then begin
+       Create_Enemy(PID_FEMALE_HOMESTEADER,PID_COMBAT_KNIFE,SCRIPT_ECTRVLR);
+       give_money(Critter,random(5,15));
+   end
+   else begin
+       Create_Enemy(PID_MALE_HOMESTEADER,PID_POWER_FIST,SCRIPT_ECTRVLR);
+       give_money(Critter,random(5,15));
+   end
+end
+
+procedure NCR_Masters_Army begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_NIGHTKIN,PID_LASER_RIFLE,SCRIPT_ECMSTAMY);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_NIGHTKIN,PID_MINIGUN,SCRIPT_ECMSTAMY);
+       item:=create_object(PID_5MM_JHP,0,0);
+       add_mult_objs_to_inven(Critter,item,random(1,3));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_CENTAUR,-1,SCRIPT_ECCENTUR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FLOATER,-1,SCRIPT_ECFLOATR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure NCR_Rangers begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_NCR_RANGER,PID_COMBAT_SHOTGUN,SCRIPT_ECRANGER);
+       give_money(Critter,random(10,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_NCR_RANGER,PID_FLAMER,SCRIPT_ECRANGER);
+       give_money(Critter,random(15,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_NCR_RANGER,PID_HK_CAWS,SCRIPT_ECRANGER);
+       give_money(Critter,random(20,30));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_NCR_RANGER,PID_GREASE_GUN,SCRIPT_ECRANGER);
+       give_money(Critter,random(20,40));
+   end
+end
+
+procedure KLA_Farmers begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*2)/3;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_AVERAGE_PEASANT_MALE,PID_10MM_SMG,SCRIPT_ECFARMER);
+       give_money(Critter,random(2,10));
+       item:=create_object(PID_MUTATED_FRUIT,0,0);
+       add_mult_objs_to_inven(Critter,item,random(2,5));
+   end
+
+   Critter_Total:=Encounter_Counter/3;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_AVERAGE_PEASANT_FEMALE,PID_HUNTING_RIFLE,SCRIPT_ECFARMER);
+       give_money(Critter,random(5,10));
+       item:=create_object(PID_MUTATED_FRUIT,0,0);
+       add_mult_objs_to_inven(Critter,item,random(2,5));
+   end
+
+   if (random(0,99) < 30) then begin
+       Create_Enemy(PID_CHILD_MALE,-1,SCRIPT_ECCHILD);
+   end
+
+   if (random(0,99) < 30) then begin
+       Create_Enemy(PID_CHILD_FEMALE,-1,SCRIPT_ECCHILD);
+   end
+end
+
+procedure DNRV_Den_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //new addition - april 2006 - killap (was dude_perception*2)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_BAD_MERCHANT_MALE,-1,SCRIPT_ECMSTDEN);
+   give_money(Critter,random(3,20));
+   inc_map_var(MVAR_Hostile_Total);
+
+   Critter_Total:=Encounter_Counter/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_STRONG_SLAVER_MALE,PID_COMBAT_KNIFE,SCRIPT_ECGUARD); //edit by killap
+       //Create_Enemy(PID_STRONG_SLAVER_MALE,PID_COMBAT_KNIFE,SCRIPT_ECSLAVER);
+       give_money(Critter,random(3,10));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_SLAVER_GUARD,PID_10MM_SMG,SCRIPT_ECGUARD); //edit by killap
+       //Create_Enemy(PID_SLAVER_GUARD,PID_10MM_SMG,SCRIPT_ECSLAVER);
+       give_money(Critter,random(2,10));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/20;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_HEALTHY_SLAVE_FEMALE,-1,SCRIPT_ECSLAVE);  //den slave which will decrease the hostile count even though it never raises it when created. Should use the slave script and not SCRIPT_ECGUARD -killap
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/20;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_HEALTHY_SLAVE_MALE,-1,SCRIPT_ECSLAVE); //den slave which will decrease the hostile count even though it never raises it when created. Should use the slave script and not SCRIPT_ECGUARD -killap
+   end
+end
+
+procedure DVMV_Highwaymen begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_THUG_MALE,PID_44_MAGNUM_REVOLVER,SCRIPT_ECHIWYMN);
+       give_money(Critter,random(5,10));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_THUG_FEMALE,PID_FN_FAL,SCRIPT_ECHIWYMN);
+       give_money(Critter,random(6,10));
+       item:=create_object(PID_7_62MM_AMMO,0,0);
+       add_obj_to_inven(Critter,item);
+       item:=create_object(PID_STIMPAK,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_THUG_MALE,PID_DESERT_EAGLE,SCRIPT_ECHIWYMN);
+       give_money(Critter,random(4,12));
+       item:=create_object(PID_HEALING_POWDER,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_THUG_FEMALE,PID_SHOTGUN,SCRIPT_ECHIWYMN);
+       give_money(Critter,random(5,10));
+       item:=create_object(PID_HEALING_POWDER,0,0);
+       add_obj_to_inven(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DVMV_Robbers begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*2)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_THUG_MALE,PID_SHOTGUN,SCRIPT_ECROBBER);
+       give_money(Critter,random(5,11));
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*2)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_THUG_FEMALE,PID_10MM_SMG,SCRIPT_ECROBBER);
+       give_money(Critter,random(6,12));
+       item:=create_object(PID_10MM_JHP,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_AGILE_THUG_MALE,PID_COMBAT_KNIFE,SCRIPT_ECROBBER);
+       give_money(Critter,random(6,10));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_obj_to_inven(Critter,item);
+       item:=create_object(PID_JET,0,0);
+       add_mult_objs_to_inven(Critter,item,random(1,3));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_AGILE_THUG_FEMALE,PID_10MM_SMG,SCRIPT_ECROBBER);
+       give_money(Critter,random(10,14));
+       item:=create_object(PID_JET,0,0);
+       add_mult_objs_to_inven(Critter,item,random(1,4));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DMRV_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //new addition - april 2006 - killap (was dude_perception*2)
+
+   Create_Enemy(PID_MALE_SLAVER,PID_HUNTING_RIFLE,SCRIPT_ECMSTDEN);
+   give_money(Critter,random(20,40));
+   item:=create_object(PID_STIMPAK,0,0);
+   add_obj_to_inven(Critter,item);
+   item:=create_object(PID_JET,0,0);
+   add_obj_to_inven(Critter,item);
+
+   Critter_Total:=(Encounter_Counter*2)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_GUARD_MALE,PID_HUNTING_RIFLE,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,20));
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_CUTE_SLAVE_FEMALE,-1,SCRIPT_ECSLAVE);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_COMBAT_SLAVE_MALE,-1,SCRIPT_ECSLAVE);
+   end
+end
+
+procedure DMRV_Highwaymen begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Create_Enemy(PID_TOUGH_THUG_MALE,PID_HUNTING_RIFLE,SCRIPT_ECHIWYMN);
+   give_money(Critter,random(40,70));
+   item:=create_object(PID_STIMPAK,0,0);
+   add_obj_to_inven(Critter,item);
+   item:=create_object(PID_JET,0,0);
+   add_obj_to_inven(Critter,item);
+   inc_map_var(MVAR_Hostile_Total);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_AGILE_THUG_MALE,PID_COMBAT_KNIFE,SCRIPT_ECHIWYMN);
+       give_money(Critter,random(10,20));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_AGILE_THUG_FEMALE,PID_COMBAT_KNIFE,SCRIPT_ECHIWYMN);
+       give_money(Critter,random(10,16));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_MALE,PID_HUNTING_RIFLE,SCRIPT_ECHIWYMN);
+       give_money(Critter,random(10,25));
+       item:=create_object(PID_JET,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_FEMALE,PID_HUNTING_RIFLE,SCRIPT_ECHIWYMN);
+       give_money(Critter,random(12,20));
+       item:=create_object(PID_JET,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DMRV_Robbers begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Create_Enemy(PID_TOUGH_THUG_FEMALE,PID_HUNTING_RIFLE,SCRIPT_ECROBBER);
+   give_money(Critter,random(20,40));
+   item:=create_object(PID_STIMPAK,0,0);
+   add_obj_to_inven(Critter,item);
+   item:=create_object(PID_JET,0,0);
+   add_obj_to_inven(Critter,item);
+   inc_map_var(MVAR_Hostile_Total);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MELEE_THUG_MALE,PID_COMBAT_KNIFE,SCRIPT_ECROBBER);
+       give_money(Critter,random(10,20));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_obj_to_inven(Critter,item);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MELEE_THUG_FEMALE,PID_SPIKED_KNUCKLES,SCRIPT_ECROBBER);
+       give_money(Critter,random(8,22));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_MALE,PID_10MM_PISTOL,SCRIPT_ECROBBER);
+       give_money(Critter,random(5,15));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_FEMALE,PID_10MM_PISTOL,SCRIPT_ECROBBER);
+       give_money(Critter,random(10,20));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DVMV_Mantis_Swarm begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MED_MANTIS,-1,SCRIPT_ECMANTIS);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure DVMV_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //april 2006 edit by killap (was dude_perception*2)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_MASTER_TRADER_MALE,PID_COMBAT_KNIFE,SCRIPT_ECMRCHNT);
+   give_money(Critter,random(50,100));
+   item:=create_object(PID_JET,0,0);
+   add_obj_to_inven(Critter,item);
+   item:=create_object(PID_STIMPAK,0,0);
+   add_obj_to_inven(Critter,item);
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_GUARD_MALE,PID_10MM_SMG,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,30));
+       item:=create_object(PID_10MM_JHP,0,0);
+       add_obj_to_inven(Critter,item);
+       item:=create_object(PID_STIMPAK,0,0);
+       add_obj_to_inven(Critter,item);
+   end
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_GUARD_FEMALE,PID_FN_FAL,SCRIPT_ECGUARD);
+       give_money(Critter,random(10,20));
+       item:=create_object(PID_STIMPAK,0,0);
+       add_obj_to_inven(Critter,item);
+   end
+end
+
+procedure Red_Claim_Jumper begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_MALE,PID_LIGHT_SUPPORT_WEAPON,SCRIPT_ECCLMJMP);
+       give_money(Critter,random(10,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_MALE,PID_LASER_RIFLE,SCRIPT_ECCLMJMP);
+       give_money(Critter,random(10,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_FEMALE,PID_LIGHT_SUPPORT_WEAPON,SCRIPT_ECCLMJMP);
+       give_money(Critter,random(10,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_MALE,PID_LASER_RIFLE,SCRIPT_ECCLMJMP);
+       give_money(Critter,random(10,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure Red_Prospector begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_PROSPECTOR_MALE,PID_SUPER_SLEDGE,SCRIPT_ECPROSPE);
+       give_money(Critter,random(0,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_PROSPECTOR_MALE,PID_PANCOR_JACKHAMMER,SCRIPT_ECPROSPE);
+       give_money(Critter,random(0,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_PROSPECTOR_FEMALE,PID_HK_G11,SCRIPT_ECPROSPE);
+       give_money(Critter,random(0,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       //Create_Enemy(PID_PROSPECTOR_FEMALE,PID_HK_CAWS,SCRIPT_ECPROSPE);
+       Create_Enemy(PID_PROSPECTOR_FEMALE,PID_10MM_SMG,SCRIPT_ECPROSPE); //edit by killap
+       give_money(Critter,random(0,20));
+   end
+end
+
+procedure Red_Trappers begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MELEE_THUG_MALE,PID_COMBAT_KNIFE,SCRIPT_ECTRAPPR);
+       give_money(Critter,random(0,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MELEE_THUG_MALE,PID_POWER_FIST,SCRIPT_ECTRAPPR);
+       give_money(Critter,random(0,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MELEE_THUG_FEMALE,PID_COMBAT_KNIFE,SCRIPT_ECTRAPPR);
+       give_money(Critter,random(0,20));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MELEE_THUG_MALE,PID_POWER_FIST,SCRIPT_ECTRAPPR);
+       give_money(Critter,random(0,20));
+   end
+end
+
+procedure Red_Homesteaders begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_HOMESTEADER,PID_NEEDLER_PISTOL,SCRIPT_ECHOMEST);
+       give_money(Critter,random(4,16));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MALE_HOMESTEADER,PID_LASER_PISTOL,SCRIPT_ECHOMEST);
+       give_money(Critter,random(5,15));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       //Create_Enemy(PID_FEMALE_HOMESTEADER,PID_HK_CAWS,SCRIPT_ECHOMEST);
+       Create_Enemy(PID_FEMALE_HOMESTEADER,PID_10MM_SMG,SCRIPT_ECHOMWFE); //edit by killap
+       give_money(Critter,random(3,17));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FEMALE_HOMESTEADER,PID_HK_G11,SCRIPT_ECHOMWFE);
+       give_money(Critter,random(4,16));
+   end
+end
+
+procedure Red_Bootlegger begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BOOTLEGGER_MALE,PID_SUPER_SLEDGE,SCRIPT_ECMONSHN);
+       give_money(Critter,random(2,10));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BOOTLEGGER_MALE,PID_PANCOR_JACKHAMMER,SCRIPT_ECMONSHN);
+       give_money(Critter,random(6,16));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BOOTLEGGER_FEMALE,PID_NEEDLER_PISTOL,SCRIPT_ECMONSHN);
+       give_money(Critter,random(4,12));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BOOTLEGGER_FEMALE,PID_POWER_FIST,SCRIPT_ECMONSHN);
+       give_money(Critter,random(4,16));
+   end
+end
+
+procedure EPA_Deathclaws begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*6)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_SM_TOUGH_DEATHCLAW,PID_DEATHCLAW_CLAW_1,SCRIPT_ECDTHCLW);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*2)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_DEATHCLAW,PID_DEATHCLAW_CLAW_1,SCRIPT_ECDTHCLW);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*2)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_LARGE_DEATHCLAW,-1,SCRIPT_ECDTHCLW);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure EPA_Fire_Geckos begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FIRE_GECKO,PID_FLAME_BREATH,SCRIPT_ECGECKO);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure Fran2_San_Fran_Caravan begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,18); //april 2006 killap - (was dude_perception*2)
+
+   call Build_Grey_Caravan;
+
+   Create_Enemy(PID_GRAND_MASTER_TRADER_MALE,PID_NEEDLER_PISTOL,SCRIPT_ECMSTSAN);
+   give_money(Critter,random(100,160));
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_VC_PATROL_MALE,PID_LASER_RIFLE,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_VC_PATROL_MALE,PID_AVENGER_MINIGUN,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_VC_PATROL_FEMALE,PID_LIGHT_SUPPORT_WEAPON,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_VC_PATROL_FEMALE,PID_HK_P90C,SCRIPT_ECGUARD);
+       give_money(Critter,random(20,40));
+   end
+end
+
+procedure EPA_Special_Alien begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_ALIEN,-1,SCRIPT_ECALIEN);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_ALIEN,-1,SCRIPT_ECALIEN);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure EPA_Floater_Centaurs begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_CENTAUR,-1,SCRIPT_ECCENTUR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FLOATER,-1,SCRIPT_ECFLOATR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MEAN_CENTAUR,-1,SCRIPT_ECCENTUR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/10;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_NASTY_FLOATER,-1,SCRIPT_ECFLOATR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure EPA_Special_Fire_Geckos begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*9)/20;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FIRE_GECKO,PID_FLAME_BREATH,SCRIPT_ECGECKO);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*11)/20;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_TOUGH_FIRE_GECKO,PID_FLAME_BREATH,SCRIPT_ECGECKO);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure EPA_Alien begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_ALIEN,-1,SCRIPT_ECALIEN);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure EPA_Centaurs begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*2)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_CENTAUR,-1,SCRIPT_ECCENTUR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MEAN_CENTAUR,-1,SCRIPT_ECCENTUR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure EPA_Floaters begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*2)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_FLOATER,-1,SCRIPT_ECFLOATR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*3)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_NASTY_FLOATER,-1,SCRIPT_ECFLOATR);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure New_Yakuza begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_YAKUZA,PID_TOMMY_GUN,SCRIPT_ECYAKUZA);
+       give_money(Critter,random(3,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_YAKUZA,PID_SNIPER_RIFLE,SCRIPT_ECYAKUZA);
+       give_money(Critter,random(3,30));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure New_Gang begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_MALE,PID_COMBAT_SHOTGUN,SCRIPT_ECGANGS);
+       give_money(Critter,random(3,8));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_MALE,PID_14MM_PISTOL,SCRIPT_ECGANGS); // phobos2077: replaced .223 Pistol
+       give_money(Critter,random(5,18));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_BIG_GUN_THUG_FEMALE,PID_FLAMER,SCRIPT_ECGANGS);
+       give_money(Critter,random(3,8));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=Encounter_Counter/4;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GUN_THUG_FEMALE,PID_14MM_PISTOL,SCRIPT_ECGANGS);
+       give_money(Critter,random(3,8));
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure New_Mobsters begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MOBSTER,PID_TOMMY_GUN,SCRIPT_ECMOBSTR);
+       give_money(Critter,random(10,30));
+//       inc_map_var(MVAR_Hostile_Total); -comemnt out by killap
+   end
+
+   Critter_Total:=Encounter_Counter/2;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MOBSTER,PID_COMBAT_SHOTGUN,SCRIPT_ECMOBSTR);
+       give_money(Critter,random(12,23));
+//       inc_map_var(MVAR_Hostile_Total); -comment out by killap
+   end
+end
+
+procedure Klad_Mole_Pig_Rat begin
+   variable Critter_Counter:=0;
+   variable Critter_Total;
+   //variable Critter;
+   variable Critter_Tile;
+   variable item;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,dude_perception*2);
+
+   Critter_Total:=(Encounter_Counter*2)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_MOLE_RAT,-1,SCRIPT_ECRAT);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*1)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_GREATER_MOLE_RAT,-1,SCRIPT_ECRAT);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+
+   Critter_Total:=(Encounter_Counter*2)/5;
+   Critter_Counter:=0;
+   if (Critter_Total < 1) then
+       Critter_Total:=1;
+
+   while (Critter_Counter < Critter_Total) do begin
+       Create_Enemy(PID_PIG_RAT,-1,SCRIPT_ECRAT);
+       inc_map_var(MVAR_Hostile_Total);
+   end
+end
+
+procedure Build_Grey_Caravan begin
+   variable Brahmin_Tile;
+   //variable Critter;
+   variable Critter_Tile;
+
+   Critter_Tile:=tile_num_in_direction(dude_tile,Encounter_Rotation,20);
+
+   Create_EW_Grey_Caravan(Critter_Tile,dude_elevation)
+
+   Brahmin_Tile:=tile_num_in_direction(Critter_Tile,0,1);
+   Critter:=create_object_sid(PID_BRAHMIN,0,0,SCRIPT_ECCRTBRA);
+   set_team(Critter,TEAM_CARAVAN); //added by killap
+   critter_attempt_placement(Critter,Brahmin_Tile,0);
+   obj_rotate(Critter,1);
+
+   Brahmin_Tile:=tile_num_in_direction(Critter_Tile,2,2);
+   Critter:=create_object_sid(PID_BRAHMIN,0,0,SCRIPT_ECCRTBRA);
+   set_team(Critter,TEAM_CARAVAN); //added by killap
+   critter_attempt_placement(Critter,Brahmin_Tile,0);
+   obj_rotate(Critter,1);
+end

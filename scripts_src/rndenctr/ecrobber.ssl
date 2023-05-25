@@ -123,14 +123,16 @@ procedure map_enter_p_proc begin
          end
       end else if (dude_level < 15) then begin
          if (val == 1) then begin
-            wep_pid := PID_223_PISTOL;
-            ammo_pid := PID_223_FMJ;
+            // phobos2077: replaced .223 Pistol
+            wep_pid := PID_14MM_PISTOL;
+            ammo_pid := PID_14MM_AP;
             ammo_qty := Random(1, 2);
          end else if (val == 2) then begin
             val1 := Random(1, 4);
             if (val1 == 1) then begin
-               wep_pid  := PID_223_PISTOL;
-               ammo_pid := PID_223_FMJ;
+               // phobos2077: replaced .223 Pistol
+               wep_pid  := PID_14MM_PISTOL;
+               ammo_pid := PID_14MM_AP;
                ammo_qty := Random(1, 2);
             end else if (val1 == 2) then begin
                wep_pid  := PID_MINIGUN;

@@ -7,6 +7,7 @@
 *.zip
 **/.tmp.ssl
 
+.vscode/*
 *.code-workspace
 __pycache__/
 .~lock*
