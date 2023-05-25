@@ -279,7 +279,7 @@ begin
    staticMult := 0.01 * difficulty * ammoMult / ammoDiv;
    criticalMult *= 0.5;
 
-   debug_verbose("ammoDR="+ammoDR+", DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
+   debug_verbose("ammoDR="+ammoDR+", dmgType="+dmgType+" DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
 
    if (ini_burst_critical_fraction != 1.0 and (bypassArmor or criticalMult > 1)) then
       criticalRounds := math_max(round_chance(ini_burst_critical_fraction * rounds), 1);

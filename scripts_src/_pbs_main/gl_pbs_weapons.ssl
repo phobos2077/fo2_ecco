@@ -2,6 +2,7 @@
    Scripting support for various custom weapon features.
 */
 
+#include "../sfall/command_lite.h"
 #include "../headers/animcomd.h"
 #include "../headers/itempid.h"
 #include "../_pbs_headers/ecco.h"
@@ -97,6 +98,7 @@ procedure afterhitroll_handler begin
    // This is needed for custom door script!
    pbs_last_hit_roll_result := willHit;
 
+   /*
    if (target and attacker) then begin
 
       //debug_msg("afterhitroll: "+willHit+" chance="+hitChance+"%% t="+target+" type="+obj_type(target)+" tpid="+obj_pid(target));
@@ -119,6 +121,7 @@ procedure afterhitroll_handler begin
       set_proto_data(PID_PBS_M79, 48, damageType);
       set_proto_data(PID_PBS_MGL, 48, damageType);
    end
+   */
 end
 
 
@@ -193,6 +196,14 @@ procedure combatdamage_handler begin
 end
 
 
+procedure is_hit_from_front(variable attacker, variable target) begin
+   variable diff := get_cur_rot(attacker) - get_cur_rot(target);
+   if (diff < 0) then
+      diff := -diff;
+
+    return diff != 0 and diff != 1 and diff != 5;
+end
+
 /*
    Runs after Fallout has calculated the death animation. Lets you set your own custom frame id, so more powerful than HOOK_DEATHANIM1, but performs no validation. When using critter_dmg function, this script will also run. In that case weapon pid will be -1 and attacker will point to an object with obj_art_fid == 0x20001F5.
 
@@ -205,7 +216,7 @@ end
    int     arg4 - The death anim id calculated by Fallout
 */
 procedure deathanim2_handler begin
-   variable weaponPID, attacker, target, damage, animID;
+   variable weaponPID, attacker, target, damage, animID, rotToAttacker, targetRot;
    variable wpn, kt;
 
    weaponPID := get_sfall_arg;
@@ -226,7 +237,7 @@ procedure deathanim2_handler begin
    if ((weaponPID == PID_SHOTGUN or weaponPID == PID_SAWED_OFF_SHOTGUN) 
       and (animID == ANIM_chunks_of_flesh or animID == ANIM_dancing_autofire)) then
    begin
-      animID := ANIM_fall_back;
+      animID := ANIM_fall_front if is_hit_from_front(attacker, target) else ANIM_fall_back;
    end
    
    // Grenade Launcher: use fire death animation when using incendiary grenades.

@@ -1,0 +1,157 @@
+/*
+   Inventory AP costs mod
+
+      - Reduces inventory opening costs to 0 action points.
+      - Doing anything in the inventory costs 2 action points.
+      - Limits the Quick Pockets perk to 1 rank.
+      - Enabled by APCOST section in combat.ini
+*/
+
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+#include "../sfall/command_lite.h"
+
+#include "../_pbs_headers/ecco.h"
+
+#define INI_SECTION     "APCOST"
+#define ITEM_USE_COST   (2 - dude_perk(PERK_quick_pockets))
+
+
+variable
+   ini_unarmed_special_attacks,
+   ini_reload_cost;
+
+procedure reduce_ap_from_inventory(variable critter, variable cost) begin
+   variable ap;
+   if (combat_is_initialized) then begin
+      if (get_game_mode bwand INVENTORY) then begin
+         ap := get_critter_current_ap(critter);
+
+         if (ap >= cost) then begin
+            set_critter_current_ap(critter, ap - cost);
+         end
+         else begin
+            display_msg(sprintf(mstr_combat(100), cost)); // You need %d action points.
+            set_sfall_return(0);
+         end
+      end
+   end
+end
+
+procedure useobjon_handler begin
+   variable target, critter, item;
+   target := get_sfall_arg;
+   critter := get_sfall_arg;
+   item := get_sfall_arg;
+
+   call reduce_ap_from_inventory(critter, ITEM_USE_COST);
+end
+
+#define ammo_caliber(ammoPid)       get_proto_data(ammoPid, PROTO_AM_CALIBER)
+#define mag_size(weaponPid)         get_proto_data(weaponPid, PROTO_WP_MAG_SIZE)
+#define weapon_caliber(weaponPid)   get_proto_data(weaponPid, PROTO_WP_CALIBER)
+
+/*
+   HOOK_INVENTORYMOVE
+   Runs before moving items between inventory slots in dude interface. You can override the action. What you can NOT do with this hook:
+
+   force moving items to inappropriate slots (like gun in armor slot) What you can do:
+   restrict player from using specific weapons or armors
+   add AP costs for all inventory movement including reloading
+   apply or remove some special scripted effects depending on PC's armor
+   int     arg0 - Target slot:
+                  0 - main backpack
+                  1 - left hand
+                  2 - right hand
+                  3 - armor slot
+                  4 - weapon, when reloading it by dropping ammo
+                  5 - container, like bag/backpack
+                  6 - dropping on the ground
+                  7 - picking up item
+                  8 - dropping item on the character portrait
+   Item    arg1 - Item being moved
+   Item    arg2 - Item being replaced, weapon being reloaded, or container being filled (can be 0)
+
+   int     ret0 - Override setting (-1 - use engine handler, any other value - prevent relocation of item/reloading weapon/picking up item)
+*/
+procedure inventorymove_handler begin
+   variable target, item, critter, replaced, ammoPid, weaponPid, oldAmmoPid, oldAmmoCount, cost, willReload;
+   target := get_sfall_arg;
+   item := get_sfall_arg;
+   replaced := get_sfall_arg;
+   critter := dude_obj;
+
+   //debug_msg("inventory_move " + target + ", item: " + obj_pid(item) + ", replaced: " + (obj_pid(replaced) if replaced else 0));
+
+   if (item != replaced) then begin
+      if (target == 4 and obj_item_subtype(item) == item_type_ammo and obj_item_subtype(replaced) == item_type_weapon) then begin
+         ammoPid := obj_pid(item);
+         weaponPid := obj_pid(replaced);
+         oldAmmoPid := get_weapon_ammo_pid(replaced);
+         oldAmmoCount := get_weapon_ammo_count(replaced);
+         willReload := (oldAmmoPid == ammoPid and oldAmmoCount < mag_size(weaponPid)) or
+                       (oldAmmoPid != ammoPid and oldAmmoCount == 0 and ammo_caliber(ammoPid) == weapon_caliber(weaponPid));
+         if (willReload) then begin
+            cost := ini_reload_cost if ini_reload_cost >= 0 else 2;
+            if (get_proto_data(obj_pid(replaced), PROTO_WP_PERK) == PERK_weapon_fast_reload) then begin
+               cost := cost / 2;
+            end
+         end else begin
+            cost := 0;
+         end
+      end else begin
+         cost := ITEM_USE_COST;
+      end
+      call reduce_ap_from_inventory(critter, cost);
+   end
+end
+
+procedure apcost_handler begin
+   variable critter, type, aimed, weapon, normalCost, cost;
+   critter := get_sfall_arg;
+   type := get_sfall_arg;
+   aimed := get_sfall_arg;
+   normalCost := get_sfall_arg;
+
+   cost := -1;
+   if (ini_unarmed_special_attacks > 0) then begin
+      if (type == ATKTYPE_PALMSTRIKE) or (type == ATKTYPE_PIERCINGSTRIKE) or (type == ATKTYPE_JAB) then begin
+         cost := 4 - (has_trait(TRAIT_PERK, dude_obj, PERK_bonus_hth_attacks) > 0);
+      end
+      if (type == ATKTYPE_HIPKICK) or (type == ATKTYPE_HOOKKICK) or (type == ATKTYPE_PIERCINGKICK) then begin
+         cost := 5 - (has_trait(TRAIT_PERK, dude_obj, PERK_weapon_fast_reload) > 0);
+      end
+      if (cost != -1 and aimed) then 
+         cost++;
+   end
+   if (ini_reload_cost >= 0) then begin
+      if (type == ATKTYPE_LWEP_RELOAD or type == ATKTYPE_RWEP_RELOAD) then begin
+         cost := ini_reload_cost;
+         if (normalCost == 1) then 
+            cost := cost / 2;
+      end
+   end
+   if (cost != -1) then begin 
+      set_sfall_return(cost);
+   end
+end
+
+procedure start begin
+   if game_loaded then begin
+      if (get_int_from_ini(INI_COMBAT, INI_SECTION, "inventory_cost_per_action")) then begin
+         register_hook_proc(HOOK_USEOBJON, useobjon_handler);
+         register_hook_proc(HOOK_INVENTORYMOVE, inventorymove_handler);
+
+         // This mod will override the inventory opening ap costs from the ddraw.ini
+         // Also makes it so that the Quick Pockets perk can only be taken once.
+         set_inven_ap_cost(0);
+         set_perk_ranks(PERK_quick_pockets, 1);
+      end
+      int_from_ini_file(unarmed_special_attacks, INI_COMBAT, INI_SECTION);
+      int_from_ini_file(reload_cost, INI_COMBAT, INI_SECTION);
+      if (ini_unarmed_special_attacks > 0 or ini_reload_cost != -1) then begin
+         register_hook_proc(HOOK_CALCAPCOST, apcost_handler);
+      end
+   end
+end
