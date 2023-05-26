@@ -709,8 +709,8 @@
 {36101}{}{Ammunition. This cartridge appears to be ammo for the HN Needler Pistol. Each 'bullet' is a small hypodermic designed to inject a target with its contents upon impact.}
 {36200}{}{HN AP Needler Cartridge}
 {36201}{}{Ammunition. This cartridge appears to be armor-piercing ammo for the HN Needler Pistol. The hypodermic tips are made of a strange alloy and are incredibly sharp.}
-{36300}{}{7.62mm}
-{36301}{}{Ammunition. Caliber: 7.62mm.}
+{36300}{}{7.62mm FMJ}
+{36301}{}{Ammunition. Caliber: 7.62mm, full metal jacket.}
 {36400}{}{Robot Motivator}
 {36401}{}{This is the drive mechanism for a robot.}
 {36500}{}{Plant Spike}
@@ -1194,7 +1194,7 @@
 {62701}{}{Healthy soup made from local fish and some other strange ingredients. Really good aroma!}
 {62800}{}{Meat Stew}
 {62801}{}{Very healthy stew made with meat, fruits and some spices. Grandmother's recipe.}
-{62900}{}{9mm SMG}
+{62900}{}{14mm SMG}
 {62901}{}{Ruger MP9. This old pre-war sub-machine gun was primarily used by police forces. It is inferior to other SMGs, but can still be found in the wastes. Caliber: 9x19mm. Min ST: 4.}
 {63000}{}{Grenade Launcher}
 {63001}{}{40mm M79 grenade launcher. Sawed-off for concealed carry. Needs reload after each shot, but still effective against large groups. Min ST: 5.}
@@ -1220,3 +1220,7 @@
 {64001}{}{A sturdy leather gauntlet with three claws attached to it. Extremely sharp. Min ST: 3.}
 {64100}{}{12 ga. Dragon Breath}
 {64101}{}{These incendiary shells pack a fiery punch that can melt armor and flesh alike.}
+{64200}{}{7.62mm AP}
+{64201}{}{Ammunition. Caliber: 7.62mm armor piercing.}
+{64300}{}{Cowboy Repeater}
+{64301}{}{Winchester lever-action rifle, in .44 magnum. Min ST: 4.}
