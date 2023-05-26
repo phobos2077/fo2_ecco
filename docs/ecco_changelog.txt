@@ -10,7 +10,7 @@ v0.9.0
 - reduced price to learn gecko skinning and leather crafting
 
 > Combat:
-- new script-based damage formula (based on vanilla, with few important improvements):
+- new script-based damage formula (based on vanilla, with few important improvements)
 - armor and ammo stats revamped for new formula: AP ammo will now do better against late game armor
 - nerfed burst criticals: only a fraction of bullets will retain critical effects (optional)
 - rebalanced shotgun shell types to make both crafted types useful and changed third type to incendiary buckshot

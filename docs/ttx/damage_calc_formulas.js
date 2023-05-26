@@ -197,8 +197,9 @@ var yaamFormula = {
 
 var eccoFormula = {
     ...vanillaFormula,
-    name: "EcCo (DT add)",
-    dtAdjustDiv: 10,
+    name: "EcCo (DT add-, mult+)",
+    dtMultNegative: 1.3,
+    dtMultPositive: 2,
     burstCriticalFraction: 0.5,
     dmg: function(ctx) {
         let dmgThresh, dmgResist;
@@ -236,7 +237,9 @@ var eccoFormula = {
         if (ctx.ammo) {
             const drAdj = ctx.ammo.drAdj;
             if (drAdj < 0) {
-                dt += drAdj / this.dtAdjustDiv;
+                dt += drAdj * this.dtMultNegative / 10;
+            } else if (drAdj > 0) {
+                dt *= 1 + drAdj * this.dtMultPositive / 100;
             }
             dr += drAdj;
         }
@@ -248,8 +251,8 @@ var eccoFormula = {
 var eccoFormula2 = {
     ...eccoFormula,
     name: "EcCo (DT mult)",
-    dtMultPositive: 0,
-    dtMultNegative: 1,
+    dtMultPositive: 2,
+    dtMultNegative: 1.3,
     dtdr: function(ctx, noBypass) {
         let dt, dr;
         [dt, dr] = this.dtdrBeforeAmmo(ctx, noBypass);

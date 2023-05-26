@@ -1,33 +1,34 @@
-Import;ProFILE;NAME;Cost;Weight;Caliber;Quantity;AC Adjust;DR Adjust;Dam Mult;Dam Div;Size
-;00000008.pro;Explosive Rocket;200;3;Rocket;1;0;0;3;2;2
-;00000029.pro;10mm JHP;75;1;10mm;20;10;10;3;2;1
-;00000030.pro;10mm AP;100;1;10mm;20;-10;-40;1;1;1
-;00000031.pro;.44 Magnum JHP;50;1;.44 cal;12;10;10;3;2;1
-;00000032.pro;Flamethrower Fuel;250;8;Flamethrower Fuel;10;-30;20;5;4;3
-;00000033.pro;14mm AP;125;1;14mm;12;-20;-50;1;1;1
-;00000034.pro;.223 FMJ;150;1;.223;30;0;-10;1;1;1
-;00000035.pro;5mm JHP;150;1;5mm;40;10;0;4;3;1
-;00000036.pro;5mm AP;200;1;5mm;40;-10;-35;1;1;1
-;00000037.pro;Rocket AP;400;3;Rocket;1;-15;-60;1;1;2
-;00000038.pro;Small Energy Cell;200;2;C Energy Cell;20;0;-10;1;1;1
-;00000039.pro;Micro Fusion Cell;400;2;D Energy Cell;20;0;-20;1;1;1
-;00000095.pro;12 ga. Buckshot;150;1;12-gauge;12;-30;20;8;5;1
-;00000111.pro;.44 magnum FMJ;50;1;.44 cal;12;-10;-30;1;1;1
-;00000121.pro;9mm ball;50;1;9mm;20;0;10;1;1;1
-;00000163.pro;BB's;25;1;None;50;0;0;1;1;1
-;00000274.pro;Robo Rocket Ammo;0;10;Rocket;6;0;-25;1;1;0
-;00000357.pro;.45 Caliber;225;2;.45 cal;50;0;0;1;1;1
-;00000358.pro;2mm EC;250;1;2mm;10;-30;-50;1;1;1
-;00000359.pro;4.7mm Caseless;450;2;4.7mm caseless;40;-5;-30;4;3;1
-;00000360.pro;9mm AP;100;1;9mm;20;0;-20;1;1;1
-;00000361.pro;HN Needler Cartridge;200;1;HN needler;10;-10;0;1;1;1
-;00000362.pro;HN AP Needler Cartridge;250;1;HN needler;10;-10;-40;4;3;1
-;00000363.pro;7.62mm;200;2;7.62mm;20;-10;-30;1;1;1
-;00000382.pro;Flamethrower Fuel MKII;250;8;Flamethrower Fuel;10;-40;-10;1;1;3
-;00000610.pro;.50 BMG;250;2;.50 cal;5;-10;-50;1;1;1
-;00000614.pro;12 ga. Slugs;150;1;12-gauge;12;0;-30;1;1;1
-;00000615.pro;.223 AP;250;1;.223;30;-10;-50;4;5;1
-;00000631.pro;40mm HE Grenades;200;3;40mm grenade;3;0;-10;1;1;2
-;00000632.pro;40mm IC Grenades;300;3;40mm grenade;3;0;0;4;3;2
-;00000633.pro;14mm JHP;100;1;14mm;12;10;-10;3;2;1
-;00000641.pro;12 ga. Dragon Breath;200;1;12-gauge;12;-20;-10;5;4;1
+Import;ProFILE;NAME;Caliber;AC Adjust;DR Adjust;Dam Mult;Dam Div
+;00000008.pro;Explosive Rocket;Rocket;0;0;3;2
+;00000029.pro;10mm JHP;10mm;10;10;3;2
+;00000030.pro;10mm AP;10mm;-10;-30;4;5
+;00000031.pro;.44 Magnum JHP;.44 cal;10;20;9;5
+;00000032.pro;Flamethrower Fuel;Flamethrower Fuel;-30;20;5;4
+;00000033.pro;14mm AP;14mm;-20;-50;1;1
+;00000034.pro;.223 FMJ;.223;0;-10;1;1
+;00000035.pro;5mm JHP;5mm;10;0;4;3
+;00000036.pro;5mm AP;5mm;-10;-35;1;1
+;00000037.pro;Rocket AP;Rocket;-20;-60;1;1
+;00000038.pro;Small Energy Cell;C Energy Cell;0;-10;1;1
+;00000039.pro;Micro Fusion Cell;D Energy Cell;0;-20;1;1
+;00000095.pro;12 ga. Buckshot;12-gauge;-30;20;9;5
+;00000111.pro;.44 magnum FMJ;.44 cal;-10;-20;1;1
+;00000121.pro;9mm ball;9mm;0;10;1;1
+;00000163.pro;BB's;None;0;0;1;1
+;00000274.pro;Robo Rocket Ammo;Rocket;0;-25;1;1
+;00000357.pro;.45 Caliber;.45 cal;0;0;1;1
+;00000358.pro;2mm EC;2mm;-30;-50;1;1
+;00000359.pro;4.7mm Caseless;4.7mm caseless;-5;-30;4;3
+;00000360.pro;9mm AP;9mm;0;-20;1;1
+;00000361.pro;HN Needler Cartridge;HN needler;-10;0;1;1
+;00000362.pro;HN AP Needler Cartridge;HN needler;-10;-40;4;3
+;00000363.pro;7.62mm FMJ;7.62mm;0;-10;1;1
+;00000382.pro;Flamethrower Fuel MKII;Flamethrower Fuel;-40;-10;1;1
+;00000610.pro;.50 BMG;.50 cal;-10;-50;1;1
+;00000614.pro;12 ga. Slugs;12-gauge;0;-30;1;1
+;00000615.pro;.223 AP;.223;-10;-50;4;5
+;00000631.pro;40mm HE Grenades;40mm grenade;0;-10;1;1
+;00000632.pro;40mm IC Grenades;40mm grenade;0;0;4;3
+;00000633.pro;14mm JHP;14mm;10;-10;3;2
+;00000641.pro;12 ga. Dragon Breath;12-gauge;-20;-10;5;4
+;00000642.pro;7.62mm AP;7.62mm;-10;-50;4;5

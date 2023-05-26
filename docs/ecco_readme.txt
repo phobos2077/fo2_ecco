@@ -171,13 +171,13 @@ MFC  - 20 (50)
 
 
 > FIREARMS:
-- All shotguns: the max damage is much higher (min dmg is almost the same), wich makes them very deadly against unarmored critters, but cannot penetrate heavy armor and limited in range.
+- Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
 - Sawed off shotgun have a duplet (burst) firing mode with single shot animation.
-- All pistols (including energy pistols): cost 4 AP to shoot, but have smaller firing range and not as powerfull as rifles.
+- All "small" pistols cost 4 AP to shoot.
 - Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
 - Sniper Rifle is much more powerful, rechambered "back" to 7.62.
 - M60 is a true machinegun: more powerful with 100 rounds ammo capacity.
-- Bursts rebalanced to differ in bullet spread between weapon types (thanks to sfall). This makes certain guns work in new roles with effective mid-long range bursts.
+- Bursts rebalanced to differ in bullet spread between weapon types (thanks to sfall). This makes certain guns work in new roles with effective mid-long range bursts. Expect guns that should have small recoil to do better at long-range bursts.
 - Burst sizes were reduced across the board and rebalanced. This should make bursts viable with the added ammo scarcity.
 - Almost every weapon was subjectively improved (main concerns were: more interesting balance between weapons, taking new ammo behaviour into account, BUT not going too far from vanilla stats, except those weapons mentioned specifically).
 
@@ -294,14 +294,21 @@ many thanks goes to following people, who made this mod possible:
 - Haenlomal for YAAM which gives more weapon balance options
 - JimTheDinosaur for trap system inspiration
 - Killap for the Restoration Project that gives something new to play in Fallout :)
+- BGForgeNet team for carrying the torch of modding
 - Timeslip for sfall with much needed features it gives and Script Editor which is awesome!
 - Cubik2k for F2wedit and FO 1/2 Critter proto editor (eased my task VERY MUCH)
+- Mr.Stalin for Proto Manager
 - F2se author for this great mod testing tool :)
 - pelicano for Party Orders addon
 - people at NMA and nuclear-city forums for useful comments
 - Black Isle for my personal favorite game of all time! :)
 - BGForgeNet and rotators teams for inspiring me to come back to modding
 - NovaRain for his outstanding dedication to keeping sfall project alive and helping me get back on track
+- Ziro for solid balance advice
+
+
+Art credits:
+- Skipperino (DownloadFree3D.com, Low Poly Lever Action Rifle)
 
 
 ::O

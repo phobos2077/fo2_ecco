@@ -132,12 +132,16 @@ def main(file_pattern: str, output_dir: str, msg_dir: str):
     typeToDir = dict(zip(ITEM_TYPES, ['armor', 'container', 'drug', 'weapon', 'ammo', 'misc', 'key']))
     files = glob.glob(file_pattern)
     for file in files:
-        data = readFile(file, msgFiles)
-        # fileName = "".join(x for x in data['name'] if (x.isalnum() or x in "._- ")) if data['name'] else os.basename(file)
+        try:
+            data = readFile(file, msgFiles)
+            # fileName = "".join(x for x in data['name'] if (x.isalnum() or x in "._- ")) if data['name'] else os.basename(file)
 
-        outputSubdir = os.path.join(output_dir, typeToDir[data['type']])
-        os.makedirs(outputSubdir, exist_ok = True)
-        writeFile(os.path.join(outputSubdir, f'{os.path.splitext(os.path.basename(file))[0]}.yml'), data)
+            outputSubdir = os.path.join(output_dir, typeToDir[data['type']])
+            os.makedirs(outputSubdir, exist_ok = True)
+            writeFile(os.path.join(outputSubdir, f'{os.path.splitext(os.path.basename(file))[0]}.yml'), data)
+        except Exception as e:
+            print("Error reading proto " + file + ": ", e)
+
     print("Written " + str(len(files)) + " text files.")
 
 if __name__ == '__main__':
