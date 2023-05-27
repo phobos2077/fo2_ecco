@@ -309,6 +309,7 @@ many thanks goes to following people, who made this mod possible:
 
 Art credits:
 - Skipperino (DownloadFree3D.com, Low Poly Lever Action Rifle)
+- "Grenade launcher - Milkor MGL" (https://skfb.ly/oESu8) by Valo is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
 
 ::O

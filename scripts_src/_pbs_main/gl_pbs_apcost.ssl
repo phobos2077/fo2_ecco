@@ -11,16 +11,19 @@
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 #include "../sfall/command_lite.h"
+#include "../sfall/command_extra.h"
 
 #include "../_pbs_headers/ecco.h"
 
 #define INI_SECTION     "APCOST"
 #define ITEM_USE_COST   (2 - dude_perk(PERK_quick_pockets))
 
+#define int_from_apcost_ini(var)       int_from_ini_file(var, INI_COMBAT, INI_SECTION)
 
 variable
    ini_unarmed_special_attacks,
-   ini_reload_cost;
+   ini_reload_cost,
+   ini_carry_unspent_ap;
 
 procedure reduce_ap_from_inventory(variable critter, variable cost) begin
    variable ap;
@@ -137,6 +140,50 @@ procedure apcost_handler begin
    end
 end
 
+/*
+   HOOK_COMBATTURN
+   Runs before and after each turn in combat (for both PC and NPC).
+
+   int     arg0 - event type:
+                  1 - start of turn
+                  0 - normal end of turn
+                  -1 - combat ends abruptly (by script or by pressing Enter during PC turn)
+                  -2 - combat ends normally (hook always runs at the end of combat)
+   Critter arg1 - critter doing the turn
+   bool    arg2 - 1 at the start/end of the player's turn after loading a game saved in combat mode, 0 otherwise
+
+   int     ret0 - pass 1 at the start of turn to skip the turn, pass -1 at the end of turn to force end of combat
+*/
+variable
+   critter_ap_map;
+
+procedure combatturn_handler begin
+   variable curAP, carryAP;
+   variable
+      type := get_sfall_arg,
+      critter := get_sfall_arg;
+
+   if (not critter) then return;
+   
+   curAP := get_critter_current_ap(critter);
+   //display_msg("combatturn "+type+", "+obj_name(critter)+", cur AP: "+curAP);
+
+   if (type == 0) then begin
+      critter_ap_map[critter] := curAP;
+   end else begin
+      if (type == 1) then begin
+         carryAP := critter_ap_map[critter];
+         if (carryAP > 0) then begin
+            if (carryAP > ini_carry_unspent_ap) then carryAP := ini_carry_unspent_ap;
+
+            set_critter_current_ap(critter, curAP + carryAP);
+            //debug_msg("Boost "+obj_name_safe(critter)+" AP by "+carryAP);
+         end
+      end
+      critter_ap_map[critter] := 0;
+   end
+end
+
 procedure start begin
    if game_loaded then begin
       if (get_int_from_ini(INI_COMBAT, INI_SECTION, "inventory_cost_per_action")) then begin
@@ -148,10 +195,16 @@ procedure start begin
          set_inven_ap_cost(0);
          set_perk_ranks(PERK_quick_pockets, 1);
       end
-      int_from_ini_file(unarmed_special_attacks, INI_COMBAT, INI_SECTION);
-      int_from_ini_file(reload_cost, INI_COMBAT, INI_SECTION);
+      int_from_apcost_ini(unarmed_special_attacks);
+      int_from_apcost_ini(reload_cost);
       if (ini_unarmed_special_attacks > 0 or ini_reload_cost != -1) then begin
          register_hook_proc(HOOK_CALCAPCOST, apcost_handler);
+      end
+
+      int_from_apcost_ini(carry_unspent_ap);
+      if (ini_carry_unspent_ap > 0) then begin
+         critter_ap_map := create_array_map;
+         register_hook_proc(HOOK_COMBATTURN, combatturn_handler);
       end
    end
 end
