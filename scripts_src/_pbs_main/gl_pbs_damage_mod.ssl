@@ -165,9 +165,9 @@ procedure combatdamage_handler begin
          difficulty := 125;
    end
 
-   // F2 default start
-   // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
    amount := calc_damage(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
+   // F2 default, for reference:
+   // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
    /*dmg_resist += get_ammo_value(weapon, PROTO_AM_DR_MOD); // item_w_dr_adjust_ (DR Adjust %)
    if (dmg_resist < 100) then begin
       if (dmg_resist < 0) then dmg_resist := 0;

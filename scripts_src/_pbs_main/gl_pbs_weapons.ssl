@@ -175,7 +175,7 @@ procedure combatdamage_handler begin
    if (target and attacker) then begin
       if (obj_type(target) == OBJ_TYPE_CRITTER) then begin
          if (weapon) then weaponPid := obj_pid(weapon);
-         //debug_msg("combatdamage: "+target+" (type:"+obj_type(target)+"), wpn: "+weaponPid+", flags: "+target_flags);
+         //debug_msg("combatdamage: "+obj_name(target)+", wpn: "+weaponPid+", flags: "+target_flags+", elec DT: "+get_critter_stat(target, STAT_dmg_thresh_electrical));
 
          // Taser knockout.
          if (weaponPid == PID_PBS_TASER) then begin
@@ -193,6 +193,8 @@ procedure combatdamage_handler begin
    set_sfall_return(attacker_damage);
    set_sfall_return(target_flags);
    set_sfall_return(attacker_flags);
+
+   set_sfall_arg(4, target_flags);
 end
 
 
