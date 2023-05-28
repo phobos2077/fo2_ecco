@@ -60,7 +60,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_STIMPAK, 2, 5, 100)
          check_restock_item(PID_10MM_SMG, 0, 1, 50)
          check_restock_item(PID_PBS_9MM_SMG, 0, 1, 25) // phobos2077
-         check_restock_item(PID_9MM_BALL, 2, 5, 75) // phobos2077
+         check_restock_item(PID_9MM_BALL, 1, 3, 75) // phobos2077
          check_restock_item(PID_DESERT_EAGLE, 1, 2, 100)
          check_restock_item(PID_SLEDGEHAMMER, 0, 1, 100)
          check_restock_item(PID_RADAWAY, 0, 3, 100)

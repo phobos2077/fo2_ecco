@@ -1194,8 +1194,8 @@
 {62701}{}{Healthy soup made from local fish and some other strange ingredients. Really good aroma!}
 {62800}{}{Meat Stew}
 {62801}{}{Very healthy stew made with meat, fruits and some spices. Grandmother's recipe.}
-{62900}{}{14mm SMG}
-{62901}{}{Ruger MP9. This old pre-war sub-machine gun was primarily used by police forces. It is inferior to other SMGs, but can still be found in the wastes. Caliber: 9x19mm. Min ST: 4.}
+{62900}{}{9mm SMG}
+{62901}{}{This old pre-war sub-machine gun was primarily used by police forces. It is inferior to other SMGs, but can still be found in the wastes. Caliber: 9x19mm. Min ST: 4.}
 {63000}{}{Grenade Launcher}
 {63001}{}{40mm M79 grenade launcher. Sawed-off for concealed carry. Needs reload after each shot, but still effective against large groups. Min ST: 5.}
 {63100}{}{40mm HE Grenades}
@@ -1224,3 +1224,5 @@
 {64201}{}{Ammunition. Caliber: 7.62mm armor piercing.}
 {64300}{}{Cowboy Repeater}
 {64301}{}{Winchester lever-action rifle, in .44 magnum. Min ST: 4.}
+{64400}{}{14mm SMG}
+{64401}{}{When you need the most firepower in the smallest package. Caliber: 14mm. Min ST: 6.}

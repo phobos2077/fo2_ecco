@@ -608,7 +608,7 @@ type_02=ratio:50%, pid:16777263, Item:351(wielded), Item:40, Item:(0-15)41, Scri
 position=huddle, spacing:2
 
 [Encounter: WILD1_Trader]
-type_00=pid:16777274, Item:9(wielded), Item:(0-20)41, Script:741                             ; Average Male Merchant w/ 10mm SMG
+type_00=pid:16777274, Item:629(wielded), Item:(0-20)41, Script:741              ; Average Male Merchant w/ 9mm SMG
 type_01=ratio:50%, pid:16777262, Item:122(wielded), Script:259                  ; Male Gun Guard w/ 9mm Mauser
 type_02=ratio:50%, pid:16777263, Item:10(wielded), Script:259                   ; Female Gun Guard w/ Hunting Rifle
 ;position=Surrounding

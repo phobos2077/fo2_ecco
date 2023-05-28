@@ -13,13 +13,13 @@ Import;ProFILE;NAME;Caliber;AC Adjust;DR Adjust;Dam Mult;Dam Div
 ;00000039.pro;Micro Fusion Cell;D Energy Cell;0;-20;1;1
 ;00000095.pro;12 ga. Buckshot;12-gauge;-30;20;9;5
 ;00000111.pro;.44 magnum FMJ;.44 cal;-10;-20;1;1
-;00000121.pro;9mm ball;9mm;0;10;1;1
+;00000121.pro;9mm ball;9mm;0;0;1;1
 ;00000163.pro;BB's;None;0;0;1;1
 ;00000274.pro;Robo Rocket Ammo;Rocket;0;-25;1;1
 ;00000357.pro;.45 Caliber;.45 cal;0;0;1;1
 ;00000358.pro;2mm EC;2mm;-30;-50;1;1
 ;00000359.pro;4.7mm Caseless;4.7mm caseless;-5;-30;4;3
-;00000360.pro;9mm AP;9mm;0;-20;1;1
+;00000360.pro;9mm AP;9mm;0;-30;1;1
 ;00000361.pro;HN Needler Cartridge;HN needler;-10;0;1;1
 ;00000362.pro;HN AP Needler Cartridge;HN needler;-10;-40;4;3
 ;00000363.pro;7.62mm FMJ;7.62mm;0;-10;1;1
