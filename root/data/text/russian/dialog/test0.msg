@@ -118,8 +118,8 @@
 # MOD CONFIGURATION
 {491}{}{1}  # allow party members to help with crafting (1 enable, 0 disable)
 {492}{}{2}  # split items into categories (0 disable, 1 enable, 2 automatically enable when enough items available)
-{493}{}{0}  # use sfall gloval vars to check if item is available
-{494}{}{29+46}  # Crafting shortcut: Ctrl+C
+{493}{}{1}  # use sfall gloval vars to check if item is available
+{494}{}{56+33}  # Crafting shortcut: Alt+F
 
 # CRAFTING SCHEMATICS:
 

@@ -2,7 +2,7 @@
 
 v0.9.0
 > Economy:
-- rebalanced barter - buy prices aligned with vanilla prices, sell prices higher at low skill and differ less between merchants
+(!) rebalanced barter - buy prices aligned with vanilla prices, sell prices higher at low skill and differ less between merchants
 - party members with high barter now give simple discount to prices, instead of overriding player skill
 - added more items to town demands
 - reduced base price of some high-tier weapons and armor
@@ -10,21 +10,26 @@ v0.9.0
 - reduced price to learn gecko skinning and leather crafting
 
 > Combat:
-- new script-based damage formula (based on vanilla, with few important improvements)
+(!) new script-based damage formula (based on vanilla, with few important improvements)
 - armor and ammo stats revamped for new formula: AP ammo will now do better against late game armor
 - nerfed burst criticals: only a fraction of bullets will retain critical effects (optional)
+- up to 2 unspent AP carry over to the next round (optional)
+- added option to have opening inventory cost no AP, but every action cost 2 AP in combat (replaces "drug free uses")
 - rebalanced shotgun shell types to make both crafted types useful and changed third type to incendiary buckshot
 - removed duplet mode from regular shotgun (reserved for Sawed-off variant)
+- new guns: 14mm SMG and .44 lever-action
+- new ammo types: 7.62mm AP, 12ga Incendiary Shells (replaces "Buckshot" from 0.6.2)
 - .223 Pistol is now unique (can only be bought from one person and is back to it's full power)
 - added Weapon Penetrate to XL70E3
 - removed HK G11E & Pulse Pistol from random encounters
 - small adjustments to ammo&weapon stats based on data analysis
-- added option to have opening inventory cost no AP, but every action cost 2 AP in combat (replaces "drug free uses")
-- new spray settings script (different bullet distribution based on weapon type!)
+- added script to differentiate bullet distribution in bursts between weapons
 - revamped bursts: lower burst sizes for most weapons, but damage and spray settings tweaked to compensate
 - reverted flamers to use both fuel types and rebalanced them
 
+
 > Other:
+- crafting: added button on main panel + several bug fixes and improvements
 - added back russian translation
 - replaced all human NPC armor changes with a script (and fixed several issues of wrong armor being applied)
 - rewritten most global scripts to fix issues and not use hs_* names

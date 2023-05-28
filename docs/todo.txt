@@ -1,9 +1,11 @@
 for 0.9:
-- add 7.62 AP ammo & rebalance 7.62 weapons
-- fitting sprite for Dragon Breath
+- integrate 7.62 AP ammo & rebalance 7.62 weapons
+- integrate new guns
 - review perk/skill reqs for early craft (too high from feedback)
 - remove 9mm SMG and second 9mm ammo type from stores and worldmap
 - convert Mauser to 10mm to complement P90c as mid-game 10mm
+- add grenade launcher to more enemies
+- fix crafting button visual (change iface panel)
 - review armor class for armors
 - review weapon distribution in stores
 - review and update full readme
@@ -12,8 +14,17 @@ for 0.9:
 
 
 for "future":
-- add weapons to utilize .44 and 14mm calibers (Carbine/SMG)
 - attempt to make melee useful for mid game (stun, knoknout effects, penetrate for knives, etc.)
 - rewrite weapons mod to be configurable from ini
 - port "grenades anywhere" script from FO2Tweaks
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
+- rewrite Mr.Fixit to read from INI file
+
+
+
+
+
+IDEAS:
+- subsequent shots to the same target cost less AP (except bursts)
+- add penetrate to bladed weapons and knockback to blunt
+- guaranteed damage bonus for head/eye shots? ()

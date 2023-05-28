@@ -1,17 +1,18 @@
-#include "../sfall/define_lite.h"
-#include "../sfall/define_extra.h"
-#include "learn_craft.h"
-
 #define BATCH_MSG               SCRIPT_TEST0
 
 #include "../sfall/sfall.h"
-#include "../headers/itempid.h"
+#include "../sfall/lib.arrays.h"
 #include "../sfall/lib.inven.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
 
 #include "atoi2.h"
 #include "custstr2.h"
 
-#define CRAFT_MOD_VERSION		3
+//#include "../headers/itempid.h"
+#include "learn_craft.h"
+
+#define CRAFT_MOD_VERSION        3
 
 #define SECTION_START           1000
 #define SECTION_STEP            100
@@ -72,14 +73,14 @@ end
 #define field(x)                bstr(cur_section_start + x)
 #define skill_name(x)           bstr(1 + x)
 #define skill_def(x)            bstr(19 + x)
-#define npc_pid(x)            	bstr(450 + x)
+#define npc_pid(x)                bstr(450 + x)
 
-#define cfg_party_skills		atoi(bstr(491))
-#define cfg_use_categories		atoi(bstr(492))
-#define cfg_check_gvars 		atoi(bstr(493))
-#define cfg_fixit_hotkey 		bstr(494)
+#define cfg_party_skills        atoi(bstr(491))
+#define cfg_use_categories        atoi(bstr(492))
+#define cfg_check_gvars         atoi(bstr(493))
+#define cfg_fixit_hotkey         bstr(494)
 
-#define cur_section_is_available	((cur_category == 0 or atoi(field(ITEM_CAT)) == cur_category) and (not(check_gvars) or field(ITEM_GVAR) == "" or (field(ITEM_GVAR) != "NEVER" and get_sfall_global_int(field(ITEM_GVAR)) > 0)))
+#define cur_section_is_available    ((cur_category == 0 or atoi(field(ITEM_CAT)) == cur_category) and (not(check_gvars) or field(ITEM_GVAR) == "" or (field(ITEM_GVAR) != "NEVER" and get_sfall_global_int(field(ITEM_GVAR)) > 0)))
 
 /*
 #define free_array_var(var)  \
@@ -130,39 +131,38 @@ pure procedure skill_names(variable skills);
 
 /******************************************************************************/
 
-#define _if_global_update(sgvar, gvar)		if (get_sfall_global_int(sgvar) == 0) then set_sfall_global(sgvar, global_var(gvar));
+#define _if_global_update(sgvar, gvar)        if (get_sfall_global_int(sgvar) == 0) then set_sfall_global(sgvar, global_var(gvar));
 
 procedure handle_mod_update begin
-	if (get_sfall_global_int(SGVAR_CRAFT_VERSION) < 2 and (global_var(644) or global_var(645) or global_var(647) or global_var(648) or global_var(649) or global_var(650))) then begin
-		// convert global vars from previous version
+    if (get_sfall_global_int(SGVAR_CRAFT_VERSION) < 2 and (global_var(644) or global_var(645) or global_var(647) or global_var(648) or global_var(649) or global_var(650))) then begin
+        // convert global vars from previous version
       display_msg("Converting schematic gvars to new format...");
-		_if_global_update(SGVAR_CRAFT_EXPLOSIVES, 644)
-		_if_global_update(SGVAR_CRAFT_LEATHER, 	645)
-		_if_global_update(SGVAR_CRAFT_FIRST_AID, 	647)
-		_if_global_update(SGVAR_CRAFT_ELECTRONICS,648)
-		_if_global_update(SGVAR_CRAFT_AMMO, 		649)
-		_if_global_update(SGVAR_CRAFT_BLADES, 		650)
-	end
-	set_sfall_global(SGVAR_CRAFT_VERSION, CRAFT_MOD_VERSION);
+        _if_global_update(SGVAR_CRAFT_EXPLOSIVES, 644)
+        _if_global_update(SGVAR_CRAFT_LEATHER,     645)
+        _if_global_update(SGVAR_CRAFT_FIRST_AID,     647)
+        _if_global_update(SGVAR_CRAFT_ELECTRONICS,648)
+        _if_global_update(SGVAR_CRAFT_AMMO,         649)
+        _if_global_update(SGVAR_CRAFT_BLADES,         650)
+    end
+    set_sfall_global(SGVAR_CRAFT_VERSION, CRAFT_MOD_VERSION);
 end
 
 #undef _if_global_update
 
-procedure wtftest begin
-   display_msg("CLICKED!");
-end
-
 procedure batch_init begin
-	call handle_mod_update;
-    //pcx_show := 0;
+    debug_msg("batch_init()");
+    call handle_mod_update;
+    stop_game;
+
     cur_section_start := SECTION_START;
     //last_saved_pos := cur_section_start;
     cur_pos := 0;
     items_avail := 0;
     cur_category := 0;
 
-	win_x := (get_screen_width - 640) / 2;
-	win_y := (get_screen_height - 380) / 2;
+    win_x := (get_screen_width - 640) / 2;
+    win_y := (get_screen_height - 380) / 2;
+    if (win_y > 100) then win_y := 100; // for some reason, SayOptionWindow can't be lowered after certain Y coordinate
 
     SetFont(5);
     SaySetSpacing(3);
@@ -177,11 +177,6 @@ procedure batch_init begin
     CreateWin("win_dscr", win_x + 1, win_y + 1, 300, 378);
     SelectWin("win_dscr");
 
-    /*AddButton("aaa", win_x, win_y, 50, 50);
-    AddButtonText("aaa", "TEXT");
-    addbuttonproc ("aaa", null_proc, null_proc, null_proc, wtftest);*/
-
-    //AddButtonProc(10, 10, 70, 20, wtftest);
     Display("PCX/w_dscr.pcx");
 
     ShowWin;
@@ -192,7 +187,6 @@ procedure batch_init begin
        use_categories := true;
     end else if (cfg_use_categories == 2) then begin
        call count_items_avail;
-       //display_msg("avail="+items_avail);
        if (items_avail > ITEMS_PER_SCREEN) then
           use_categories := true;
     end
@@ -208,10 +202,9 @@ procedure batch_init begin
     call loop_mode;
 
     DeleteWin("win_dscr");
-//    if (pcx_show) then begin
-//        DeleteWin("win_pcx");
-//        DeleteWin("win_name");
-//    end
+
+    resume_game;
+    debug_msg("batch_init() returns");
 end
 
 procedure count_items_avail begin
@@ -275,10 +268,12 @@ procedure display_category_list begin
     variable skip_counter := 0;
     var catList;
     var cat;
+    debug_msg("display_category_list(): SayStart");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_display_list", bstr(210));
 
+        debug_msg("display_category_list: redraw win");
         call redraw_win_idle;
         //cur_section_start := last_saved_pos;
         cur_category := 0;
@@ -297,9 +292,11 @@ procedure display_category_list begin
         //if (items_avail == 0) then SayOption(bstr(107), exit_mode);
         SayOption(bstr(101), exit_mode);
     SayEnd;
+    debug_msg("display_category_list(): SayEnd");
 end
 
 procedure display_items_list begin
+    debug_msg("display_items_list(): sayStart");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_display_list", bstr(200));
@@ -307,8 +304,11 @@ procedure display_items_list begin
         SayOptionFlags(justifyleft);
         call display_items_avail;
         //SayOptionFlags(justifycenter bwor textshadow bwor textdirect);
+
+        debug_msg("display_items_list: sayoption "+bstr(101));
         SayOption(bstr(101), exit_mode);
     SayEnd;
+    debug_msg("display_items_list(): SayEnd");
 end
 
 procedure display_item_options begin
@@ -316,8 +316,11 @@ procedure display_item_options begin
     cur_pid_qty := atoim(field(ITEM_PID), cur_pid + ":");
     if (cur_pid_qty == 0) then cur_pid_qty := 1;
     max_undo := obj_is_carrying_obj_pid(dude_obj, cur_pid);
+    
+    debug_msg("display_item_options: SayStart()");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
+        debug_msg("display_item_options SayReply: " + proto_data(cur_pid, it_description));
         SayReply("r_item_options", proto_data(cur_pid, it_description));
         call draw_item_pcx;
         call draw_item_properties;
@@ -330,24 +333,29 @@ procedure display_item_options begin
             SayOption(bstr(112), item_categories_mode);
         SayOption(bstr(101), exit_mode);
     SayEnd;
+    debug_msg("display_item_options: SayEnd()");
 end
 
 procedure display_batch_ok begin
+    debug_msg("display_batch_ok: SayStart()");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_batch_item", bstr(201));
         SayOption(bstr(100), item_options_mode);
         SayOption(bstr(101), exit_mode);
     SayEnd;
+    debug_msg("display_batch_ok: SayEnd()");
 end
 
 procedure display_undo_ok begin
+    debug_msg("display_undo_ok: SayStart()");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_undo_batch", bstr(202));
         SayOption(bstr(100), item_options_mode);
         SayOption(bstr(101), exit_mode);
     SayEnd;
+    debug_msg("display_undo_ok: SayEnd()");
 end
 
 procedure null_proc begin
@@ -364,21 +372,12 @@ procedure list_back_proc begin
 end
 
 procedure redraw_win_dscr begin
-//    if (pcx_show) then begin
-//        DeleteWin("win_pcx");
-//        DeleteWin("win_name");
-//        pcx_show := 0;
-//    end
-    DeleteWin("win_dscr");
-    CreateWin("win_dscr", win_x + 1, win_y + 1, 300, 378);
     SelectWin("win_dscr");
     Display("PCX/w_dscr.pcx");
     ShowWin;
 end
 
 procedure redraw_win_idle begin
-    DeleteWin("win_dscr");
-    CreateWin("win_dscr", win_x + 1, win_y + 1, 300, 378);
     SelectWin("win_dscr");
     Display("PCX/w_idle.pcx");
     ShowWin;
@@ -388,6 +387,7 @@ procedure display_items_avail begin
     variable lines_counter := 0;
     variable skip_counter := 0;
     var cat;
+    debug_msg("display_items_avail()");
     //call redraw_win_dscr;
     call redraw_win_idle;
     //cur_section_start := last_saved_pos;
@@ -475,7 +475,7 @@ procedure batch_item(variable num) begin
 //    cur_time := atoi(field(ITEM_TIME));
     if (random(0,1)) then play_sfx("carrepair");
     else play_sfx("fixstill");
-	  gfade_out(400);
+      gfade_out(400);
     game_time_advance(cur_time * num);
     gfade_in(400);
     while (field(line) != ITEM_COMPONENTS and line < SECTION_STEP) do line += 1;
@@ -574,6 +574,7 @@ procedure draw_item_properties begin
         str := 0;
         list;
     end
+    debug_msg("draw_item_properties "+cur_pid);
     SelectWin("win_dscr");
     // ???????? ????????
     SetTextColor(0.0, 1.0, 0.0);
@@ -640,20 +641,16 @@ procedure draw_item_properties begin
             str := "";
         end
         else begin
-        	// check party members skills
-        	if (cfg_party_skills) then begin
-        		str := get_party_member_with_skill(list, skill_lv);
-        	end else begin
-        		str := 0;
-        	end
-        	if (str) then begin
-        		SetTextColor(0.0, 1.0, 0.0);
-        		str := " (" + str + ")";
-        	end else begin
-            SetTextColor(1.0, 0.0, 0.0);
-            has_skills := 0;
-            str := "";
-         end
+            // check party members skills
+            str := get_party_member_with_skill(list, skill_lv) if cfg_party_skills else 0;
+            if (str) then begin
+                SetTextColor(0.0, 1.0, 0.0);
+                str := " (" + str + ")";
+            end else begin
+                SetTextColor(1.0, 0.0, 0.0);
+                has_skills := 0;
+                str := "";
+            end
         end
         Format(skill_names(list) + ": " + skill_lv + str, 25, display_line, 250, 10, justifyleft);
         display_line += 10;
@@ -735,24 +732,18 @@ procedure draw_item_pcx begin
         w;
         h;
     end
+    debug_msg("draw_item_pcx "+cur_pid);
+    // TODO: remove ITEM_PCX
     cur_pcx := field(ITEM_PCX);
+    // TODO: get size from FRM directly
     cur_size := atoi(field(ITEM_SIZE));
     w := cur_size / 1000;
     h := cur_size % 1000;
-//    pcx_show := 1;
-//    CreateWin("win_pcx", 150 - w/2, 55 - h/2, w, h);
-//    SelectWin("win_pcx");
     call redraw_win_dscr;
     SelectWin("win_dscr");
-//    DisplayGFX(cur_pcx, 0, 0, w, h);
-    DisplayGFX(cur_pcx, 150 - w/2, 55 - h/2, w, h);
+    //DisplayGFX(cur_pcx, 150 - w/2, 55 - h/2, w, h);
+    draw_image(proto_data(cur_pid, it_inv_fid), 0, 150 - w/2, 55 - h/2, false);
     ShowWin;
-/*    CreateWin("win_name", 25, 110, 150, 30);
-    SelectWin("win_name");
-    Display("");
-    SetTextColor(0.0, 1.0, 0.0);
-    PrintRect(proto_data(cur_pid, it_name), 150, 0);
-    ShowWin;*/
 end
 
 procedure parse_skill_name(variable s_name) begin
@@ -776,21 +767,17 @@ procedure parse_skill_name(variable s_name) begin
 end
 
 procedure get_party_member_with_skill(variable skills, variable level) begin
-	variable ret := 0;
-	variable i;
-	variable obj;
-	//display_msg("search skill "+skill+" at least " + level);
-	while (ret == 0 and npc_pid(i) != "Error") do begin
-		obj := party_member_obj(atoi(npc_pid(i)));
-		if (obj) then begin
-			//display_msg(proto_data(atoi(npc_pid(i)), cr_name) + " has " + has_skill(obj, skill));
-			if (has_skill_sum(obj, skills) >= level) then begin
-				ret := proto_data(atoi(npc_pid(i)), cr_name);
-			end
-		end
-		i++;
-	end
-	return ret;
+    variable ret := 0;
+    variable obj;
+    display_msg("search skill "+debug_array_str(skills)+" at least " + level);
+
+    // TODO: use party_member_list
+    foreach (obj in party_member_list_critters) if (obj) then begin
+        if (has_skill_sum(obj, skills) >= level) then begin
+            ret := obj_name(obj);// proto_data(obj_pid, cr_name)
+        end
+    end
+    return ret;
 end
 
 pure procedure has_skill_sum(variable crit, variable skills) begin
