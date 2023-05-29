@@ -41,7 +41,7 @@ FIRST_AID+OUTDOORSMAN:75
 [ITEM]
 273                               # PID_HEALING_POWDER
 pcx/items/healpwdr.pcx
-47060
+47063
                                   # ALWAYS
 18000                             # 30 m
 NO
@@ -263,7 +263,7 @@ REPAIR+SMALL_GUNS:100
 
 
 [ITEM]
-641                              # new 12ga buck ammo
+641                              # new 12ga incendiary
 pcx/items/ssbcksht.pcx
 79060
 CRFT_AMM                         # ammo craft schematics
@@ -280,53 +280,70 @@ REPAIR+SMALL_GUNS:120
 
 
 [ITEM]
-615                                # new .223 AP
+615                              # new .223 AP
 pcx/items/223ap.pcx
-85065
-CRFT_AMM                              # ammo craft schematics
-162000                            # 4 h 30 m
+81059
+CRFT_AMM                         # ammo craft schematics
+162000                           # 4 h 30 m
 NO
 5                                # Ammo
 [TOOLS]
-308                            # PID_SUPER_TOOL_KIT
+308                              # PID_SUPER_TOOL_KIT
 [SKILLS]
-REPAIR+SMALL_GUNS:160
+REPAIR+SMALL_GUNS:140
 [COMPONENTS]
-34:1                              # 223 FMJ
+34:1                             # 223 FMJ
 36:1                             # 5mm AP
 
 
 [ITEM]
-633                               # 14mm JHP
-pcx/items/14mmJHP.pcx
-45068
-CRFT_AMM                          # Ammo schematics
-72000                             # 2h
+642                              # 7.62 AP
+pcx/items/223ap.pcx
+57054
+CRFT_AMM                         # ammo craft schematics
+162000                           # 4 h 30 m
 NO
 5                                # Ammo
 [TOOLS]
-75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+308                              # PID_SUPER_TOOL_KIT
 [SKILLS]
-REPAIR+SMALL_GUNS:120
+REPAIR+SMALL_GUNS:160
 [COMPONENTS]
-33:1                              # 14mm AP
+363:1                            # 7.62 FMJ
+33:1                             # 14mm AP
 
 
 [ITEM]
-632                               # 40mm IC
-pcx/items/40mm_IC.pcx
-74060
-CRFT_AMM                          # Ammo schematics
-36000                             # 2h
+633                              # 14mm JHP
+pcx/items/14mmJHP.pcx
+45068
+CRFT_AMM                         # Ammo schematics
+72000                            # 2h
 NO
 5                                # Ammo
 [TOOLS]
-308                               # Super tool kit
+75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+SMALL_GUNS:120
+[COMPONENTS]
+33:1                             # 14mm AP
+
+
+[ITEM]
+632                              # 40mm IC
+pcx/items/40mm_IC.pcx
+74060
+CRFT_AMM                         # Ammo schematics
+36000                            # 2h
+NO
+5                                # Ammo
+[TOOLS]
+308                              # Super tool kit
 [SKILLS]
 REPAIR+BIG_GUNS:150
 [COMPONENTS]
-631:1                              # 40mm HE grenades
-159:2                              # Molotov
+631:1                            # 40mm HE grenades
+159:2                            # Molotov
 
 
 # TRAPS

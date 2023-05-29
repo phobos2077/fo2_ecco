@@ -352,7 +352,7 @@ position=wedge, spacing:2
 [Encounter: ARRO_Outcasts]
 type_00=ratio:60%, pid:16777420, Script:620                     ; Male Cannibal
 type_01=ratio:20%, pid:16777421, Script:620                     ; Female Cannibal
-type_02=ratio:10%, pid:16777420, Item:4(wielded), Script:620    ; Male Cannibal w/ Knife
+type_02=ratio:10%, pid:16777420, Item:4(wielded), Item:618, Script:620    ; Male Cannibal w/ Knife & Spike Trap
 type_03=ratio:10%, pid:16777421, Item:4(wielded), Script:620    ; Female Cannibal w/ Knife
 position=huddle, spacing:3
 
@@ -403,9 +403,10 @@ position=huddle, spacing:5
 
 [Encounter: KLA_Bandits]
 ;type_00=pid:16777248, Item:4(wielded), Item:40, Item:(1-3)273, Script:624        ; Melee Thug (Bandit Leader) w/ Sledgehammer, Stim, Healing Powder
-type_00=ratio:33%, pid:16777285, Item:7(wielded), Item:(0-10)41, Script:624               ; Weak Melee Guard (male) w/ Crowbar
-type_01=ratio:33%, pid:16777428, Item:4(wielded), Item:(0-10)41, Script:624                ; Bandit (male) w/ Knife
-type_02=ratio:33%, pid:16777429, Item:280(wielded), Item:(0-10)41, Script:624               ; Bandit (female) w/ Sharp Spear
+type_00=ratio:25%, pid:16777285, Item:7(wielded), Item:(0-10)41, Script:624               ; Weak Melee Guard (male) w/ Crowbar
+type_01=ratio:25%, pid:16777428, Item:4(wielded), Item:(0-10)41, Script:624               ; Bandit (male) w/ Knife
+type_02=ratio:25%, pid:16777429, Item:280(wielded), Item:(0-10)41, Script:624             ; Bandit (female) w/ Sharp Spear
+type_03=ratio:25%, pid:16777252, Item:300(wielded), Item:(0-1)29, Item:(0-10)41, Script:624  ; Gun Thug (male) w/ Zip Gun
 ;type_04=ratio:25%, pid:16777429, Item:7(wielded), Item:(0-10)41, Script:624               ;Bandit (female) w/ Spear
 type_05=Dead, pid:16777272, Distance:7 ; Dead Bad Merchant
 type_06=Dead, pid:16777287, Distance:8 ; Dead Male Weak Gun Guard
@@ -413,19 +414,19 @@ type_07=Dead, pid:16777288, Distance:9 ; Dead Female Weak Gun Guard
 position=double_line, spacing:2
 
 [Encounter: KLA_Homeless]
-type_00=ratio:33%, pid:16777284, Item:4(wielded), Script:623    ; Strong Peasant Female w/ Club
-type_01=ratio:33%, pid:16777283, Item:21(wielded), Script:623   ; Strong Peasant Male w/ Brass Knuckles
+type_00=ratio:20%, pid:16777284, Item:4(wielded), Script:623    ; Strong Peasant Female w/ Club
+type_01=ratio:30%, pid:16777283, Item:21(wielded), Script:623   ; Strong Peasant Male w/ Brass Knuckles
 type_02=ratio:15%, pid:16777279, Item:320, Script:623           ; Weak Peasant Male w/ Sharpened Pole
-type_03=ratio:15%, pid:16777280, Item:4, Script:623             ; Weak Peasant Female w/ Knife
-type_04=ratio:4%, pid:16777270, Script:623                      ; Male Loser - killap - adult male proto, so why child script?
+type_03=ratio:30%, pid:16777280, Item:300(wielded), Item:4, Script:623             ; Weak Peasant Female w/ Zip Gun & Knife
+type_04=ratio:5%, pid:16777270, Script:623                      ; Male Loser - killap - adult male proto, so why child script?
 type_05=pid:16777269, Script:1129                                ; Female Child
 type_06=pid:16777268, Script:1129                                ; Male Child - killap - no longer uses adult proto with child script
 type_07=Dead, pid:16777298                                      ; Dead Dog
 position=Surrounding, Spacing:6, Distance:7
 
 [Encounter: KLA_Farmers]
-type_00=ratio:67%, pid:16777281, Item:9, Item:(0-3)71, Item:(0-10)41, Script:493    ; Average Peasant Male w/ 10mm SMG and Fruit
-type_01=ratio:25%, pid:16777282, Item:299, Item:(1-2)71, Item:(0-10)41, Script:493   ; Average Peasant Female w/ Hunting Rifle and Fruit
+type_00=ratio:67%, pid:16777281, Item:629, Item:(0-3)71, Item:(0-10)41, Script:493  ; Average Peasant Male w/ 9mm SMG and Fruit
+type_01=ratio:25%, pid:16777282, Item:299, Item:29, Item:(1-2)71, Item:(0-10)41, Script:493  ; Average Peasant Female w/ Pipe Rifle and Fruit
 type_02=ratio:4%, pid:16777269, Item:71, Script:785             ; Female Child w/ Fruit
 type_03=ratio:4%, pid:16777268, Script:785                      ; Male Child	-killap - no longer uses adult proto with child script
 type_04=Dead, pid:16777298                                      ; Dead Dog
@@ -528,8 +529,8 @@ type_01=ratio:50%, pid:16777434, Item:4(wielded), Item:(0-10)41, Script:627     
 position=Surrounding
 
 [Encounter: DEN_Slaves]
-type_00=ratio:40%, pid:16777235, Item:299(wielded), Script:628                    ; Healthy Female Slave w/ Knife
-type_01=ratio:40%, pid:16777236, Item:4(wielded), Script:628                    ; Healthy Male Slave w/ Spear
+type_00=ratio:40%, pid:16777235, Item:299(wielded), Item:29, Script:628          ; Healthy Female Slave w/ Pipe Rifle
+type_01=ratio:40%, pid:16777236, Item:4(wielded), Script:628                     ; Healthy Male Slave w/ Spear
 type_02=ratio:10%, pid:16777266, Script:1129                                     ; Male Orphan
 type_03=ratio:10%, pid:16777267, Script:1129                                     ; Female Orphan
 position=Surrounding, Spacing:4
@@ -751,18 +752,19 @@ type_05=pid:33555432, Distance:14, If (Rand(10%))                               
 position=huddle, spacing:2
 
 [Encounter: RED_Trappers]
-type_00=ratio:25%, pid:16777248, Item:22(wielded), Item:(0-20)41, Script:509                              ; Melee Thug male w/ 14mm
-type_01=ratio:25%, pid:16777248, Item:9(wielded), Item:(0-20)41, Script:509                              ; Melee Thug male w/ 10mm SMG
+type_00=ratio:25%, pid:16777248, Item:9(wielded), Item:(0-20)41, Script:509                              ; Melee Thug male w/ 10mm SMG
+type_01=ratio:25%, pid:16777248, Item:629(wielded), Item:(0-20)41, Script:509                              ; Melee Thug male w/ 9mm SMG
 type_02=ratio:25%, pid:16777249, Item:236(wielded), Item:(0-20)41, Script:509                              ; Melee Thug female w/ Combat Knife
-type_03=ratio:25%, pid:16777249, Item:9(wielded), Item:(0-20)41, Script:509                              ; Melee Thug female w/ 10mm SMG
+type_03=ratio:25%, pid:16777253, Item:(2-3)611(wielded), Item:(0-20)41, Script:509                         ; Gun Thug female w/ Throwing Axe
 position=Surrounding, spacing:5, distance:5
 
 [Encounter: RED_Prospector]
 type_00=pid:16777452, Item:638(wielded), Item:(0-20)41, Script:1115                                       ; Prospector male w/ Spiked Sledge
-type_01=ratio:25%, pid:16777452, Item:23(wielded), Item:(0-20)41, Script:763                              ; Prospector male w/ Assault Rifle
-type_02=ratio:25%, pid:16777452, Item:242(wielded), Item:(0-20)41, Script:763                              ; Prospector male w/ Combat Shotgun
+type_01=ratio:15%, pid:16777452, Item:23(wielded), Item:(0-20)41, Script:763                              ; Prospector male w/ Assault Rifle
+type_02=ratio:15%, pid:16777452, Item:242(wielded), Item:(0-20)41, Script:763                              ; Prospector male w/ Combat Shotgun
 type_03=ratio:25%, pid:16777453, Item:236(wielded), Item:(0-20)41, Script:763                              ; Prospector female w/ combat knife
 type_04=ratio:25%, pid:16777453, Item:9(wielded), Item:(0-20)41, Script:763                              ; Prospector female w/ SMG
+type_05=ratio:20%, pid:16777452, Item:643(wielded), Item:(0-20)41, Script:763                              ; Prospector male w/ Cowboy Repeater
 position=Surrounding, Spacing:4, distance:4
 
 [Encounter: RED_Claim_Jumper]
@@ -774,6 +776,7 @@ type_04=ratio:20%, pid:16777253, Item:613(wielded), Item:(0-20)41, Script:768, I
 type_05=ratio:20%, pid:16777253, Item:25(wielded), Item:(0-20)41, Script:768, If(Player(Level) > 15)      ; Gun Thug female w/ Frag Grenade
 type_06=ratio:15%, pid:16777253, Item:(1-3)637(wielded), Item:(0-20)41, Script:768, If(Player(Level) < 21)     ; Gun Thug female w/ Boomerangs
 type_07=ratio:15%, pid:16777249, Item:639(wielded), Item:(0-20)41, Script:768, If(Player(Level) > 20)     ; Melee Thug female w/ Piston Spear
+type_08=ratio:10%, pid:16777252, Item:630(wielded), Item:(1-2)631, Item:(0-20)41, Script:768, If(Player(Level) < 16)     ; Gun Thug male w/ Grenade Launcher
 ;position=Surrounding
 ;position=straight_line, spacing:1
 ;position=straight_line, spacing:2
@@ -789,8 +792,8 @@ position=Surrounding
 [Encounter: RED_Homesteaders]
 type_00=ratio:25%, pid:16777436, Item:8(wielded), Item:(0-20)41, Script:786                                ; Homesteader male w/ 10MM Pistol
 type_01=ratio:25%, pid:16777436, Item:160(wielded), Item:(0-20)41, Script:786                              ; Homesteader male w/ Cattle Prod
-type_02=ratio:25%, pid:16777437, Item:9(wielded), Item:(0-20)41, Script:787                                ; Homesteader female w/ SMG
-type_03=ratio:25%, pid:16777437, Item:352(wielded), Item:(0-20)41, Script:787                              ; Homesteader female w/ H&K G11
+type_02=ratio:25%, pid:16777437, Item:9(wielded), Item:(0-20)41, Script:787                                ; Homesteader female w/ 10mm SMG
+type_03=ratio:25%, pid:16777437, Item:629(wielded), Item:(0-20)41, Script:787                              ; Homesteader female w/ 9mm SMG
 type_04=pid:16777269, Script:788                                                                           ; Homesteader child - female
 type_05=pid:16777268, Script:788                                                                           ; Homesteader child - male
 
@@ -798,14 +801,15 @@ position=huddle, spacing:2
 
 [Encounter: RDRC_Broken_Hills_Caravan]
 type_00=pid:16777277, Item:9(wielded), Item:(0-40)41, Script:779                                           ; Master Trader female w/ SMG
-type_01=ratio:50%, pid:16777264, Item:12(wielded), Item:(0-30)41, Script:259                               ; Big Gun Guard male w/ Minigun
-type_02=ratio:50%, pid:16777265, Item:12(wielded), Item:(0-30)41, Script:259                               ; Big Gun Guard female w/ Minigun
+type_01=ratio:50%, pid:16777264, Item:355(wielded), Item:(0-30)41, Script:259                               ; Big Gun Guard male w/ LSW
+type_02=ratio:50%, pid:16777265, Item:634(wielded), Item:(0-30)41, Script:259                               ; Big Gun Guard female w/ MGL
 position=huddle, spacing:2
 
 [Encounter: RDRC_Gecko_Caravan]
 type_00=pid:16777375, Item:94(wielded), Item:(0-30)41, Script:780                                          ; Generic Ghoul w/ Shotgun  (Caravan Leader)
-type_01=ratio:50%, pid:16777375, Item:10(wielded), Item:(0-20)41, Script:259                               ; Reactor Ghoul w/ Hunting rifle
-type_02=ratio:50%, pid:16777375, Item:23(wielded), Item:(0-20)41, Script:259                               ; Reactor Ghoul w/ Assault Rifle
+type_01=ratio:33%, pid:16777375, Item:10(wielded), Item:(0-20)41, Script:259                               ; Reactor Ghoul w/ Hunting rifle
+type_02=ratio:33%, pid:16777375, Item:23(wielded), Item:(0-20)41, Script:259                               ; Reactor Ghoul w/ Assault Rifle
+type_02=ratio:34%, pid:16777375, Item:643(wielded), Item:(0-20)41, Script:259                              ; Reactor Ghoul w/ Cowboy Repeater
 position=huddle, spacing:2
 
 [Encounter: RDRC_Raiders]

@@ -8,22 +8,39 @@ KLATOXIC:
 
 DENBUS1:
 - added Knuckles to one of Tubby's friends and Knife to another
-- added SMG and ammo to Flick
+- added 9mm SMG and ammo to Flick
+- replaced 14mm with 9mm SMG for Joshua
 
 DENBUS2:
 - replaced several Metzger guards with more tough ones: 
     1 male Melee Guard w/ sledge, 
     1 female Melee Guard w/ sharp spear, 
-    2 Gun Guards guarding room (one with SMG), 
-    2-3 Bishop Thug 2 (Leather Mk2)
+    2 Gun Guards guarding room (one with 9mm SMG), 
+    2 Bishop Thug 2 (Leather Mk2)
+- removed 1 weak slaver in first room
+- One of Metzger's room guards has AP ammo
+- Two of slavers outside the guild carry Pipe Rifle
 - Metzger holding shotgun in hands
 - moved doorway to the right and added second window to Metzger room
 - added Flint to an empty shelf near Mom
 
 
+REDDOWN:
+- replace 14mm with .44 Revolved at southern footlocker
+- add traps book to table near footlocker
+- add barter book to shelf at Ascorti's back room
+- rcdick: replace Assault Rifle with Cowboy Repeater
+
+
+REDMENT:
+- replace 14mm with DE at blonde near pen
+- JHoffy: replace 14mm with 9mm SMG (AP ammo)
+
+
 SLCAMP:
 - added script NIBIS2LK to shelves and desk at the house
 - removed chair from the table (to bee seen better when stealing SMG)
+- front door guard: replaced DE with 9mm SMG & Frag with Home Made grenade
 
 
 MODMAIN:
@@ -68,6 +85,7 @@ RAIDERS2 (TODO):
 - redesigned level 0: replaced both entrances with dead ends and ladders (ladder up in bottom to RAIDERS1-level1, ladder down in top to level2)
 - redesigned level 2 main entrance (it leads to RAIDERS1-level0 and looks like moving to a sunshine)
 - large rocks near the secret entrance to hideout: widened the pass so you can't snipe enemies one by one anymore
+- replaced some FN FALs with: 2 Cowboy Repeater, 1 Grenade Launcher, 1 Spiked Sledge
 
 
 EPAX:

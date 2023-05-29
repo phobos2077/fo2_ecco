@@ -74,6 +74,7 @@ procedure map_enter_p_proc begin
          // by phobos2077 - new stuff:
          check_restock_item(PID_PBS_PISTON_SPEAR, 1, 1, 50)
          check_restock_item(PID_PBS_TASER, 1, 1, 100)
+         check_restock_item(PID_PBS_COWBOY_REPEATER, 1, 1, 50)
          check_restock_item(PID_5MM_JHP, 2, 5, 100)
          check_restock_item(PID_5MM_AP, 0, 2, 100)
          check_restock_item(PID_PUMP_PARTS, 3, 6, 100)

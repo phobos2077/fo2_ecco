@@ -27,6 +27,8 @@
 #include "../headers/command.h"
 #include "../headers/sanfran.h"
 
+#include "../_pbs_headers/ecco.h" // phobos2077
+
 /* Standard Script Procedures */
 procedure start;
 procedure use_p_proc;
@@ -223,10 +225,12 @@ procedure map_enter_p_proc begin
 //Used to be table 5
 
             check_restock_item(PID_7_62MM_AMMO, 3, 4, 50)
+            check_restock_item(PID_PBS_PID_7_62MM_AP, 1, 2, 50) // pbs
             check_restock_item(PID_FLAMETHROWER_FUEL_MK_II, 1, 3, 50)
             check_restock_item(PID_MICRO_FUSION_CELL, 2, 4, 50)
             check_restock_item(PID_ROCKET_AP, 1, 4, 50)
             check_restock_item(PID_14MM_AP, 2, 3, 100)
+            check_restock_item(PID_PBS_14MM_JHP, 1, 2, 50) // pbs
             check_restock_item(PID_FLAMETHROWER_FUEL, 2, 4, 50)
             check_restock_item(PID_45_CALIBER_AMMO, 3, 5, 50)
             check_restock_item(PID_HN_NEEDLER_CARTRIDGE, 1, 5, 65)
