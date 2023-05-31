@@ -113,16 +113,16 @@ loadDataFromCsv = async function(dataSet) {
         drAdj: parseInt(a["DR Adjust"]),
         dmgMult: parseInt(a["Dam Mult"]),
         dmgDiv: parseInt(a["Dam Div"]),
-        dmgType: dataSet.ammoDamageType && dataSet.ammoDamageType[parseInt(a["ProFILE"])]
+        dmgType: dataSet.ammoDamageType && dataSet.ammoDamageType[parseInt(a["PID"])]
     }));
     weapons = (await csvFileToArrayOfObjects(dataSet.getPath("weapon"))).map(a => ({
-        name: a["NAME"],
+        name: `${a["NAME"]} [${a["PID"]}]`,
         caliber: parseInt(a["Max Ammo"]) > 0 ? a["Caliber"] : null,
         dmgType: weaponDamageTypeMap.get(a["Damage Type"]) || a["Damage Type"],
         dmgMin: parseInt(a["Min Damage"]),
         dmgMax: parseInt(a["Max Damage"]),
         penetrate: a["Perk"] == "Weapon Penetrate [60]",
-        burst: parseInt(a["Rounds Brust"]),
+        burst: parseInt(a["Rounds Brust"] || a["Burst Rounds"]),
         perk: a["Perk"]
     }));
     weapons.sort((a, b) => a.name > b.name);

@@ -64,7 +64,7 @@
 
 <script type="text/javascript" src="damage_calc_datasets.js?v=4"></script>
 <script type="text/javascript" src="damage_calc_formulas.js?v=3"></script>
-<script type="text/javascript" src="damage_calc_loadcsv.js?v=6"></script>
+<script type="text/javascript" src="damage_calc_loadcsv.js?v=7"></script>
 <script type="text/javascript" src="damage_calc_graph.js?v=3"></script>
 <script type="text/javascript">
 
@@ -105,19 +105,30 @@ function updateCheckbox(id) {
     inputEl.checked = getLastSetting(id);
 }
 
-function fillOptions(selectId, arr, defaultVal) {
+function fillOptions(selectId, arr, defaultVal, groupBy, defaultGroupKey) {
     const selectEl = document.getElementById(selectId);
     selectEl.innerHTML = "";
     defaultVal = getLastSetting(selectId) || defaultVal;
+    const optGroups = {};
     for (let i = 0; i < arr.length; i++) {
         let option = document.createElement("option");
         option.value = typeof(arr[i]) == "object" ? i : arr[i];
         option.textContent = arr[i].name || arr[i];
-        selectEl.appendChild(option);
+        if (groupBy) {
+            const groupKey = arr[i][groupBy] || defaultGroupKey || "";
+            if (!optGroups[groupKey]) {
+                optGroups[groupKey] = document.createElement("optgroup");
+                optGroups[groupKey].label = groupKey;
+            }
+            optGroups[groupKey].appendChild(option);
+        } else {
+            selectEl.appendChild(option);
+        }
         if (defaultVal && option.value == defaultVal) {
             selectEl.value = option.value;
         }
     }
+    Object.keys(optGroups).sort().forEach(k => selectEl.appendChild(optGroups[k]));
 }
 
 function loadSettings() {
@@ -153,7 +164,7 @@ async function loadDataset() {
 
     //console.log(armors, ammoTypes, weapons);
     
-    fillOptions("weapon", weapons);
+    fillOptions("weapon", weapons, null, "caliber", "_Melee");
     fillOptions("formula", damageFormulas);
     fillOptions("critMult", [2,3,4,6,8]);
     fillOptions("difficulty", [75,100,125], 100);

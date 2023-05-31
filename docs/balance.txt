@@ -1,0 +1,31 @@
+Balance principles:
+- Close to vanilla
+- Every weapon has use
+- Balance around item availability/tiers
+- Early ammo => higher damage falloff
+
+
+Tiers:
+
+1. Arroyo - Klamath
+Guns: Zip Gun, Pipe Rifle, 10mm Pistol.
+Melee: Knife, Sh. Spear, Club, Brass Knuckles.
+
+2. Den - Modoc - Redding
+Guns: DE, Hunting Rifle, .44 Revolver, 9mm/10mm SMG, Shotgun.
+Big: Grenade Launcher
+
+3. Vault City - Broken Hills - New Reno
+Guns: 14mm Pistol, Cowboy Repeater, Sniper Rifle, Assault Rifle, FN FAL, Combat Shotgun.
+Big: MGL
+Energy: Laser Pistol
+
+4. NCR
+Guns: HK G11, 14mm SMG, Bozar AMR, FN FAL HPFA.
+Big: LSW.
+Energy: Plasma Pistol/Rifle.
+
+5. San Francisco
+Guns: Pancor, 
+Big: M60, Avenger/Vindicator Minigun, Rocket Launcher.
+Energy: Pulse Pistol/Rifle, Gatling Laser.
