@@ -15,7 +15,7 @@ procedure close_dialog;
 procedure show_dialog;
 
 variable ini_fixit_hotkey;
-variable warning_msg, mouse_over, button_pressed, batch_scheduled;
+variable warning_msg, batch_scheduled;
 
 #define SGVAR_FIXIT_BUTTON    "openbutt"
 #define SFX_BUTTON_DOWN       "butin4"
@@ -108,7 +108,7 @@ procedure create_button begin
          screenCenterX -= 80;
       end
 
-      create_win("helwin", (screenCenterX + 248), (get_screen_height - 90), 20, 18);
+      create_win("helwin", (screenCenterX + 237), (get_screen_height - 98), 20, 18);
       SelectWin("helwin");
       AddButton("but", 0, 0, 20, 18);
       AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);

@@ -66,6 +66,9 @@ variable begin
 
     win_x := 0;
     win_y := 0;
+
+    mouse_over;
+    button_pressed;
 end
 
 
@@ -149,6 +152,45 @@ end
 
 #undef _if_global_update
 
+procedure do_cancel_on begin
+    mouse_over := true;
+end
+
+procedure do_cancel_off begin
+    if (button_pressed == true) then play_sfx("IB1LU1X1");
+    mouse_over := false;
+    button_pressed := false;
+end
+
+procedure do_cancel_down begin
+    if (button_pressed == false) then begin
+        button_pressed := true;
+        play_sfx("IB1P1XX1");
+    end
+end
+
+procedure do_cancel_up begin
+    call exit_mode;
+    tap_key(DIK_ESCAPE);
+    button_pressed := false;
+    play_sfx("IB1LU1X1");
+end
+
+procedure show_cancel_button begin
+    create_win_flag("win_btn", win_x + 300, win_y + 347, 342, 32, WIN_FLAG_MOVEONTOP + WIN_FLAG_TRANSPARENT);
+    SelectWin("win_btn");
+    Display("PCX/w_close.pcx");
+    AddButton("but2", 133, 6, 15, 16);
+    AddButtonGFX("but2", "PCX/lilreddn.pcx", "PCX/lilredup.pcx", "PCX/lilredup.pcx");
+    AddButtonProc("but2", do_cancel_on, do_cancel_off, do_cancel_down, do_cancel_up);
+    SetFont(103);
+    SetTextColor(0.52, 0.75, 0.15);
+    Format(bstr(120), 154, 6, 200, 30, 0);
+    SetFont(101);
+    SetTextColor(0.0, 1.0, 0.0);
+    ShowWin;
+end
+
 procedure batch_init begin
     debug_msg("batch_init()");
     call handle_mod_update;
@@ -170,9 +212,9 @@ procedure batch_init begin
     SetHighlightColor(1.0, 1.0, 1.0);
     SetHighlightColor(1.0, 1.0, 0.64);
 
-    SayReplyWindow (win_x + 300, win_y +   1, 340, 179, "PCX/w_rep.pcx");
-    SayOptionWindow(win_x + 300, win_y + 180, 340, 199, "PCX/w_opt.pcx");
-    SayBorder(25, 12);
+    SayReplyWindow (win_x + 300, win_y +   1, 342, 144, "PCX/w_rep.pcx");
+    SayOptionWindow(win_x + 300, win_y + 146, 342, 201, "PCX/w_opt.pcx");
+    SayBorder(30, 30);
 
     CreateWin("win_dscr", win_x + 1, win_y + 1, 300, 378);
     SelectWin("win_dscr");
@@ -180,6 +222,8 @@ procedure batch_init begin
     Display("PCX/w_dscr.pcx");
 
     ShowWin;
+
+    call show_cancel_button;
 
     check_gvars := (cfg_check_gvars > 0);
 
@@ -202,6 +246,7 @@ procedure batch_init begin
     call loop_mode;
 
     DeleteWin("win_dscr");
+    DeleteWin("win_btn");
 
     resume_game;
     debug_msg("batch_init() returns");
@@ -769,9 +814,8 @@ end
 procedure get_party_member_with_skill(variable skills, variable level) begin
     variable ret := 0;
     variable obj;
-    display_msg("search skill "+debug_array_str(skills)+" at least " + level);
+    //debug_msg("search skill "+debug_array_str(skills)+" at least " + level);
 
-    // TODO: use party_member_list
     foreach (obj in party_member_list_critters) if (obj) then begin
         if (has_skill_sum(obj, skills) >= level) then begin
             ret := obj_name(obj);// proto_data(obj_pid, cr_name)

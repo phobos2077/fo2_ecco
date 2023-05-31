@@ -75,6 +75,7 @@
 {110}{}{ (}
 {111}{}{ unit(s))}
 {112}{}{[Categories]}
+{120}{}{DONE}
 
 {150}{}{ or }
 
@@ -118,7 +119,7 @@
 {491}{}{1}  # allow party members to help with crafting (1 enable, 0 disable)
 {492}{}{2}  # split items into categories (0 disable, 1 enable, 2 automatically enable when enough items available)
 {493}{}{1}  # use sfall gloval vars to check if item is available
-{494}{}{56+33}  # Crafting shortcut: Alt+F
+{494}{}{29+33}  # Crafting shortcut: Ctrl+F
 
 # CRAFTING SCHEMATICS:
 
