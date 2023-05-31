@@ -160,6 +160,8 @@ procedure map_enter_p_proc begin
          if (self_tile == DUPPO_TBL_1) then begin
             check_restock_item(PID_DESERT_EAGLE, 1, 3, 100)
             check_restock_item(PID_HUNTING_RIFLE, 1, 3, 100)
+            check_restock_item(PID_SNIPER_RIFLE, 1, 1, 100) // pbs
+            check_restock_item(PID_PBS_COWBOY_REPEATER, 1, 1, 40) // pbs
             check_restock_item(PID_SHOTGUN, 1, 3, 100)
             check_restock_item(PID_ASSAULT_RIFLE, 1, 1, 50)
             check_restock_item(PID_HK_CAWS, 1, 1, 50)
@@ -189,12 +191,15 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_44_MAGNUM_JHP, 1, 5, 100)
             check_restock_item(PID_223_FMJ, 5, 15, 100)
             check_restock_item(PID_14MM_AP, 1, 10, 100)
+            check_restock_item(PID_PBS_14MM_JHP, 1, 3, 50)
             check_restock_item(PID_SHOTGUN_SHELLS, 20, 20, 100)
             check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 2, 45) // pbs
             check_restock_item(PID_7_62MM_AMMO, 10, 10, 100)
+            check_restock_item(PID_PBS_7_62MM_AP, 1, 3, 50) // pbs
             check_restock_item(PID_FN_FAL_HPFA, 1, 3, 100)
             check_restock_item(PID_HK_P90C, 1, 2, 100)
-            check_restock_item(PID_SNIPER_RIFLE, 1, 1, 100) // pbs
+            check_restock_item(PID_BOZAR, 1, 1, 25) // pbs
+            check_restock_item(PID_PBS_14MM_SMG, 1, 1, 25) // pbs
             check_restock_item(PID_POWER_FIST, 0, 2, 100)
             check_restock_item(PID_10MM_AP, 5, 10, 100)
 

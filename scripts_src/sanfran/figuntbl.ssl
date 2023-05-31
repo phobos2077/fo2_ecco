@@ -204,6 +204,7 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_PK12_GAUSS_PISTOL, 1, 1, 30)
             check_restock_item(PID_VINDICATOR_MINIGUN, 1, 1, 30)
             check_restock_item(PID_MEGA_POWER_FIST, 1, 2, 40)
+            check_restock_item(PID_PBS_14MM_SMG, 1, 1, 50) // pbs
             //Used to be on table 3
 
             check_restock_item(PID_EXPLOSIVE_ROCKET, 1, 3, 100)
@@ -229,6 +230,7 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_HN_NEEDLER_CARTRIDGE, 1, 10, 75)
             check_restock_item(PID_HN_AP_NEEDLER_CARTRIDGE, 1, 10, 75)
             check_restock_item(PID_SHOTGUN_SHELLS, 5, 7, 100)
+            check_restock_item(PID_PBS_SHOTGUN_SLUGS, 3, 5, 100) // pbs
             check_restock_item(PID_4_7MM_CASELESS, 1, 4, 33)
             check_restock_item(PID_2MM_EC_AMMO, 1, 4, 33)
             check_restock_item(PID_PBS_50_AMMO, 1, 4, 33) // by phobos2077

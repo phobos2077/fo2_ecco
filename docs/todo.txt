@@ -1,9 +1,7 @@
 for 0.9:
-- integrate 7.62 AP ammo & rebalance 7.62 weapons
-- integrate 14mm SMG
 - review perk/skill reqs for early craft (too high from feedback)
-- add grenade launcher to more enemies
 - crafting: fix iface panel art for button, fix art position for some items (read size from FRM?)
+- ensure fire death anims for Dragon Breath
 - decide on script and INI naming 
 - review armor class for armors
 - review weapon distribution in stores

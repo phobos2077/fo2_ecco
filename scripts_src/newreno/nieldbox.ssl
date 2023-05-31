@@ -61,6 +61,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_DESERT_EAGLE, 1, 2, 80)
          check_restock_item(PID_FN_FAL, 1, 2, 80)
          check_restock_item(PID_7_62MM_AMMO, 2, 6, 100)  // new
+         check_restock_item(PID_PBS_7_62MM_AP, 1, 2, 50)  // new
          check_restock_item(PID_HUNTING_RIFLE, 1, 2, 80)
          check_restock_item(PID_SHOTGUN, 1, 2, 25)
          check_restock_item(PID_GREASE_GUN, 1, 1, 25)
@@ -74,8 +75,9 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_45_CALIBER_AMMO, 2, 5, 100) // min 1 -> 2
          check_restock_item(PID_223_FMJ, 1, 5, 75)
          check_restock_item(PID_14MM_AP, 1, 3, 100)
-         check_restock_item(PID_SHOTGUN_SHELLS, 1, 6, 100) // max increased from 5 to 6
-         check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 2, 50) // new
+         check_restock_item(PID_PBS_14MM_JHP, 1, 1, 40) // new
+         check_restock_item(PID_SHOTGUN_SHELLS, 1, 5, 100)
+         check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 5, 100) // new
          check_restock_item(PID_PBS_DRAGON_BREATH, 1, 2, 50) // new
          check_restock_item(PID_PBS_50_AMMO, 1, 4, 25) // new
          check_restock_item(PID_DYNAMITE, 1, 1, 50)
@@ -89,7 +91,9 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_METAL_ARMOR_MK_II, 1, 1, 50)
          // pbs new stuff:
          check_restock_item(PID_PBS_THROWING_AXE, 1, 3, 50)
-         check_restock_item(PID_THROWING_KNIFE, 2, 5, 100) 
+         check_restock_item(PID_THROWING_KNIFE, 2, 5, 100)
+         check_restock_item(PID_SNIPER_RIFLE, 1, 1, 50)
+         check_restock_item(PID_LIGHT_SUPPORT_WEAPON, 1, 1, 50)
          check_restock_item(PID_PBS_BOOMERANG, 1, 3, 75)
          check_restock_item(PID_PBS_M79, 1, 1, 50)
          check_restock_item(PID_PBS_40MM_HE, 2, 3, 50) 

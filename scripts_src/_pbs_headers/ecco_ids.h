@@ -66,8 +66,9 @@
 #define PID_PBS_PISTON_SPEAR        (639)
 #define PID_PBS_DEATHCLAW_GAUNTLET  (640)
 #define PID_PBS_DRAGON_BREATH       (641)
-#define PID_PBS_PID_7_62MM_AP       (642)
+#define PID_PBS_7_62MM_AP           (642)
 #define PID_PBS_COWBOY_REPEATER     (643)
+#define PID_PBS_14MM_SMG            (644)
 
 // new scenery
 #define PID_PBS_SPIKE_TRAP_DISARMED  (0x02000000 + 2335)
