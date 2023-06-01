@@ -6,6 +6,13 @@
 
 #include "learn_craft.h"
 
+/*
+    TODO:
+    - load non-text settings from INI
+    - use custom game msg file
+    - get rid of "say" and "reply" stuff, use normal windows with text and buttons
+*/
+
 #define CRAFT_MOD_VERSION        3
 
 #define SECTION_START           1000
@@ -25,10 +32,12 @@
 #define ITEM_CAT                7
 #define PARSER_START            8
 
-#define ITEMS_PER_SCREEN        10
+#define ITEMS_PER_SCREEN        9
 
 // should typically be ITEMS_PER_SCREEN + 2
 #define MAX_CATEGORIES          (ITEMS_PER_SCREEN + 2)
+
+#define craft_debug(text)       if (false) then debug_msg("[craft] "+text)
 
 variable begin
     // TODO: craft_msg;
@@ -79,8 +88,8 @@ end
 #define cfg_check_gvars         atoi(bstr(493))
 #define cfg_fixit_hotkey         bstr(494)
 
-#define cur_section_is_available    ((cur_category == 0 or atoi(field(ITEM_CAT)) == cur_category) and (not(check_gvars) or field(ITEM_GVAR) == "" or (field(ITEM_GVAR) != "NEVER" and get_sfall_global_int(field(ITEM_GVAR)) > 0)))
-
+#define has_prev_page           (cur_pos > 0)
+#define has_next_page           (cur_pos + ITEMS_PER_SCREEN < items_avail - 1)
 
 procedure display_next_option(variable i, variable text);
 
@@ -141,6 +150,23 @@ end
 
 #undef _if_global_update
 
+procedure cur_section_is_available begin
+    variable gvar, gvarVal;
+    if (cur_category != 0 and atoi(field(ITEM_CAT)) != cur_category) then return false;
+
+    if (check_gvars) then begin
+        gvar := field(ITEM_GVAR);
+        if (gvar == "NEVER") then
+            return false;
+        else if (gvar != "") then begin
+            gvarVal := get_sfall_global_int(gvar) if atoi(gvar) == 0 else global_var(atoi(gvar));
+            if (gvarVal == 0) then
+                return false;
+        end
+    end
+    return true;
+end
+
 procedure do_cancel_on begin
     mouse_over := true;
 end
@@ -159,15 +185,15 @@ procedure do_cancel_down begin
 end
 
 procedure do_cancel_up begin
-    call exit_mode;
-    tap_key(DIK_ESCAPE);
     button_pressed := false;
     play_sfx("IB1LU1X1");
+    call exit_mode;
+    tap_key(DIK_ESCAPE);
 end
 
-procedure show_cancel_button begin
-    create_win_flag("win_btn", win_x + 300, win_y + 347, 342, 32, WIN_FLAG_MOVEONTOP + WIN_FLAG_TRANSPARENT);
-    SelectWin("win_btn");
+procedure show_cancel_button(variable winName) begin
+    create_win_flag(winName, win_x + 300, win_y + 347, 342, 32, WIN_FLAG_MOVEONTOP + WIN_FLAG_TRANSPARENT);
+    SelectWin(winName);
     Display("PCX/w_close.pcx");
     AddButton("but2", 133, 6, 15, 16);
     AddButtonGFX("but2", "PCX/lilreddn.pcx", "PCX/lilredup.pcx", "PCX/lilredup.pcx");
@@ -181,7 +207,7 @@ procedure show_cancel_button begin
 end
 
 procedure batch_init begin
-    debug_msg("batch_init()");
+    craft_debug("batch_init()");
     call handle_mod_update;
     stop_game;
 
@@ -205,14 +231,22 @@ procedure batch_init begin
     SayOptionWindow(win_x + 300, win_y + 146, 342, 201, "PCX/w_opt.pcx");
     SayBorder(30, 30);
 
-    CreateWin("win_dscr", win_x + 1, win_y + 1, 300, 378);
+    create_win_flag("win_dscr", win_x + 1, win_y + 1, 300, 378, WIN_FLAG_EXCLUSIVE);
     SelectWin("win_dscr");
-
     Display("PCX/w_dscr.pcx");
-
     ShowWin;
 
-    call show_cancel_button;
+    // We show these here to remove interface flickery
+    CreateWin("win_rep", win_x + 300, win_y +   1, 342, 144);
+    SelectWin("win_rep");
+    Display("PCX/w_rep.pcx");
+    ShowWin;
+    CreateWin("win_opt", win_x + 300, win_y + 146, 342, 201);
+    SelectWin("win_opt");
+    Display("PCX/w_opt.pcx");
+    ShowWin;
+
+    call show_cancel_button("win_btn");
 
     check_gvars := (cfg_check_gvars > 0);
 
@@ -235,10 +269,11 @@ procedure batch_init begin
     call loop_mode;
 
     DeleteWin("win_dscr");
+    DeleteWin("win_rep");
+    DeleteWin("win_opt");
     DeleteWin("win_btn");
 
     resume_game;
-    debug_msg("batch_init() returns");
 end
 
 procedure count_items_avail begin
@@ -255,6 +290,7 @@ end
 
 procedure loop_mode begin
     while (mode != -1) do begin
+        craft_debug("craft: loop_mode(): "+mode);
         if (mode == 1)      then call display_items_list;
         else if (mode == 2) then call display_item_options;
         else if (mode == 3) then call display_batch_ok;
@@ -265,10 +301,6 @@ end
 
 procedure exit_mode begin
     mode := -1;
-end
-
-procedure test_p begin
-    display_msg("nothing");
 end
 
 procedure items_list_mode begin
@@ -303,12 +335,11 @@ procedure display_category_list begin
         skip_counter := 0,
         catList,
         cat;
-    debug_msg("display_category_list(): SayStart");
+    craft_debug("display_category_list(): SayStart");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_display_list", bstr(210));
 
-        debug_msg("display_category_list: redraw win");
         call redraw_win_idle;
         //cur_section_start := last_saved_pos;
         cur_category := 0;
@@ -324,14 +355,13 @@ procedure display_category_list begin
            end
            cur_section_start += SECTION_STEP;
         end
-        //if (items_avail == 0) then SayOption(bstr(107), exit_mode);
-        SayOption(bstr(101), exit_mode);
+        // SayOption(bstr(101), exit_mode);
     SayEnd;
-    debug_msg("display_category_list(): SayEnd");
+    craft_debug("display_category_list(): SayEnd");
 end
 
 procedure display_items_list begin
-    debug_msg("display_items_list(): sayStart");
+    craft_debug("display_items_list(): sayStart");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_display_list", bstr(200));
@@ -340,10 +370,9 @@ procedure display_items_list begin
         call display_items_avail;
         //SayOptionFlags(justifycenter bwor textshadow bwor textdirect);
 
-        debug_msg("display_items_list: sayoption "+bstr(101));
-        SayOption(bstr(101), exit_mode);
+        craft_debug("display_items_list: sayoption "+bstr(101));
     SayEnd;
-    debug_msg("display_items_list(): SayEnd");
+    craft_debug("display_items_list(): SayEnd");
 end
 
 procedure display_item_options begin
@@ -354,10 +383,10 @@ procedure display_item_options begin
     if (cur_pid_qty <= 0) then cur_pid_qty := 1;
     max_undo := obj_is_carrying_obj_pid(dude_obj, cur_pid);
     
-    debug_msg("display_item_options: SayStart()");
+    craft_debug("display_item_options: SayStart()");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
-        debug_msg("display_item_options SayReply: " + proto_data(cur_pid, it_description));
+        craft_debug("display_item_options SayReply: " + proto_data(cur_pid, it_description));
         SayReply("r_item_options", proto_data(cur_pid, it_description));
         call draw_item_pcx;
         call draw_item_properties;
@@ -365,34 +394,35 @@ procedure display_item_options begin
         if (can_batch) then SayOption(bstr(103), batch_one_item);
         if (can_undo and max_undo > 1) then SayOption(bstr(109) + bstr(110) + max_undo + bstr(111), undo_all_items);
         if (can_undo) then SayOption(bstr(104), undo_one_item);
-        SayOption(bstr(102), items_list_mode);
+        SayOption("0: "+bstr(102), items_list_mode);
         if (use_categories) then
             SayOption(bstr(112), item_categories_mode);
-        SayOption(bstr(101), exit_mode);
+        else
+            SayOption(bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
     SayEnd;
-    debug_msg("display_item_options: SayEnd()");
+    craft_debug("display_item_options: SayEnd()");
 end
 
 procedure display_batch_ok begin
-    debug_msg("display_batch_ok: SayStart()");
+    craft_debug("display_batch_ok: SayStart()");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_batch_item", bstr(201));
-        SayOption(bstr(100), item_options_mode);
-        SayOption(bstr(101), exit_mode);
+        SayOption("0. "+bstr(100), item_options_mode);
+        //SayOption(bstr(101), exit_mode);
     SayEnd;
-    debug_msg("display_batch_ok: SayEnd()");
+    craft_debug("display_batch_ok: SayEnd()");
 end
 
 procedure display_undo_ok begin
-    debug_msg("display_undo_ok: SayStart()");
+    craft_debug("display_undo_ok: SayStart()");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_undo_batch", bstr(202));
-        SayOption(bstr(100), item_options_mode);
-        SayOption(bstr(101), exit_mode);
+        SayOption("0. "+bstr(100), item_options_mode);
+        //SayOption(bstr(101), exit_mode);
     SayEnd;
-    debug_msg("display_undo_ok: SayEnd()");
+    craft_debug("display_undo_ok: SayEnd()");
 end
 
 procedure null_proc begin
@@ -425,12 +455,11 @@ procedure display_items_avail begin
         lines_counter := 0,
         skip_counter := 0,
         cat;
-    debug_msg("display_items_avail()");
+    craft_debug("display_items_avail()");
     //call redraw_win_dscr;
     call redraw_win_idle;
     //cur_section_start := last_saved_pos;
     cur_section_start := SECTION_START;
-    if (cur_pos != 0) then SayOption(bstr(106), list_back_proc);
     //else SayOption(".", null_proc);
     while (skip_counter < cur_pos) do begin
         if (cur_section_is_available) then skip_counter += 1;
@@ -447,11 +476,13 @@ procedure display_items_avail begin
         cur_section_start += SECTION_STEP;
     end
     //cur_section_start := last_saved_pos;
-    if (cur_pos + ITEMS_PER_SCREEN < items_avail - 1) then SayOption(bstr(105), list_next_proc);
+    if (has_prev_page) then SayOption("<. "+bstr(106), list_back_proc);
+    if (has_next_page) then SayOption(">. "+bstr(105), list_next_proc);
     //if ((cur_section_start - SECTION_START) / SECTION_STEP + ITEMS_PER_SCREEN < items_avail) then SayOption(bstr(105), list_next_proc);
     if (use_categories) then
-        SayOption(bstr(112), item_categories_mode);
-    if (items_avail == 0) then SayOption(bstr(107), exit_mode);
+        SayOption("0. "+bstr(112), item_categories_mode);
+    if (items_avail == 0) then
+        SayOption(bstr(107), exit_mode);
 end
 
 #define _optProc(NNN) \
@@ -477,6 +508,9 @@ _optProc(11)
 #undef _optProc
 
 procedure display_next_option(variable i, variable text) begin
+    if (i < 9) then
+        text := ""+(i+1)+". "+text;
+
     #define _ifOpt(NNN) \
     if (i == NNN) then begin \
         start##NNN := cur_section_start; \
@@ -615,9 +649,9 @@ procedure draw_item_properties begin
         list;
         componentData;
     end
-    debug_msg("draw_item_properties "+cur_pid);
+    craft_debug("draw_item_properties "+cur_pid);
     SelectWin("win_dscr");
-    // ???????? ????????
+    // Item name
     SetTextColor(0.0, 1.0, 0.0);
     str := proto_data(cur_pid, it_name);
     c_quantity := cur_pid_qty;
@@ -626,13 +660,12 @@ procedure draw_item_properties begin
     if (c_quantity > 1) then str := str + " x" + c_quantity;
     Format(str, 25, display_line, 250, 10, justifycenter);
     display_line += 30;
-    // ????? ?????? ?????? "???????????"
+    // Skip to TOOLS section
     while (field(line) != ITEM_TOOLS and line < SECTION_STEP) do line += 1;
     line += 1;
-    // ?????? "???????????"
     Format(bstr(300), 25, display_line, 250, 10, justifycenter);
     display_line += 10;
-    // ????????? ?????? "???????????"
+    // Display list of tools
     saved_line := line;
     while (field(line) != ITEM_SKILLS and line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
         has_any := 0;
@@ -656,19 +689,19 @@ procedure draw_item_properties begin
         if (has_any == 0) then has_tools := 0;
         line += 1;
     end
-    // ???? ??? ????????????, ?? ??????? "???"
+    // If no tools needed - display "No".
     if (saved_line == line) then begin
         SetTextColor(0.0, 1.0, 0.0);
         Format(bstr(303), 25, display_line, 250, 10, justifyleft);
         display_line += 10;
     end
-    // ??????? ? ?????? "??????"
+    display_line += 10;
+    // Skip to Skills section
     line += 1;
-    // ?????? "??????"
     SetTextColor(0.0, 1.0, 0.0);
     Format(bstr(301), 25, display_line, 250, 10, justifycenter);
     display_line += 10;
-    // ????????? ?????? "??????"
+    // Display list of skills
     saved_line := line;
     while (field(line) != ITEM_COMPONENTS and line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
         list := string_split_safe(field(line), ":");
@@ -697,19 +730,19 @@ procedure draw_item_properties begin
         display_line += 10;
         line += 1;
     end
-    // ???? ??? ???????, ?? ??????? "???"
+    // If no skills - display "No".
     if (saved_line == line) then begin
         SetTextColor(0.0, 1.0, 0.0);
         Format(bstr(303), 25, display_line, 250, 10, justifyleft);
         display_line += 10;
     end
-    // ??????? ? ?????? "??????????"
+    display_line += 10;
+    // Skip to Components section
     line += 1;
-    // ?????? "??????????"
     SetTextColor(0.0, 1.0, 0.0);
     Format(bstr(302), 25, display_line, 250, 10, justifycenter);
     display_line += 10;
-    // ????????? ?????? "??????????"
+    // Display list of components.
     saved_line := line;
     max := 32767;
     while (line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
@@ -742,20 +775,21 @@ procedure draw_item_properties begin
         if (has_any == 0) then has_components := 0;
         line += 1;
     end
-    // ???? ??? ???????????, ?? ??????? "???"
+    // If no components found - display "No".
     if (saved_line == line) then begin
         SetTextColor(0.0, 1.0, 0.0);
         Format(bstr(303), 25, display_line, 250, 10, justifyleft);
         display_line += 10;
     end
-    // ???????? ?? ??????????? ??????
+    display_line += 10;
+    // Check if all requirements for crafting are met.
     if (has_tools and has_skills and has_components) then can_batch := 1;
     else can_batch := 0;
-    // ???????? ?? ??????????? ????????
+    // Check if disassembly is possible.
     cur_undo := field(ITEM_UNDO);
     if (cur_undo == "YES" and has_tools and has_skills and obj_is_carrying_obj_pid(dude_obj, cur_pid)) then can_undo := 1;
     else can_undo := 0;
-    // ????? ?? ??????/????????
+    // Display time required for crafting.
     SetTextColor(0.0, 1.0, 0.0);
     Format(bstr(304), 25, display_line, 250, 10, justifycenter);
     display_line += 10;
@@ -765,7 +799,7 @@ procedure draw_item_properties begin
     Format(bstr(305) + hours, 25, display_line, 250, 10, justifyleft);
     display_line += 10;
     Format(bstr(306) + mins, 25, display_line, 250, 10, justifyleft);
-    // ???????? ???? ???? ???? :)
+
     ShowWin;
 end
 
@@ -774,17 +808,17 @@ procedure draw_item_pcx begin
         w;
         h;
     end
-    debug_msg("draw_item_pcx "+cur_pid);
     // TODO: remove ITEM_PCX
     cur_pcx := field(ITEM_PCX);
     // TODO: get size from FRM directly
     cur_size := atoi(field(ITEM_SIZE));
     w := cur_size / 1000;
     h := cur_size % 1000;
+    craft_debug("draw_item_pcx "+cur_pid+", size: "+w+"x"+h);
     call redraw_win_dscr;
     SelectWin("win_dscr");
     //DisplayGFX(cur_pcx, 150 - w/2, 55 - h/2, w, h);
-    draw_image(proto_data(cur_pid, it_inv_fid), 0, 150 - w/2, 55 - h/2, false);
+    draw_image_scaled(proto_data(cur_pid, it_inv_fid), 0, 150 - w/2, 55 - h/2, w, h);
     ShowWin;
 end
 
@@ -811,7 +845,7 @@ end
 procedure get_party_member_with_skill(variable skills, variable level) begin
     variable ret := 0;
     variable obj;
-    //debug_msg("search skill "+debug_array_str(skills)+" at least " + level);
+    //craft_debug("search skill "+debug_array_str(skills)+" at least " + level);
 
     foreach (obj in party_member_list_critters) if (obj) then begin
         if (has_skill_sum(obj, skills) >= level) then begin

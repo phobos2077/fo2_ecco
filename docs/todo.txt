@@ -1,11 +1,10 @@
 for 0.9:
-- review perk/skill reqs for early craft (too high from feedback)
 - review armor class for armors
 - review and update full readme
 - ensure fire death anims for Dragon Breath
+- investigate critter_dmg fix in deathanim2
 - decide on script and INI naming
 - kill experience reduction option (flat multiplier or falloff based on kill type?)
-- sneak attack msg from combat.msg
 - compare text changes to 0.8 and update RU texts
 - update RU readme
 
@@ -16,13 +15,17 @@ for "future":
 - rewrite weapons mod to be configurable from ini
 - port "grenades anywhere" script from FO2Tweaks
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
-- rewrite Mr.Fixit to read from INI file
+- rewrite Mr.Fixit to read config from INI file and texts from game/craft.msg
+- sneak attack msg from combat.msg
 - replace "handmade grenade" sprite
 
 
 
 
 IDEAS:
+- add more drug types (Med-X?)
+- add machete (above Combat Knife, non-thrown alternative to Axe)
+- make robots drop "robot parts" and use them in crafting
 - subsequent shots to the same target cost less AP (except bursts)
 - add penetrate to bladed weapons and knockback to blunt
 - guaranteed damage bonus for head/eye shots? (will need to be countered by changing hit chance formula to require higher skill for 95%)

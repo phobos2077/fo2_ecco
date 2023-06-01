@@ -1,4 +1,6 @@
 procedure start;
+procedure create_button;
+procedure delete_button;
 
 #include "..\sfall\sfall.h"
 #include "..\sfall\define_lite.h"
@@ -11,11 +13,10 @@ procedure start;
 
 #include "mrfixit.h"
 
-procedure close_dialog;
-procedure show_dialog;
+
 
 variable ini_fixit_hotkey;
-variable warning_msg, batch_scheduled, fixit_button_shown;
+variable warning_msg, batch_scheduled, fixit_button_shown, screen_center_x;
 
 #define WIN_CRAFT_BTN         "helwin"
 #define SFX_BUTTON_DOWN       "butin4"
@@ -37,7 +38,9 @@ end
 
 procedure keypress_handler begin
    variable pressed := get_sfall_arg,
-            key := get_sfall_arg;
+            key := get_sfall_arg,
+            optionProc,
+            oldMode;
    if (pressed) then begin
       if (hotkey_pressed_now(ini_fixit_hotkey, key)) then begin
          if combat_is_initialized then
@@ -46,15 +49,27 @@ procedure keypress_handler begin
             call batch_init;
       	end
       end else if (mode > 0) then begin
+         oldMode := mode;
          if (key == DIK_ESCAPE) then begin
             call exit_mode;
-            tap_key(DIK_ESCAPE);
          end else if (key >= DIK_1 and key <= DIK_9) then begin
-            cur_section_start := key - DIK_1;
-            display_msg("go "+cur_section_start);
-            call item_options_mode;
-            //tap_key(DIK_ESCAPE);
+            optionProc := "item_options_" + (key - DIK_1);
+            debug_msg("select "+optionProc); // this debug is needed to prevent stupid optimizer from removing the string!
+            call optionProc;
+         end else if (key == DIK_0 and mode <= 4) then begin
+            if (mode == 2) then
+               call items_list_mode;
+            else if (mode == 1 and use_categories) then
+               call item_categories_mode;
+            else if (mode >= 3) then
+               call item_options_mode;
+         end else if (key == DIK_COMMA and mode == 1 and has_prev_page) then begin
+            call list_back_proc;
+         end else if (key == DIK_PERIOD and mode == 1 and has_next_page) then begin
+            call list_next_proc;
          end
+         if (mode != oldMode) then
+            tap_key(DIK_ESCAPE);
       end
    end
 end
@@ -95,16 +110,9 @@ end
 
 // Create the button
 procedure create_button begin
-   variable screenCenterX;
    if fixit_button_shown then return;
 
-   screenCenterX  := (get_screen_width / 2);
-
-   if ((get_ini_setting("f2_res.ini|IFACE|IFACE_BAR_WIDTH") != 800) or (screenCenterX < 400)) then begin
-      screenCenterX -= 80;
-   end
-
-   create_win(WIN_CRAFT_BTN, (screenCenterX + 237), (get_screen_height - 98), 20, 18);
+   create_win_flag(WIN_CRAFT_BTN, (screen_center_x + 237), (get_screen_height - 98), 20, 18, WIN_FLAG_DONTMOVE /*bwor WIN_FLAG_TRANSPARENT*/);
    SelectWin(WIN_CRAFT_BTN);
    AddButton("but", 0, 0, 20, 18);
    AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);
@@ -122,7 +130,7 @@ procedure delete_button begin
 end
 
 procedure gamemodechange_handler begin
-   if (get_game_mode == 0 or get_game_mode bwand COMBAT) then begin
+   if (not (get_game_mode bwand LOADGAME)) then begin
       call create_button;
    end
    else begin
@@ -137,6 +145,10 @@ procedure start begin
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
       register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
 
+      screen_center_x  := (get_screen_width / 2);
+      if ((get_ini_setting("f2_res.ini|IFACE|IFACE_BAR_WIDTH") != 800) or (screen_center_x < 400)) then begin
+         screen_center_x -= 80;
+      end
       call create_button;
 
       set_global_script_type(1);

@@ -157,7 +157,7 @@
 # Examine text messages
 #
 {510}{}{AC Mod: %d}
-{511}{}{DT Mod: %d}
+{511}{}{DR Mod: %d}
 {512}{}{Dmg Mod: %d/%d}
 {518}{}{You look: %s }
 {519}{}{%s %s }
