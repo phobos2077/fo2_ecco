@@ -101,13 +101,13 @@ If you won't like the merchant prices or some other aspects, feel free to read a
 -=== DETAILS  (WARNING! SPOILERS!!!) ===-
 
 > CRAFTING:
-- Mr.Fixit v1.1 was taken and slightly expanded with better hi-res support and some new features
-- All crafting rules was rewritten with new "better" balance and variaty, including new game items
+- New crafting system based on Mr.Fixit by Team-X and Fix-Boy by Lexx
+- Custom crafting schematics designed to serve game's balance and add variaty, including new game items
 - All "schematics" are divided into several categories, you need to find teacher for each category (there is no spoiler here, so try to
-find them on your own. I will only say that they all around northern half of the world...)
-- Knowing schematics not enough, to start crafting you need tools, skills and components
+find them on your own. I will only say that most are found around northern half of the world...)
+- Knowing schematics not enough: to start crafting you may also need skills, components and tools
 - Some craftable food
-- Crafting menu is accessible by doing description of player or with a hotkey: Ctrl+C.
+- Crafting menu is accessible by clicking a new button on main panel or with a hotkey: Ctrl+F.
 
 > TRAPS:
 - to use traps you need to craft a Trap Kit first (need explosive schematics for mines and electronics for sensor mine)
@@ -283,7 +283,7 @@ So basically, you get 2x maximum damage with 100% skill, 3x damage with 200% and
 
 -=== CREDITS ===-
 
-mod was developed by phobos2077 between 2010 and 2023
+mod was developed by phobos2077 between 2010 and 2023 (with years-long gaps)
 
 additional dialogs, designs, flow fixes: Lujo
 russian translators: Pyran, Drobovik, phobos2077, Frederika, PolarTulip
@@ -291,26 +291,29 @@ russian translators: Pyran, Drobovik, phobos2077, Frederika, PolarTulip
 many thanks goes to following people, who made this mod possible:
 - Magnus for WR mod that inspired me
 - Nirran for the original Barter mod
-- Haenlomal for YAAM which gives more weapon balance options
 - JimTheDinosaur for trap system inspiration
-- Killap for the Restoration Project that gives something new to play in Fallout :)
-- BGForgeNet team for carrying the torch of modding
-- Timeslip for sfall with much needed features it gives and Script Editor which is awesome!
-- Cubik2k for F2wedit and FO 1/2 Critter proto editor (eased my task VERY MUCH)
-- Mr.Stalin for Proto Manager
-- F2se author for this great mod testing tool :)
-- pelicano for Party Orders addon
-- people at NMA and nuclear-city forums for useful comments
-- Black Isle for my personal favorite game of all time! :)
-- BGForgeNet and rotators teams for inspiring me to come back to modding
-- NovaRain for his outstanding dedication to keeping sfall project alive and helping me get back on track
+- Lexx for his Fix-Boy art and code
+- Killap and RP team for the Restoration Project that gives something new to play in Fallout :)
+- BGForgeNet team for carrying the torch of FO2 modding
+- Timeslip for sfall and Script Editor, without which this mod wouldn't be possible
+- NovaRain for his dedication to sfall and helping me get back on track
+- Mr.Stalin for contributions to sfall and Proto Manager
+- Cubik2k for F2wedit and FO 1/2 Critter proto editor
+- vad for F12se - an invaluable mod testing/debugging tool
+- PercivalCrump for another save editor with unique features
 - Ziro for solid balance advice
+- pelicano for his Party Orders addon
+- Haenlomal for YAAM which was the basis for my balancing efforts
+- people at NMA and Nuclear-City forums for useful comments
+- Black Isle Studios for my favorite game of all time!
 
 
-Art credits:
+External art credits:
 - Skipperino (DownloadFree3D.com, Low Poly Lever Action Rifle)
 - "Grenade launcher - Milkor MGL" (https://skfb.ly/oESu8) by Valo is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "MP9" (https://skfb.ly/ovNCI) by FranciscoRodriguez is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+- Obsidian Entertainment
+- Bethesda Game Studios
 
 
 ::O

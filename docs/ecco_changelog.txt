@@ -16,10 +16,11 @@ v0.9.0
 - up to 2 unspent AP carry over to the next round (optional)
 - added option to have opening inventory cost no AP, but every action cost 2 AP in combat (replaces "drug free uses")
 - rebalanced shotgun shell types to make both crafted types useful and changed third type to incendiary buckshot
-- removed duplet mode from regular shotgun (reserved for Sawed-off variant)
-- new guns: 14mm SMG and .44 lever-action
+- removed duplet mode from regular shotgun (reserved for Sawed-off variant), but kept the high damage
+- new guns: 14mm SMG and .44 lever-action (in shops and on some enemies)
 - new ammo types: 7.62mm AP, 12ga Incendiary Shells (replaces "Buckshot" from 0.6.2)
 - .223 Pistol is now unique (can only be bought from one person and is back to it's full power)
+- Zip Gun, Pipe Rifle, 9mm SMG are distributed in early game
 - added Weapon Penetrate to XL70E3
 - removed HK G11E & Pulse Pistol from random encounters
 - small adjustments to ammo&weapon stats based on data analysis
@@ -29,7 +30,7 @@ v0.9.0
 
 
 > Other:
-- crafting: added button on main panel + several bug fixes and improvements
+- crafting: new interface art (from Lexx), button on main panel, close window button and several bug fixes and improvements
 - added back russian translation
 - replaced all human NPC armor changes with a script (and fixed several issues of wrong armor being applied)
 - rewritten most global scripts to fix issues and not use hs_* names

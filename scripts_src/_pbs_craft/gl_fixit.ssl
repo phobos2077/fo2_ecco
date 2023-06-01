@@ -5,9 +5,9 @@ procedure start;
 #include "..\sfall\lib.misc.h"
 #include "..\sfall\dik.h"
 
-#define PID_BLOCKING_HEX             (33554499)
-#define PID_WORKBENCH                (157)
-#define SCRIPT_TEST0                 (2)
+//#define PID_BLOCKING_HEX             (33554499)
+//#define PID_WORKBENCH                (157)
+//#define SCRIPT_TEST0                 (2)
 
 #include "mrfixit.h"
 
@@ -15,9 +15,9 @@ procedure close_dialog;
 procedure show_dialog;
 
 variable ini_fixit_hotkey;
-variable warning_msg, batch_scheduled;
+variable warning_msg, batch_scheduled, fixit_button_shown;
 
-#define SGVAR_FIXIT_BUTTON    "openbutt"
+#define WIN_CRAFT_BTN         "helwin"
 #define SFX_BUTTON_DOWN       "butin4"
 #define SFX_BUTTON_UP         "IB2LU1X1"
 #define SFX_ERROR             "IISXXXX1"
@@ -29,7 +29,7 @@ procedure warning_combat begin
    if (warning_msg == false) then begin
       warning_msg := true;
       play_sfx(SFX_ERROR);
-      sfall_func2("message_box", "Mr.Fixit not available in combat!", MSGBOX_NORMAL);
+      sfall_func2("message_box", bstr(121), MSGBOX_NORMAL);
       warning_msg := false;
    end
 end
@@ -96,36 +96,30 @@ end
 // Create the button
 procedure create_button begin
    variable screenCenterX;
-   if (get_sfall_global_int(SGVAR_FIXIT_BUTTON) == 0) then begin
-      set_sfall_global(SGVAR_FIXIT_BUTTON, 1);
+   if fixit_button_shown then return;
 
-      // We now reset everything, to make the button work in any case.
-      //set_sfall_global("openfixi", 0);
+   screenCenterX  := (get_screen_width / 2);
 
-      screenCenterX  := (get_screen_width / 2);
-
-      if ((get_ini_setting("f2_res.ini|IFACE|IFACE_BAR_WIDTH") != 800) or (screenCenterX < 400)) then begin
-         screenCenterX -= 80;
-      end
-
-      create_win("helwin", (screenCenterX + 237), (get_screen_height - 98), 20, 18);
-      SelectWin("helwin");
-      AddButton("but", 0, 0, 20, 18);
-      AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);
-      AddButtonProc("but", do_on, do_off, do_down, do_up);
-      ShowWin;
+   if ((get_ini_setting("f2_res.ini|IFACE|IFACE_BAR_WIDTH") != 800) or (screenCenterX < 400)) then begin
+      screenCenterX -= 80;
    end
+
+   create_win(WIN_CRAFT_BTN, (screenCenterX + 237), (get_screen_height - 98), 20, 18);
+   SelectWin(WIN_CRAFT_BTN);
+   AddButton("but", 0, 0, 20, 18);
+   AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);
+   AddButtonProc("but", do_on, do_off, do_down, do_up);
+   ShowWin;
+   fixit_button_shown := true;
 end
 
-// Delete the button, duh.
 procedure delete_button begin
-   if (get_sfall_global_int(SGVAR_FIXIT_BUTTON) > 0) then begin
-      set_sfall_global(SGVAR_FIXIT_BUTTON, 0);
-      mouse_over := 0;
-      DeleteWin("helwin");
-   end
+   if not fixit_button_shown then return;
+   
+   fixit_button_shown := false;
+   mouse_over := 0;
+   DeleteWin(WIN_CRAFT_BTN);
 end
-
 
 procedure gamemodechange_handler begin
    if (get_game_mode == 0 or get_game_mode bwand COMBAT) then begin
@@ -138,17 +132,16 @@ end
 
 procedure start begin
 	if (game_loaded) then begin
+      //craft_msg := add_extra_msg_file("craft.msg");
 		ini_fixit_hotkey := parse_hotkey(cfg_fixit_hotkey);
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
       register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
-
-      set_sfall_global(SGVAR_FIXIT_BUTTON, 0);
 
       call create_button;
 
       set_global_script_type(1);
 	end else begin
-      debug_msg("gl_fixit repeats");
+      //debug_msg("gl_fixit repeats");
       if (batch_scheduled) then begin
          batch_scheduled := false;
          call batch_init;

@@ -1,15 +1,9 @@
-#define BATCH_MSG               SCRIPT_TEST0
-
 #include "../sfall/sfall.h"
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.inven.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 
-#include "atoi2.h"
-#include "custstr2.h"
-
-//#include "../headers/itempid.h"
 #include "learn_craft.h"
 
 #define CRAFT_MOD_VERSION        3
@@ -37,6 +31,7 @@
 #define MAX_CATEGORIES          (ITEMS_PER_SCREEN + 2)
 
 variable begin
+    // TODO: craft_msg;
     mode;
 
     use_categories := false;
@@ -71,8 +66,9 @@ variable begin
     button_pressed;
 end
 
-
-#define bstr(x)                 message_str(BATCH_MSG, x)
+// TODO:
+//#define bstr(x)                 message_str(craft_msg, x)
+#define bstr(x)                 message_str(SCRIPT_TEST0, x)
 #define field(x)                bstr(cur_section_start + x)
 #define skill_name(x)           bstr(1 + x)
 #define skill_def(x)            bstr(19 + x)
@@ -85,13 +81,6 @@ end
 
 #define cur_section_is_available    ((cur_category == 0 or atoi(field(ITEM_CAT)) == cur_category) and (not(check_gvars) or field(ITEM_GVAR) == "" or (field(ITEM_GVAR) != "NEVER" and get_sfall_global_int(field(ITEM_GVAR)) > 0)))
 
-/*
-#define free_array_var(var)  \
-    if (var != 0) then begin \
-       free_array(var); \
-       var := 0; \
-    end
-    */
 
 procedure display_next_option(variable i, variable text);
 
@@ -309,10 +298,11 @@ procedure item_categories_mode begin
 end
 
 procedure display_category_list begin
-    variable lines_counter := 0;
-    variable skip_counter := 0;
-    var catList;
-    var cat;
+    variable
+        lines_counter := 0,
+        skip_counter := 0,
+        catList,
+        cat;
     debug_msg("display_category_list(): SayStart");
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
@@ -357,9 +347,11 @@ procedure display_items_list begin
 end
 
 procedure display_item_options begin
-    cur_pid := atoi(field(ITEM_PID));
-    cur_pid_qty := atoim(field(ITEM_PID), cur_pid + ":");
-    if (cur_pid_qty == 0) then cur_pid_qty := 1;
+    variable pidData;
+    pidData := string_split_ints(field(ITEM_PID), ":");
+    cur_pid := pidData[0];
+    cur_pid_qty := pidData[1] if len_array(pidData) > 1 else 1;
+    if (cur_pid_qty <= 0) then cur_pid_qty := 1;
     max_undo := obj_is_carrying_obj_pid(dude_obj, cur_pid);
     
     debug_msg("display_item_options: SayStart()");
@@ -429,9 +421,10 @@ procedure redraw_win_idle begin
 end
 
 procedure display_items_avail begin
-    variable lines_counter := 0;
-    variable skip_counter := 0;
-    var cat;
+    variable
+        lines_counter := 0,
+        skip_counter := 0,
+        cat;
     debug_msg("display_items_avail()");
     //call redraw_win_dscr;
     call redraw_win_idle;
@@ -514,7 +507,8 @@ procedure batch_item(variable num) begin
         hours;
         mins;
         word;
-        list;
+        orList;
+        componentData;
         i;
     end
 //    cur_time := atoi(field(ITEM_TIME));
@@ -526,16 +520,16 @@ procedure batch_item(variable num) begin
     while (field(line) != ITEM_COMPONENTS and line < SECTION_STEP) do line += 1;
     line += 1;
     while (line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
-        list := string_split_safe(field(line), "|");
+        orList := string_split_safe(field(line), "|");
         i := 0;
-        // remove first item from "OR" list that player has
-        while (i < len_array(list)) do begin
-            word := list[i];
-            c_pid := atoi(word);
-            c_quantity := atoim(word, c_pid + ":");
+        // remove first item from "OR" orList that player has
+        while (i < len_array(orList)) do begin
+            componentData := string_split_ints(orList[i], ":");
+            c_pid := componentData[0];
+            c_quantity := componentData[1] if len_array(componentData) > 1 else 1;
             if (obj_is_carrying_obj_pid(dude_obj, c_pid) >= c_quantity) then begin
                 call remove_items_pid(dude_obj, c_pid, c_quantity * num);
-                i := len_array(list);
+                i := len_array(orList);
             end
             i++;
         end
@@ -555,20 +549,21 @@ procedure undo_batch(variable num) begin
         c_quantity := 0;
         hours;
         mins;
-        list;
+        orList;
         word;
+        componentData;
     end
 //    cur_time := atoi(field(ITEM_TIME));
     game_time_advance(cur_time * num);
     while (field(line) != ITEM_COMPONENTS and line < SECTION_STEP) do line += 1;
     line += 1;
     while (line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
-        list := string_split_safe(field(line), "|");
-        // give first item from optional list
-        if (len_array(list) > 0) then begin
-            word := list[0];
-            c_pid := atoi(word);
-            c_quantity := atoim(word, c_pid + ":");
+        orList := string_split_safe(field(line), "|");
+        // give first item from optional orList
+        if (len_array(orList) > 0) then begin
+            componentData := string_split_ints(orList[0], ":");
+            c_pid := componentData[0];
+            c_quantity := componentData[1];
             call add_items_pid(dude_obj, c_pid, c_quantity * num);
         end
         line += 1;
@@ -618,6 +613,7 @@ procedure draw_item_properties begin
 
         str := 0;
         list;
+        componentData;
     end
     debug_msg("draw_item_properties "+cur_pid);
     SelectWin("win_dscr");
@@ -676,7 +672,7 @@ procedure draw_item_properties begin
     saved_line := line;
     while (field(line) != ITEM_COMPONENTS and line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
         list := string_split_safe(field(line), ":");
-        if (len_array(list) != 2) then debug_msg("[Mr.Fixit] Invalid skill definition: " + field(line));
+        if (len_array(list) != 2) then debug_msg("! ERROR ! [craft] Invalid skill definition: " + field(line));
         skill_lv := atoi(list[1]);
         // list of skills
         list := parse_skill_name(list[0]);
@@ -722,24 +718,25 @@ procedure draw_item_properties begin
         i := 0;
         max2 := 0;
         foreach tool_word in list begin
-          c_pid := atoi(tool_word);
-          c_quantity := atoim(tool_word, "" + c_pid + ":");
-          if (obj_is_carrying_obj_pid(dude_obj, c_pid) >= c_quantity) then begin
-              SetTextColor(0.0, 1.0, 0.0);
-              has_any := 1;
-          end
-          else begin
-              SetTextColor(1.0, 0.0, 0.0);
-          end
-          mins := obj_is_carrying_obj_pid(dude_obj, c_pid) / c_quantity;
-          if (mins > max2) then max2 := mins;
-          if (proto_data(c_pid, it_type) == item_type_ammo) then c_quantity := c_quantity * get_proto_data(c_pid, PROTO_AM_PACK_SIZE);
-          str := proto_data(c_pid, it_name) + ": " + c_quantity;
-          if (i) then
-              str := bstr(150) + str;
-          Format(str, 25, display_line, 250, 10, justifyleft);
-          display_line += 10;
-          i += 1;
+            componentData := string_split_ints(tool_word, ":");
+            c_pid := componentData[0];
+            c_quantity := componentData[1] if len_array(componentData) > 1 else 1;
+            if (obj_is_carrying_obj_pid(dude_obj, c_pid) >= c_quantity) then begin
+                SetTextColor(0.0, 1.0, 0.0);
+                has_any := 1;
+            end
+            else begin
+                SetTextColor(1.0, 0.0, 0.0);
+            end
+            mins := obj_is_carrying_obj_pid(dude_obj, c_pid) / c_quantity;
+            if (mins > max2) then max2 := mins;
+            if (proto_data(c_pid, it_type) == item_type_ammo) then c_quantity := c_quantity * get_proto_data(c_pid, PROTO_AM_PACK_SIZE);
+            str := proto_data(c_pid, it_name) + ": " + c_quantity;
+            if (i) then
+                str := bstr(150) + str;
+            Format(str, 25, display_line, 250, 10, justifyleft);
+            display_line += 10;
+            i += 1;
         end
         if (max2 < max) then max := max2;
         if (has_any == 0) then has_components := 0;
