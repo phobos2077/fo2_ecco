@@ -1,0 +1,131 @@
+/*
+   Tracks all armor stats via saved arrays and corrects bonus stats if any stat was changed afterwards.
+   This allows to modify armor stats in proto files without breaking save games.
+
+   Might not work if someone changes relevant armor stats at runtime via set_proto_data!!
+*/
+
+#include "..\sfall\sfall.h"
+#include "..\sfall\define_lite.h"
+#include "..\sfall\define_extra.h"
+#include "..\sfall\command_lite.h"
+#include "..\sfall\lib.arrays.h"
+
+#define MAX_PID            (1000)
+#define STATS_ARR_NAME(pid) ("armor_stats_"+pid)
+#define STATS_AC           (0)
+#define STATS_DR           (1)
+#define STATS_DT           (1 + 7)
+#define STATS_SIZE         (1 + 7*2)
+
+#define debug_log(msg)     debug_msg("pc_armor_stats_fix: "+msg)
+#define debug_error(msg)   debug_msg("! ERROR ! pc_armor_stats_fix: "+msg)
+
+
+procedure save_armor_stats(variable armorPid) begin
+   variable stats, i;
+   
+   stats := load_create_array(STATS_ARR_NAME(armorPid), STATS_SIZE);
+   stats[STATS_AC] := get_proto_data(armorPid, PROTO_AR_AC);
+   for (i := 0; i < 7; i++) begin
+      stats[STATS_DR + i] := get_proto_data(armorPid, PROTO_AR_DR_NORMAL + i*4);
+      stats[STATS_DT + i] := get_proto_data(armorPid, PROTO_AR_DT_NORMAL + i*4);
+   end
+   //debug_log("Saved armor stats for "+armorPid+": "+debug_array_str(stats));
+end
+
+procedure save_all_armor_stats begin
+   variable i, pids := "";
+   for (i := 1; i < MAX_PID; i++) begin
+      if (not proto_data(i, it_pid)) then break;
+      if (proto_data(i, it_type) == item_type_armor) then begin
+         call save_armor_stats(i);
+         pids += i + ", ";
+      end
+   end
+   debug_log("Saved armor stats for "+pids);
+end
+
+procedure apply_armor_stats_difference begin
+   variable stats, armorPid, diff, i;
+   armorPid := obj_pid(dude_armor) if dude_armor else 0;
+   if (not armorPid) then return;
+
+   stats := load_array(STATS_ARR_NAME(armorPid));
+   if (not stats) then begin
+      debug_error("Dude has armor but no saved armor stats! (possibly loaded an old save)");
+      return;
+   end
+
+   diff := get_proto_data(armorPid, PROTO_AR_AC) - stats[STATS_AC];
+   if (diff != 0) then begin
+      set_critter_extra_stat(dude_obj, STAT_ac, get_critter_extra_stat(dude_obj, STAT_ac) + diff);
+      debug_log("Armor "+armorPid+" AC changed by "+diff+", applying difference.");
+      intface_redraw;
+   end
+   for (i := 0; i < 7; i++) begin
+      diff := get_proto_data(armorPid, PROTO_AR_DR_NORMAL + i*4) - stats[STATS_DR + i];
+      if (diff != 0) then begin
+         set_critter_extra_stat(dude_obj, STAT_dmg_resist + i, get_critter_extra_stat(dude_obj, STAT_dmg_resist + i) + diff);
+         debug_log("Armor "+armorPid+" DR ("+i+") changed by "+diff+", applying difference.");
+      end
+      diff := get_proto_data(armorPid, PROTO_AR_DT_NORMAL + i*4) - stats[STATS_DT + i];
+      if (diff != 0) then begin
+         set_critter_extra_stat(dude_obj, STAT_dmg_thresh + i, get_critter_extra_stat(dude_obj, STAT_dmg_thresh + i) + diff);
+         debug_log("Armor "+armorPid+" DT ("+i+") changed by "+diff+", applying difference.");
+      end
+   end
+end
+
+/*
+procedure invenwield_handler begin
+   variable
+      critter := get_sfall_arg,
+      item := get_sfall_arg,
+      slot := get_sfall_arg,
+      isWielding := get_sfall_arg;
+
+   if (critter == dude_obj and slot == INVEN_TYPE_WORN) then
+      call save_armor_stats(obj_pid(item) if isWielding else 0);
+end
+
+procedure inventorymove_handler begin
+   variable
+      slot := get_sfall_arg,
+      item := get_sfall_arg;
+
+   display_msg("inventorymove: "+slot+", "+item);
+   if (slot == 3) then
+      call save_armor_stats(obj_pid(item));
+   else if (not dude_armor) then
+      call save_armor_stats(0);
+end*/
+
+/*procedure keypress_handler begin
+   variable
+      isPressed := get_sfall_arg,
+      keyCode := get_sfall_arg;
+
+   if isPressed then begin
+      if (keyCode == DIK_1) then
+         inven_unwield(dude_obj);
+      else if (keyCode == DIK_2) then
+         unwield_slot(dude_obj, INVEN_TYPE_WORN);
+      else if (keyCode == DIK_3) then
+         unwield_armor(dude_obj);
+      else if (keyCode == DIK_4) then
+         wield_obj_critter(dude_obj, obj_carrying_pid_obj(17));
+   end
+end*/
+
+procedure start begin
+   if (game_loaded) then begin
+      call apply_armor_stats_difference;
+      call save_all_armor_stats;
+      //register_hook_proc(HOOK_KEYPRESS, keypress_handler);
+      //register_hook_proc(HOOK_INVENWIELD, invenwield_handler);
+      //register_hook_proc(HOOK_INVENTORYMOVE, inventorymove_handler);
+   end else begin
+
+   end
+end
