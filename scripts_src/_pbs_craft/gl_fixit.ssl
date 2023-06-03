@@ -130,7 +130,8 @@ procedure delete_button begin
 end
 
 procedure gamemodechange_handler begin
-   if (not (get_game_mode bwand LOADGAME)) then begin
+   variable gameExit := get_sfall_arg;
+   if (not (get_game_mode bwand LOADGAME) and not gameExit) then begin
       call create_button;
    end
    else begin
