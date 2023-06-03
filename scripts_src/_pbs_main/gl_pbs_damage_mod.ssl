@@ -15,9 +15,11 @@
 #include "../sfall/lib.math.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
+#include "../sfall/command_extra.h"
 #include "../sfall/sfall.h"
 #include "../headers/animcomd.h"
 #include "../_pbs_headers/ecco.h"
+
 
 procedure start;
 procedure load_damage_types_from_ini;
@@ -449,6 +451,19 @@ end
 
 */
 
+#define critter_anim_fid(objFid, animType, rot)       ((rot * 0x10000000) bwor ((animType * 0x10000) bwand 0xFF0000) bwor (objFid bwand 0xF00FFFF))
+
+procedure validate_critter_anim(variable critter, variable animType) begin
+   variable objFid := obj_art_fid(critter);
+   variable rot := objFid bwand 0x70000000;
+   // This is based on vanilla logic from art_id_()
+   if (animType != ANIM_fire_dance and animType >= ANIM_fall_back and animType <= ANIM_fall_front_blood) then begin
+      if (art_exists(critter_anim_fid(objFid, animType, 1))) then
+         return true;
+   end
+   return art_exists(critter_anim_fid(objFid, animType, 0));
+end
+
 /*
    HOOK_DEATHANIM2
    Runs after Fallout has calculated the death animation. Lets you set your own custom frame id, so more powerful than HOOK_DEATHANIM1, but performs no validation. When using critter_dmg function, this script will also run. In that case weapon pid will be -1 and attacker will point to an object with obj_art_fid == 0x20001F5.
@@ -467,7 +482,7 @@ procedure deathanim2_handler begin
    /**
     * Correct death anim based on overriden damage type.
     */
-   variable weapon, dmgType, dmgTypeNew;
+   variable weapon, dmgType, dmgTypeNew, targetFid;
    variable
       weaponPid := get_sfall_arg,
       attacker := get_sfall_arg,
@@ -479,13 +494,18 @@ procedure deathanim2_handler begin
    if (deathAnim == ANIM_fall_back or deathAnim == ANIM_fall_front or obj_type(attacker) != OBJ_TYPE_CRITTER) then return;
 
    // Find actual attacker's weapon.
-   weapon := critter_inven_obj(attacker, (2 - active_hand) if attacker == dude_obj else INVEN_TYPE_RIGHT_HAND);
+   weapon := get_active_weapon(attacker);
    if (not weapon) then return;
 
    dmgTypeNew := get_weapon_damage_type_override(weapon);
    if (dmgTypeNew == -1) then return;
 
    deathAnim := death_anims_maximum[dmgTypeNew] if is_in_array(deathAnim, death_anims_maximum) else death_anims_normal[dmgTypeNew];
+   
+   // Check if animation actually exists.
+   if not validate_critter_anim(target, deathAnim) then begin
+      deathAnim := ANIM_fall_back;
+   end
 
    debug_verbose("Overriding death anim according to new damage type "+dmgTypeNew+" to "+deathAnim);
    set_sfall_return(deathAnim);

@@ -1,5 +1,4 @@
 for 0.9:
-- kill experience reduction option (flat multiplier or falloff based on kill type?)
 - decide on script and INI naming
 - compare text changes to 0.8 and update RU texts
 - review and update full readme

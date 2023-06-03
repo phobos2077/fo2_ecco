@@ -14,6 +14,8 @@
 #define ENEMY_THUG      (2)
 #define ENEMY_FARMER    (3)
 #define ENEMY_EYEBOT    (4)
+#define ENEMY_RAT       (5)
+#define ENEMY_ALIEN     (6)
 
 variable enemy_types;
 
@@ -35,6 +37,12 @@ procedure spawn_enemy(variable type, variable tile) begin
       case ENEMY_EYEBOT:
          pid := PID_EYEBALL;
          sid := SCRIPT_WCSECBOT;
+      case ENEMY_RAT:
+         pid := PID_RAT;
+         sid := SCRIPT_ZCLRAT;
+      case ENEMY_ALIEN:
+         pid := PID_ALIEN;
+         sid := SCRIPT_ECALIEN;
       default:
          return;
    end
@@ -71,6 +79,8 @@ procedure keypress_handler begin
          call spawn_enemy(ENEMY_FARMER, tile_under_cursor);
       if (keyCode == DIK_8) then
          call spawn_enemy(ENEMY_EYEBOT, tile_under_cursor);
+      if (keyCode == DIK_9) then
+         call spawn_enemies_circle(ENEMY_ALIEN, 1);
    end
 end
 

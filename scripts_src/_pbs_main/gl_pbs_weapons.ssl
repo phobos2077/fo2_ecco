@@ -30,7 +30,7 @@ procedure combatdamage_handler;
 procedure deathanim2_handler;
 procedure itemdamage_handler;
 
-procedure load_emp_effect_armors begin
+procedure load_settings begin
    variable pid, pidList, fid;
 
    pidList := get_int_list_from_ini(INI_COMBAT, "DEATHANIM", "duplet_fix_pids");
@@ -53,7 +53,7 @@ end
 
 procedure start begin
    if game_loaded then begin
-      call load_emp_effect_armors;
+      call load_settings;
 
       register_hook_proc(HOOK_AFTERHITROLL, afterhitroll_handler);
       register_hook_proc(HOOK_AMMOCOST, ammocost_handler);
