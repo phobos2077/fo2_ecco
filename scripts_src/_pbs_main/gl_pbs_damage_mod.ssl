@@ -475,7 +475,7 @@ procedure deathanim2_handler begin
       deathAnim := get_sfall_arg;
 
    // Only correct for gory animations.
-   if (deathAnim == ANIM_fall_back or deathAnim == ANIM_fall_front) then return;
+   if (deathAnim == ANIM_fall_back or deathAnim == ANIM_fall_front or obj_type(attacker) != OBJ_TYPE_CRITTER) then return;
 
    // Find actual attacker's weapon.
    weapon := critter_inven_obj(attacker, (2 - active_hand) if attacker == dude_obj else INVEN_TYPE_RIGHT_HAND);

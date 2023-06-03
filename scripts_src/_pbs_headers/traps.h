@@ -145,6 +145,12 @@ procedure manual_trap_explosion(variable tile, variable elev, variable dmgMin, v
 procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType);
 
 
+// Normal variables
+
+variable calling_critter_dmg_trap;
+
+// Exported variables
+
 #ifdef _TRAPS_EXPORT
 #define _EXPORT_VAR(name, value)    export variable name := value;
 #else
@@ -425,6 +431,7 @@ procedure react_hostile_action begin
     	and obj_can_see_obj(crit, dude_obj)) then
     begin
       call add_array_set(angry_set, obj_team(crit));
+      //set_object_data(crit, OBJ_DATA_WHO_HIT_ME, dude_obj);
     end
   end
 end
@@ -498,8 +505,10 @@ procedure critter_dmg_trap(variable obj, variable dmg, variable dmgType) begin
       call add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(obj));
     end
   end
+  calling_critter_dmg_trap := true;
   set_target_knockback(obj, 0, 0); // prevents knockback
   critter_dmg(obj, dmg, dmgType);
+  calling_critter_dmg_trap := false;
   remove_target_knockback(obj);
   play_sfx("FLRTRAP");
   play_sfx("WH82FXX1");

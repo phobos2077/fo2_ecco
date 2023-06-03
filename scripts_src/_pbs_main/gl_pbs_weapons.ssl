@@ -179,7 +179,7 @@ end
    int     arg4 - The death anim id calculated by Fallout
 */
 procedure deathanim2_handler begin
-   variable weaponPID, attacker, target, damage, animID, rotToAttacker, targetRot;
+   variable weaponPID, attacker, target, damage, animID, oldAnimID, rotToAttacker, targetRot;
    variable wpn, kt;
 
    weaponPID := get_sfall_arg;
@@ -188,29 +188,25 @@ procedure deathanim2_handler begin
    damage := get_sfall_arg;
    animID := get_sfall_arg;
 
-   debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID);
+   oldAnimID := animID;
 
-   // fix for critter_dmg function
-   // TODO: this is mostly needed for spike traps - move to gl_traps!
-   if (obj_art_fid(attacker) == 0x20001F5 and animID == ANIM_chunks_of_flesh) then begin
-      set_sfall_return(ANIM_fall_front);
-      return;
-   end
+   //debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID);
 
    // For double-barrels duplet mode: prevent animations that suggest burst fire, since we're actually doing duplet.
    if ((weaponPID == PID_SHOTGUN or weaponPID == PID_SAWED_OFF_SHOTGUN)
       and (animID == ANIM_chunks_of_flesh or animID == ANIM_dancing_autofire)) then
    begin
-      animID := ANIM_fall_front if is_hit_from_front(attacker, target) else ANIM_fall_back;
+      animID := ANIM_fall_back if is_hit_from_front(attacker, target) else ANIM_fall_front;
    end
 
-   //debug_msg("DEATHANIM "+animID);
+   if (animID != oldAnimID) then begin
+      set_sfall_return(animID);
+      set_sfall_arg(4, animID);
+   end
 
    // Save last death anim and critter. This can be used in critter's destroy_p_proc
    set_sfall_global(SGVAR_LAST_DEATHANIM, animID);
    set_sfall_global(SGVAR_LAST_DEATHANIM_CRITTER, target);
-
-   set_sfall_return(animID);
 end
 
 procedure ammocost_handler begin

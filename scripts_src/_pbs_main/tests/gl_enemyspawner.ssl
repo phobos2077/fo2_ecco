@@ -6,9 +6,13 @@
 #include "..\..\sfall\dik.h"
 #include "..\..\sfall\define_lite.h"
 #include "..\..\sfall\lib.inven.h"
+#include "..\..\headers\critrpid.h"
+#include "..\..\headers\itempid.h"
+#include "..\..\headers\scripts.h"
 
 #define ENEMY_ENCLAVE   (1)
 #define ENEMY_THUG      (2)
+#define ENEMY_FARMER    (3)
 
 variable enemy_types;
 
@@ -16,21 +20,27 @@ procedure spawn_enemy(variable type, variable tile) begin
    variable critter, pid, sid, weaponPid, weapon;
    switch (type) begin
       case ENEMY_ENCLAVE:
-         pid := 16777466;
-         sid := 794; // ECElvPat
-         weaponPid := 24; // plasma pistol
+         pid := PID_MALE_ENCALVE_PATROL + random(0, 1);
+         sid := SCRIPT_ECELVPAT; // ECElvPat
+         weaponPid := PID_PLASMA_PISTOL; // plasma pistol
       case ENEMY_THUG:
-         pid := 16777252 + random(0, 1);
-         sid := 624; // ecbandit
-         weaponPid := 18; // DE
+         pid := PID_GUN_THUG_MALE + random(0, 1);
+         sid := SCRIPT_ECBANDIT; // ecbandit
+         weaponPid := PID_DESERT_EAGLE; // DE
+      case ENEMY_FARMER:
+         pid := PID_MALE_FARMER + random(0, 1);
+         sid := SCRIPT_DCPEASNT;
+         weaponPid := PID_SAWED_OFF_SHOTGUN;
       default:
          return;
    end
 
    critter := create_object_sid(pid, tile, dude_elevation, sid);
-   weapon := add_item_pid(critter, weaponPid);
-   wield_obj_critter(critter, weapon);
-   call add_items_pid(critter, get_proto_data(weaponPid, PROTO_WP_AMMO_PID), 3);
+   if (weaponPid) then begin
+      weapon := add_item_pid(critter, weaponPid);
+      wield_obj_critter(critter, weapon);
+      call add_items_pid(critter, get_proto_data(weaponPid, PROTO_WP_AMMO_PID), 3);
+   end
 end
 
 procedure spawn_enemies_circle(variable type, variable radius) begin
@@ -53,6 +63,8 @@ procedure keypress_handler begin
          call spawn_enemies_circle(ENEMY_ENCLAVE, 2);
       if (keyCode == DIK_6) then
          call spawn_enemies_circle(ENEMY_THUG, 2);
+      if (keyCode == DIK_7) then
+         call spawn_enemy(ENEMY_FARMER, tile_under_cursor);
    end
 end
 

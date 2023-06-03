@@ -2,6 +2,7 @@ procedure start;
 procedure keypress_hook;
 procedure useobj_hook;
 procedure movecost_hook;
+procedure deathanim2_hook;
 
 /**
 
@@ -24,10 +25,13 @@ procedure movecost_hook;
 
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
+#include "../sfall/lib.misc.h"
 
 #define _TRAPS_EXPORT
 #include "../_pbs_headers/traps.h"
 #undef _TRAPS_EXPORT
+
+#define INI_SECTION 			"TRAPS"
 
 variable angry_set;
 //variable ar_explosions;
@@ -59,13 +63,13 @@ procedure start begin
 	call traps_common_init;
 
   	// exported settings
-	pbs_ini_trap_reveals_dude := get_ini_setting("combat.ini|TRAPS|trap_reveals_dude");
-	pbs_ini_trap_friendfoe := get_ini_setting("combat.ini|TRAPS|trap_friendfoe");
-	pbs_ini_trap_is_crime := get_ini_setting("combat.ini|TRAPS|trap_is_crime");
-	ini_assemble_hotkey := parse_hotkey(get_ini_string("combat.ini|TRAPS|assemble_hotkey"));
-	ini_remove_numeric_arrays := get_ini_setting("combat.ini|GENERAL|_remove_numeric_arrays");
+	pbs_ini_trap_reveals_dude := get_int_from_ini(INI_COMBAT, INI_SECTION, "trap_reveals_dude");
+	pbs_ini_trap_friendfoe := get_int_from_ini(INI_COMBAT, INI_SECTION, "trap_friendfoe");
+	pbs_ini_trap_is_crime := get_int_from_ini(INI_COMBAT, INI_SECTION, "trap_is_crime");
+	ini_assemble_hotkey := parse_hotkey(get_str_from_ini(INI_COMBAT, INI_SECTION, "assemble_hotkey"));
 
 	// migrate from old saves - nonzero value of this global indicates save from pre-3.4 sfall era
+	// TODO: probably don't need this anymore..
 	if (get_sfall_global_int(SGVAR_TRAPS_BY_DUDE_LOCAL) != 0) then begin
 	   display_msg("Migrating traps data to new format...");
    	foreach (k: v in ({SGVAR_TRAPS_BY_DUDE: ARR_TRAPS, SGVAR_TRAPS_BY_DUDE_LOCAL: -1, SGVAR_ANGRY_TEAMS: ARR_ANGRY_TEAMS, SGVAR_TRAPS_LAST_MAP: -1})) begin
@@ -76,14 +80,6 @@ procedure start begin
    	end
 	end
 
-	if (ini_remove_numeric_arrays) then begin
-	   // clear all arrays with numeric keys from savegame to make in clean
-	   foreach (item in list_saved_arrays) begin
-	      if (typeof(item) == VALTYPE_INT) then
-	         free_array(load_array(item));
-	   end
-	end
-
 	// initialize global and exported arrays
   	angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
   	pbs_local_traps := create_array_list(0);
@@ -92,6 +88,7 @@ procedure start begin
   	register_hook_proc(HOOK_KEYPRESS, keypress_hook);
   	register_hook_proc(HOOK_USEOBJ, useobj_hook);
   	register_hook_proc(HOOK_MOVECOST, movecost_hook);
+	register_hook_proc(HOOK_DEATHANIM2, deathanim2_hook);
 
   end else begin
 
@@ -180,16 +177,48 @@ procedure useobj_hook begin
    end
 end
 
+/*
+Runs when calculating the AP cost of movement.
+
+Critter arg0 - the critter doing the moving
+int     arg1 - the number of hexes being moved
+int     arg2 - the original AP cost
+
+int     ret0 - the new AP cost
+*/
 procedure movecost_hook begin
    variable
-      critter := get_sfall_arg;
+      critter := get_sfall_arg,
+		hexes := get_sfall_arg,
+		cost := get_sfall_arg;
 
-	//display_msg(proto_data(obj_pid(critter), cr_name)+" move_by "+hexes+"cost"+cost);
+	//debug_msg(proto_data(obj_pid(critter), cr_name)+" move_by "+hexes+"cost"+cost);
 	// traps setoff, turn-based
 	call check_setoff_traps(critter, 0);
 end
 
+procedure deathanim2_hook begin
+   variable weaponPID, attacker, target, damage, animID, rotToAttacker, targetRot;
+   variable wpn, kt;
+
+   weaponPID := get_sfall_arg;
+   attacker := get_sfall_arg;
+   target := get_sfall_arg;
+   damage := get_sfall_arg;
+   animID := get_sfall_arg;
+
+   //debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID+", calling_critter_dmg_trap: "+calling_critter_dmg_trap);
+
+   // Override death animation when critter_dmg function is used from a trp
+   if (obj_art_fid(attacker) == 0x20001F5 and calling_critter_dmg_trap and animID == ANIM_chunks_of_flesh) then begin
+      set_sfall_return(ANIM_fall_front);
+		set_sfall_arg(4, ANIM_fall_front);
+      return;
+   end
+end
+
 
 procedure map_enter_p_proc begin
+	//display_msg("cur map = "+cur_map_index);
    clear_array(pbs_trap_victims);
 end
