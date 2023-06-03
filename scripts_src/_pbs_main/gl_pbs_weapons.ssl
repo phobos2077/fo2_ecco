@@ -20,7 +20,8 @@ export variable pbs_last_hit_roll_result;
 
 variable
    emp_effect_armor_pids,
-   emp_effect_armor_fids;
+   emp_effect_armor_fids,
+   duplet_fix_pids;
 
 procedure start;
 procedure afterhitroll_handler;
@@ -31,6 +32,14 @@ procedure itemdamage_handler;
 
 procedure load_emp_effect_armors begin
    variable pid, pidList, fid;
+
+   pidList := get_int_list_from_ini(INI_COMBAT, "DEATHANIM", "duplet_fix_pids");
+   duplet_fix_pids := create_array_map;
+   foreach (pid in pidList) begin
+      duplet_fix_pids[pid] := 1;
+   end
+   //debug_msg("Loaded weapon pids for duplet fix: "+debug_array_str(array_keys(duplet_fix_pids)));
+
    pidList := get_int_list_from_ini(INI_COMBAT, INI_EFFECTS_SECTION, "emp_effect_armor_pids");
    emp_effect_armor_pids := create_array_map;
    emp_effect_armor_fids := create_array_map;
@@ -39,7 +48,7 @@ procedure load_emp_effect_armors begin
       emp_effect_armor_fids[get_proto_data(pid, PROTO_AR_FID_MALE) bwand 0xFFF] := 1;
       emp_effect_armor_fids[get_proto_data(pid, PROTO_AR_FID_FEMALE) bwand 0xFFF] := 1;
    end
-   debug_msg("Loaded emp effects for armor pids: "+debug_array_str(array_keys(emp_effect_armor_pids))+" and fids: "+debug_array_str(array_keys(emp_effect_armor_fids)));
+   //debug_msg("Loaded emp effects for armor pids: "+debug_array_str(array_keys(emp_effect_armor_pids))+" and fids: "+debug_array_str(array_keys(emp_effect_armor_fids)));
 end
 
 procedure start begin
@@ -193,7 +202,7 @@ procedure deathanim2_handler begin
    //debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID);
 
    // For double-barrels duplet mode: prevent animations that suggest burst fire, since we're actually doing duplet.
-   if ((weaponPID == PID_SHOTGUN or weaponPID == PID_SAWED_OFF_SHOTGUN)
+   if (duplet_fix_pids[weaponPID]
       and (animID == ANIM_chunks_of_flesh or animID == ANIM_dancing_autofire)) then
    begin
       animID := ANIM_fall_back if is_hit_from_front(attacker, target) else ANIM_fall_front;
