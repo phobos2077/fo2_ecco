@@ -23,6 +23,7 @@ procedure round_chance(variable dmg);
 #define INI_SECTION   "DAMAGE"
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 
+#define debug_log(msg)        debug_msg("pbs_damage_mod: "+msg)
 #define debug_verbose(msg)    if ini_debug then debug_msg("pbs_damage_mod: "+msg)
 
 #define DT_MODE_ADD   (1)
@@ -102,8 +103,8 @@ end
    int     ret4 - The amount of knockback to the target
  */
 procedure combatdamage_handler begin
-   variable dmgType, weaponPerk, critterDT, critterDR, weapon_subtype, bonus_ranged, difficulty, i, dmg_mult, dmg_div, damage;
-   variable target, flags, knockback, amount;
+   variable dmgType, weaponPerk, critterDT, critterDR, weaponSubType, bonusRanged, difficulty, stoneWall;
+   variable target, flags, knockback, calcKnockback, calcAmount, oldAmount, oldFlags;
 
    variable
       ctdTarget        := get_sfall_arg,
@@ -138,7 +139,7 @@ procedure combatdamage_handler begin
       return;
    end
 
-   debug_msg("CombatDamage: "+obj_name(target)+"("+target+"), rounds: "+rounds);
+   debug_verbose("target: "+obj_name(target)+"("+target+"), rounds: "+rounds);
 
    if weapon then begin
       dmgType := get_weapon_final_damage_type(weapon);
@@ -151,11 +152,11 @@ procedure combatdamage_handler begin
    critterDT := get_critter_stat(target, STAT_dmg_thresh + dmgType);
    critterDR := get_critter_stat(target, STAT_dmg_resist + dmgType);
 
-   weapon_subtype := item_w_subtype(weapon, attackType); // item_w_subtype_
-   if (ctdSource != dude_obj) or (weapon_subtype != WEAPON_TYPE_RANGED) then
-      bonus_ranged := 0;
+   weaponSubType := item_w_subtype(weapon, attackType); // item_w_subtype_
+   if (ctdSource != dude_obj) or (weaponSubType != WEAPON_TYPE_RANGED) then
+      bonusRanged := 0;
    else
-      bonus_ranged := has_trait(TRAIT_PERK, ctdSource, PERK_bonus_ranged_damage) * 2;
+      bonusRanged := has_trait(TRAIT_PERK, ctdSource, PERK_bonus_ranged_damage) * 2;
 
    difficulty := 100;
    if (has_trait(TRAIT_OBJECT, ctdSource, OBJECT_TEAM_NUM) != has_trait(TRAIT_OBJECT, dude_obj, OBJECT_TEAM_NUM)) then begin
@@ -165,7 +166,7 @@ procedure combatdamage_handler begin
          difficulty := 125;
    end
 
-   amount := calc_damage(weapon, rounds, critterDT, critterDR, bonus_ranged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
+   calcAmount := calc_damage(weapon, rounds, critterDT, critterDR, bonusRanged, damageMultiplier, difficulty, ctdSource, flags, dmgType, weaponPerk, attackType);
    // F2 default, for reference:
    // Damage = (1 - (DR_armor + DR_ammo_adjust) * (((raw_damage * (dmg_mult * damageMultiplier)) / dmg_div) - critterDT)
    /*dmg_resist += get_ammo_value(weapon, PROTO_AM_DR_MOD); // item_w_dr_adjust_ (DR Adjust %)
@@ -176,13 +177,13 @@ procedure combatdamage_handler begin
       dmg_div := get_ammo_value(weapon, PROTO_AM_DMG_DIV); // item_w_dam_div_ (Dmg mod B)
 
       for (i := 1; i <= rounds; i++) begin
-         damage := (random(item_damage_min, item_damage_max) + bonus_ranged) * dmg_mult; // item_w_damage_ (raw_damage)
+         damage := (random(item_damage_min, item_damage_max) + bonusRanged) * dmg_mult; // item_w_damage_ (raw_damage)
          if dmg_div then damage /= dmg_div;
 
          damage := (((damage / 2) * difficulty) / 100) - critterDT;
          if (damage > 0) then begin
             damage := damage - ((damage * dmg_resist) / 100); // reduce damage by the percentage of DR_armor + DR_Ammo
-            if (damage > 0) then amount += damage;
+            if (damage > 0) then calcAmount += damage;
          end
       end
    end*/
@@ -191,38 +192,46 @@ procedure combatdamage_handler begin
    if (ctdSource == dude_obj) then begin
       if has_trait(TRAIT_PERK, ctdSource, PERK_living_anatomy_perk) and (critter_kill_type(ctdTarget) != KILL_TYPE_robot_kills)
          and (critter_kill_type(ctdTarget) != KILL_TYPE_alien_kills) then
-         amount += 5;
+         calcAmount += 5;
       if has_trait(TRAIT_PERK, ctdSource, PERK_pyromaniac_perk) and (dmgType == DMG_fire) then
-         amount += 5;
+         calcAmount += 5;
    end
 
    if knockback and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)
-      and (dmgType == DMG_explosion or weapon == 0 or weapon_subtype == WEAPON_TYPE_MELEE)
+      and (dmgType == DMG_explosion or weapon == 0 or weaponSubType == WEAPON_TYPE_MELEE)
       and ((get_proto_data(obj_pid(target), PROTO_CR_FLAGS) bwand CFLG_NOKNOCKDOWN) == 0) then begin // critter_flag_check_
-      damage := 0;
+         
       if (target == dude_obj) and has_trait(TRAIT_PERK, target, PERK_stonewall_perk) then begin
-         damage := 1;
+         stoneWall := 1;
          if (random(0, 100) < 50) then knockback := 0;
       end
       if knockback then begin
          if (weaponPerk == PERK_weapon_knockback) then
-            amountKnockback := amount / 5;
+            calcKnockback := calcAmount / 5;
          else
-            amountKnockback := amount / 10;
+            calcKnockback := calcAmount / 10;
 
-         if damage then amountKnockback /= 2;
+         if stoneWall then calcKnockback /= 2;
       end
    end
 
    if (flagsSource bwand DAM_HIT) then begin
-      debug_verbose("amountTarget = " + amountTarget+ ", amount = " + amount);
-      amountTarget := amount;
+      oldAmount := amountTarget;
+      oldFlags := flagsTarget;
+   end else begin
+      oldAmount := amountSource;
+      oldFlags := flagsSource;
+   end
+   debug_verbose("Final damage = " + calcAmount+ " ("+oldAmount+"), flags = " + sprintf("%x", flags) +"("+sprintf("%x", oldFlags)+")" +", knockback = " + calcKnockback + "("+amountKnockback+")");
+   
+   if (flagsSource bwand DAM_HIT) then begin
+      amountTarget := calcAmount;
       flagsTarget := flags;
    end else begin
-      debug_verbose("amountSource = " + amountSource+ ", amount = " + amount);
-      amountSource := amount;
+      amountSource := calcAmount;
       flagsSource := flags;
    end
+   amountKnockback := calcKnockback;
 
    set_sfall_return(amountTarget);
    set_sfall_return(amountSource);

@@ -77,55 +77,9 @@ procedure apply_armor_stats_difference begin
    end
 end
 
-/*
-procedure invenwield_handler begin
-   variable
-      critter := get_sfall_arg,
-      item := get_sfall_arg,
-      slot := get_sfall_arg,
-      isWielding := get_sfall_arg;
-
-   if (critter == dude_obj and slot == INVEN_TYPE_WORN) then
-      call save_armor_stats(obj_pid(item) if isWielding else 0);
-end
-
-procedure inventorymove_handler begin
-   variable
-      slot := get_sfall_arg,
-      item := get_sfall_arg;
-
-   display_msg("inventorymove: "+slot+", "+item);
-   if (slot == 3) then
-      call save_armor_stats(obj_pid(item));
-   else if (not dude_armor) then
-      call save_armor_stats(0);
-end*/
-
-/*procedure keypress_handler begin
-   variable
-      isPressed := get_sfall_arg,
-      keyCode := get_sfall_arg;
-
-   if isPressed then begin
-      if (keyCode == DIK_1) then
-         inven_unwield(dude_obj);
-      else if (keyCode == DIK_2) then
-         unwield_slot(dude_obj, INVEN_TYPE_WORN);
-      else if (keyCode == DIK_3) then
-         unwield_armor(dude_obj);
-      else if (keyCode == DIK_4) then
-         wield_obj_critter(dude_obj, obj_carrying_pid_obj(17));
-   end
-end*/
-
 procedure start begin
    if (game_loaded) then begin
       call apply_armor_stats_difference;
       call save_all_armor_stats;
-      //register_hook_proc(HOOK_KEYPRESS, keypress_handler);
-      //register_hook_proc(HOOK_INVENWIELD, invenwield_handler);
-      //register_hook_proc(HOOK_INVENTORYMOVE, inventorymove_handler);
-   end else begin
-
    end
 end

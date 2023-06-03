@@ -1,0 +1,12 @@
+procedure my_proc begin
+   display_msg("my_proc called");
+end
+
+procedure start begin
+   variable n;
+   variable procName;
+   call my_proc;
+   n := dude_obj;
+   procName := "my_"+"proc"+n;
+   call procName;
+end

@@ -1,0 +1,7 @@
+procedure test(variable a, variable b) begin
+   return 2;
+end
+
+procedure start begin
+   display_msg(test(1,2));
+end

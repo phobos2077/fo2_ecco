@@ -1,10 +1,20 @@
 /*
-   Inventory AP costs mod
+   A collection of AP-related mods:
+
+   1. Inventory AP costs mod
 
       - Reduces inventory opening costs to 0 action points.
       - Doing anything in the inventory costs 2 action points.
       - Limits the Quick Pockets perk to 1 rank.
       - Enabled by APCOST section in combat.ini
+      - Reloading weapons from inventory costs the same as normal reload.
+   
+   2. AP costs mod:
+
+      - Unarmed special attacks costs less AP to perform.
+      - Configurable reload cost.
+
+   3. Carry unspent AP mod.
 */
 
 #include "../sfall/sfall.h"

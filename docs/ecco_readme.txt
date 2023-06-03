@@ -210,7 +210,7 @@ MFC  - 20 (50)
 plasma:  60 - 100
 frag:    35 - 60
 molotov: 15 - 35
-- EMP grenade now can do damage to a man in Power armor (enclave patrols included), due to electro-mechanical nature of this suit
+- EMP grenades now can temporarily disrupt power armors, forcing target to lose turn (also their radius was increased)
 - Home-made grenade can be crafted, it is worse than regular frag, but still powerful
 
 
@@ -220,7 +220,7 @@ dmgMax := floor(dmgMax * (1 + skill / 100.0));
 So basically, you get 2x maximum damage with 100% skill, 3x damage with 200% and so on. It only affects maximum damage.
 - Stats for throwing weapons were improved to make them more useful.
 - Throwing Axe - new weapon was added. It's a more powerful replacement for throwing knife for mid-late game combat. Can be bought later in game.
-- Molotov Cocktail, while still making visual explosion like frag grenade, now actually inflicts fire damage and does not knockback targets (it's not explosion after all).
+- Molotov Cocktail now inflicts fire damage and does not knockback targets.
 
 
 > MELEE & UNARMED:
@@ -231,10 +231,10 @@ So basically, you get 2x maximum damage with 100% skill, 3x damage with 200% and
 
 
 > ARMOR:
-- Armor class was lowered considerably for power armours. AC affects hit chance, the more the AC, the more probable is to miss. It was not looking right when soldiers in big and heavy power armor appeared like they are extremely agile, because power armor is big, it should be easier to hit such target (but actual damage resistance remains the same). 
+- Armor Class lowered for heavy armor (metal and power). AC only affects hit chance, so it makes sense bigger/bulkier target is easier to hit.
 - Laser resistance changed: leather - zero protection, combat - mediocre, metal - good, power armor & tesla - great protection
-- Power Armor user can now take damage from EMP grenades
-- all changes to armor affect appropriate critters as well
+- Explosion and Fire resistance slightly lowered for some armor
+- all changes to armor are applied to all critters wielding that armor
 
 
 > CRITTERS:

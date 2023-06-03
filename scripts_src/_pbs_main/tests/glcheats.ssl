@@ -1,8 +1,9 @@
+#include "../../sfall/lib.inven.h"
+
 procedure start begin
-   variable o;
-   o := create_object_sid(7, 0, 0, -1);
-   add_obj_to_inven(dude_obj, o);
-   o := create_object_sid(12, 0, 0, -1);
-   add_obj_to_inven(dude_obj, o);
-   
+   variable pid, qty;
+   if (not game_loaded) then begin return; end
+
+   //foreach (pid: qty in {38: 2, 617: 1, 629: 1, 630: 1, 634: 1, 643: 1, 641: 2, 642: 2, 633: 2, 631: 6, 632: 6})
+   //   call set_items_qty_pid(dude_obj, pid, qty);
 end

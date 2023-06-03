@@ -1,0 +1,63 @@
+/*
+   
+*/
+
+#include "..\..\sfall\sfall.h"
+#include "..\..\sfall\dik.h"
+#include "..\..\sfall\define_lite.h"
+#include "..\..\sfall\lib.inven.h"
+
+#define ENEMY_ENCLAVE   (1)
+#define ENEMY_THUG      (2)
+
+variable enemy_types;
+
+procedure spawn_enemy(variable type, variable tile) begin
+   variable critter, pid, sid, weaponPid, weapon;
+   switch (type) begin
+      case ENEMY_ENCLAVE:
+         pid := 16777466;
+         sid := 794; // ECElvPat
+         weaponPid := 24; // plasma pistol
+      case ENEMY_THUG:
+         pid := 16777252 + random(0, 1);
+         sid := 624; // ecbandit
+         weaponPid := 18; // DE
+      default:
+         return;
+   end
+
+   critter := create_object_sid(pid, tile, dude_elevation, sid);
+   weapon := add_item_pid(critter, weaponPid);
+   wield_obj_critter(critter, weapon);
+   call add_items_pid(critter, get_proto_data(weaponPid, PROTO_WP_AMMO_PID), 3);
+end
+
+procedure spawn_enemies_circle(variable type, variable radius) begin
+   variable dir, origin := tile_under_cursor;
+   call spawn_enemy(type, origin);
+   if (radius > 0) then begin
+      for (dir := 0; dir < 6; dir++) begin
+         call spawn_enemy(type, tile_num_in_direction(origin, dir, radius));
+      end
+   end
+end
+
+procedure keypress_handler begin
+   variable
+      isPressed := get_sfall_arg,
+      keyCode := get_sfall_arg;
+
+   if isPressed and get_cursor_mode == 0 then begin
+      if (keyCode == DIK_5) then
+         call spawn_enemies_circle(ENEMY_ENCLAVE, 2);
+      if (keyCode == DIK_6) then
+         call spawn_enemies_circle(ENEMY_THUG, 2);
+   end
+end
+
+procedure start begin
+   if (not game_loaded) then return;
+
+   register_hook_proc(HOOK_KEYPRESS, keypress_handler);
+end
