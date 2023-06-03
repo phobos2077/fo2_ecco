@@ -1,16 +1,31 @@
+/**
+ * Damage mod.
+ * 
+ * - Implements new damage formula based on Vanilla, with a few differences:
+ *    - DT is reduced based on ammo DR Adjust using a configurable formula
+ *    - In a critical burst, a configurable fraction of bullets will keep the critical effects (as opposed to all bullets)
+ *    - All calculations for each bullet/attack is done in float and rounded at the end using probabilistic rounding
+ * 
+ * - On start, checks if any DamageMod integrated into sfall is enabled and auto-corrects, prompting user to restart.
+ *
+ * - Allows to override attack damage type based on loaded ammo. This affects damage calculations as well as death animations.
+ */
+
 
 #include "../sfall/lib.math.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 #include "../sfall/sfall.h"
+#include "../headers/animcomd.h"
 #include "../_pbs_headers/ecco.h"
 
 procedure start;
 procedure load_damage_types_from_ini;
 procedure combatdamage_handler;
 procedure itemdamage_handler;
+procedure deathanim2_handler;
 procedure check_damage_formula;
-procedure get_weapon_final_damage_type(variable weapon);
+procedure get_weapon_damage_type_override(variable weapon);
 procedure calc_damage(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus,
    variable criticalMult, variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType);
 procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypass,
@@ -40,7 +55,9 @@ variable
    ini_dt_mult_positive,
    ini_dt_mult_negative,
    ini_damage_types,
-   ini_debug;
+   ini_debug,
+   death_anims_normal,
+   death_anims_maximum;
 
 procedure start begin
    if game_loaded then begin
@@ -56,6 +73,28 @@ procedure start begin
 
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
+      register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
+
+      death_anims_normal := [
+         ANIM_dancing_autofire,
+         ANIM_sliced_in_half,
+         ANIM_charred_body,
+         ANIM_charred_body,
+         ANIM_electrify,
+         ANIM_fall_back,
+         ANIM_big_hole
+      ];
+      fix_array(death_anims_normal);
+      death_anims_maximum := [
+         ANIM_chunks_of_flesh,
+         ANIM_sliced_in_half,
+         ANIM_fire_dance,
+         ANIM_melted_to_nothing,
+         ANIM_electrified_to_nothing,
+         ANIM_fall_back,
+         ANIM_exploded_to_nothing
+      ];
+      fix_array(death_anims_maximum);
    end
 end
 
@@ -75,7 +114,7 @@ end
 
 /**
    HOOK_COMBATDAMAGE
-   
+
    Runs when:
 
    Game calculates how much damage each target will get. This includes primary target as well as all extras (explosions and bursts). This happens BEFORE the actual attack animation.
@@ -142,7 +181,10 @@ procedure combatdamage_handler begin
    debug_verbose("target: "+obj_name(target)+"("+target+"), rounds: "+rounds);
 
    if weapon then begin
-      dmgType := get_weapon_final_damage_type(weapon);
+      dmgType := get_weapon_damage_type_override(weapon);
+      if (dmgType == -1) then
+         dmgType := weapon_dmg_type(weapon);
+
       weaponPerk := get_proto_data(obj_pid(weapon), PROTO_WP_PERK);
    end else begin
       dmgType := DMG_normal_dam;
@@ -200,7 +242,7 @@ procedure combatdamage_handler begin
    if knockback and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)
       and (dmgType == DMG_explosion or weapon == 0 or weaponSubType == WEAPON_TYPE_MELEE)
       and ((get_proto_data(obj_pid(target), PROTO_CR_FLAGS) bwand CFLG_NOKNOCKDOWN) == 0) then begin // critter_flag_check_
-         
+
       if (target == dude_obj) and has_trait(TRAIT_PERK, target, PERK_stonewall_perk) then begin
          stoneWall := 1;
          if (random(0, 100) < 50) then knockback := 0;
@@ -223,7 +265,7 @@ procedure combatdamage_handler begin
       oldFlags := flagsSource;
    end
    debug_verbose("Final damage = " + calcAmount+ " ("+oldAmount+"), flags = " + sprintf("%x", flags) +"("+sprintf("%x", oldFlags)+")" +", knockback = " + calcKnockback + "("+amountKnockback+")");
-   
+
    if (flagsSource bwand DAM_HIT) then begin
       amountTarget := calcAmount;
       flagsTarget := flags;
@@ -246,20 +288,16 @@ procedure combatdamage_handler begin
    set_sfall_arg(10, amountKnockback);
 end
 
-procedure get_weapon_final_damage_type(variable weapon) begin
+procedure get_weapon_damage_type_override(variable weapon) begin
    variable dmgType, ammoPid;
    // First, check override for ammo.
    ammoPid := get_weapon_ammo_pid(weapon);
    if (ammoPid and ini_damage_types[ammoPid]) then begin
-      dmgType := ini_damage_types[ammoPid] - 1;
-      debug_verbose("Overriding damage type from ammo "+ammoPid+": "+dmgType);
+      return ini_damage_types[ammoPid] - 1;
    end else if (ini_damage_types[obj_pid(weapon)]) then begin  // check override for weapon
-      dmgType := ini_damage_types[obj_pid(weapon)] - 1;
-      debug_verbose("Overriding damage type from weapon "+ammoPid+": "+dmgType);
-   end else begin
-      dmgType := weapon_dmg_type(weapon);
+      return ini_damage_types[obj_pid(weapon)] - 1;
    end
-   return dmgType;
+   return -1;
 end
 
 /*
@@ -358,7 +396,7 @@ procedure calc_dtdr_vanilla_plus(variable targetDT, variable targetDR, variable 
 
    // No change to DR calculation.
    targetDR += ammoDR;
-   
+
    return [math_max(targetDT, 0), math_max(math_min(targetDR, 100), 0)];
 end
 
@@ -406,12 +444,59 @@ procedure itemdamage_handler begin
    //display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max);
 end
 
+/*
+
+*/
+
+/*
+   HOOK_DEATHANIM2
+   Runs after Fallout has calculated the death animation. Lets you set your own custom frame id, so more powerful than HOOK_DEATHANIM1, but performs no validation. When using critter_dmg function, this script will also run. In that case weapon pid will be -1 and attacker will point to an object with obj_art_fid == 0x20001F5.
+
+   Does not run for critters in the knockdown/out state.
+
+   int     arg0 - The pid of the weapon performing the attack. (May be -1 if the attack is unarmed)
+   Critter arg1 - The attacker
+   Critter arg2 - The target
+   int     arg3 - The amount of damage
+   int     arg4 - The death anim id calculated by Fallout
+
+   int     ret0 - The death anim id to override with
+*/
+procedure deathanim2_handler begin
+   /**
+    * Correct death anim based on overriden damage type.
+    */
+   variable weapon, dmgType, dmgTypeNew;
+   variable
+      weaponPid := get_sfall_arg,
+      attacker := get_sfall_arg,
+      target := get_sfall_arg,
+      damage := get_sfall_arg,
+      deathAnim := get_sfall_arg;
+
+   // Only correct for gory animations.
+   if (deathAnim == ANIM_fall_back or deathAnim == ANIM_fall_front) then return;
+
+   // Find actual attacker's weapon.
+   weapon := critter_inven_obj(attacker, (2 - active_hand) if attacker == dude_obj else INVEN_TYPE_RIGHT_HAND);
+   if (not weapon) then return;
+
+   dmgTypeNew := get_weapon_damage_type_override(weapon);
+   if (dmgTypeNew == -1) then return;
+
+   deathAnim := death_anims_maximum[dmgTypeNew] if is_in_array(deathAnim, death_anims_maximum) else death_anims_normal[dmgTypeNew];
+
+   debug_verbose("Overriding death anim according to new damage type "+dmgTypeNew+" to "+deathAnim);
+   set_sfall_return(deathAnim);
+   set_sfall_arg(4, deathAnim);
+end
+
 procedure item_w_subtype(variable weapon, variable attackType) begin
    variable attack_mode, type := WEAPON_TYPE_UNARMED;
 
    if weapon and (attackType <= ATKTYPE_RWEP2) then begin
       attack_mode := weapon_attack_mode(obj_pid(weapon), attackType);
-      
+
       if (attack_mode >= ATTACK_MODE_SINGLE) then
          type := WEAPON_TYPE_RANGED;
       else if (attack_mode == ATTACK_MODE_THROW) then

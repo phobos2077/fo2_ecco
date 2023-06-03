@@ -1,5 +1,5 @@
 /*
-   Scripting support for various custom weapon features.
+   Scripting support for various custom weapon features in EcCo.
 */
 
 #include "../sfall/command_lite.h"
@@ -19,7 +19,6 @@ export variable pbs_last_burst_size;
 export variable pbs_last_hit_roll_result;
 
 variable
-   ini_damage_types,
    emp_effect_armor_pids,
    emp_effect_armor_fids;
 
@@ -29,8 +28,6 @@ procedure ammocost_handler;
 procedure combatdamage_handler;
 procedure deathanim2_handler;
 procedure itemdamage_handler;
-procedure load_damage_types_from_ini;
-procedure get_weapon_damage_type_override(variable weapon);
 
 procedure load_emp_effect_armors begin
    variable pid, pidList, fid;
@@ -47,41 +44,14 @@ end
 
 procedure start begin
    if game_loaded then begin
-      call load_damage_types_from_ini;
       call load_emp_effect_armors;
 
-      //register_hook_proc(HOOK_AFTERHITROLL, afterhitroll_handler);
+      register_hook_proc(HOOK_AFTERHITROLL, afterhitroll_handler);
       register_hook_proc(HOOK_AMMOCOST, ammocost_handler);
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
    end
-end
-
-
-procedure load_damage_types_from_ini begin
-   variable section, k, v, pid, dmgType;
-   ini_damage_types = create_array_map;
-   section = get_ini_section(INI_COMBAT, INI_DAMAGE_TYPE_SECTION);
-   foreach (k: v in section) begin
-      pid := atoi(k);
-      dmgType := atoi(v);
-      if (pid > 0 and dmgType >= DMG_normal_dam and dmgType <= DMG_explosion) then begin
-         ini_damage_types[pid] := dmgType + 1; // to distinguish normal damage from non-existing key...
-      end
-   end
-end
-
-procedure get_weapon_damage_type_override(variable weapon) begin
-   variable dmgType, ammoPid;
-   // First, check override for ammo.
-   ammoPid := get_weapon_ammo_pid(weapon);
-   if (ammoPid and ini_damage_types[ammoPid]) then begin
-      return ini_damage_types[ammoPid] - 1;
-   end else if (ini_damage_types[obj_pid(weapon)]) then begin  // check override for weapon
-      return ini_damage_types[obj_pid(weapon)] - 1;
-   end
-   return -1;
 end
 
 
@@ -116,34 +86,7 @@ procedure afterhitroll_handler begin
 
    // This is needed for custom door script!
    pbs_last_hit_roll_result := willHit;
-
-   /*
-   if (target and attacker) then begin
-
-      //debug_msg("afterhitroll: "+willHit+" chance="+hitChance+"%% t="+target+" type="+obj_type(target)+" tpid="+obj_pid(target));
-      // for Molotov:
-      if (obj_type(target) == OBJ_TYPE_CRITTER and (willHit == 2 or willHit == 3)) then damageType := DMG_fire;
-      else damageType := DMG_explosion;
-      set_proto_data(PID_MOLOTOV_COCKTAIL, 48, damageType);
-      // end Molotov code
-
-      // fix for grenade launcher, this is required because one weapon has different damage types!
-      if (damageType == DMG_fire) then begin
-         damageType := DMG_explosion;
-         for (i:=1; i<=2; i++) begin
-            wpn := critter_inven_obj2(attacker, i);
-            if (wpn) then
-               if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
-                  damageType := DMG_fire;
-         end
-      end
-      set_proto_data(PID_PBS_M79, 48, damageType);
-      set_proto_data(PID_PBS_MGL, 48, damageType);
-   end
-   */
 end
-
-
 
 
 /*
@@ -178,22 +121,22 @@ procedure combatdamage_handler begin
    variable
       target := get_sfall_arg,
       attacker := get_sfall_arg,
-      target_damage := get_sfall_arg,
-      attacker_damage := get_sfall_arg,
-      target_flags := get_sfall_arg,
-      attacker_flags := get_sfall_arg,
+      targetDamage := get_sfall_arg,
+      attackerDamage := get_sfall_arg,
+      targetFlags := get_sfall_arg,
+      attackerFlags := get_sfall_arg,
       weapon := get_sfall_arg;
 
-   if (target and attacker and weapon and obj_type(target) == OBJ_TYPE_CRITTER) then begin
+   if (target and attacker and weapon and (attackerFlags bwand DAM_HIT) and obj_type(target) == OBJ_TYPE_CRITTER) then begin
       weaponPid := obj_pid(weapon);
-      //debug_msg("combatdamage: "+obj_name(target)+", wpn: "+weaponPid+", flags: "+target_flags+", elec DT: "+get_critter_stat(target, STAT_dmg_thresh_electrical));
+      //debug_msg("combatdamage: "+obj_name(target)+", wpn: "+weaponPid+", flags: "+targetFlags+", elec DT: "+get_critter_stat(target, STAT_dmg_thresh_electrical));
 
       // Taser knockout.
       if (weaponPid == PID_PBS_TASER) then begin
          if ((is_human(target) or is_animal(target)) and get_critter_stat(target, STAT_dmg_thresh_electrical) < 10) then begin
-            target_flags := target_flags bwor DAM_LOSE_TURN;
+            targetFlags := targetFlags bwor DAM_LOSE_TURN;
             if (random(0,99) < (110 - 10*get_critter_stat(target, STAT_en))) then begin
-               target_flags := target_flags bwor DAM_CRITICAL bwor DAM_KNOCKED_DOWN;
+               targetFlags := targetFlags bwor DAM_CRITICAL bwor DAM_KNOCKED_DOWN;
             end
          end
       end
@@ -202,17 +145,17 @@ procedure combatdamage_handler begin
       targetFid := obj_art_fid(target) bwand 0xFFF;
       //debug_msg("Weapons combat dmg: "+armorPid+", dmg type: "+get_proto_data(weaponPid, PROTO_WP_DMG_TYPE)+", target fid: "+targetFid);
       if (get_proto_data(weaponPid, PROTO_WP_DMG_TYPE) == DMG_emp and ((armorPid and emp_effect_armor_pids[armorPid]) or emp_effect_armor_fids[targetFid])) then begin
-         target_flags := target_flags bwor DAM_LOSE_TURN;
+         targetFlags := targetFlags bwor DAM_LOSE_TURN;
          //debug_msg("Armor disrupted! losing turn!");
       end
+
+      set_sfall_return(targetDamage);
+      set_sfall_return(attackerDamage);
+      set_sfall_return(targetFlags);
+      set_sfall_return(attackerFlags);
+   
+      set_sfall_arg(4, targetFlags);
    end
-
-   set_sfall_return(target_damage);
-   set_sfall_return(attacker_damage);
-   set_sfall_return(target_flags);
-   set_sfall_return(attacker_flags);
-
-   set_sfall_arg(4, target_flags);
 end
 
 
@@ -248,6 +191,7 @@ procedure deathanim2_handler begin
    debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID);
 
    // fix for critter_dmg function
+   // TODO: this is mostly needed for spike traps - move to gl_traps!
    if (obj_art_fid(attacker) == 0x20001F5 and animID == ANIM_chunks_of_flesh) then begin
       set_sfall_return(ANIM_fall_front);
       return;
@@ -258,30 +202,6 @@ procedure deathanim2_handler begin
       and (animID == ANIM_chunks_of_flesh or animID == ANIM_dancing_autofire)) then
    begin
       animID := ANIM_fall_front if is_hit_from_front(attacker, target) else ANIM_fall_back;
-   end
-
-   // Grenade Launcher: use fire death animation when using incendiary grenades.
-   if (is_critter(attacker)) then begin
-      // Find actual attacker's weapon.
-      wpn := critter_inven_obj(attacker, INVEN_TYPE_RIGHT_HAND);
-      if (wpn == 0) then
-         wpn := critter_inven_obj(attacker, INVEN_TYPE_LEFT_HAND);
-      else if (obj_pid(wpn) != weaponPID) then
-         wpn := critter_inven_obj(attacker, INVEN_TYPE_LEFT_HAND);
-      if (wpn) then if (get_weapon_ammo_pid(wpn) == PID_PBS_40MM_IC) then
-      begin
-         kt := critter_kill_type(target);
-         if (kt == KILL_TYPE_men_kills or kt == KILL_TYPE_women_kills or kt == KILL_TYPE_children_kills or kt == KILL_TYPE_super_mutant_kills or kt == KILL_TYPE_ghoul_kills) then begin
-            if (random(0,99) < 50) then
-               animID := ANIM_fire_dance;
-            else
-               animID := ANIM_burned_to_nothing;
-         end
-         //else if (is_humanoid(target)) then
-         //   animID := ANIM_fire_dance;
-         else if (kt != KILL_TYPE_robot_kills) then
-            animID := ANIM_charred_body;
-      end
    end
 
    //debug_msg("DEATHANIM "+animID);
@@ -333,16 +253,7 @@ procedure itemdamage_handler begin
          set_attack_explosion_pattern(1, 0);
       end
       //display_msg("t:"+get_last_target(attacker)+", isMelee:"+isMelee);
-      
-      // tell engine to remove knockback for incendiary weapons - Should not be needed because in damage_mod we only apply knockback if final damage type is explosion
-      /*if (get_weapon_damage_type_override(weapon) (weaponPid == PID_MOLOTOV_COCKTAIL or get_weapon_ammo_pid(weapon) == PID_PBS_40MM_IC)
-            and get_proto_data(weaponPid, PROTO_WP_DMG_TYPE) == DMG_fire) then
-      begin
-         set_weapon_knockback(weapon, 0, 0);
-         //set_attack_is_explosion_fire;
-         //set_proto_data(weaponPid, 48, DMG_explosion);
-      end
-      */
+
       // tell engine to reduce explosion damage radius for smaller explosions
       if (get_proto_data(weaponPid, PROTO_WP_CALIBER) == CALIBER_40MM_GRENADE) then begin
          set_attack_explosion_radius(2);
