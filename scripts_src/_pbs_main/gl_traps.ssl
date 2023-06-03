@@ -219,6 +219,5 @@ end
 
 
 procedure map_enter_p_proc begin
-	//display_msg("cur map = "+cur_map_index);
    clear_array(pbs_trap_victims);
 end

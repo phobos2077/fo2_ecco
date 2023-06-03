@@ -137,8 +137,8 @@ procedure map_exit_p_proc begin
 	call identify_me;
 	if (my_trap_index == INDEX_EXPLOSION) then begin
 		destroy_object(self_obj);
-	end else if (i_am_trap and cur_map_index == 0) then begin
-		//display_msg("Destroy trap "+my_trap_index);
+	end else if (i_am_trap and cur_town == -1) then begin
+		debug_msg("Leaving random map, destroying trap "+my_trap_index);
 		call remove_trap_info(my_trap_index);
 		destroy_object(self_obj);
 	end
