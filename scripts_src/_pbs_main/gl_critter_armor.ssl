@@ -8,12 +8,13 @@
 procedure start;
 
 variable
-   ini_critter_to_armor_map;
+   ini_apply_ac;
 
 procedure start begin
    variable section, k, v, i, critterId, critterPid, armorPid, dt, dr, dtArr, drArr, name, armorName, numApplied := 0;
    if game_loaded then begin
       section := get_ini_section(INI_CRITTER_ARMOR, "CRITTER_TO_ARMOR");
+      ini_apply_ac := get_ini_setting(INI_CRITTER_ARMOR + "|SETTINGS|apply_ac");
       
       dtArr := temp_array_list(DMG_explosion + 1);
       drArr := temp_array_list(DMG_explosion + 1);
@@ -31,6 +32,9 @@ procedure start begin
             set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_resist*4 + i*4, dr);
             dtArr[i] := dt;
             drArr[i] := dr;
+         end
+         if (ini_apply_ac) then begin
+            set_proto_data(critterPid, PROTO_CR_BONUS_AC, get_proto_data(armorPid, PROTO_AR_AC));
          end
          name := message_str_game(GAME_MSG_PRO_CRIT, critterId * 100);
          //debug_msg(""+k+"="+v+" ; "+name);
