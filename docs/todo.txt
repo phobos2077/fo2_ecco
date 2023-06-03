@@ -1,18 +1,13 @@
 for 0.9:
-- review armor class for armors
-- review and update full readme
-- ensure fire death anims for Dragon Breath
-- investigate critter_dmg fix in deathanim2
-- decide on script and INI naming
 - kill experience reduction option (flat multiplier or falloff based on kill type?)
+- decide on script and INI naming
 - compare text changes to 0.8 and update RU texts
+- review and update full readme
 - update RU readme
 
 
 for "future":
 - attempt to make melee useful for mid game (stun, knoknout effects, penetrate for knives, etc.)
-- fix art position for some items (read size from FRM?)
-- rewrite weapons mod to be configurable from ini
 - port "grenades anywhere" script from FO2Tweaks
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - rewrite Mr.Fixit to read config from INI file and texts from game/craft.msg
@@ -23,6 +18,7 @@ for "future":
 
 
 IDEAS:
+- melee buff similar to throwing: increase max damage based on skill, use attack mode as "caliber", e.g. "thrust" attacks should incur DR Adjust while Swing have higher DMG
 - add more drug types (Med-X?)
 - add machete (above Combat Knife, non-thrown alternative to Axe)
 - make robots drop "robot parts" and use them in crafting
@@ -30,3 +26,8 @@ IDEAS:
 - add penetrate to bladed weapons and knockback to blunt
 - guaranteed damage bonus for head/eye shots? (will need to be countered by changing hit chance formula to require higher skill for 95%)
 - barter: the more you sell to the same trader, the less is selling price
+- trap system redesign:
+   - More straightforward trap install (just drop & go)
+   - Use traps skill for trap effectiveness instead of chance to install, which doesn't achieve anything
+   - All traps should have minimum 1 tile radius
+   - Add simple ready-to-go traps (maybe to vendors), without having to install explosive

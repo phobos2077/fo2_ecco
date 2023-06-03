@@ -13,6 +13,7 @@
 #define ENEMY_ENCLAVE   (1)
 #define ENEMY_THUG      (2)
 #define ENEMY_FARMER    (3)
+#define ENEMY_EYEBOT    (4)
 
 variable enemy_types;
 
@@ -31,6 +32,9 @@ procedure spawn_enemy(variable type, variable tile) begin
          pid := PID_MALE_FARMER + random(0, 1);
          sid := SCRIPT_DCPEASNT;
          weaponPid := PID_SAWED_OFF_SHOTGUN;
+      case ENEMY_EYEBOT:
+         pid := PID_EYEBALL;
+         sid := SCRIPT_WCSECBOT;
       default:
          return;
    end
@@ -65,6 +69,8 @@ procedure keypress_handler begin
          call spawn_enemies_circle(ENEMY_THUG, 2);
       if (keyCode == DIK_7) then
          call spawn_enemy(ENEMY_FARMER, tile_under_cursor);
+      if (keyCode == DIK_8) then
+         call spawn_enemy(ENEMY_EYEBOT, tile_under_cursor);
    end
 end
 

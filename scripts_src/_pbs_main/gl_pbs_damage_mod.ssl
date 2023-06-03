@@ -187,7 +187,7 @@ procedure combatdamage_handler begin
 
       weaponPerk := get_proto_data(obj_pid(weapon), PROTO_WP_PERK);
    end else begin
-      dmgType := DMG_normal_dam;
+      dmgType := get_proto_data(obj_pid(ctdSource), PROTO_CR_DMG_TYPE) if obj_type(ctdSource) == OBJ_TYPE_CRITTER else DMG_normal_dam;
       weaponPerk := -1;
    end
 
@@ -353,8 +353,8 @@ begin
 
       bulletDamage := round_chance(bulletDamage * staticMult * (1 - calcDTDR[1] / 100.0) * criticalMult);
 
+      debug_verbose("Bullet "+i+" dmg="+bulletDamage+"/"+baseDamage);
       if (bulletDamage > 0) then begin
-         debug_verbose("Bullet "+i+" dmg="+bulletDamage+"/"+baseDamage);
          accumulatedDamage += bulletDamage;
       end
    end
@@ -438,10 +438,11 @@ procedure itemdamage_handler begin
    item_damage_max := get_sfall_arg;
    item_damage_weapon := get_sfall_arg;
    item_damage_attacker := get_sfall_arg;
-      //attackType := get_sfall_arg,
-      //isMelee := get_sfall_arg;
+   //variable
+   //   attackType := get_sfall_arg,
+   //   isMelee := get_sfall_arg;
 
-   //display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max);
+   //display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max + ", wpn: "+(obj_pid(item_damage_weapon) if item_damage_weapon else 0)+", attackType: "+attackType+", isMelee: "+isMelee);
 end
 
 /*
