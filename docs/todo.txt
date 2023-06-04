@@ -1,5 +1,4 @@
 for 0.9:
-- attempt to make melee useful for mid game (stun, knoknout effects, penetrate for knives, etc.)
 - decide on script and INI naming
 - compare text changes to 0.8 and update RU texts
 - review and update full readme
@@ -17,7 +16,6 @@ for "future":
 
 
 IDEAS:
-- melee buff similar to throwing: increase max damage based on skill, use attack mode as "caliber", e.g. "thrust" attacks should incur DR Adjust while Swing have higher DMG
 - add penetrate to bladed weapons and knockback to blunt
 - add more drug types (Med-X?)
 - add machete (above Combat Knife, non-thrown alternative to Axe)
