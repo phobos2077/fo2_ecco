@@ -11,18 +11,21 @@
  * - Allows to override attack damage type based on loaded ammo. This affects damage calculations as well as death animations.
  */
 
-
+#include "../sfall/lib.arrays.h"
 #include "../sfall/lib.math.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 #include "../sfall/command_extra.h"
 #include "../sfall/sfall.h"
+
 #include "../headers/animcomd.h"
+
 #include "../_pbs_headers/ecco.h"
 
 
 procedure start;
 procedure load_damage_types_from_ini;
+procedure load_attack_mode_from_ini;
 procedure combatdamage_handler;
 procedure itemdamage_handler;
 procedure deathanim2_handler;
@@ -39,6 +42,7 @@ procedure round_chance(variable dmg);
 
 #define INI_SECTION   "DAMAGE"
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
+#define INI_ATTACK_MODES_SECTION  "ATTACK_MODES"
 
 #define debug_log(msg)        debug_msg("pbs_damage_mod: "+msg)
 #define debug_verbose(msg)    if ini_debug then debug_msg("pbs_damage_mod: "+msg)
@@ -57,6 +61,7 @@ variable
    ini_dt_mult_positive,
    ini_dt_mult_negative,
    ini_damage_types,
+   ini_dr_adjust_by_attack_mode,
    ini_debug,
    death_anims_normal,
    death_anims_maximum;
@@ -72,6 +77,7 @@ procedure start begin
       int_from_ini_file(debug, INI_COMBAT, INI_SECTION);
 
       call load_damage_types_from_ini;
+      call load_attack_mode_from_ini;
 
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
@@ -111,8 +117,31 @@ procedure load_damage_types_from_ini begin
          ini_damage_types[pid] := dmgType + 1; // to distinguish normal damage from non-existing key...
       end
    end
+   debug_verbose("Loaded damage types "+debug_array_str(ini_damage_types));
 end
 
+procedure load_attack_mode_from_ini begin
+   ini_dr_adjust_by_attack_mode = create_array_map;
+
+   variable mode;
+   for (mode := ATTACK_MODE_PUNCH; mode <= ATTACK_MODE_FLAME; mode++) begin
+      variable val := get_str_from_ini(INI_COMBAT, INI_ATTACK_MODES_SECTION, "dr_adjust_"+mode);
+      if (val != "") then begin
+         ini_dr_adjust_by_attack_mode[mode] := atoi(val);
+      end
+   end
+   debug_verbose("Loaded DR adjust by attack modes "+debug_array_str(ini_dr_adjust_by_attack_mode));
+end
+
+procedure get_weapon_attack_mode_by_attack_type(variable weapon, variable attackType) begin
+   if (attackType == ATKTYPE_KICK or (attackType >= ATKTYPE_STRONGKICK and attackType <= ATKTYPE_PIERCINGKICK)) then
+      return ATTACK_MODE_KICK;
+
+   if (not weapon) then
+      return ATTACK_MODE_PUNCH;
+
+   return weapon_attack_mode(obj_pid(weapon), attackType);
+end
 
 /**
    HOOK_COMBATDAMAGE
@@ -319,6 +348,9 @@ begin
    if (ammoDiv == 0) then ammoDiv := 1; // prevent divide by zero
    ammoMult := get_ammo_value(weapon, PROTO_AM_DMG_MULT);
    ammoDR := get_ammo_value(weapon, PROTO_AM_DR_MOD); // we use DR mod as DT&DR mod
+
+   // DR Adjust mod by attack mode
+   ammoDR += ini_dr_adjust_by_attack_mode[get_weapon_attack_mode_by_attack_type(weapon, attackType)];
 
    bypassArmor := (flags bwand DAM_BYPASS) and dmgType != DMG_emp;
 
