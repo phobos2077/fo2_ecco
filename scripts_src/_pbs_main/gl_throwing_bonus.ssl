@@ -5,23 +5,84 @@
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/lib.arrays.h"
+#include "../sfall/lib.math.h"
+#include "../sfall/lib.inven.h"
 #include "../_pbs_headers/ecco.h"
 
 variable
-   ini_damage_bonus_skill_mult;
+   ini_damage_bonus_skill_mult,
+   ini_bonus_crit_chance;
 
 procedure start;
 procedure itemdamage_handler;
+procedure rollcheck_handler;
 
 procedure start begin
    if game_loaded then begin
-      if not get_int_from_ini(INI_COMBAT, "THROWING", "damage_bonus") then begin
-         return;
+      float_from_ini_file_clamped(damage_bonus_skill_mult, INI_COMBAT, "THROWING", 0.0, 10.0);
+      int_from_ini_file_clamped(bonus_crit_chance, INI_COMBAT, "THROWING", 0, 100);
+
+      if ini_damage_bonus_skill_mult > 0.01 then begin
+         register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
       end
+      if (ini_bonus_crit_chance > 0) then begin
+         register_hook_proc(HOOK_ROLLCHECK, rollcheck_handler);
+      end
+   end
+end
 
-      int_from_ini_file(damage_bonus_skill_mult, INI_COMBAT, "THROWING");
 
-      register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
+#define var_as_str(name)            #name": "+name+"; "
+
+/*
+HOOK_ROLLCHECK
+Runs when a game event performs a random roll to check the chance of success or failure.
+
+int     arg0 - event type:
+               1 - checks the chance of an attack hitting the target
+               2 - checks the chance of a bullet from a burst hitting the target (for burst attacks)
+               3 - checks the chance when using skills (not listed below)
+               4 - check the chance of using Repair skill
+               5 - check the chance of using Doctor skill
+               6 - check the chance of using Steal skill for the thief (usually the player)
+               7 - the second Steal skill chance check for the target to catch the thief, in which the target's failure is the thief's success result
+int     arg1 - the value of roll result (see ROLL_* constants), which is calculated as:
+*/
+procedure rollcheck_handler begin
+   variable
+      eventType := get_sfall_arg,
+      roll := get_sfall_arg,
+      chance := get_sfall_arg,
+      critChanceBonus := get_sfall_arg,
+      randomDelta := get_sfall_arg;
+
+   //display_msg("rollcheck: "+eventType+"; "+var_as_str(roll)+var_as_str(chance)+var_as_str(critChanceBonus)+var_as_str(randomDelta));
+   // On successfull attack roll..
+   if eventType == 1 and randomDelta >= 0 then begin
+      variable
+         ctd := combat_data,
+         attacker := get_object_data(combat_data, C_ATTACK_SOURCE),
+         hitMode := get_object_data(combat_data, C_ATTACK_HIT_MODE),
+         weapon := item_by_attack_type(attacker, hitMode);
+
+      if (weapon) then begin
+         variable
+            attackMode := weapon_attack_mode(obj_pid(weapon), hitMode),
+            dmgType := weapon_dmg_type(weapon);
+         
+         //display_msg("attacker: "+obj_name(attacker)+"; "+var_as_str(hitMode)+var_as_str(weaponPid)+var_as_str(attackMode));
+         if (attackMode == ATTACK_MODE_THROW and weapon_dmg_type(weapon) == DMG_normal_dam) then begin
+            critChanceBonus += ini_bonus_crit_chance;
+            if (random(1, 100) <= randomDelta / 10 + critChanceBonus) then begin
+               roll := ROLL_CRITICAL_SUCCESS;
+            end else begin
+               roll := ROLL_SUCCESS;
+            end
+            debug_msg("gl_throwing_bonus: rerolling for "+obj_name(attacker)+" with better crit chance: "+critChanceBonus+", result: "+roll);
+            set_sfall_arg(1, roll);
+            set_sfall_return(roll);
+         end
+      end
    end
 end
 
@@ -74,7 +135,7 @@ procedure itemdamage_handler begin
             // dmgMax := dmgMax + agility + (skill / 20);
             // method 3 (combined):
             //dmgMax := dmgMax + agility + floor(dmgMax * (skill / 100.0));
-            debug_msg("Bump throw dmg (sk:"+skill+"): "+dmgMin+"-"+dmgMax);
+            debug_msg("gl_throwing_bonus: dmg (sk:"+skill+"): "+dmgMin+"-"+dmgMax);
 
             set_sfall_arg(0, dmgMin);
             set_sfall_arg(1, dmgMax);
