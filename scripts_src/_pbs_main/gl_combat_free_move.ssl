@@ -31,20 +31,23 @@ bool    arg2 - 1 at the start/end of the player's turn after loading a game save
 
 int     ret0 - pass 1 at the start of turn to skip the turn, pass -1 at the end of turn to force end of combat
 */
-/*
+
 procedure combatturn_hook begin
    variable
       eventType := get_sfall_arg,
       critter := get_sfall_arg;
 
    if (eventType == 1 and critter != dude_obj) then begin
-      display_msg("bonus move for "+obj_name(critter));
-      //write_int(0x56D39C, 10);
-      //get_critter_stat(critter, STAT_ag);
-      //set_combat_free_move("set_combat_free_move", 10);
+      variable
+         ag := get_critter_stat(critter, STAT_ag),
+         freeMove := round(math_max(ag + ini_shift, 0) * ini_mult_npc);
+
+      if (freeMove > 0) then begin
+         set_combat_free_move(freeMove);
+         debug_msg("gl_combat_free_move: Setting combat_free_move for NPC "+obj_name(critter)+"'s turn to "+freeMove);
+      end
    end
 end
-*/
 
 
 /*
@@ -58,7 +61,7 @@ int     arg3 - 1 after procedure execution
 obj     arg4 - target_obj
 int     arg5 - fixed_param
 */
-procedure stdprocedureend_hook begin
+procedure stdprocedure_hook begin
    variable
       handler := get_sfall_arg,
       self := get_sfall_arg,
@@ -67,22 +70,17 @@ procedure stdprocedureend_hook begin
       target := get_sfall_arg,
       param := get_sfall_arg;
 
-   if (handler == combat_proc and param != COMBAT_SUBTYPE_NONCOM_TURN) then begin
+   if (handler == combat_proc and self == dude_obj and param == COMBAT_SUBTYPE_TURN) then begin
       //display_msg("combat_proc. self: "+obj_name_safe(self)+", source: "+obj_name_safe(source)+", target: "+obj_name_safe(target)+", param: "+param);
-      if param == COMBAT_SUBTYPE_TURN then begin
-         variable
-            ag := get_critter_stat(self, STAT_ag),
-            mult := ini_mult_dude if self == dude_obj else ini_mult_npc,
-            freeMove := round(math_max(ag + ini_shift, 0) * mult);
+      variable
+         ag := get_critter_stat(self, STAT_ag),
+         freeMove := round(math_max(ag + ini_shift, 0) * ini_mult_dude);
 
-         if (freeMove > 0) then begin
-            // Add vanilla move points from perk
-            if (self == dude_obj) then
-               freeMove += 2 * dude_perk(PERK_bonus_move);
-
-            set_combat_free_move(freeMove);
-            debug_msg("gl_combat_free_move: Setting combat_free_move for "+obj_name(self)+"'s turn to "+freeMove);
-         end
+      if (freeMove > 0) then begin
+         // Add vanilla move points from perk
+         freeMove += 2 * dude_perk(PERK_bonus_move);
+         set_combat_free_move(freeMove);
+         debug_msg("gl_combat_free_move: Setting combat_free_move for player's turn to "+freeMove);
       end
    end
 end
@@ -94,9 +92,11 @@ procedure start begin
    float_from_ini_file_clamped(mult_npc, INI_COMBAT, INI_SECTION, 0.0, 10.0);
    int_from_ini_file_clamped(shift, INI_COMBAT, INI_SECTION, -9, 0);
 
-   if (ini_mult_dude > 0.01 or ini_mult_npc > 0.01) then begin
-      //register_hook_proc(HOOK_COMBATTURN, combatturn_hook);
-      register_hook_proc(HOOK_STDPROCEDURE_END, stdprocedureend_hook);
+   if (ini_mult_dude > 0.01) then begin
+      register_hook_proc(HOOK_STDPROCEDURE, stdprocedure_hook);
+   end
+   if (ini_mult_npc > 0.01) then begin
+      register_hook_proc(HOOK_COMBATTURN, combatturn_hook);
    end
 end
 
