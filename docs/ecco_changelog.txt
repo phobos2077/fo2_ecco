@@ -14,6 +14,7 @@ v0.9.0
 - armor and ammo stats revamped for new formula: AP ammo will now do better against late game armor
 - nerfed burst criticals: only a fraction of bullets will retain critical effects (optional)
 - up to 2 unspent AP carry over to the next round (optional)
+- bonus move points now awarded to player and NPC's with high AG, adjusted AG of some critters to take advantage (optional)
 - added option to have opening inventory cost no AP, but every action cost 2 AP in combat (replaces "drug free uses")
 - rebalanced shotgun shell types to make both crafted types useful and changed third type to incendiary buckshot
 - removed duplet mode from regular shotgun (reserved for Sawed-off variant), but kept the high damage
@@ -24,17 +25,19 @@ v0.9.0
 - added Weapon Penetrate to XL70E3
 - removed HK G11E & Pulse Pistol from random encounters
 - small adjustments to ammo&weapon stats based on data analysis
-- added script to differentiate bullet distribution in bursts between weapons
+- added script to differentiate bullet distribution (spray) in bursts between weapons
 - revamped bursts: lower burst sizes for most weapons, but damage and spray settings tweaked to compensate
 - reverted flamers to use both fuel types and rebalanced them
 - rebalanced armor AC and added script to auto-correct for changed armor protos in existing saved games
+- EMP grenades now stun PA users for 1 turn instead of damaging them
+- slight buff to Dogmeat agility and melee damage
 
 > Other:
 - crafting system: new UI art, button on main panel, full keyboard navigation, close window button, various bug fixes and improvements
 - rebalanced many crafting schematics and added Metal Armor to craft
 - added back russian translation
 - replaced all human NPC armor changes with a script (and fixed several issues of wrong armor being applied)
-- rewritten most global scripts to fix issues and not use hs_* names
+- rewritten most global scripts: fixed some issues and improved compatibility
 
 
 v0.8.0

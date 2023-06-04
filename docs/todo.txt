@@ -1,4 +1,5 @@
 for 0.9:
+- attempt to make melee useful for mid game (stun, knoknout effects, penetrate for knives, etc.)
 - decide on script and INI naming
 - compare text changes to 0.8 and update RU texts
 - review and update full readme
@@ -6,7 +7,6 @@ for 0.9:
 
 
 for "future":
-- attempt to make melee useful for mid game (stun, knoknout effects, penetrate for knives, etc.)
 - port "grenades anywhere" script from FO2Tweaks
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - rewrite Mr.Fixit to read config from INI file and texts from game/craft.msg
@@ -18,11 +18,11 @@ for "future":
 
 IDEAS:
 - melee buff similar to throwing: increase max damage based on skill, use attack mode as "caliber", e.g. "thrust" attacks should incur DR Adjust while Swing have higher DMG
+- add penetrate to bladed weapons and knockback to blunt
 - add more drug types (Med-X?)
 - add machete (above Combat Knife, non-thrown alternative to Axe)
 - make robots drop "robot parts" and use them in crafting
-- subsequent shots to the same target cost less AP (except bursts)
-- add penetrate to bladed weapons and knockback to blunt
+- subsequent shots to the same target cost less AP (except bursts) - but can make guns even more powerful compared to melee/unarmed
 - guaranteed damage bonus for head/eye shots? (will need to be countered by changing hit chance formula to require higher skill for 95%)
 - barter: the more you sell to the same trader, the less is selling price
 - trap system redesign:

@@ -75,12 +75,12 @@ procedure itemdamage_handler begin
             // method 3 (combined):
             //dmgMax := dmgMax + agility + floor(dmgMax * (skill / 100.0));
             debug_msg("Bump throw dmg (sk:"+skill+"): "+dmgMin+"-"+dmgMax);
+
+            set_sfall_arg(0, dmgMin);
+            set_sfall_arg(1, dmgMax);
+            set_sfall_return(dmgMin);
+            set_sfall_return(dmgMax);
          end
       end
    end
-
-   set_sfall_arg(0, dmgMin);
-   set_sfall_arg(1, dmgMax);
-   set_sfall_return(dmgMin);
-   set_sfall_return(dmgMax);
 end

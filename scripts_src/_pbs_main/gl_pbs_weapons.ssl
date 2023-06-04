@@ -268,7 +268,4 @@ procedure itemdamage_handler begin
          set_attack_explosion_radius(4);
       end
    end
-
-   set_sfall_return(dmgMin);
-   set_sfall_return(dmgMax);
 end
