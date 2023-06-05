@@ -1,0 +1,58 @@
+/*
+   Drops additional monster parts (new items) for some critters.
+*/
+
+procedure start;
+
+#include "../sfall/define_lite.h"
+#include "../sfall/command_lite.h"
+#include "../sfall/lib.inven.h"
+#include "../_pbs_craft/learn_craft.h"
+#include "../_pbs_headers/ecco.h"
+
+variable
+   ini_enable;
+   
+procedure drop_monster_parts(variable critter);
+
+#define INI_FILE        INI_COMBAT
+#define INI_SECTION     "MONSTER_PARTS"
+
+
+/*
+   HOOK_ONDEATH
+   Runs immediately after a critter dies for any reason. No return values; this is just a convenience for when you need to do something after death for a large number of different critters and don't want to have to script each and every one of them.
+
+   Critter arg0 - The critter that just died
+*/
+procedure ondeath_handler begin
+   variable critter := get_sfall_arg;
+
+   if (critter and critter != dude_obj and obj_type(critter) == OBJ_TYPE_CRITTER) then begin
+      call drop_monster_parts(critter);
+   end
+end
+
+procedure start begin
+   if (game_loaded) then begin
+      int_from_ini_file(enable, INI_FILE, INI_SECTION);
+      if (ini_enable) then
+         register_hook_proc(HOOK_ONDEATH, ondeath_handler);
+   end
+end
+
+procedure drop_monster_parts(variable critter) begin
+   if (can_steal_from_critter_pid(obj_pid(critter))) then begin
+      if (is_deathclaw(critter))       then begin
+         call add_item_pid(critter, PID_PBS_DEATH_CLAW);
+         if (get_sfall_global_int(SGVAR_CRAFT_DEATHCLAW) == false) then
+            if (is_success(roll_vs_skill(dude_obj, SKILL_REPAIR, 0))) then begin
+               display_msg(fixit_mstr(90));
+               set_sfall_global(SGVAR_CRAFT_DEATHCLAW, true);
+            end
+      end
+      else if (is_molerat(critter))    then call add_item_pid(critter, PID_PBS_MOLERAT_HIDE);
+      else if (is_floater(critter) or is_centaur(critter))    then call add_item_pid(critter, PID_PBS_TENTACLE);
+      else if (is_alien(critter))    then call add_item_pid(critter, PID_PBS_ALIEN_HAND);
+   end
+end

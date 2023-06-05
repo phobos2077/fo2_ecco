@@ -1,3 +1,14 @@
+/**
+ * Main crafting system script.
+ * 
+ * - Shows crafting button on main UI.
+ * - Opens crafting window via button or hotkey.
+ * 
+ * by phobos2077
+ * 
+ * inspired by Mr.Fixit mod by Team-X and Fix-Boy mod by Lexx.
+ */
+
 procedure start;
 procedure create_button;
 procedure delete_button;
@@ -11,12 +22,10 @@ procedure delete_button;
 //#define PID_WORKBENCH                (157)
 //#define SCRIPT_TEST0                 (2)
 
-#include "mrfixit.h"
+#include "crafting.h"
 
-
-
-variable ini_fixit_hotkey;
-variable warning_msg, batch_scheduled, fixit_button_shown, screen_center_x;
+variable crafting_hotkey;
+variable warning_msg, batch_scheduled, crafting_button_shown, screen_center_x;
 
 #define WIN_CRAFT_BTN         "helwin"
 #define SFX_BUTTON_DOWN       "butin4"
@@ -42,7 +51,7 @@ procedure keypress_handler begin
             optionProc,
             oldMode;
    if (pressed) then begin
-      if (hotkey_pressed_now(ini_fixit_hotkey, key)) then begin
+      if (hotkey_pressed_now(crafting_hotkey, key)) then begin
          if combat_is_initialized then
             call warning_combat;
          else if (not(get_game_mode) and mode <= 0) then begin
@@ -110,7 +119,7 @@ end
 
 // Create the button
 procedure create_button begin
-   if fixit_button_shown then return;
+   if crafting_button_shown then return;
 
    create_win_flag(WIN_CRAFT_BTN, (screen_center_x + 237), (get_screen_height - 98), 20, 18, WIN_FLAG_DONTMOVE /*bwor WIN_FLAG_TRANSPARENT*/);
    SelectWin(WIN_CRAFT_BTN);
@@ -118,13 +127,13 @@ procedure create_button begin
    AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);
    AddButtonProc("but", do_on, do_off, do_down, do_up);
    ShowWin;
-   fixit_button_shown := true;
+   crafting_button_shown := true;
 end
 
 procedure delete_button begin
-   if not fixit_button_shown then return;
+   if not crafting_button_shown then return;
    
-   fixit_button_shown := false;
+   crafting_button_shown := false;
    mouse_over := 0;
    DeleteWin(WIN_CRAFT_BTN);
 end
@@ -142,7 +151,7 @@ end
 procedure start begin
 	if (game_loaded) then begin
       //craft_msg := add_extra_msg_file("craft.msg");
-		ini_fixit_hotkey := parse_hotkey(cfg_fixit_hotkey);
+		crafting_hotkey := parse_hotkey(cfg_crafting_hotkey);
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
       register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
 
@@ -162,4 +171,3 @@ procedure start begin
       set_global_script_repeat(0);
    end
 end
-

@@ -167,8 +167,8 @@
 #define set_pbs_global(x, val)         (set_array(load_create_array_map(ARR_PBS_GLOBALS), x, val))
 // #define pbs_mod_version             (pbs_var("_version"))
 
-#define INI_COMBAT         "combat.ini"
-#define INI_ECONOMY        "barter.ini"
+#define INI_COMBAT         "ecco\\combat.ini"
+#define INI_ECONOMY        "ecco\\barter.ini"
 
 #define get_int_from_ini(name, section, setting)       get_ini_setting(name + "|" + section + "|" + setting)
 #define get_str_from_ini(name, section, setting)       get_ini_string(name + "|" + section + "|" + setting)

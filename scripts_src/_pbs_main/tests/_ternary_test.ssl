@@ -10,6 +10,6 @@ procedure start begin
    variable xx, a, b, c, a2;
    a := dude_obj if b else c;
    if (1) then begin
-      display_msg("hello");
+      display_msg("hello"+a);
    end
 end

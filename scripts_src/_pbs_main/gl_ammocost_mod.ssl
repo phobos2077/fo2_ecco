@@ -7,7 +7,7 @@
 #include "../sfall/lib.misc.h"
 
 
-#define INI_FILE                "combat.ini"
+#define INI_FILE                "ecco\\combat.ini"
 #define INI_AMMOCOST_SECTION    "AMMOCOST"
 
 variable

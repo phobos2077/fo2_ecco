@@ -18,6 +18,9 @@
 #include "../headers/itempid.h"
 #include "../headers/scenepid.h"
 
+#define INI_FILE          "ecco\\traps.ini"
+#define INI_SECTION        "TRAPS"
+
 #define MELEE_TRAP_ARMAMENT_PID		PID_PLANT_SPIKE
 
 #define is_explosive_pid(pid)		(pid == PID_FRAG_GRENADE or pid == PID_PBS_HOMEMADE_GRENADE \
@@ -200,7 +203,7 @@ procedure get_traps_for_map begin
   variable j := 0;
   //variable num := 0;
   if (cur_map_index != pbs_traps_last_map) then begin
-    debug_msg("Rebuild local traps");
+    debug_msg("pbs_traps: Rebuilding local traps");
     ar_global := global_traps;
     if (pbs_local_traps) then
        clear_array(pbs_local_traps);

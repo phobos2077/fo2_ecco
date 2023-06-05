@@ -56,6 +56,8 @@ variable my_trap_type;
 
 #define is_in_inventory 	(self_tile == -1)
 
+#define debug_log(msg)		debug_msg("test2 (traps): "+msg)
+#define debug_err(msg)		debug_msg("! ERROR ! test2 (traps): "+msg)
 
 procedure identify_me begin
 	variable i;
@@ -68,7 +70,7 @@ procedure identify_me begin
 				my_trap_index := local_var(LVAR_index);
 			end else begin
 				i := 0;
-				debug_msg("Search.. "+len_array(ar_global));
+				//debug_log("Search.. "+len_array(ar_global));
 				while (i < len_array(ar_global)) do begin
 					if (trap_objpid(ar_global, i) == self_pid
 						and trap_tile(ar_global, i) == self_tile
@@ -94,7 +96,7 @@ procedure identify_me begin
 		my_trap_charges := trap_charges(ar_global, my_trap_index);
 		my_trap_type := trap_type(ar_global, my_trap_index);
 	end
-	debug_msg("identify_me: "+my_trap_index);
+	debug_log("identify_me: "+my_trap_index);
 end
 
 procedure start begin
@@ -133,12 +135,12 @@ end
 end*/
 
 procedure map_exit_p_proc begin
-	debug_msg("Map exit: "+self_obj +", "+self_pid+ ", map:"+cur_map_index);
+	//debug_msg("Map exit: "+self_obj +", "+self_pid+ ", map:"+cur_map_index);
 	call identify_me;
 	if (my_trap_index == INDEX_EXPLOSION) then begin
 		destroy_object(self_obj);
 	end else if (i_am_trap and cur_town == -1) then begin
-		debug_msg("Leaving random map, destroying trap "+my_trap_index);
+		debug_log("Leaving random map, destroying trap "+my_trap_index);
 		call remove_trap_info(my_trap_index);
 		destroy_object(self_obj);
 	end
@@ -152,12 +154,12 @@ end*/
 procedure look_at_p_proc begin
 	call identify_me;
 	//display_msg("trap id:"+my_trap_index /*+", pid:" +my_arm_pid*/ +"obj.pid:"+obj_pid(self_obj)/*+", inv:"+ inven_ptr(self_obj, 0)*/);
-	debug_msg("Charges: "+my_trap_charges);
+	debug_log("Trap charges: "+my_trap_charges);
 	if (i_am_trap) then begin
 		script_overrides;
 		display_mstr((my_trap_type == TRAP_TYPE_SPIKE)*50 + (my_trap_type == TRAP_TYPE_MINE)*60 + (my_trap_type == TRAP_TYPE_SENSOR)*70);
 	end else if (my_trap_index == INDEX_UNKNOWN) then begin
-		display_msg("Error identify trap!");
+		debug_err("Cannot identify trap!");
 	end
 end
 
@@ -274,14 +276,14 @@ begin
 	else
 		groundType:="other";
 		
-	roll_mod := -(get_ini_setting("combat.ini|TRAPS|skill_type_" + my_trap_type) + get_ini_setting("combat.ini|TRAPS|skill_ground_"+groundType));
+	roll_mod := -(get_int_from_ini(INI_FILE, INI_SECTION, "skill_type_" + my_trap_type) + get_int_from_ini(INI_FILE, INI_SECTION, "skill_ground_"+groundType));
 	if (armament_obj) then begin
 		armament_pid := obj_pid(armament_obj);
-		roll_mod -= get_ini_setting("combat.ini|TRAPS|skill_arm_" + armament_pid);
+		roll_mod -= get_int_from_ini(INI_FILE, INI_SECTION, "skill_arm_" + armament_pid);
 		// remember last used armament (if any), regardless if it will be success or fail
 		set_sfall_global(SGVAR_TRAPS_LAST_ARMAMENT, armament_pid);
 	end
-	debug_msg("roll-vs-traps: "+roll_mod);
+	debug_log("roll-vs-traps: "+roll_mod);
 	roll := roll_vs_skill(dude_obj, SKILL_TRAPS, roll_mod);
 	
 	if (is_success(roll)) then begin

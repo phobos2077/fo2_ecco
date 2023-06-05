@@ -17,7 +17,7 @@ procedure map_enter_p_proc;
 
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
-#include "../_pbs_headers/ecco.h"
+#include "../sfall/define_extra.h"
 
 #define caliber_name(x)    (mstr_proto(300 + x))
 

@@ -81,12 +81,12 @@ end
 #define field(x)                bstr(cur_section_start + x)
 #define skill_name(x)           bstr(1 + x)
 #define skill_def(x)            bstr(19 + x)
-#define npc_pid(x)                bstr(450 + x)
+#define npc_pid(x)              bstr(450 + x)
 
 #define cfg_party_skills        atoi(bstr(491))
-#define cfg_use_categories        atoi(bstr(492))
+#define cfg_use_categories      atoi(bstr(492))
 #define cfg_check_gvars         atoi(bstr(493))
-#define cfg_fixit_hotkey         bstr(494)
+#define cfg_crafting_hotkey     bstr(494)
 
 #define has_prev_page           (cur_pos > 0)
 #define has_next_page           (cur_pos + ITEMS_PER_SCREEN < items_avail - 1)

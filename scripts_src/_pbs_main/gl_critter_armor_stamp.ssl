@@ -1,9 +1,14 @@
+/**
+ * Stamps armor stats unto critter stats at runtime (using set_proto_data).
+ * Mapping between critters and armors is configured by INI file.
+ */
+
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 #include "../sfall/lib.strings.h"
 #include "../sfall/sfall.h"
 
-#define INI_CRITTER_ARMOR   ("critter_armor.ini")
+#define INI_CRITTER_ARMOR   "ecco\\critter_armor.ini"
 
 procedure start;
 

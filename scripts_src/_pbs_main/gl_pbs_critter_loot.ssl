@@ -1,0 +1,208 @@
+/*
+   Critter loot mod:
+
+   - Removes a portion of ammo and drugs from critters on death.
+   - Drops critter weapon on the ground.
+   - Destroys critter weapon with a chance.
+*/
+
+
+procedure start;
+
+#include "../headers/scenepid.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/command_lite.h"
+#include "../sfall/lib.strings.h"
+#include "../sfall/lib.arrays.h"
+#include "../sfall/lib.inven.h"
+#include "../sfall/lib.math.h"
+#include "../_pbs_headers/ecco.h"
+
+variable
+   ini_destroy_weapon_chance,
+   ini_destroy_weapon_list,
+   ini_weapon_drop,
+   ini_weapon_drop_dist,
+   ini_weapon_drop_dir,
+   ini_reduce_loot,
+   ini_reduce_ammo_percent,
+   ini_reduce_drugs_percent,
+   ini_reduce_drugs_pids;
+
+
+procedure destroy_weapon(variable critter);
+procedure drop_weapons(variable critter);
+procedure reduce_loot(variable critter);
+procedure set_item_count(variable invenobj, variable item, variable newCount);
+
+#define INI_FILE        INI_COMBAT
+#define INI_SECTION     "CRITTER_LOOT"
+
+#define load_ini_int(name)       int_from_ini_file(name, INI_COMBAT, INI_SECTION)
+#define load_ini_str(name)       str_from_ini_file(name, INI_COMBAT, INI_SECTION)
+#define load_ini_int_clamped(name, min, max)    int_from_ini_file_clamped(name, INI_COMBAT, INI_SECTION, min, max)
+#define load_ini_int_list(name)  int_list_from_ini_file(name, INI_COMBAT, INI_SECTION); fix_array(ini_##name)
+
+/*
+   HOOK_ONDEATH
+   Runs immediately after a critter dies for any reason. No return values; this is just a convenience for when you need to do something after death for a large number of different critters and don't want to have to script each and every one of them.
+
+   Critter arg0 - The critter that just died
+*/
+procedure ondeath_handler begin
+   variable critter;
+
+   critter := get_sfall_arg;
+   if (critter == dude_obj) then
+      return;
+
+   if (critter and obj_type(critter) == OBJ_TYPE_CRITTER) then begin
+      if (ini_destroy_weapon_chance > 0) then begin
+         call destroy_weapon(critter);
+      end
+      if (ini_reduce_loot) then begin
+         call reduce_loot(critter);
+      end
+      if (ini_weapon_drop) then begin
+         call drop_weapons(critter);
+      end
+   end
+end
+
+procedure start begin
+   if (game_loaded) then begin
+   
+      load_ini_int(destroy_weapon_chance);
+      load_ini_int_list(destroy_weapon_list);
+      load_ini_int(weapon_drop);
+      load_ini_int(weapon_drop_dist);
+      load_ini_int(weapon_drop_dir);
+
+      load_ini_int(reduce_loot);
+      load_ini_int_clamped(reduce_ammo_percent, 0, 100);
+      load_ini_int_clamped(reduce_drugs_percent, 0, 100);
+      load_ini_int_list(reduce_drugs_pids);
+
+      register_hook_proc(HOOK_ONDEATH, ondeath_handler);
+   end
+end
+
+procedure destroy_weapon(variable critter) begin
+   variable
+      weapon := 0,
+      i;
+
+   for (i := 1; i <= 2; i++) begin
+      weapon := critter_inven_obj(critter, i);
+      if (weapon and obj_item_subtype(weapon) == item_type_weapon and is_in_array(obj_pid(weapon), ini_destroy_weapon_list) and random(0,99) < ini_destroy_weapon_chance) then begin
+         rm_obj_from_inven(critter, weapon);
+         destroy_object(weapon);
+         display_msg(obj_name(critter) + " " + mstr_combat(313 + is_female(critter)*100) + ".");
+         break;
+      end
+   end
+end
+
+procedure drop_weapons(variable critter) begin
+   variable
+      dist,
+      dir,
+      weapon := 0,
+      dropped_hex := 0,
+      critter_flags,
+      i;
+
+   critter_flags := get_proto_data(obj_pid(critter), PROTO_CR_FLAGS);
+   if critter_flags bwand CFLG_NODROP then return;
+
+   for (i := 1; i <= 2; i++) begin
+      weapon := critter_inven_obj(critter, i);
+      if (weapon and obj_item_subtype(weapon) == item_type_weapon and not(is_unarmed_weapon_pid(obj_pid(weapon)))) then 
+         break;
+      else
+         weapon := 0;
+   end
+   if not weapon then return;
+
+   rm_obj_from_inven(critter, weapon);
+   dropped_hex := tile_num(critter);
+   if (ini_weapon_drop_dist > 0) then begin
+      dist := random(1, ini_weapon_drop_dist);
+      if (ini_weapon_drop_dir >= 0) then begin
+         dir := (ini_weapon_drop_dir + get_cur_rot(critter)) % 6;
+      end else
+         dir := random(0, 5);
+
+      i := 0;
+      while (i < dist and tile_contains_obj_pid(tile_num_in_direction(tile_num(critter), dir, i+1), elevation(dude_obj), PID_BLOCKING_HEX) == false) do begin
+         dropped_hex := tile_num_in_direction(tile_num(critter), dir, i+1);
+         i++;
+      end
+   end
+   move_to(weapon, dropped_hex, elevation(critter));
+end
+
+procedure reduce_loot(variable critter) begin
+   variable
+      item,
+      list,
+      count,
+      newCount,
+      packSize,
+      pid,
+      removeStats;
+
+   list := inven_as_array(critter);
+   removeStats := "";
+   foreach item in list begin
+      if (item == 0) then
+         continue;
+      if (obj_item_subtype(item) == item_type_ammo) then begin
+         // reduce ammo in measures of individual rounds, not packs
+         pid := obj_pid(item);
+         count := actual_ammo_count(critter, item);
+         packSize := get_proto_data(pid, PROTO_AM_PACK_SIZE);
+         newCount := round(count * (100 - ini_reduce_ammo_percent) / 100.0);
+         //display_msg("count: "+count+", pack: "+packSize+", new: "+newCount+" ("+ceil(1.0*newCount / packSize)+")");
+         call set_item_count(critter, item, ceil(1.0*newCount / packSize));
+         // if number of items reduced, object reference will be different
+         item := obj_carrying_pid_obj(critter, pid);
+         if (item and newCount % packSize > 0) then set_weapon_ammo_count(item, newCount % packSize);
+         removeStats += obj_name(item)+" ("+count+" -> "+newCount+"), ";
+      end else if (is_in_array(obj_pid(item), ini_reduce_drugs_pids)) then begin
+         // reduce with probability formula
+         count := obj_is_carrying_obj_pid(critter, obj_pid(item));
+         newCount := count * (100 - ini_reduce_drugs_percent) / 100.0;
+         if (floor(newCount) < newCount) then newCount := floor(newCount) + (random(0, 99) < (newCount - floor(newCount))*100);
+         else newCount := floor(newCount);
+         call set_item_count(critter, item, newCount);
+         removeStats += obj_name(item)+" ("+count+" -> "+newCount+"), ";
+      end
+   end
+   if (removeStats != "") then
+      debug_msg("gl_pbs_critter_loot: removed loot for "+obj_name(critter)+": "+removeStats);
+end
+
+
+procedure set_item_count(variable invenobj, variable item, variable newCount)
+begin
+   variable begin
+      count;
+      newitem;
+   end
+   count := obj_is_carrying_obj_pid(invenobj, obj_pid(item));
+   if (newCount > count) then begin
+      newitem := create_object_sid(obj_pid(item), 0, 0, -1);
+      add_mult_objs_to_inven(invenobj, newitem, newCount - count);
+   end else if (newCount < count) then begin
+      count := rm_mult_objs_from_inven(invenobj, item, count - newCount);
+      destroy_object(item);
+   end
+end
+
+
+
+
+
+
+
