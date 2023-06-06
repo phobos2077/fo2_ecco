@@ -5,291 +5,177 @@
 						by phobos2077
 
 
-In short, this is a conservative gameplay overhaul.
-
-Main goals:
-- add more challenge to the combat, barter and other aspects of the game (but without mandatory hardcore)
-- fix some stuff of the Restoration Project as well as vanilla game which I feel were broken
-- add more variety to the gameplay, mainly to the combat (but in line with original game design, you won't see OP weapons or other unicorns here). 
-- keep things configurable and modular, so the players can tweak mod to their liking and modders can re-use parts of it in their own creations
-
-
-Main Highlights.
-
-Economy Rebalance:
-- Barter skill now more useful:
-- prices in stores are affected stronger by skill at lower barter levels and less at higher, using arctangent function 
-- selling prices now depend on Barter skill, as well as player charisma merchant skill
-- some items are in greater or lower demand in certain towns, you can trade for profit if you skilled enough
-- prices are highly customizable via INI
-- raise money by selling new types of monster parts or by doing several new quests (see details)
-- reduced/made harder to get some critically-overpowered loot in several locations
-
-Combat Rebalance:
-- weapons and ammo rebalanced to add realism and more difference between various types of weaponry,
-while staying as close as possible to vanilla (the point is not to re-invent weapons, but to improve existing ones)
-- amount of ammo in game is reduced
-- energy weapons made more effective against lesser armors, and laser weapons made more powerfull
-- new melee weapons for Melee skill to be viable in mid-game
-- throwing weapons expanded and made much more usefull with skill-based damage bonus for blades, much deadlier grenades and new weapons
-- Bozar is now a large caliber sniper rifle (per its picture and description), firing new rare and expensive .50 rounds
-- double-barrel shotguns now have proper duplet mode with new sound and single-shot animation (optional)
-- slight ballance changes to armor
-- several critters in the game have much better stats now (like weak types of Deathclaws and large scorpions)
-- new stealth elements: blackjack and sneak attack
-
-Game Progression changes:
-- included gameflow fixes by Lujo: Small changes which should help integrate some of the RP restored content to the original game. A few hooks for some of the content, a new scouting quest in Vault City, and adjustments to the Vault Village quest.
-- some gangs made tougher (Metzgers, Salvatores, Vault 15 raiders)
-- redesigned entrances to the Raiders hideout for more challange and variety
-- reduced unbalanced EXP rewards for several quests
-(more to come...)
-
-Crafting System:
-- Revamped version of Mr. Fixit mod included (more user friendly)
-- existing schematics rebalanced, new added
-- several new items to craft: new ammo types, home-made grenade, new drugs, traps
-- unlockable crafting groups (explosives, drugs, electronics, etc.), you need to find teacher for each group
-
-Traps System:
-- installable traps: "melee" type spike trap, explosive mine and sensor mine
-- explosive traps are customized by arming them with any type of explosives or grenades
-- become a trapper by luring geckos and rats into your traps using food as bait!
-
-New Quests:
-- a couple of random-encounter-based "Bounty Hunt" quests
-- a couple of "Bring X items" quests
-
-
-Other mods that I used/included:
-- Mr. Fixit (adopted and expanded)
-- Haenlomal's Yet Another Ammo Mod damage formula (with sfall)
-
-
--=== COMPATIBILITY ===-
-
-ONLY installable above the Restoration Project Update v27 (with updated maps from Pixote)
-Following RP options MUST be installed:
-- New weapon animations (all of them)
-
-Start of a new game is NOT required (but is recommended, as usual...)
-
--=== INSTALLATION ===-
-
-1) install RPU v26 on a clean game installation (installer version is recommended):
-- IMPORTANT: install Rifle Animations and Wakizashi Animations mods!
-https://github.com/BGforgeNet/Fallout2_Restoration_Project/releases/tag/v26
-
-2) download the archive and extract it's contents into the folder where you installed RPU in step 1 (should overwrite rpu.dat file)
-https://drive.google.com/file/d/1CgCZjDh0H_zgLk0nQs9qLlUeaZ-zJPjK/view?usp=share_link
-
-3) extract the contents of the archive into the game folder, overwriting files
-
-4) edit ddraw.ini and change the following:
-  a) Find DamageFormula and set it to 5 (to use YAAM)
-DamageFormula=5
-
-  b) Find and uncomment the following lines:
-PerksFile=sfall\perks.ini
-BooksFile=sfall\books.ini
-
-5) start Fallout 2 and play
-
-If you won't like the merchant prices or some other aspects, feel free to read and edit the barter.ini and combat.ini in mods folder as you like.
-
-
--=== DETAILS  (WARNING! SPOILERS!!!) ===-
-
 > CRAFTING:
-- New crafting system based on Mr.Fixit by Team-X and Fix-Boy by Lexx
-- Custom crafting schematics designed to serve game's balance and add variaty, including new game items
-- All "schematics" are divided into several categories, you need to find teacher for each category (there is no spoiler here, so try to
-find them on your own. I will only say that most are found around northern half of the world...)
-- Knowing schematics not enough: to start crafting you may also need skills, components and tools
-- Some craftable food
+- New crafting system based on Mr.Fixit by Team-X and Fix-Boy by Lexx.
+- Custom crafting schematics designed to serve game's balance and add variety, including new game items.
+- All "schematics" are divided into several categories, you need to find teacher for each category.
+- Knowing schematics is not enough: to start crafting you may also need skills, components and tools.
+- Some craftable food.
 - Crafting menu is accessible by clicking a new button on main panel or with a hotkey: Ctrl+F.
 
-> TRAPS:
-- to use traps you need to craft a Trap Kit first (need explosive schematics for mines and electronics for sensor mine)
-- then, put trap in your active hand slot and use it ON your character (or just press Ctrl+1 hotkey) - it will place trap on the ground below (not yet armed)
-- use Traps skill on trap to arm it.
-- for mines: you can use any explosive from inventory on the floor trap tile; if you just use "Traps" skill on them, the game will first try to arm it with last used explosive type, and then with any explosive found in your inventory.
-- you need to pass traps skill check to successfully arm the trap, if you are bad enough, you may end up blowing yourself.
-- you can dismantle any trap (both armament and trap kit will return to your inventory) just Using them or using Traps Skill on them.
-- number of traps is not limited
-- spike traps can be used a couple of times (it loses one "charge" when someone steps on it)
-- there are INI-configurable friend-or-foe system (by default dude and party members are ignored by your traps)
-- when using spike traps, damage formula is: 7-14 (when traps skill is 0~40), max damage is increased up to 40, by 1 for each 3 skill points (7-40 at 120% skill).
-- when using explosives, explosion damage is approximately equal to damage when using those items normally; damage type is also derived from item (EMP for Pulse grenade, Fire for Molotov, etc.)
-- sensor mines detect movement on 1 tile radius. If critter passes just near the trap and don't step on it, there is a very small chance trap won't go off.
 
-> PRICES:
-- Selling prices are affected by skill. (at lower levels prices may drop as low as 10% from their normal margin). This way, if you wanna get rich by selling weapons, upgrade your Barter or you'll need to sell many times more than before.
-- Buying prices use vanilla formula as a base (with all kind of things effecting it, like perks or bad merchant reaction) and multiplies it slightly with arctangent kind of function (example graph in sources folder, for more info study barter.ini)
-- Some misc. items prices was adjusted for early game so you can make some money in hardest parts (high prices for gecko pelts and scorpion tails in Klamath, etc.)
-- There are several alternative formulas to choose from and many coefficients to tweak (read and modify barter.ini)
+> TRAPS:
+- To use traps you need to craft a Trap Kit first (need explosive schematics for mines and electronics for sensor mine).
+- To place the trap on the ground, put it in your active hand slot and use it ON your character (or just press Ctrl+1 hotkey).
+- To actually arm the trap, use Traps skill on it.
+- For mines: you can use any explosive from inventory on the floor trap tile; if you just use "Traps" skill on them, the game will first try to arm it with last used explosive type, and then with any explosive found in your inventory.
+- You need to pass traps skill check to successfully arm the trap, if you are bad enough, you may end up blowing yourself.
+- You can dismantle any trap (both armament and trap kit will return to your inventory) just Using them or using Traps Skill on them.
+- Spike traps can be used a couple of times (it loses one "charge" when someone steps on it).
+- Player and party members can't be hurt by your traps.
+- When using spike traps, damage formula is: 7-14 (when traps skill is 0~40), max damage is increased up to 40, by 1 for each 3 skill points (7-40 at 120% skill).
+- When using explosives, explosion damage is approximately equal to damage when using those items normally; damage type is also derived from item (EMP for Pulse grenade, Fire for Molotov, etc.).
+- Sensor mines detect movement on 1 tile radius. If critter passes just near the trap and don't step on it, there is a very small chance trap won't go off.
+- New book for Traps skill added.
+
+
+> BARTER:
+- Selling prices are affected by skill. (at lower levels prices may drop as low as 25% from their normal margin). This way, if you want to get rich by selling weapons, upgrade your Barter, or you'll need to sell many times more than before.
+- Buying prices are comparable to base game, but have a steeper curve (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
+- Some misc items prices were adjusted, so you can still make profit selling them, especially in early game (gecko pelts and scorpion tails in Klamath, etc.).
+- New book for Barter skill added.
+
 
 > LOOT REDUCTION:
-- there is chance a weapon will get destroyed when critter dies (except unique and rare weapons; optional)
-- corpses are stripped from some percent of ammo and stimpaks (optional)
-- Loot slightly reduced in S.A.D, Hubologist Stash, Toxic Caves 
-- EPA: loot rearranged/reduced somewhat; room with most powerful stuff at security level will be harder to get in
-- it is harder to steal from Redding doctor now
-- slosed rooms in Bishop club are harder to get in
+- There is a chance a weapon will get destroyed when critter dies (except unique and rare weapons).
+- Corpses are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
+- Loot slightly reduced in S.A.D, Hubologist Stash, Toxic Caves.
+- EPA: loot rearranged/reduced somewhat; room with most powerful stuff at security level will be harder to get in.
+- It is harder to steal from Redding doctor now.
+- Closed rooms in Bishop club are harder to get in.
+
 
 > NEW QUEST CONTENT:
-- craft learning (see "crafting" section)
-- one of the trappers in Klamath can now teach you gecko skinning (not free)
-- kill groups of robbers near Redding
-- hunt down several rogues throughout the wastelend, one-by-one (NCR)
-- bring a number of hides to Modoc tannery
-- bring a number of tentacles to NCR doctor
+- Craft learning (see "crafting" section).
+- One of the trappers in Klamath can now teach you gecko skinning (not free).
+- Kill groups of robbers near Redding.
+- Hunt down several rogues throughout the wastelend, one-by-one (NCR).
+- Bring a number of hides to Modoc tannery.
+- Bring a number of tentacles to NCR doctor.
+
+
+> COMBAT:
+- A couple of unspent AP points carry over to the next round.
+- Opening inventory has no cost, but every action requires 2 AP (except reload, see below).
+- All characters now get a bonus move points (not AP!) for every AG point above 5. Double for NPCs. This should allow melee characters to close on their gun-wielding foes and make combat more dynamic.
+
 
 > AMMO:
-- parameters of all ammo types were carefully edited to fix vanilla issues and add choices
-- AP/FMJ generally do less damage then JHP against unarmored, but is effective against armored targets (thanks to new damage script)
-- Changed pack size of ammo to balance the total amount of that ammo in game, creating the need of purchase:
-[caliber] - [pack size] ([vanilla pack size])
-10mm - 20 (24)
-12ga - 12 (20)
-.44  - 12 (20)
-14mm - 12 (20)
-5mm  - 40 (50)
-7.62 - 20 (20) - unchanged
-.45  - 50 (50) - unchanged
-.223 - 30 (50)
-SEC  - 20 (40)
-MFC  - 20 (50)
-4.7mm- 40 (50)
-2mm  - 10 (20)
-
-- weight and cost was rebalanced as well
-- to further reduce "ammo swimming", all dying critters are stripped from some amount of ammo (optional), see MISC section
-- ammo now occupies space, so you cannot store unlimited ammo in car trunk (increased trunk capacity by 20% to balance that)
-- new "calibers" and ammo types: .50 BMG (for AMR) and 40mm Grenade
-- new ammo types for existing calibers: 12ga Slugs, 12ga Buckshot, .223AP, 14mm JHP (some craftable)
-
-
-> FIREARMS:
-- Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
-- Sawed off shotgun have a duplet (burst) firing mode with single shot animation.
-- All "small" pistols cost 4 AP to shoot.
-- Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
-- Sniper Rifle is much more powerful, rechambered "back" to 7.62.
-- M60 is a true machinegun: more powerful with 100 rounds ammo capacity.
-- Bursts rebalanced to differ in bullet spread between weapon types (thanks to sfall). This makes certain guns work in new roles with effective mid-long range bursts. Expect guns that should have small recoil to do better at long-range bursts.
-- Burst sizes were reduced across the board and rebalanced. This should make bursts viable with the added ammo scarcity.
-- Almost every weapon was subjectively improved (main concerns were: more interesting balance between weapons, taking new ammo behaviour into account, BUT not going too far from vanilla stats, except those weapons mentioned specifically).
+- Parameters of all ammo types were carefully edited to fix vanilla issues and add choices.
+- AP/FMJ generally do less damage then JHP against unarmored, but is effective against armored targets (thanks to new damage script).
+- Reduced pack sizes of certain ammo calibers to further balance the total amount of that ammo in game.
+- Weight and cost was rebalanced as well.
+- To further reduce "ammo swimming", all dying critters are stripped from some amount of ammo (optional), see MISC section.
+- Ammo now occupies space, so you cannot store unlimited ammo in car trunk (increased trunk capacity by 20% to balance that).
+- New "calibers" and ammo types: .50 BMG (for AMR) and 40mm Grenade.
+- New ammo types for existing calibers: 12ga Slugs, "special" 12ga ammo, .223AP, 7.62mm AP, 14mm JHP.
 
 
 > NEW WEAPONS:
 - Taser (stuns enemies from a short distance)
+- one .44 Magnum weapon
+- one 14mm automatic weapon
 - 40mm grenade launchers (two types) with two types of grenades
-- Late-game non-firearm weapons: one "unarmed", a sprear weapon, a sledge weapon, two throwing weapons
+- Late-game non-firearm weapons: one "unarmed", a spear weapon, a sledge weapon, two throwing weapons
 - A new craftable grenade
 
 
+> GUNS:
+- New gun for .44 Magnum and 14mm calibers to add variety and make these calibers feel "complete".
+- Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
+- Sawed off shotgun have a duplet (burst) firing mode with single shot animation and correct death animations.
+- Some smaller pistols cost 4 AP to shoot to make them viable compared to "long" guns.
+- Sniper Rifle is much more powerful, rechambered to 7.62.
+- .223 Pistol is now unique, can only be found in one place.
+- Bursts rebalanced to differ in bullet spread between weapon types (thanks to sfall). This makes certain guns work in new roles with effective mid-long range bursts. Expect guns that should have small recoil to do better at long-range bursts.
+- Burst sizes were reduced across the board and rebalanced. This should make bursts viable with the added ammo scarcity.
+- In critical bursts, only half of bullets will "inherit" the increased damage and penetration of the critical. This should balance against bursts being more "accurate".
+- Almost every weapon was subjectively improved (main concerns were: more interesting balance between weapons, taking new ammo behavior into account, BUT not going too far from vanilla stats, except those weapons mentioned specifically).
+- Reload AP cost is increased to 4 to make magazine capacity matter more.
+
+
+> BIG GUNS:
+- Two new 40mm Grenade weapons added to make Big Guns skill more useful in early-to-mid game.
+- Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
+- M60 is a true machine gun: more powerful with 100 rounds ammo capacity.
+
+
 > ENERGY WEAPONS:
+- Taser to stun enemies.
 - Laser weapons are now very effective against everything below Combat/Metal Armor.
 - "Real" Turbo Plasma rifle, costs 4 AP for shot (max damage reduced a bit).
 - Strong single-shot energy weapons now spend more than 1 cell round for each shot.
 
 
-> Some examples of ballance between some weapons of comparable class:
-- 10mm Pistol vs 10mm SMG (for single shots): Pistol is faster (4AP) but has reduced range and slightly less damage
-- .44 Magnum vs Desert Eagle: first has more power, second is more accurate and long-ranged
-- 14mm Pistol does less damage than legendary .223 Pistol, but has more penetration
-- Laser pistol and 14mm Pistol are comparable but Laser will better penetrate most armour types except metal armor. 14mm ammo is superb against any armor.
-- Assault rifle vs FN FAL: high rate of fire (deadly at close and medium range) vs powerful 7.62x51 ammo (poor burst accuracy at long range, but better single shoot)
-- HK CAWS vs Pancor Jackhammer: first has more range, fires 3-shot burst; second is low-range, uneconomical due to larger burst, but extremely deadly
-- Light Support Weapon (.223) is less deadly than M60 (7.62mm), but has better accuracy
-
-
-> GRENADES:
-- all grenades was made more powerfull:
-plasma:  60 - 100
-frag:    35 - 60
-molotov: 15 - 35
-- EMP grenades now can temporarily disrupt power armors, forcing target to lose turn (also their radius was increased)
-- Home-made grenade can be crafted, it is worse than regular frag, but still powerful
-
-
 > THROWING:
-- Throwing skill now affects damage for all throwing weapons (except grenades), precise formula: 
-dmgMax := floor(dmgMax * (1 + skill / 100.0));
-So basically, you get 2x maximum damage with 100% skill, 3x damage with 200% and so on. It only affects maximum damage.
+- All throwing non-explosive weapons now have a big critical chance boost.
 - Stats for throwing weapons were improved to make them more useful.
-- Throwing Axe - new weapon was added. It's a more powerful replacement for throwing knife for mid-late game combat. Can be bought later in game.
-- Molotov Cocktail now inflicts fire damage and does not knockback targets.
+- New, more powerful, non-explosive throwing weapons for mid-game.
+- Molotov Cocktail now inflicts fire damage and does not knock back targets.
+- Increased damage by all grenades.
+- EMP grenades now can temporarily disrupt power armors, forcing target to lose turn (also their radius was increased).
 
 
 > MELEE & UNARMED:
-- The cost of the unarmed special attacks has been lowered to 4 for punches and 5 for kicks (taken from Weapons Redone mod).
-- Super sledge takes 4,5 AP instead of 3,4 (same as regular sledge; no logical explaination of "faster swing").
+- Thrust attacks now do better against armored enemies, but will cost 1 AP more than swings.
+- The cost of unarmed special attacks has been lowered to 4 for punches and 5 for kicks (taken from Weapons Redone mod).
+- Super sledge takes 4,5 AP instead of 3,4 (same as regular sledge).
 - Wakizashi blade is much more powerful.
-- new weapons: piston spear and spiked sledge
+- New weapons: one spear and one sledge type.
+- Some melee oriented NPCs made more dangerous.
 
 
 > ARMOR:
 - Armor Class lowered for heavy armor (metal and power). AC only affects hit chance, so it makes sense bigger/bulkier target is easier to hit.
-- Laser resistance changed: leather - zero protection, combat - mediocre, metal - good, power armor & tesla - great protection
-- Explosion and Fire resistance slightly lowered for some armor
-- all changes to armor are applied to all critters wielding that armor
+- Laser resistance changed: leather - zero protection, combat - mediocre, metal - good, power armor & tesla - great protection.
+- Explosion and Fire resistance slightly lowered for some armor.
+- All changes to armor are applied to all critters wielding that armor.
 
 
 > CRITTERS:
-- some "lesser" critters made tougher: Tough Giant Ant, Large radscorpion, Deathclaws, Mole Rat. (they are rare on early maps and were way too weak)
-- new monster parts dropped from critters: Death Claw, Mole Rat Hide, Wanamingo Hand, Mutant Tentacle
+- Some "lesser" critters made tougher: Tough Giant Ant, Large radscorpion, Deathclaws, Mole Rat. (they are rare on early maps and were way too weak).
+- New monster parts can be harvested from critters for profit: Deathclaws, Mole Rats, Wanamingos, mutants.
+
 
 > QUESTS and NPCs:
-- Lidya in VC rewards 500 for shipment of alcohol (was 300)
-- better reward for VC plow quest
-- Algernon need rest after work and don't spawn ammo in guns
-- Trappers in random encounters now sell pelts through standard barter dialog only, but with high discount
-- see Lujo Gameflow fixes mod for more information on additional changes
+- Lidya in VC rewards 500 for shipment of alcohol (was 300).
+- Better reward for VC plow quest.
+- Algernon need rest after work.
+- Trappers in random encounters now sell pelts through standard barter dialog only, but with high discount.
+- Small changes which better integrate some content restored by RP. A few hooks for some content, a new scouting quest in Vault City, and adjustments to the Vault Village quest. (by Lujo)
+
 
 > MERCHANTS:
-- added new items to several shopkeepers
-- added some crafting components (mainly junk) to general stores
-- Cash tender in Redding now offers cash from 1000 to 7000 depending on player's current level (that should be someone to sell all your stuff to)
-- changed some merchants stock to offer some new items and more ammo for purchase
+- More crafting components (mainly junk) sold at general stores.
+- Cash tender in Redding now offers cash from 1000 to 7000 depending on player's current level.
+- Changed some merchants stock to offer some new items and more ammo for purchase.
+
 
 > RANDOM ENCOUNTERS:
-- weapon loadouts were adjusted in respect to new weapon balance
-- most new weapons are used by people in the wasteland
-- throwing weapons will be used against you more often
+- Weapon loadouts were adjusted in respect to new weapon balance.
+- Most new weapons are used by people in the wasteland.
+- Throwing weapons will be used against you more often.
+
 
 > MISC:
-- some mine traps in the game became more dangerous
-- nerfed slot jinxer perk: slots break for month instead of 1 day, high rollers give 2/5 of initial money and there is a luck-based chance to fail. You can still become insanely rich by gambling.
-- nerfed gambling dice: you can win maximum about 1000-5000 caps per table, per week (that's still a LOT of money)
-- people drop their weapon to the ground in front of them when they die (optional)
-- stimpaks radiate upon use (optional)
-- drugs cost action points to use, even from inventory (first couple of uses are free though) - optional 
-- Bonus Rate of Fire perk was removed (all pistols were completely OP if you take it, especially with the appropriate Trait)
-- Hakunin dreams can be delayed, so they happen at more appropriate pace (RP has more content...)  - optional
-- added Traps and Barter skill books to the game
+- Some mine traps in the game became more dangerous.
+- Nerfed slot jinxer perk: slots break for month instead of 1 day, high rollers give 2/5 of initial money and there is a luck-based chance to fail. You can still become insanely rich by gambling.
+- Nerfed gambling dice: you can win maximum about 1000-5000 caps per table, per week (that's still a LOT of money).
+- People drop their weapon to the ground in front of them when they die.
+- Bonus Rate of Fire perk was removed (all pistols were completely OP if you take it, especially with the appropriate Trait).
+- Hakunin dreams delayed, so they happen at more appropriate pace (RP has more content...).
 
-
--=== FOR MODDERS, TECHNICAL INFO ===-
-
-- mod configs are stored in "barter.ini" and "combat.ini" files
-- sfall config files used: Books.ini, Perks.ini
-- this mod uses scripts TEST0 (2) for Mr.Fixit and TEST2 (4) for Traps system, no new (regular) scripts are added
-- I had to use some normal global variables in range (644-647) for worldmap logic and pipboy quests
-- 3 global scripts are running about 5-10 times in second (gl_stlth, gl_traps, gl_fixit)
-- several hook script are used, refer to !Sources folder for more info
 
 
 -=== CREDITS ===-
 
-mod was developed by phobos2077 between 2010 and 2023 (with years-long gaps)
+Mod was developed by phobos2077 between 2010 and 2023 (with years-long gaps).
 
-additional dialogs, designs, flow fixes: Lujo
-russian translators: Pyran, Drobovik, phobos2077, Frederika, PolarTulip
+Additional dialogs, designs, flow fixes: Lujo.
+Russian translators: Pyran, Drobovik, phobos2077, Frederika, PolarTulip.
 
-many thanks goes to following people, who made this mod possible:
-- Magnus for WR mod that inspired me
+Many thanks to following people, who made this mod possible:
+- Magnus for Weapons Redone mod that inspired me
 - Nirran for the original Barter mod
 - JimTheDinosaur for trap system inspiration
 - Lexx for his Fix-Boy art and code
@@ -303,9 +189,9 @@ many thanks goes to following people, who made this mod possible:
 - PercivalCrump for another save editor with unique features
 - Ziro for solid balance advice
 - pelicano for his Party Orders addon
-- Haenlomal for YAAM which was the basis for my balancing efforts
+- Haenlomal, Glovz and Burn for their damage formulas that inspired me to make my own
 - people at NMA and Nuclear-City forums for useful comments
-- Black Isle Studios for my favorite game of all time!
+- Black Isle Studios (R.I.P.) for my favorite game of all time!
 
 
 External art credits:

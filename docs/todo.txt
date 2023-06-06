@@ -1,8 +1,5 @@
 for 0.9:
-- decide on script and INI naming
-- compare text changes to 0.8 and update RU texts
-- review and update full readme
-- update RU readme
+- SHIP IT
 
 
 for "future":
