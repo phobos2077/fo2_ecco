@@ -12,6 +12,7 @@
 
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 #define INI_EFFECTS_SECTION       "EFFECTS"
+#define INI_DEATHANIM_SECTION     "DEATHANIM"
 
 
 // These are used in custom door script.
@@ -33,7 +34,7 @@ procedure itemdamage_handler;
 procedure load_settings begin
    variable pid, pidList, fid;
 
-   pidList := get_int_list_from_ini(INI_COMBAT, "DEATHANIM", "duplet_fix_pids");
+   pidList := get_int_list_from_ini(INI_COMBAT, INI_DEATHANIM_SECTION, "duplet_fix_pids");
    duplet_fix_pids := create_array_map;
    foreach (pid in pidList) begin
       duplet_fix_pids[pid] := 1;
