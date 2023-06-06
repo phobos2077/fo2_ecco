@@ -45,6 +45,7 @@ v0.9.0
 - added back russian translation
 - replaced all human NPC armor changes with a script (and fixed several issues of wrong armor being applied)
 - rewritten most global scripts: fixed some issues and improved compatibility
+- all mod configs moved to mods/ecco folder
 
 
 v0.8.0

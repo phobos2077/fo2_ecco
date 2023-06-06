@@ -1197,7 +1197,7 @@
 {62900}{}{9mm SMG}
 {62901}{}{This old pre-war sub-machine gun was primarily used by police forces. It is inferior to other SMGs, but can still be found in the wastes. Caliber: 9x19mm. Min ST: 4.}
 {63000}{}{Grenade Launcher}
-{63001}{}{40mm M79 grenade launcher. Sawed-off for concealed carry. Needs reload after each shot, but still effective against large groups. Min ST: 5.}
+{63001}{}{40mm M79 grenade launcher. Sawed-off for concealed carry. Needs reload after each shot, but still effective against large groups. Min ST: 4.}
 {63100}{}{40mm HE Grenades}
 {63101}{}{High-explosive frag grenades. Caliber 40x46 mm. Typically used with M79 grenade launcher.}
 {63200}{}{40mm IC Grenades}
@@ -1205,7 +1205,7 @@
 {63300}{}{14mm JHP}
 {63301}{}{Large caliber ammunition. 14mm jacketed hollow-points.}
 {63400}{}{MGL}
-{63401}{}{Milkor MGL is a lightweight 40mm six-shot revolver-type grenade launcher. It has enough firepower to quickly create chaos in a wide area. Min ST: 6.}
+{63401}{}{Milkor MGL is a lightweight 40mm six-shot revolver-type grenade launcher. It has enough firepower to quickly create chaos in a wide area. Min ST: 5.}
 {63500}{}{Traps and Explosives}
 {63501}{}{This book describes ways to set and disarm traps, and how to make explosives without getting blown up in the process.}
 {63600}{}{Capital}
