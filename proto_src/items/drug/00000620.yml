@@ -1,0 +1,40 @@
+pid: 620
+messageId: 62000
+name: Hercules
+description: This drug increases strength of certain muscle groups, allowing to lift
+  and carry heavy items.
+fid: 15
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 1
+size: 1
+weight: 1
+cost: 150
+inventoryFid: 117440925
+soundId: '0'
+drugData:
+  stat:
+  - STAT_CARRY_WEIGHT
+  - STAT_STRENGTH
+  - STAT_CURRENT_RADIATION_LEVEL
+  amount:
+  - 150
+  - 1
+  - 0
+  duration1: 280
+  amount1:
+  - -150
+  - -2
+  - 0
+  duration2: 1080
+  amount2:
+  - 0
+  - 1
+  - 0
+  addictionChance: 0
+  withdrawalEffect: -1
+  withdrawalOnset: 0

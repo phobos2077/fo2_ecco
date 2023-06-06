@@ -1,0 +1,22 @@
+pid: 275
+messageId: 27500
+name: Trophy of Recognition
+description: 'A solid gold trophy with the inscription "To: Dave, From: DC''s, For:
+  Being a Special Person."'
+fid: 127
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 10
+cost: 10000
+inventoryFid: 117440609
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -858993460

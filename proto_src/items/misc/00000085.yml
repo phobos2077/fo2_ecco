@@ -1,0 +1,22 @@
+pid: 85
+messageId: 8500
+name: Plastic Explosives
+description: A chunk of Cordex, a military brand of plastic explosives. Highly stable,
+  very destructive. Includes a timer.
+fid: 125
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 4
+cost: 450
+inventoryFid: 117440582
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

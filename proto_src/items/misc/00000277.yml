@@ -1,0 +1,21 @@
+pid: 277
+messageId: 27700
+name: Golden Gecko Pelt
+description: This is the dried and cured hide of a Golden Gecko.
+fid: 193
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 7
+size: 3
+weight: 5
+cost: 375
+inventoryFid: 117440685
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -858993460

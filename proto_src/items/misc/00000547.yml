@@ -1,0 +1,22 @@
+pid: 547
+messageId: 54700
+name: A watch
+description: An antique watch. This brand stopped being manufactured long before the
+  Great War.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 1
+cost: 1250
+inventoryFid: 117440892
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

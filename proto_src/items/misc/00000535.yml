@@ -1,0 +1,21 @@
+pid: 535
+messageId: 53500
+name: Scaly Fish
+description: A scaly looking fish. If cooked, it would probably make a tasty meal.
+fid: 195
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 5
+cost: 50
+inventoryFid: 117440881
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

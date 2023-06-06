@@ -1,0 +1,40 @@
+pid: 49
+messageId: 4900
+name: Antidote
+description: A bottle containing a home-brewed antidote for poison. A milky liquid
+  with floating pieces of radscorpion flesh.
+fid: 15
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x1000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 1
+size: 1
+weight: 1
+cost: 125
+inventoryFid: 117440556
+soundId: '0'
+drugData:
+  stat:
+  - STAT_CURRENT_POISON_LEVEL
+  - STAT_CURRENT_RADIATION_LEVEL
+  - STAT_CURRENT_RADIATION_LEVEL
+  amount:
+  - -25
+  - 0
+  - 0
+  duration1: 1
+  amount1:
+  - -25
+  - 0
+  - 0
+  duration2: 2
+  amount2:
+  - -25
+  - 0
+  - 0
+  addictionChance: 0
+  withdrawalEffect: -1
+  withdrawalOnset: 0

@@ -12,14 +12,14 @@ type: ITEM_TYPE_ARMOR
 material: 1
 size: 10
 weight: 35
-cost: 1100
+cost: 1500
 inventoryFid: 117440513
 soundId: '0'
 armorData:
-  armorClass: 10
+  armorClass: 5
   damageResistance:
     normal: 30
-    laser: 40
+    laser: 30
     fire: 10
     plasma: 20
     electrical: 0
@@ -27,7 +27,7 @@ armorData:
     explosion: 25
   damageThreshold:
     normal: 5
-    laser: 4
+    laser: 6
     fire: 4
     plasma: 4
     electrical: 0

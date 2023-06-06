@@ -1,0 +1,40 @@
+pid: 106
+messageId: 10600
+name: Nuka-Cola
+description: A bottle of Nuka-Cola, the flavored softdrink of the post-nuclear world.
+  Warm and flat.
+fid: 116
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x1000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 1
+size: 1
+weight: 1
+cost: 3
+inventoryFid: 117440605
+soundId: '0'
+drugData:
+  stat:
+  - STAT_CURRENT_RADIATION_LEVEL
+  - STAT_CURRENT_RADIATION_LEVEL
+  - STAT_CURRENT_RADIATION_LEVEL
+  amount:
+  - 0
+  - 0
+  - 0
+  duration1: 0
+  amount1:
+  - 0
+  - 0
+  - 0
+  duration2: 0
+  amount2:
+  - 0
+  - 0
+  - 0
+  addictionChance: 10
+  withdrawalEffect: 53
+  withdrawalOnset: 30

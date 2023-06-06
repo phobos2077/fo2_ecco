@@ -1,0 +1,23 @@
+pid: 636
+messageId: 63600
+name: Capital
+description: 'Capital: A Critique of Political Economy. Book describes the process
+  of circulation of capital. You already feel as it starts to circulate towards your
+  pocket.'
+fid: 13
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 3
+size: 1
+weight: 2
+cost: 275
+inventoryFid: 117440942
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

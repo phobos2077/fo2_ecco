@@ -30,7 +30,7 @@ weaponData:
   actionPointCost2: 0
   criticalFailureType: 2
   perk: NONE
-  rounds: 1
+  rounds: 0
   caliber: 8
   ammoTypePid: 29
   ammoCapacity: 10

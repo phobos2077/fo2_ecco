@@ -2,7 +2,7 @@ pid: 634
 messageId: 63400
 name: MGL
 description: 'Milkor MGL is a lightweight 40mm six-shot revolver-type grenade launcher.
-  It has enough firepower to quickly create chaos in a wide area. Min ST: 6.'
+  It has enough firepower to quickly create chaos in a wide area. Min ST: 5.'
 fid: 24
 lightDistance: 0
 lightIntensity: 0
@@ -24,7 +24,7 @@ weaponData:
   maxRange1: 40
   maxRange2: 0
   projectilePid: 83886106
-  minStrength: 6
+  minStrength: 5
   actionPointCost1: 4
   actionPointCost2: 0
   criticalFailureType: 5

@@ -1,0 +1,21 @@
+pid: 127
+messageId: 12700
+name: Rope
+description: A strong, thick line. About 45 feet in length.
+fid: 126
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 7
+size: 1
+weight: 6
+cost: 25
+inventoryFid: 117440622
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

@@ -1,0 +1,21 @@
+pid: 494
+messageId: 49400
+name: Kokoweef Mine Scrip
+description: This is a small chit probably used to pay Kokoweef Mine Workers.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 7
+size: 1
+weight: 0
+cost: 5
+inventoryFid: 117440860
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: 168652658

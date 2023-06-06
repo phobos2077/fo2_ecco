@@ -1,7 +1,7 @@
 pid: 95
 messageId: 9500
-name: 12 ga. Shotshells
-description: 'Shotgun ammunition, #7 bird shot. This particular ammo is marked: "12-gauge
+name: 12 ga. Buckshot
+description: 'Shotgun ammunition, #00 buckshot. This particular ammo is marked: "12-gauge
   shells, not for use by children under the age of 3."'
 fid: 1
 lightDistance: 0
@@ -19,7 +19,7 @@ soundId: '0'
 ammoData:
   caliber: 11
   quantity: 12
-  armorClassMod: -20
-  damageResistanceMod: 30
-  damageMult: 1
-  damageDiv: 1
+  armorClassMod: -30
+  damageResistanceMod: 20
+  damageMult: 9
+  damageDiv: 5

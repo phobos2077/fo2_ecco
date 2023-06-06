@@ -28,7 +28,7 @@ armorData:
     explosion: 20
   damageThreshold:
     normal: 3
-    laser: 1
+    laser: 2
     fire: 1
     plasma: 1
     electrical: 1

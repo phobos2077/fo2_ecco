@@ -1,0 +1,22 @@
+pid: 621
+messageId: 62100
+name: Severed Arm
+description: An arm brutally cut from the body. There is a tattoo that indecates a
+  gang and a rank of the victim.
+fid: 45
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 7
+size: 3
+weight: 5
+cost: 0
+inventoryFid: 117440927
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -1

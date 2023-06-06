@@ -26,7 +26,7 @@ weaponData:
   projectilePid: 83886087
   minStrength: 4
   actionPointCost1: 4
-  actionPointCost2: 6
+  actionPointCost2: 5
   criticalFailureType: 1
   perk: NONE
   rounds: 0

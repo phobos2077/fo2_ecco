@@ -1,7 +1,8 @@
 pid: 641
 messageId: 64100
-name: 12 ga. Buckshot
-description: 'Shells with heavy #00 buckshots.'
+name: 12 ga. Dragon Breath
+description: These incendiary shells pack a fiery punch that can melt armor and flesh
+  alike.
 fid: 1
 lightDistance: 0
 lightIntensity: 0
@@ -12,7 +13,7 @@ type: ITEM_TYPE_AMMO
 material: 1
 size: 1
 weight: 1
-cost: 200
+cost: 300
 inventoryFid: 117440947
 soundId: '0'
 ammoData:

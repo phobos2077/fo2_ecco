@@ -1,0 +1,22 @@
+pid: 433
+messageId: 43300
+name: Mirrored Shades
+description: This is a pair of fashionable and deadly-looking mirrored shades. Just
+  having them in your inventory makes you feel cool.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 2
+size: 1
+weight: 1
+cost: 250
+inventoryFid: 117440812
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -456128247

@@ -1,0 +1,39 @@
+pid: 81
+messageId: 8100
+name: Iguana-on-a-stick
+description: A cooked iguana, roasted in its own skin.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x1000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 7
+size: 0
+weight: 1
+cost: 20
+inventoryFid: 117440574
+soundId: '0'
+drugData:
+  stat:
+  - STAT_CURRENT_HIT_POINTS
+  - STAT_CURRENT_RADIATION_LEVEL
+  - STAT_CURRENT_RADIATION_LEVEL
+  amount:
+  - 1
+  - 0
+  - 0
+  duration1: 0
+  amount1:
+  - 0
+  - 0
+  - 0
+  duration2: 0
+  amount2:
+  - 0
+  - 0
+  - 0
+  addictionChance: 0
+  withdrawalEffect: 0
+  withdrawalOnset: 0

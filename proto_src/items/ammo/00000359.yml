@@ -19,6 +19,6 @@ ammoData:
   caliber: 16
   quantity: 40
   armorClassMod: -5
-  damageResistanceMod: -20
-  damageMult: 1
-  damageDiv: 1
+  damageResistanceMod: -30
+  damageMult: 4
+  damageDiv: 3

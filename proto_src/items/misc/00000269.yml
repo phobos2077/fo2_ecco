@@ -1,0 +1,21 @@
+pid: 269
+messageId: 26900
+name: Robot Parts
+description: A pile of damaged robot parts.
+fid: 6
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 4
+weight: 20
+cost: 100
+inventoryFid: 117440678
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: -858993460

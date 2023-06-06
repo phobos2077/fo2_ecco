@@ -1,0 +1,22 @@
+pid: 422
+messageId: 42200
+name: Excavator Chip
+description: This chip appears to be for some sort of large industrial machine. Beneath
+  the dirt and dust, it appears to be in surprisingly good shape.
+fid: 48
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 1
+cost: 1250
+inventoryFid: 117440802
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -858993460

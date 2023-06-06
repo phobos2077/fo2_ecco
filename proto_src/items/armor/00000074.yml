@@ -16,15 +16,15 @@ cost: 250
 inventoryFid: 117440589
 soundId: '0'
 armorData:
-  armorClass: 8
+  armorClass: 10
   damageResistance:
-    normal: 20
+    normal: 15
     laser: 0
     fire: 10
     plasma: 10
     electrical: 30
     emp: 500
-    explosion: 20
+    explosion: 10
   damageThreshold:
     normal: 0
     laser: 0

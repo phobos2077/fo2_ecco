@@ -18,17 +18,17 @@ inventoryFid: 117440658
 soundId: '0'
 weaponData:
   animationCode: 6
-  minDamage: 18
-  maxDamage: 26
+  minDamage: 20
+  maxDamage: 30
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 20
   maxRange2: 0
   projectilePid: -1
   minStrength: 5
-  actionPointCost1: 4
+  actionPointCost1: 5
   actionPointCost2: 0
   criticalFailureType: 2
-  perk: NONE
+  perk: PERK_WEAPON_PENETRATE
   rounds: 1
   caliber: 5
   ammoTypePid: 34

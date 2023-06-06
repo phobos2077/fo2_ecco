@@ -18,7 +18,7 @@ soundId: '0'
 armorData:
   armorClass: 15
   damageResistance:
-    normal: 25
+    normal: 20
     laser: 0
     fire: 20
     plasma: 10

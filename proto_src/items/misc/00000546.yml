@@ -1,0 +1,22 @@
+pid: 546
+messageId: 54600
+name: Old Coin
+description: A very old coin. You are not sure whose face is on it, but it looks like
+  it could be rare and worth a lot of money.
+fid: 3
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 1
+cost: 500
+inventoryFid: 117440891
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

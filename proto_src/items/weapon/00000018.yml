@@ -13,22 +13,22 @@ type: ITEM_TYPE_WEAPON
 material: 1
 size: 2
 weight: 4
-cost: 800
+cost: 750
 inventoryFid: 117440530
 soundId: '0'
 weaponData:
   animationCode: 5
   minDamage: 10
-  maxDamage: 16
+  maxDamage: 18
   damageType: DAMAGE_TYPE_NORMAL
-  maxRange1: 25
+  maxRange1: 23
   maxRange2: 0
   projectilePid: -1
   minStrength: 4
-  actionPointCost1: 4
+  actionPointCost1: 5
   actionPointCost2: 0
   criticalFailureType: 2
-  perk: PERK_WEAPON_ACCURATE
+  perk: NONE
   rounds: 0
   caliber: 9
   ammoTypePid: 31

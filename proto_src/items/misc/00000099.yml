@@ -1,0 +1,21 @@
+pid: 99
+messageId: 9900
+name: Gold Locket
+description: A valuable gold locket.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 1
+cost: 1500
+inventoryFid: 117440594
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

@@ -20,5 +20,5 @@ ammoData:
   quantity: 12
   armorClassMod: 10
   damageResistanceMod: 20
-  damageMult: 3
-  damageDiv: 2
+  damageMult: 9
+  damageDiv: 5

@@ -1,0 +1,22 @@
+pid: 625
+messageId: 62500
+name: Wanamingo Hand
+description: A hand taken from a dead wanamingo. Extraordinary hardness that allows
+  the creature to dig tunnels through solid rock also makes it useful in many ways.
+fid: 14
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 2
+weight: 4
+cost: 750
+inventoryFid: 117440931
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -1

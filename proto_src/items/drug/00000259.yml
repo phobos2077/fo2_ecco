@@ -1,0 +1,41 @@
+pid: 259
+messageId: 25900
+name: Jet
+description: Jet is a powerful methamphetamine that stimulates the central nervous
+  system. The initial euphoric rush rarely lasts more than a few minutes, but during
+  that time, the user is filled with a rush of energy & strength.
+fid: 15
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 1
+size: 0
+weight: 0
+cost: 125
+inventoryFid: 117440668
+soundId: '0'
+drugData:
+  stat:
+  - STAT_MAXIMUM_ACTION_POINTS
+  - STAT_STRENGTH
+  - STAT_PERCEPTION
+  amount:
+  - 2
+  - 1
+  - 1
+  duration1: 5
+  amount1:
+  - -4
+  - -4
+  - -4
+  duration2: 1440
+  amount2:
+  - 2
+  - 3
+  - 3
+  addictionChance: 50
+  withdrawalEffect: 70
+  withdrawalOnset: 2880

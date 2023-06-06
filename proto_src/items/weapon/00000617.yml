@@ -13,7 +13,7 @@ type: ITEM_TYPE_WEAPON
 material: 1
 size: 1
 weight: 1
-cost: 500
+cost: 750
 inventoryFid: 117440922
 soundId: '0'
 weaponData:
@@ -21,7 +21,7 @@ weaponData:
   minDamage: 3
   maxDamage: 5
   damageType: DAMAGE_TYPE_ELECTRICAL
-  maxRange1: 6
+  maxRange1: 8
   maxRange2: 0
   projectilePid: -1
   minStrength: 3

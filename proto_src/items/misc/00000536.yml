@@ -1,0 +1,21 @@
+pid: 536
+messageId: 53600
+name: Fish
+description: A raw looking fish. If cooked, it would probably make a tasty meal.
+fid: 195
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 3
+cost: 85
+inventoryFid: 117440882
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

@@ -1,0 +1,22 @@
+pid: 429
+messageId: 42900
+name: Gold Tooth
+description: This gold tooth used to belong to someone else, but they won't be needing
+  it anymore.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 5
+size: 1
+weight: 0
+cost: 250
+inventoryFid: 117440808
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -1

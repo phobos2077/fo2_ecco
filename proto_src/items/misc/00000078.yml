@@ -1,0 +1,22 @@
+pid: 78
+messageId: 7800
+name: Fuzzy Painting
+description: An image of a singer. Obviously, very old. The image has a felt coating
+  that is still in good condition.
+fid: 119
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 12
+cost: 900
+inventoryFid: 117440570
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

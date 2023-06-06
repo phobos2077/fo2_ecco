@@ -1,0 +1,21 @@
+pid: 436
+messageId: 43600
+name: Deck of Cards
+description: A standard set of playing cards.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 7
+size: 1
+weight: 1
+cost: 50
+inventoryFid: 117440813
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: 497228230

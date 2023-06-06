@@ -19,7 +19,7 @@ soundId: '0'
 weaponData:
   animationCode: 5
   minDamage: 12
-  maxDamage: 20
+  maxDamage: 24
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 20
   maxRange2: 0

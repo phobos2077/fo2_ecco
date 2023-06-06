@@ -1,0 +1,35 @@
+pid: 643
+messageId: 64300
+name: Cowboy Repeater
+description: 'Winchester lever-action rifle, in .44 magnum. Min ST: 4.'
+fid: 36
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x206'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 4
+weight: 6
+cost: 1600
+inventoryFid: 117440949
+soundId: '0'
+weaponData:
+  animationCode: 7
+  minDamage: 16
+  maxDamage: 24
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 35
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 4
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 2
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 9
+  ammoTypePid: 111
+  ammoCapacity: 12
+  soundCode: G

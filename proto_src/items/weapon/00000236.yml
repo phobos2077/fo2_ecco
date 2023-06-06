@@ -18,15 +18,15 @@ inventoryFid: 117440654
 soundId: '0'
 weaponData:
   animationCode: 1
-  minDamage: 4
-  maxDamage: 10
+  minDamage: 5
+  maxDamage: 12
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 1
   maxRange2: 1
   projectilePid: -1
   minStrength: 2
   actionPointCost1: 3
-  actionPointCost2: 3
+  actionPointCost2: 4
   criticalFailureType: 1
   perk: NONE
   rounds: 0

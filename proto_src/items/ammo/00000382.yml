@@ -12,13 +12,13 @@ type: ITEM_TYPE_AMMO
 material: 1
 size: 3
 weight: 8
-cost: 250
+cost: 400
 inventoryFid: 117440772
 soundId: '0'
 ammoData:
-  caliber: 7
+  caliber: 2
   quantity: 10
-  armorClassMod: -30
-  damageResistanceMod: 0
-  damageMult: 4
-  damageDiv: 3
+  armorClassMod: -40
+  damageResistanceMod: -10
+  damageMult: 1
+  damageDiv: 1

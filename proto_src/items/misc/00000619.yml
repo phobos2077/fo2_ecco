@@ -1,0 +1,22 @@
+pid: 619
+messageId: 61900
+name: Proximity Mine Kit
+description: A mine-trap kit, consisting of a plastic shell and a simple proximity
+  sensor with detonator. Can be armed with all types of explosives or grenades.
+fid: 45
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 3
+cost: 150
+inventoryFid: 117440924
+soundId: '0'
+miscData:
+  powerTypePid: 38
+  powerType: 0
+  charges: 1

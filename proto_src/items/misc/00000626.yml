@@ -1,0 +1,22 @@
+pid: 626
+messageId: 62600
+name: Bone Amulet
+description: A tribal amulet, carefully carved from bones. Unique image on the amulet
+  indicates the tribe of origin and the name of the warrior who should wear it.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 3
+size: 1
+weight: 1
+cost: 100
+inventoryFid: 117440932
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -1

@@ -1,10 +1,9 @@
 pid: 400
 messageId: 40000
 name: Improved Flamer
-description: 'A Flambe 450 model flamethrower, varmiter variation. Fires a short spray
-  of extremely hot, flammable liquid. Requires specialized fuel to work properly.
-  This model has been modified to fire a hotter mixture which causes greater combustibility.
-  Min ST: 6.'
+description: 'A Flambe 450 model flamethrower, varmiter variation. Fires a spray of
+  extremely hot, flammable liquid. This model has been modified to fire a hotter mixture
+  which causes greater combustibility at range. Min ST: 6.'
 fid: 24
 lightDistance: 0
 lightIntensity: 0
@@ -15,24 +14,24 @@ type: ITEM_TYPE_WEAPON
 material: 1
 size: 6
 weight: 19
-cost: 2000
+cost: 2400
 inventoryFid: 117440776
 soundId: '0'
 weaponData:
   animationCode: 8
-  minDamage: 50
+  minDamage: 55
   maxDamage: 90
   damageType: DAMAGE_TYPE_FIRE
-  maxRange1: 6
+  maxRange1: 7
   maxRange2: 0
   projectilePid: -1
   minStrength: 6
   actionPointCost1: 6
   actionPointCost2: 0
   criticalFailureType: 6
-  perk: PERK_WEAPON_NIGHT_SIGHT
+  perk: PERK_WEAPON_FLAMEBOY
   rounds: 1
-  caliber: 7
+  caliber: 2
   ammoTypePid: 382
   ammoCapacity: 5
   soundCode: I

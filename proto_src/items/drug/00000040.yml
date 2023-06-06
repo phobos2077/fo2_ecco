@@ -1,0 +1,40 @@
+pid: 40
+messageId: 4000
+name: Stimpak
+description: A healing drug. When injected, the drug provides immediate healing of
+  minor wounds.
+fid: 15
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 1
+size: 0
+weight: 0
+cost: 150
+inventoryFid: 117440627
+soundId: '0'
+drugData:
+  stat:
+  - STAT_CURRENT_POISON_LEVEL
+  - STAT_CURRENT_HIT_POINTS
+  - STAT_CURRENT_RADIATION_LEVEL
+  amount:
+  - 10
+  - 20
+  - 0
+  duration1: 0
+  amount1:
+  - 0
+  - 0
+  - 0
+  duration2: 0
+  amount2:
+  - 0
+  - 0
+  - 0
+  addictionChance: 0
+  withdrawalEffect: -1
+  withdrawalOnset: 0

@@ -2,7 +2,7 @@ pid: 630
 messageId: 63000
 name: Grenade Launcher
 description: '40mm M79 grenade launcher. Sawed-off for concealed carry. Needs reload
-  after each shot, but still effective against large groups. Min ST: 5.'
+  after each shot, but still effective against large groups. Min ST: 4.'
 fid: 215
 lightDistance: 0
 lightIntensity: 0
@@ -24,7 +24,7 @@ weaponData:
   maxRange1: 25
   maxRange2: 0
   projectilePid: 83886106
-  minStrength: 5
+  minStrength: 4
   actionPointCost1: 5
   actionPointCost2: 0
   criticalFailureType: 5

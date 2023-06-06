@@ -13,13 +13,13 @@ type: ITEM_TYPE_WEAPON
 material: 1
 size: 5
 weight: 12
-cost: 5000
+cost: 4500
 inventoryFid: 117440615
 soundId: '0'
 weaponData:
   animationCode: 8
-  minDamage: 30
-  maxDamage: 40
+  minDamage: 35
+  maxDamage: 50
   damageType: DAMAGE_TYPE_LASER
   maxRange1: 45
   maxRange2: 20

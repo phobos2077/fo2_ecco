@@ -1,0 +1,40 @@
+pid: 273
+messageId: 27300
+name: Healing Powder
+description: A very powerful healing magic- though it will bring the feeling of sleep
+  to your head.
+fid: 15
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 7
+size: 0
+weight: 1
+cost: 75
+inventoryFid: 117440682
+soundId: '0'
+drugData:
+  stat:
+  - STAT_CURRENT_POISON_LEVEL
+  - STAT_CURRENT_HIT_POINTS
+  - STAT_PERCEPTION
+  amount:
+  - 8
+  - 18
+  - -1
+  duration1: 360
+  amount1:
+  - 0
+  - 0
+  - 1
+  duration2: 0
+  amount2:
+  - 0
+  - 0
+  - 0
+  addictionChance: 0
+  withdrawalEffect: -1
+  withdrawalOnset: 0

@@ -1,0 +1,22 @@
+pid: 100
+messageId: 10000
+name: Radio
+description: A model 2043B Radio Communicator, from the fine people at Wattz Electronics.
+  Dependable, rugged, and camouflaged. With the optional RS-121 interface.
+fid: 6
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 6
+cost: 1050
+inventoryFid: 117440595
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

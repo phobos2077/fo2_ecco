@@ -18,7 +18,7 @@ cost: 3400
 inventoryFid: 117440741
 soundId: '0'
 weaponData:
-  animationCode: 13
+  animationCode: 7
   minDamage: 22
   maxDamage: 30
   damageType: DAMAGE_TYPE_NORMAL

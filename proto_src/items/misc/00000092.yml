@@ -1,0 +1,21 @@
+pid: 92
+messageId: 9200
+name: Scorpion Tail
+description: The severed tail of a radscorpion.
+fid: 39
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x0'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 10
+weight: 15
+cost: 50
+inventoryFid: 117440602
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

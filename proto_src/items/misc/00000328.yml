@@ -1,0 +1,23 @@
+pid: 328
+messageId: 32800
+name: Magic 8-Ball
+description: This black sphere is some strange precognitive device... a small window
+  on the top seems to be able to predict the future! Pre-war humanity must have been
+  geniuses to invent such a wonder!
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa800'
+sid: 50332059
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 1
+cost: 250
+inventoryFid: 117440729
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

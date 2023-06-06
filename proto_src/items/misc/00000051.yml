@@ -1,0 +1,22 @@
+pid: 51
+messageId: 5100
+name: Dynamite
+description: A high explosive, consisting of nitroglycerin mixed with the absorbent
+  substance kieselguhr. Includes a timer.
+fid: 23
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 5
+cost: 300
+inventoryFid: 117440558
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

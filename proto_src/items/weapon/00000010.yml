@@ -19,17 +19,17 @@ inventoryFid: 117440522
 soundId: '0'
 weaponData:
   animationCode: 8
-  minDamage: 50
+  minDamage: 45
   maxDamage: 90
   damageType: DAMAGE_TYPE_FIRE
-  maxRange1: 6
+  maxRange1: 5
   maxRange2: 0
   projectilePid: -1
   minStrength: 6
   actionPointCost1: 6
   actionPointCost2: 0
   criticalFailureType: 6
-  perk: PERK_WEAPON_NIGHT_SIGHT
+  perk: NONE
   rounds: 1
   caliber: 2
   ammoTypePid: 32

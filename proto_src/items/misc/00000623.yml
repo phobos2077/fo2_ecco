@@ -1,0 +1,21 @@
+pid: 623
+messageId: 62300
+name: Mole Rat Hide
+description: A sturdy piece of mole rat skin. Great material for leather armor.
+fid: 14
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 7
+size: 1
+weight: 2
+cost: 150
+inventoryFid: 117440929
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -1

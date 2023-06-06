@@ -1,7 +1,7 @@
 pid: 363
 messageId: 36300
-name: 7.62mm
-description: 'Ammunition. Caliber: 7.62mm.'
+name: 7.62mm FMJ
+description: 'Ammunition. Caliber: 7.62mm, full metal jacket.'
 fid: 1
 lightDistance: 0
 lightIntensity: 0
@@ -18,7 +18,7 @@ soundId: '0'
 ammoData:
   caliber: 18
   quantity: 20
-  armorClassMod: -10
+  armorClassMod: 0
   damageResistanceMod: -10
   damageMult: 1
   damageDiv: 1

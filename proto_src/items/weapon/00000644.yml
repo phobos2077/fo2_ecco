@@ -1,0 +1,36 @@
+pid: 644
+messageId: 64400
+name: 14mm SMG
+description: 'When you need the most firepower in the smallest package. Caliber: 14mm.
+  Min ST: 6.'
+fid: 44
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa076'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 3
+cost: 4500
+inventoryFid: 117440950
+soundId: '0'
+weaponData:
+  animationCode: 6
+  minDamage: 18
+  maxDamage: 28
+  damageType: DAMAGE_TYPE_NORMAL
+  maxRange1: 20
+  maxRange2: 12
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 5
+  actionPointCost2: 6
+  criticalFailureType: 2
+  perk: NONE
+  rounds: 6
+  caliber: 10
+  ammoTypePid: 33
+  ammoCapacity: 24
+  soundCode: H

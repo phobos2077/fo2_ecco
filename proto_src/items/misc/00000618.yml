@@ -1,0 +1,22 @@
+pid: 618
+messageId: 61800
+name: Spike Trap
+description: This trap consists of a crude triggering mechanism and a number of sharp
+  spikes. It can be used several times before the spikes are worn out.
+fid: 45
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 5
+cost: 50
+inventoryFid: 117440923
+soundId: '0'
+miscData:
+  powerTypePid: 38
+  powerType: 0
+  charges: 2

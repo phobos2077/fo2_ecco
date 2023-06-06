@@ -1,0 +1,38 @@
+pid: 554
+messageId: 55400
+name: Environmental Armor
+description: Armor best worn against biological attacks.
+fid: 199
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 1
+weight: 10
+cost: 0
+inventoryFid: 117440899
+soundId: '0'
+armorData:
+  armorClass: 10
+  damageResistance:
+    normal: 40
+    laser: 40
+    fire: 40
+    plasma: 25
+    electrical: 10
+    emp: 500
+    explosion: 40
+  damageThreshold:
+    normal: 4
+    laser: 4
+    fire: 4
+    plasma: 3
+    electrical: 1
+    emp: 0
+    explosion: 4
+  perk: NONE
+  maleFid: 16777320
+  femaleFid: 16777320

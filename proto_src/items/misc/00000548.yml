@@ -1,0 +1,24 @@
+pid: 548
+messageId: 54800
+name: Pack of Cigarettes
+description: 'A pack of ''Commies''. On the back it says: ''Smoke a Commie to do your
+  bit for democracy and feel better''. Lower down there''s a health warning: ''As
+  your doctor, I recommend Commies for fresher breath and a winning smile''. It looks
+  like there''s about 10 in a pack.'
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 2
+size: 1
+weight: 1
+cost: 200
+inventoryFid: 117440893
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

@@ -1,0 +1,40 @@
+pid: 48
+messageId: 4800
+name: RadAway
+description: A chemical solution that bonds with radiation particles and passes them
+  through your system. Takes time to work.
+fid: 15
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0x1000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 2
+size: 0
+weight: 0
+cost: 300
+inventoryFid: 117440560
+soundId: '0'
+drugData:
+  stat:
+  - STAT_CURRENT_RADIATION_LEVEL
+  - STAT_CURRENT_RADIATION_LEVEL
+  - STAT_CURRENT_RADIATION_LEVEL
+  amount:
+  - -25
+  - 0
+  - 0
+  duration1: 120
+  amount1:
+  - -50
+  - 0
+  - 0
+  duration2: 240
+  amount2:
+  - -75
+  - 0
+  - 0
+  addictionChance: 10
+  withdrawalEffect: 57
+  withdrawalOnset: 14400

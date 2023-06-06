@@ -12,15 +12,15 @@ type: ITEM_TYPE_WEAPON
 material: 1
 size: 4
 weight: 10
-cost: 200
+cost: 250
 inventoryFid: 117440705
 soundId: '0'
 weaponData:
   animationCode: 7
-  minDamage: 9
-  maxDamage: 12
+  minDamage: 8
+  maxDamage: 13
   damageType: DAMAGE_TYPE_NORMAL
-  maxRange1: 20
+  maxRange1: 25
   maxRange2: 0
   projectilePid: -1
   minStrength: 5
@@ -32,4 +32,4 @@ weaponData:
   caliber: 8
   ammoTypePid: 29
   ammoCapacity: 1
-  soundCode: G
+  soundCode: A

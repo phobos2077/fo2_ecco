@@ -16,7 +16,7 @@ cost: 8000
 inventoryFid: 117440761
 soundId: '0'
 armorData:
-  armorClass: 21
+  armorClass: 15
   damageResistance:
     normal: 45
     laser: 40
