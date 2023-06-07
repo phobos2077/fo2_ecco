@@ -81,13 +81,15 @@ Start of a new game is not required, but is **highly** recommended.
 - **IMPORTANT**: install Rifle Animations and Wakizashi Animations mods!
 https://github.com/BGforgeNet/Fallout2_Restoration_Project/releases/tag/v26
 
-2. Download the archive and extract its contents into the folder where you installed RPU in step 1 (should overwrite rpu.dat file)
-https://drive.google.com/file/d/1CgCZjDh0H_zgLk0nQs9qLlUeaZ-zJPjK/view?usp=share_link
+2. Download the archive and extract its contents into the folder where you installed RPU in step 1, overwriting any files.
+https://drive.google.com/file/d/1We_IETFZpbLh4ndGvHvMu0qrCtuFCOQH/view?usp=sharing
 
-3. Extract the contents of the archive into the game folder, overwriting files
+3. Download the latest ecco_**.zip archive from [releases page](https://github.com/phobos2077/fo2_ecco/releases) and extract the contents into the game folder, overwriting files.
 
 4. Edit ddraw.ini, find keys listed below, uncomment them if they are commented (with a semicolon) and change values as follows:
 ```
+DamageFormula=0
+
 ObjCanHearObjFix=1
 
 DerivedStats=sfall\stats.ini
