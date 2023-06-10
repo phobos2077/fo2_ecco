@@ -62,9 +62,20 @@ procedure keypress_handler begin
          if (key == DIK_ESCAPE) then begin
             call exit_mode;
          end else if (key >= DIK_1 and key <= DIK_9) then begin
-            optionProc := "item_options_" + (key - DIK_1);
-            debug_msg("select "+optionProc); // this debug is needed to prevent stupid optimizer from removing the string!
-            call optionProc;
+            if (mode == 2) then begin
+               if (key == DIK_1 and can_batch) then
+                  call batch_one_item;
+               else if (key == DIK_2 and can_batch and max_batch > 1) then
+                  call batch_all_items;
+               else if (key == DIK_3 and can_undo) then
+                  call undo_one_item;
+               else if (key == DIK_4 and can_undo and max_undo > 1) then
+                  call undo_all_items;
+            end else begin
+               optionProc := "item_options_" + (key - DIK_1);
+               debug_msg("select "+optionProc); // this debug is needed to prevent stupid optimizer from removing the string!
+               call optionProc;
+            end
          end else if (key == DIK_0 and mode <= 4) then begin
             if (mode == 2) then
                call items_list_mode;

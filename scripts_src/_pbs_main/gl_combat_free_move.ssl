@@ -78,9 +78,10 @@ procedure stdprocedure_hook begin
 
       if (freeMove > 0) then begin
          // Add vanilla move points from perk
-         freeMove += 2 * dude_perk(PERK_bonus_move);
+         variable baseFreeMove := get_combat_free_move;
+         freeMove += baseFreeMove;
          set_combat_free_move(freeMove);
-         debug_msg("gl_combat_free_move: Setting combat_free_move for player's turn to "+freeMove);
+         debug_msg("gl_combat_free_move: Setting combat_free_move for player's turn from "+baseFreeMove+" to "+freeMove);
       end
    end
 end

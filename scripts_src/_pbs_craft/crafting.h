@@ -59,7 +59,7 @@ variable begin
     cur_undo;
 
     items_avail;
-    max;
+    max_batch;
     max_undo;
 
     can_batch;
@@ -390,15 +390,15 @@ procedure display_item_options begin
         SayReply("r_item_options", proto_data(cur_pid, it_description));
         call draw_item_pcx;
         call draw_item_properties;
-        if (can_batch and max > 1) then SayOption(bstr(108) + bstr(110) + (max * cur_pid_qty) + bstr(111), batch_all_items);
-        if (can_batch) then SayOption(bstr(103), batch_one_item);
-        if (can_undo and max_undo > 1) then SayOption(bstr(109) + bstr(110) + max_undo + bstr(111), undo_all_items);
-        if (can_undo) then SayOption(bstr(104), undo_one_item);
+        if (can_batch) then SayOption("1. " + bstr(103), batch_one_item);
+        if (can_batch and max_batch > 1) then SayOption("2. " + bstr(108) + bstr(110) + (max_batch * cur_pid_qty) + bstr(111), batch_all_items);
+        if (can_undo) then SayOption("3. " + bstr(104), undo_one_item);
+        if (can_undo and max_undo > 1) then SayOption("4. " + bstr(109) + bstr(110) + max_undo + bstr(111), undo_all_items);
         SayOption("0: "+bstr(102), items_list_mode);
         if (use_categories) then
             SayOption(bstr(112), item_categories_mode);
         else
-            SayOption(bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
+            SayOption("Esc. " + bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
     SayEnd;
     craft_debug("display_item_options: SayEnd()");
 end
@@ -409,7 +409,7 @@ procedure display_batch_ok begin
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_batch_item", bstr(201));
         SayOption("0. "+bstr(100), item_options_mode);
-        //SayOption(bstr(101), exit_mode);
+        SayOption("Esc. " + bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
     SayEnd;
     craft_debug("display_batch_ok: SayEnd()");
 end
@@ -419,8 +419,8 @@ procedure display_undo_ok begin
     SayStart;
         MouseShape("pcx/st1.pcx", 0, 0);
         SayReply("r_undo_batch", bstr(202));
-        SayOption("0. "+bstr(100), item_options_mode);
-        //SayOption(bstr(101), exit_mode);
+        SayOption("0. " + bstr(100), item_options_mode);
+        SayOption("Esc. " + bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
     SayEnd;
     craft_debug("display_undo_ok: SayEnd()");
 end
@@ -614,7 +614,7 @@ procedure batch_one_item begin
 end
 
 procedure batch_all_items begin
-    call batch_item(max);
+    call batch_item(max_batch);
 end
 
 procedure undo_one_item begin
@@ -744,7 +744,7 @@ procedure draw_item_properties begin
     display_line += 10;
     // Display list of components.
     saved_line := line;
-    max := 32767;
+    max_batch := 32767;
     while (line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
         has_any := 0;
         list := string_split_safe(field(line), "|");
@@ -771,7 +771,7 @@ procedure draw_item_properties begin
             display_line += 10;
             i += 1;
         end
-        if (max2 < max) then max := max2;
+        if (max2 < max_batch) then max_batch := max2;
         if (has_any == 0) then has_components := 0;
         line += 1;
     end
