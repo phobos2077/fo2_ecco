@@ -71,7 +71,7 @@ procedure keypress_handler begin
                   call undo_one_item;
                else if (key == DIK_4 and can_undo and max_undo > 1) then
                   call undo_all_items;
-            end else begin
+            end else if (mode == 1 or mode == 5) then begin
                optionProc := "item_options_" + (key - DIK_1);
                debug_msg("select "+optionProc); // this debug is needed to prevent stupid optimizer from removing the string!
                call optionProc;
@@ -151,7 +151,7 @@ end
 
 procedure gamemodechange_handler begin
    variable gameExit := get_sfall_arg;
-   if (not (get_game_mode bwand LOADGAME) and not gameExit) then begin
+   if (not (get_game_mode bwand (LOADGAME bwor LOCALMAP bwor WORLDMAP)) and not gameExit) then begin
       call create_button;
    end
    else begin
