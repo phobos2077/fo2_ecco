@@ -40,6 +40,7 @@ v0.9.0
 - rebalanced melee and throwing weapons, thrust attack costs 1 AP more
 
 > Other:
+- replaced art of most new items with higher quality original sprites
 - crafting system: new UI art, button on main panel, full keyboard navigation, close window button, various bug fixes and improvements
 - rebalanced many crafting schematics and added Metal Armor to craft
 - added back Russian translation
