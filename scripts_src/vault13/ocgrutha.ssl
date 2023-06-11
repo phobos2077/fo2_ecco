@@ -42,6 +42,8 @@
 
 #include "../headers/v13.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_gruthar_dialog    start_gdialog_check_talking_head(4, 25, 10)
 
 /* Standard Script Procedures */
 procedure start;
@@ -315,13 +317,13 @@ procedure talk_p_proc begin
 
    if (doMattTalk == 1) then begin
       doMattTalk := 0;
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_gruthar_dialog;
       gSay_Start;
          call Node034;
       gSay_End;
       end_dialogue;
    end else if (local_var(LVAR_Talked_Gruthar) == 0) then begin
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_gruthar_dialog;
       gSay_Start;
          call Node001;
       gSay_End;
@@ -334,37 +336,37 @@ procedure talk_p_proc begin
          end
       end else begin
          if (GETDSTATUS == GDPART) then begin
-            start_gdialog(NAME,self_obj,4,-1,-1);
+            start_gruthar_dialog;
             gSay_Start;
                call Node015;
             gSay_End;
             end_dialogue;
          end else if (GETDSTATUS == GDLOOK) then begin
-            start_gdialog(NAME,self_obj,4,-1,-1);
+            start_gruthar_dialog;
             gSay_Start;
                call Node017;
             gSay_End;
             end_dialogue;
          end else if (GETDSTATUS == GDFIXED) then begin
-            start_gdialog(NAME,self_obj,4,-1,-1);
+            start_gruthar_dialog;
             gSay_Start;
                call Node018;
             gSay_End;
             end_dialogue;
          end else if (GETDSTATUS == GDIDIOT) then begin
-            start_gdialog(NAME,self_obj,4,-1,-1);
+            start_gruthar_dialog;
             gSay_Start;
                call Node020;
             gSay_End;
             end_dialogue;
          end else if (GETDSTATUS == GDREFUSE) then begin
-            start_gdialog(NAME,self_obj,4,-1,-1);
+            start_gruthar_dialog;
             gSay_Start;
                call Node021;
             gSay_End;
             end_dialogue;
          end else if (GETDSTATUS == GDACCEPT) then begin
-            start_gdialog(NAME,self_obj,4,-1,-1);
+            start_gruthar_dialog;
             gSay_Start;
                call Node022;
             gSay_End;
@@ -374,7 +376,7 @@ procedure talk_p_proc begin
          end else if (GETDSTATUS == GDTRUEIDIOT) then begin
             call Node033; // Float
          end else begin
-            start_gdialog(NAME,self_obj,4,-1,-1);
+            start_gruthar_dialog;
             gSay_Start;
                call Node001;
             gSay_End;

@@ -36,6 +36,9 @@
 #include "../headers/modreact.h"
 #include "../headers/vill.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head_oldjoe      start_gdialog_check_talking_head(4, 182, 16)
+
 #define PID_IAN_GUN             (PID_10MM_PISTOL)
 
 /* Standard Script Procedures */
@@ -193,7 +196,7 @@ procedure talk_p_proc begin
 
    if (local_var(LVAR_Herebefore) == 0) then begin
        set_local_var(LVAR_Herebefore,1);
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_oldjoe;
        gSay_Start;
            call Node001;
        gSay_End;
@@ -201,7 +204,7 @@ procedure talk_p_proc begin
    end else begin
       // by Lujo begin
       if not (mole_rat_origin_info) then begin
-         start_gdialog(NAME,self_obj,4,-1,-1);
+         start_dialog_check_head_oldjoe;
          gSay_Start;
              call Node025;
          gSay_End;

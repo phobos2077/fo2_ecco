@@ -35,6 +35,8 @@
 #include "../headers/command.h"
 #include "../headers/modreact.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+
 #define JAIL_TILE   (21915)
 
 /* Standard Script Procedures */
@@ -228,7 +230,7 @@ procedure talk_p_proc begin
    else begin
        move_inven_to_temp_box
        move_inven_from_box
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_gdialog_check_talking_head(4, 176, 7);
        gSay_Start;
            call Node001;
        gSay_End;

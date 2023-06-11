@@ -37,6 +37,8 @@
 
 #include "../headers/ncr.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_jubilee_dialog    start_gdialog_check_talking_head(4, 191, 20)
 
 /* Standard Script Procedures */
 procedure start;
@@ -263,15 +265,15 @@ procedure talk_p_proc begin
       set_local_var(LVAR_Westin_Pill_Pickup_Counter, (GAME_TIME_IN_DAYS + 14));
 
    //added by killap - expansion
-   check_forced_dialog
+   check_forced_dialog_check_talking_head(191, 20)
    else if (dude_max_hits != dude_cur_hits) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_jubilee_dialog;
        gSay_Start;
            call Node001;
        gSay_End;
        end_dialogue;
    end else if (dude_max_hits == dude_cur_hits) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_jubilee_dialog;
        gSay_Start;
            call Node008;
        gSay_End;

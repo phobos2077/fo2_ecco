@@ -27,6 +27,8 @@
 #include "../headers/den.h"
 #include "../headers/newr1.h" //added by killap
 
+#include "../headers/partybkg.h" // pbs: for talking heads compatibility
+
 /* Standard Script Procedures */
 procedure start;
 procedure critter_p_proc;
@@ -407,7 +409,7 @@ procedure talk_p_proc begin
       set_global_var(GVAR_FIND_VIC, 2);
       set_vic_known(state_vic_known_name);
       if ((Vic_In_Party) or (party_is_waiting)) then begin
-         start_dialog_at_node(PARTY_NODE_X);
+         start_dialog_at_node_check_talking_head(PARTY_NODE_X, 57, PartyMemberBackground);
       end else if (vic_free) then begin
          //added by killap
          if (local_var(LVAR_Head_To_Mom) >= 1) then begin
@@ -415,20 +417,20 @@ procedure talk_p_proc begin
          end else
          //end added
          if (local_var(LVAR_Home_Tile) != vic_mom_tile) then begin
-            start_dialog_at_node(Node008);
+            start_dialog_at_node_check_talking_head(Node008, 57, 13);
          end else begin
-            start_dialog_at_node(Node023);
+            start_dialog_at_node_check_talking_head(Node023, 57, 13);
          end
       end else if (radio_fixed) then begin
          if (node_2) then begin
             call Node002b;
          end else begin
-            start_dialog_at_node(Node002);
+            start_dialog_at_node_check_talking_head(Node002, 57, 13);
          end
       end else if (herebefore) then begin
-         start_dialog_at_node(Node003);
+         start_dialog_at_node_check_talking_head(Node003, 57, 13);
       end else begin
-         start_dialog_at_node(Node001);
+         start_dialog_at_node_check_talking_head(Node001, 57, 13);
       end
       set_herebefore;
    end

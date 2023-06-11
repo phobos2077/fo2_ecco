@@ -42,7 +42,8 @@
 
 #include "../headers/command.h"
 #include "../headers/modreact.h"
-
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_brain_dialog    start_gdialog_check_talking_head(4, 150, 14)
 
 /* Standard Script Procedures */
 procedure start;
@@ -229,7 +230,7 @@ procedure talk_p_proc begin
    else if ( (global_var(GVAR_QUEST_RAT_GOD) == RAT_GOD_SUCCESS) and (local_var(LVAR_Muse) == 0) ) then begin
        ndebug("case 2");
        set_local_var(LVAR_Muse,1);
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node040;
        gSay_End;
@@ -254,7 +255,7 @@ procedure talk_p_proc begin
    //else if (global_var(GVAR_GECKO_ANKH) == ANKH_TAKEN) then begin //killap comment - nothing is ever set anywhere for this to be called
        ndebug("case 5");
        set_local_var(LVAR_Herebefore,1); //added by killap
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node004;
        gSay_End;
@@ -264,7 +265,7 @@ procedure talk_p_proc begin
    else if (dude_item_count(PID_CHEEZY_POOFS)) then begin
        set_local_var(LVAR_Herebefore,1); //added by killap
        ndebug("case 6");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node022;
        gSay_End;
@@ -272,7 +273,7 @@ procedure talk_p_proc begin
    end
 /*
    else if (global_var(GVAR_VAULT_PLANT_STATUS) == PLANT_REPAIRED) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node013;
        gSay_End;
@@ -281,7 +282,7 @@ procedure talk_p_proc begin
 */
    else if ( (global_var(GVAR_VAULT_PLANT_STATUS) == PLANT_OPTIMIZED) or (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_OPTIMIZED) ) then begin
        ndebug("case 7");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node014;
        gSay_End;
@@ -290,7 +291,7 @@ procedure talk_p_proc begin
 //begin killap move - this has moved up from below
    else if (global_var(GVAR_GECKO_ANKH) == ANKH_GIVEN) then begin
        ndebug("case 13");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node003;
        gSay_End;
@@ -299,7 +300,7 @@ procedure talk_p_proc begin
 //end killap move
    else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_ANALYZED) then begin
        ndebug("case 8");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node013;
        gSay_End;
@@ -307,7 +308,7 @@ procedure talk_p_proc begin
    end
    else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REACTOR_DATA_RECEIVED) then begin
        ndebug("case 9");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node013;
        gSay_End;
@@ -315,7 +316,7 @@ procedure talk_p_proc begin
    end
    else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_REPAIRED) then begin
        ndebug("case 10");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node013;
        gSay_End;
@@ -323,7 +324,7 @@ procedure talk_p_proc begin
    end
    else if (global_var(GVAR_VAULT_GECKO_PLANT) == PLANT_NEED_PART) then begin
        ndebug("case 11");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node013;
        gSay_End;
@@ -331,7 +332,7 @@ procedure talk_p_proc begin
    end
    else if (global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_NEED_PART) then begin
        ndebug("case 12");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node013;
        gSay_End;
@@ -340,7 +341,7 @@ procedure talk_p_proc begin
 //begin killap comment out - this has been moved up
 /*   else if (global_var(GVAR_GECKO_ANKH) == ANKH_GIVEN) then begin
 ndebug("case 13");
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_brain_dialog;
        gSay_Start;
            call Node003;
        gSay_End;
@@ -354,7 +355,7 @@ ndebug("case 13");
 
    //else begin
       ndebug("case 14");
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_brain_dialog;
       gSay_Start;
         call Node005;
       gSay_End;

@@ -35,6 +35,9 @@
 #include "../headers/modreact.h"
 #include "../headers/newreno.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head_troy      start_gdialog_check_talking_head(4, 64, 10)
+
 
 /* Standard Script Procedures */
 procedure start;
@@ -353,7 +356,7 @@ procedure talk_p_proc begin
        call Node004;
 
    else if (global_var(GVAR_VAULT_JET_QUEST) == JET_BLACKMAIL_ON) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_troy;
        gSay_Start;
            call Node049;
        gSay_End;
@@ -362,7 +365,7 @@ procedure talk_p_proc begin
 
    else if ((global_var(GVAR_VAULT_JET_QUEST) < JET_ANTIDOTE_FOUND) and (local_var(LVAR_Antidote_Time) != 0) and ((game_time - local_var(LVAR_Antidote_Time)) >= 90*ONE_GAME_DAY)) then begin
        From_WTG:=1;
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_troy;
        gSay_Start;
            call Node055;
        gSay_End;
@@ -371,7 +374,7 @@ procedure talk_p_proc begin
 
    else if not(herebefore) then begin //edit by killap (added "not")
        set_herebefore;
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_troy;
        gSay_Start;
            call Node005;
        gSay_End;
@@ -380,7 +383,7 @@ procedure talk_p_proc begin
 
    else begin
        From_WTG:=1;
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_troy;
        gSay_Start;
            call Node044;
        gSay_End;

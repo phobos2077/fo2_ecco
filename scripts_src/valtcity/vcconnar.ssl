@@ -54,6 +54,10 @@
 #include "../headers/command.h"
 #include "../headers/modreact.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head_connar      start_gdialog_check_talking_head(4, 70, 16)
+
+
 #define GATE_TILE               (self_tile)
 
 /* Standard Script Procedures */
@@ -301,7 +305,7 @@ procedure talk_p_proc begin
    //-- Lujo: this triggers if the villagers have been enslaved, and/or you've killed the rats
    if (cur_map_index == MAP_VAULTCITY_DOWNTOWN) then begin
       if (town_known(AREA_VAULT_VILLAGE) == MARK_STATE_VISITED) then begin
-         start_gdialog(SCRIPT_VCCONNAR, self_obj, 4, -1, -1);
+         start_dialog_check_head_connar;
          gsay_start;
             call Node022;
          gsay_end;
@@ -311,7 +315,7 @@ procedure talk_p_proc begin
       end
    end
    else if (global_var(GVAR_VAULT_MONSTER_COUNT) == 0) then begin
-      start_gdialog(SCRIPT_VCCONNAR, self_obj, 4, -1, -1);
+      start_dialog_check_head_connar;
       gsay_start;
          call Node005;
       gsay_end;
@@ -325,7 +329,7 @@ procedure talk_p_proc begin
    
    // --Lujo: This should trigger if you've just done what Stark asked you to or doomed the village.
    if (global_var(GVAR_VAULT_VILLAGE) == VILLAGE_SCREWED) then begin
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_dialog_check_head_connar;
       gSay_Start;
          call Node012;
       gSay_End;
@@ -336,7 +340,7 @@ procedure talk_p_proc begin
    if (local_var(LVAR_Herebefore) == 0) then begin
       set_local_var(LVAR_Herebefore,1);
       set_map_var(0, 1);
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_dialog_check_head_connar;
       gSay_Start;
          call Node002;
       gSay_End;
@@ -381,7 +385,7 @@ procedure talk_p_proc begin
            
            //-- Lujo: This should trigger if you've finished the quest diplomatically with McClure but not with the village
            if ((global_var(GVAR_QUEST_VAULT_VILLAGE) != VILLAGE_QUEST_FINISHED_DIPLOMATIC) and (global_var(GVAR_VAULT_SERVANT) == SERVANT_FINISHED_DIPLOMATIC)) then begin
-              start_gdialog(NAME,self_obj,4,-1,-1);
+              start_dialog_check_head_connar;
               gSay_Start;
               call Node027;
               gSay_End;
@@ -423,7 +427,7 @@ procedure talk_p_proc begin
    //-- Lujo: this triggers if you've returned after agreeing to help Vault Village
    //-- Lujo: the main conversation hub
    else if (global_var(GVAR_QUEST_VAULT_VILLAGE) >= VILLAGE_QUEST_GET_GUNS) then begin  
-	   start_gdialog(NAME,self_obj,4,-1,-1);
+	    start_dialog_check_head_connar;
        gSay_Start;
            call Node013;
        gSay_End;
@@ -433,7 +437,7 @@ procedure talk_p_proc begin
    //all of these operations moved by Lujo
    /*
    else if ( (global_var(GVAR_QUEST_VAULT_VILLAGE) != VILLAGE_QUEST_FINISHED_DIPLOMATIC) and (global_var(GVAR_VAULT_SERVANT) == SERVANT_FINISHED_DIPLOMATIC)) then begin
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_dialog_check_head_connar;
        gSay_Start;
            call Node027;
        gSay_End;

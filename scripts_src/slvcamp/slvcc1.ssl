@@ -15,6 +15,10 @@
 #include "../headers/slvcamp.h"
 #include "../headers/command.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head_slaver               start_gdialog_check_talking_head(4, 155, 7)
+#define start_dialog_at_node_check_head_slaver(x)    start_dialog_at_node_check_talking_head(x, 155, 7)
+
 /* Standard Script Procedures */
 procedure start;
 procedure use_p_proc;
@@ -168,9 +172,9 @@ procedure critter_p_proc begin
          self_attack_dude;
       //end else if ( (local_var(LVAR_Force_Talk) == 0) and not (has_rep_slaver) ) then begin
       //   set_local_var(LVAR_Force_Talk,1);
-      //   start_dialog_at_node(Node001);
+      //   start_dialog_at_node_check_head_slaver(Node001);
    end else if ( (tile_distance(dude_tile, self_tile) < 5) and (local_var(LVAR_Force_Talk) == 0) ) then begin
-      start_dialog_at_node(Node001);
+      start_dialog_at_node_check_head_slaver(Node001);
    end
 end
 
@@ -212,13 +216,13 @@ procedure talk_p_proc begin
    end else if (map_var(MVAR_Take_Slaves) == 1) then begin
       floater(800);
    end else if (local_var(LVAR_Told_To_Leave) == 1) then begin
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_dialog_check_head_slaver;
       gSay_Start;
          call Node012;
       gSay_End;
       end_dialogue;
    end else begin
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_dialog_check_head_slaver;
       gSay_Start;
          call Node001;
       gSay_End;

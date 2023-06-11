@@ -35,6 +35,8 @@
 #include "../headers/command.h"
 #include "../headers/modreact.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head_lydia      start_gdialog_check_talking_head(4, 122, 20)
 
 /* Standard Script Procedures */
 procedure start;
@@ -256,7 +258,7 @@ procedure talk_p_proc begin
    if( ( game_time_hour > 200 ) and ( game_time_hour < 700 ) ) then begin
       floater(258);
    end else if ( Fallout2_enclave_destroyed ) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_lydia;
        gSay_Start;
            call Node008;
        gSay_End;
@@ -268,7 +270,7 @@ procedure talk_p_proc begin
    end else if( night ) then begin
       call Node007;
    end else begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_lydia;
        gSay_Start;
            call Node012;
        gSay_End;

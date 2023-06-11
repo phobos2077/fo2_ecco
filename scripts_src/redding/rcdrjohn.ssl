@@ -35,6 +35,8 @@
 #include "../headers/command.h"
 #include "../headers/modreact.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_drjohn_dialog     start_gdialog_check_talking_head(4, 81, 20)
 
 #define dr_heal(who)            critter_heal(who,(get_max_hits(who) - get_cur_hits(who)))
 
@@ -288,7 +290,7 @@ procedure talk_p_proc begin
    end
 
    else if ((dude_is_poisoned) or (dude_cur_hits < dude_max_hits) or (dude_is_poisoned) or (dude_is_irradiated)) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_drjohn_dialog;
        gSay_Start;
            call Node002;
        gSay_End;
@@ -297,7 +299,7 @@ procedure talk_p_proc begin
 
    else begin
        If_Party_Has_Injured then begin
-           start_gdialog(NAME,self_obj,4,-1,-1);
+           start_drjohn_dialog;
            gSay_Start;
                call Node002;
            gSay_End;
@@ -305,7 +307,7 @@ procedure talk_p_proc begin
        end
 
        else begin
-           start_gdialog(NAME,self_obj,4,-1,-1);
+           start_drjohn_dialog;
            gSay_Start;
                call Node017;
            gSay_End;

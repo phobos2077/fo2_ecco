@@ -36,4 +36,6 @@
 #include "../headers/itempid.h"
 #include "../sfall/lib.strings.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+
 #endif // LEARN_CRAFT_H

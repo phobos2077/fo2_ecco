@@ -36,6 +36,8 @@
 #include "../headers/modreact.h"
 #include "../headers/upgweap.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head_valerie      start_gdialog_check_talking_head(4, 30, 20)
 
 /* Standard Script Procedures */
 procedure start;
@@ -327,7 +329,7 @@ procedure talk_p_proc begin
    From_41 := 0;
 
    if( (Vic_Ptr != 0) and (local_var(LVAR_Vic_Relationship) == RELATION_UNKNOWN) ) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_valerie;
        gSay_Start;
          call Node039;
        gSay_End;
@@ -341,28 +343,28 @@ procedure talk_p_proc begin
       call Node008;
    else if( ( local_var(LVAR_Time_Given_Tools) != 0 ) and ( ( game_time - local_var(LVAR_Time_Given_Tools) ) >= ONE_GAME_DAY ) and
             ( local_var(LVAR_Super_Tool_Kit) == TOOLKIT_NOTGIVEN ) ) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_valerie;
        gSay_Start;
            call Node025;
        gSay_End;
        end_dialogue;
    end
    else if( (local_var(LVAR_Super_Tool_Kit) == TOOLKIT_GIVEN) and (Fallout2_enclave_destroyed) ) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_valerie;
        gSay_Start;
            call Node041;
        gSay_End;
        end_dialogue;
    end
    else if( local_var(LVAR_Super_Tool_Kit) == TOOLKIT_GIVEN ) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_valerie;
        gSay_Start;
            call Node027;
        gSay_End;
        end_dialogue;
    end
    else begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_valerie;
        gSay_Start;
            call Node009;
        gSay_End;

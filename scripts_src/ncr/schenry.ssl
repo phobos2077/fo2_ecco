@@ -36,6 +36,8 @@
 #include "../headers/modreact.h"
 #include "../headers/ncr.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head_genry    start_gdialog_check_talking_head(4, 67, 20)
 
 /* Standard Script Procedures */
 procedure start;
@@ -188,13 +190,13 @@ procedure talk_p_proc begin
    GetReaction;
 
    if (global_var(GVAR_NCR_HENRY_HYPO) == HYPO_GIVEN or global_var(GVAR_NCR_HENRY_HYPO) == HYPO_USED) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_genry;
        gSay_Start;
            call Node016;
        gSay_End;
        end_dialogue;
    end else if (self_tile == HENRY_LAB_TILE) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_genry;
        gSay_Start;
            call Node001;
        gSay_End;

@@ -36,6 +36,9 @@
 #include "../headers/modreact.h"
 #include "../headers/vill.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head_mcclure      start_gdialog_check_talking_head(4, 31, 20)
+
 /* Standard Script Procedures */
 procedure start;
 procedure critter_p_proc;
@@ -258,7 +261,7 @@ procedure talk_p_proc begin
    else if( ( night ) and ( local_var( LVAR_Pissed ) == 0 ) ) then
       call Node002;
    else if( ( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) and ( local_var(LVAR_Pissed) == 0 ) ) then begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_mcclure;
        gSay_Start;
            call Node006;
        gSay_End;
@@ -273,7 +276,7 @@ procedure talk_p_proc begin
    else if( local_var(LVAR_Pissed) == 1 ) then
       call Node005;
    else begin
-       start_gdialog(NAME,self_obj,4,-1,-1);
+       start_dialog_check_head_mcclure;
        gSay_Start;
            call Node006;
        gSay_End;
