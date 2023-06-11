@@ -11,7 +11,8 @@
 
 variable
    ini_damage_bonus_skill_mult,
-   ini_bonus_crit_chance;
+   ini_bonus_crit_chance,
+   ini_bonus_crit_chance_luck_mult;
 
 procedure start;
 procedure itemdamage_handler;
@@ -21,6 +22,7 @@ procedure start begin
    if game_loaded then begin
       float_from_ini_file_clamped(damage_bonus_skill_mult, INI_COMBAT, "THROWING", 0.0, 10.0);
       int_from_ini_file_clamped(bonus_crit_chance, INI_COMBAT, "THROWING", 0, 100);
+      int_from_ini_file_clamped(bonus_crit_chance_luck_mult, INI_COMBAT, "THROWING", 0, 100);
 
       if ini_damage_bonus_skill_mult > 0.01 then begin
          register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
@@ -73,6 +75,7 @@ procedure rollcheck_handler begin
          //display_msg("attacker: "+obj_name(attacker)+"; "+var_as_str(hitMode)+var_as_str(weaponPid)+var_as_str(attackMode));
          if (attackMode == ATTACK_MODE_THROW and weapon_dmg_type(weapon) == DMG_normal_dam) then begin
             critChanceBonus += ini_bonus_crit_chance;
+            critChanceBonus += get_critter_stat(attacker, STAT_lu) * ini_bonus_crit_chance_luck_mult;
             if (random(1, 100) <= randomDelta / 10 + critChanceBonus) then begin
                roll := ROLL_CRITICAL_SUCCESS;
             end else begin
