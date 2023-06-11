@@ -493,7 +493,7 @@
 {2911}{}{REPAIR+TRAPS:50}
 {2912}{}{[COMPONENTS]}
 {2913}{}{127:1}                            # Rope
-{2914}{}{7:2|280:2|320:4}                  # Spear OR Sharp Spear OR Sharp Pole
+{2914}{}{365:8|320:4|7:2|280:2}            # Plant Spikes OR Sharp Poles OR Spears OR Sharp Spears
 
 
 {3000}{}{[ITEM]}

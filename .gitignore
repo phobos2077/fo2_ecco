@@ -14,3 +14,4 @@ __pycache__/
 .~lock*
 
 maps_txt/*
+root/data/scripts/_ssl/*

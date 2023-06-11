@@ -1,6 +1,5 @@
 for *:
-- fix Ctrl+1 hotkey not replacing trap with another one
-
+- figure out compatibility with Talking Head mods
 
 
 for "future":
@@ -10,7 +9,7 @@ for "future":
 - sneak attack msg from combat.msg
 - replace "handmade grenade" sprite
 - add info about bonus move points to stat description
-
+- replace some of the map changes with scripts where possible
 
 
 IDEAS:
