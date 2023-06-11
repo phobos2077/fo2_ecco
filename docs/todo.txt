@@ -1,5 +1,6 @@
-for 0.9:
-- SHIP IT
+for *:
+- fix Ctrl+1 hotkey not replacing trap with another one
+
 
 
 for "future":
@@ -8,12 +9,15 @@ for "future":
 - rewrite Mr.Fixit to read config from INI file and texts from game/craft.msg
 - sneak attack msg from combat.msg
 - replace "handmade grenade" sprite
-
+- add info about bonus move points to stat description
 
 
 
 IDEAS:
-- add penetrate to bladed weapons and knockback to blunt
+- one more "unarmed" weapon above Spiked Knuckles (knuckles with knife?)
+- flashbang grenade (lose turn)
+- molotov creates a circle of flame for 1-2 turns that damage when stepped on
+- smoke grenade? (an immediate cloud of smoke in all directions that blocks LOS)
 - add more drug types (Med-X?)
 - add machete (above Combat Knife, non-thrown alternative to Axe)
 - make robots drop "robot parts" and use them in crafting

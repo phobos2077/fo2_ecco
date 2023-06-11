@@ -183,14 +183,14 @@
 {1301}{}{49}                                # PID_ANTIDOTE
 {1302}{}{pcx/items/drug_bot.pcx}
 {1303}{}{90060}
-{1304}{}{CRFT_AID}                          # first aid schematics
+{1304}{}{}                                  # ALWAYS
 {1305}{}{30000}                             # 50 m
 {1306}{}{NO}
 {1307}{}{3}                                 # Drugs
 {1308}{}{[TOOLS]}
 {1309}{}{[SKILLS]}
-{1310}{}{FIRST_AID+OUTDOORSMAN:70}
-{1311}{}{SCIENCE:30}
+{1310}{}{FIRST_AID+OUTDOORSMAN:50}
+{1311}{}{SCIENCE:25}
 {1312}{}{[COMPONENTS]}
 {1313}{}{92:1|591:2}                        # PID_SCORPION_TAIL or two Small Scorpion Tails
 {1314}{}{125:1}                             # PID_BOOZE
@@ -493,7 +493,7 @@
 {2911}{}{REPAIR+TRAPS:50}
 {2912}{}{[COMPONENTS]}
 {2913}{}{127:1}                            # Rope
-{2914}{}{7:2|280:2}                        # Spear OR Sharp Spear
+{2914}{}{7:2|280:2|320:4}                  # Spear OR Sharp Spear OR Sharp Pole
 
 
 {3000}{}{[ITEM]}

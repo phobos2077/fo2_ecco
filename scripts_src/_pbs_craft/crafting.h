@@ -544,6 +544,7 @@ procedure batch_item(variable num) begin
         orList;
         componentData;
         i;
+        item;
     end
 //    cur_time := atoi(field(ITEM_TIME));
     if (random(0,1)) then play_sfx("carrepair");
@@ -569,7 +570,11 @@ procedure batch_item(variable num) begin
         end
         line += 1;
     end
-    call add_items_pid(dude_obj, cur_pid, num * cur_pid_qty);
+    item := add_items_pid(dude_obj, cur_pid, num * cur_pid_qty);
+    if (obj_item_subtype(item) == item_type_weapon) then begin
+        // Don't produce ammo out of thin air.
+        set_weapon_ammo_count(item, 0);
+    end
     hours := ((cur_time * num) / ONE_GAME_MINUTE) / 60;
     mins  := ((cur_time * num) / ONE_GAME_MINUTE) % 60;
     display_msg(bstr(400) + proto_data(cur_pid, it_name) + bstr(402) + (num * cur_pid_qty) + bstr(403) + hours + bstr(404) + mins + bstr(405));

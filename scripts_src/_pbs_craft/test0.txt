@@ -58,14 +58,14 @@ FIRST_AID+OUTDOORSMAN:50
 49                                # PID_ANTIDOTE
 pcx/items/drug_bot.pcx
 90060
-CRFT_AID                          # first aid schematics
+                                  # ALWAYS
 30000                             # 50 m
 NO
 3                                 # Drugs
 [TOOLS]
 [SKILLS]
-FIRST_AID+OUTDOORSMAN:70
-SCIENCE:30
+FIRST_AID+OUTDOORSMAN:50
+SCIENCE:25
 [COMPONENTS]
 92:1|591:2                        # PID_SCORPION_TAIL or two Small Scorpion Tails
 125:1                             # PID_BOOZE
@@ -368,7 +368,7 @@ NO
 REPAIR+TRAPS:50
 [COMPONENTS]
 127:1                            # Rope
-7:2|280:2                        # Spear OR Sharp Spear
+7:2|280:2|320:4                  # Spear OR Sharp Spear OR Sharp Pole
 
 
 [ITEM]

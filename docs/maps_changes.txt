@@ -1,3 +1,9 @@
+ARCAVES:
+- E1: add knife to very first pot on the right
+- E2: add rope on the ground right after traps room before scorpions around the corner
+- E2: add Booze to far N chest
+- E3: add 10 bullets (10mm) to far NE chest
+
 KLADWTWN:
 - added 1 Traps book to shelf at open part of Vic's and 1 Repair book to shelf at closed part
 
