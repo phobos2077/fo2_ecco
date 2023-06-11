@@ -3,6 +3,7 @@ procedure keypress_hook;
 procedure useobj_hook;
 procedure movecost_hook;
 procedure deathanim2_hook;
+procedure description_hook;
 
 /**
 
@@ -83,6 +84,7 @@ procedure start begin
   	pbs_local_traps := create_array_list(0);
   	pbs_trap_victims := create_array_map;
 
+	register_hook_proc(HOOK_DESCRIPTIONOBJ, description_hook);
   	register_hook_proc(HOOK_KEYPRESS, keypress_hook);
   	register_hook_proc(HOOK_USEOBJ, useobj_hook);
   	register_hook_proc(HOOK_MOVECOST, movecost_hook);
@@ -137,7 +139,7 @@ procedure keypress_hook begin
       variable item;
       item := critter_inven_obj(dude_obj, 2 - active_hand);
       if (item) then if (is_trap_kit_pid(obj_pid(item))) then begin
-         if (try_assemble_trap(dude_obj, item) == true) then begin
+         if (try_assemble_trap(dude_obj, item)) then begin
             variable pid, tmp, n, obj;
             pid := obj_pid(item);
             // manually remove item and replace it with another from inventory
@@ -170,7 +172,7 @@ procedure useobj_hook begin
 
    // traps assembly
    if (item and critter) then if (critter == dude_obj and is_trap_kit_pid(obj_pid(item))) then begin
-      if (try_assemble_trap(critter, item) == true) then
+      if (try_assemble_trap(critter, item)) then
          set_sfall_return(1);
    end
 end
@@ -215,6 +217,22 @@ procedure deathanim2_hook begin
    end
 end
 
+procedure description_hook begin
+	variable item := get_sfall_arg;
+	if (not item or not is_trap_kit_pid(obj_pid(item))) then return;
+
+	variable
+		pid := obj_pid(item),
+		maxUses := get_proto_data(pid, PROTO_MI_CHARGES);
+	
+	if (maxUses < 2) then return;
+
+	variable 
+		uses := get_weapon_ammo_count(item),
+		desc = proto_data(obj_pid(item), it_description) + " "+ string_format2(traps_mstr(2010), uses, maxUses);
+
+	set_sfall_return(desc);
+end
 
 procedure map_enter_p_proc begin
    clear_array(pbs_trap_victims);
