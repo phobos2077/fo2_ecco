@@ -1,5 +1,7 @@
 @ECHO OFF
 
+SET cwd=%cd%
+
 cd /d "%~dp0..\"
 
 SET root=%cd%
@@ -20,3 +22,5 @@ for /r %%i in (*.ssl) do (
 )
 
 :end
+
+cd /d "%cwd%"
