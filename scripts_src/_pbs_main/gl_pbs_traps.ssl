@@ -162,6 +162,21 @@ procedure keypress_hook begin
          end
       end
 	end
+	/*if (pressed and key == 20) then begin
+		variable rf := get_tile_roof_fid(tile_under_cursor, dude_elevation);
+		variable gr := get_tile_ground_fid(tile_under_cursor, dude_elevation);
+		variable what;
+		     if (tile_fid_is_stone(gr)) then what := "stone";
+		else if (tile_fid_is_dirt(gr)) then what := "dirt";
+		else if (tile_fid_is_grass(gr)) then what := "grass";
+		else if (tile_fid_is_wood(gr)) then what := "wood";
+		else if (tile_fid_is_cloth_on_dirt(gr)) then what := "cloth_on_dirt";
+		else if (tile_fid_is_slime(gr)) then what := "slime";
+		else if (tile_fid_is_metal(gr)) then what := "metal";
+		else what := "other";
+		display_msg(sprintf_array("Ground = %x, Roof = %x, Ground Type = %s", [gr, rf, what]));
+	end
+	*/
 end
 
 

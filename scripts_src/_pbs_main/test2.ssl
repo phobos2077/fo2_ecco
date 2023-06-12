@@ -264,14 +264,16 @@ begin
 		arr;
 		i;
 		armament_pid := 0;
+		groundFid;
 	end
 
 	// install trap
-	if tile_is_dirt(self_tile) or tile_is_cloth_on_dirt(self_tile) or tile_is_grass(self_tile) then
+	groundFid := get_tile_ground_fid(self_tile, self_elevation);
+	if tile_fid_is_dirt(groundFid) or tile_fid_is_cloth_on_dirt(groundFid) or tile_fid_is_grass(groundFid) then
 		groundType:="dirt";
-	else if tile_is_wood(self_tile) or tile_is_carpet(self_tile) then
+	else if tile_fid_is_wood(groundFid) or tile_fid_is_carpet(groundFid) then
 		groundType:="wood";
-	else if tile_is_stone(self_tile) then
+	else if tile_fid_is_stone(groundFid) then
 		groundType:="stone";
 	else
 		groundType:="other";

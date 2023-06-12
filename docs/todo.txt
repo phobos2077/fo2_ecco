@@ -1,5 +1,4 @@
 for *:
-- figure out compatibility with Talking Head mods
 
 
 for "future":

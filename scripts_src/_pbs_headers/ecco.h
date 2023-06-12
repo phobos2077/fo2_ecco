@@ -75,40 +75,40 @@
 #define is_scorpion(crit)    (critter_kill_type(crit) == KILL_TYPE_radscorpion_kills)
 
 
-#define tile_is_stone(x)  ((get_tile_fid(x) < 84) or  \
-                           (get_tile_fid(x) > 116 and get_tile_fid(x) < 172) or   \
-                           (get_tile_fid(x) > 235 and get_tile_fid(x) < 275) or   \
-                           (get_tile_fid(x) > 506 and get_tile_fid(x) < 715) or   \
-                           (get_tile_fid(x) > 812 and get_tile_fid(x) < 1053) or   \
-                           (get_tile_fid(x) > 1927 and get_tile_fid(x) < 2093) or   \
-                           (get_tile_fid(x) > 2115 and get_tile_fid(x) < 2289) or   \
-                           (get_tile_fid(x) > 2516 and get_tile_fid(x) < 2529))
-#define tile_is_wood(x)   ((get_tile_fid(x) > 83 and get_tile_fid(x) < 102) or   \
-                           (get_tile_fid(x) > 224 and get_tile_fid(x) < 233) or   \
-                           (get_tile_fid(x) > 326 and get_tile_fid(x) < 508) or   \
-                           (get_tile_fid(x) > 2290 and get_tile_fid(x) < 2389))
-#define tile_is_metal(x)  ((get_tile_fid(x) > 101 and get_tile_fid(x) < 117) or   \
-                           (get_tile_fid(x) > 222 and get_tile_fid(x) < 225) or   \
-                           (get_tile_fid(x) > 232 and get_tile_fid(x) < 236) or   \
-                           (get_tile_fid(x) > 274 and get_tile_fid(x) < 327) or   \
-                           (get_tile_fid(x) > 1457 and get_tile_fid(x) < 1500) or   \
-                           (get_tile_fid(x) > 1826 and get_tile_fid(x) < 1892) or   \
-                           (get_tile_fid(x) > 2388 and get_tile_fid(x) < 2400) or   \
-                           (get_tile_fid(x) > 2763))
-#define tile_is_dirt(x)   ((get_tile_fid(x) > 171 and get_tile_fid(x) < 221) or   \
-                           (get_tile_fid(x) > 714 and get_tile_fid(x) < 720) or   \
-                           (get_tile_fid(x) > 801 and get_tile_fid(x) < 812) or   \
-                           (get_tile_fid(x) > 2092 and get_tile_fid(x) < 2116) or   \
-                           (get_tile_fid(x) > 2528 and get_tile_fid(x) < 2548) or   \
-                           (get_tile_fid(x) > 1095 and get_tile_fid(x) < 1375) or   \
-                           (get_tile_fid(x) > 1395 and get_tile_fid(x) < 1458) or   \
-                           (get_tile_fid(x) > 1502 and get_tile_fid(x) < 1611) or   \
-                           (get_tile_fid(x) > 1671 and get_tile_fid(x) < 1827))
-#define tile_is_slime(x)  ((get_tile_fid(x) > 1052 and get_tile_fid(x) < 1081))
-#define tile_is_cloth_on_dirt(x) ((get_tile_fid(x) > 1374 and get_tile_fid(x) < 1390) or   \
-                           (get_tile_fid(x) > 1620 and get_tile_fid(x) < 1672))
-#define tile_is_carpet(x) ((get_tile_fid(x) > 1891 and get_tile_fid(x) < 1928))
-#define tile_is_grass(x)   (get_tile_fid(x) > 2288 and get_tile_fid(x) < 2291)
+#define tile_fid_is_stone(x)  ((x < 84) or  \
+                           (x > 116 and x < 172) or   \
+                           (x > 235 and x < 275) or   \
+                           (x > 506 and x < 715) or   \
+                           (x > 812 and x < 1053) or   \
+                           (x > 1927 and x < 2093) or   \
+                           (x > 2115 and x < 2289) or   \
+                           (x > 2516 and x < 2529))
+#define tile_fid_is_wood(x)   ((x > 83 and x < 102) or   \
+                           (x > 224 and x < 233) or   \
+                           (x > 326 and x < 508) or   \
+                           (x > 2290 and x < 2389))
+#define tile_fid_is_metal(x)  ((x > 101 and x < 117) or   \
+                           (x > 222 and x < 225) or   \
+                           (x > 232 and x < 236) or   \
+                           (x > 274 and x < 327) or   \
+                           (x > 1457 and x < 1500) or   \
+                           (x > 1826 and x < 1892) or   \
+                           (x > 2388 and x < 2400) or   \
+                           (x > 2763))
+#define tile_fid_is_dirt(x)   ((x > 171 and x < 221) or   \
+                           (x > 714 and x < 720) or   \
+                           (x > 801 and x < 812) or   \
+                           (x > 2092 and x < 2116) or   \
+                           (x > 2528 and x < 2548) or   \
+                           (x > 1095 and x < 1375) or   \
+                           (x > 1395 and x < 1458) or   \
+                           (x > 1502 and x < 1611) or   \
+                           (x > 1671 and x < 1827))
+#define tile_fid_is_slime(x)  ((x > 1052 and x < 1081))
+#define tile_fid_is_cloth_on_dirt(x) ((x > 1374 and x < 1390) or   \
+                           (x > 1620 and x < 1672))
+#define tile_fid_is_carpet(x) ((x > 1891 and x < 1928))
+#define tile_fid_is_grass(x)   (x > 2288 and x < 2291)
 
 //weapon definez
 
