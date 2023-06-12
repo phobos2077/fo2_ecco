@@ -31,8 +31,8 @@ variable warning_msg, batch_scheduled, crafting_button_shown, screen_center_x;
 #define SFX_BUTTON_DOWN       "butin4"
 #define SFX_BUTTON_UP         "IB2LU1X1"
 #define SFX_ERROR             "IISXXXX1"
-#define PCX_BUTTON_DOWN       "PCX/mfdown.pcx"
-#define PCX_BUTTON_UP         "PCX/mfup.pcx"
+#define PCX_BUTTON_DOWN       pcx_path(mfdown)
+#define PCX_BUTTON_UP         pcx_path(mfup)
 
 
 procedure warning_combat begin

@@ -38,6 +38,7 @@
 #define MAX_CATEGORIES          (ITEMS_PER_SCREEN + 2)
 
 #define craft_debug(text)       if (false) then debug_msg("[craft] "+text)
+#define pcx_path(name)          "pcx\\" #name ".pcx"
 
 variable begin
     // TODO: craft_msg;
@@ -194,9 +195,9 @@ end
 procedure show_cancel_button(variable winName) begin
     create_win_flag(winName, win_x + 300, win_y + 347, 342, 32, WIN_FLAG_MOVEONTOP + WIN_FLAG_TRANSPARENT);
     SelectWin(winName);
-    Display("PCX/w_close.pcx");
+    Display(pcx_path(w_close));
     AddButton("but2", 133, 6, 15, 16);
-    AddButtonGFX("but2", "PCX/lilreddn.pcx", "PCX/lilredup.pcx", "PCX/lilredup.pcx");
+    AddButtonGFX("but2", pcx_path(lilreddn), pcx_path(lilredup), pcx_path(lilredup));
     AddButtonProc("but2", do_cancel_on, do_cancel_off, do_cancel_down, do_cancel_up);
     SetFont(103);
     SetTextColor(0.52, 0.75, 0.15);
@@ -227,23 +228,23 @@ procedure batch_init begin
     SetHighlightColor(1.0, 1.0, 1.0);
     SetHighlightColor(1.0, 1.0, 0.64);
 
-    SayReplyWindow (win_x + 300, win_y +   1, 342, 144, "PCX/w_rep.pcx");
-    SayOptionWindow(win_x + 300, win_y + 146, 342, 201, "PCX/w_opt.pcx");
+    SayReplyWindow (win_x + 300, win_y +   1, 342, 144, pcx_path(w_rep));
+    SayOptionWindow(win_x + 300, win_y + 146, 342, 201, pcx_path(w_opt));
     SayBorder(30, 30);
 
     create_win_flag("win_dscr", win_x + 1, win_y + 1, 300, 378, WIN_FLAG_EXCLUSIVE);
     SelectWin("win_dscr");
-    Display("PCX/w_dscr.pcx");
+    Display(pcx_path(w_dscr));
     ShowWin;
 
     // We show these here to remove interface flickery
     CreateWin("win_rep", win_x + 300, win_y +   1, 342, 144);
     SelectWin("win_rep");
-    Display("PCX/w_rep.pcx");
+    Display(pcx_path(w_rep));
     ShowWin;
     CreateWin("win_opt", win_x + 300, win_y + 146, 342, 201);
     SelectWin("win_opt");
-    Display("PCX/w_opt.pcx");
+    Display(pcx_path(w_opt));
     ShowWin;
 
     call show_cancel_button("win_btn");
@@ -337,7 +338,7 @@ procedure display_category_list begin
         cat;
     craft_debug("display_category_list(): SayStart");
     SayStart;
-        MouseShape("pcx/st1.pcx", 0, 0);
+        MouseShape(pcx_path(st1), 0, 0);
         SayReply("r_display_list", bstr(210));
 
         call redraw_win_idle;
@@ -363,7 +364,7 @@ end
 procedure display_items_list begin
     craft_debug("display_items_list(): sayStart");
     SayStart;
-        MouseShape("pcx/st1.pcx", 0, 0);
+        MouseShape(pcx_path(st1), 0, 0);
         SayReply("r_display_list", bstr(200));
         //SayOptionColor(5, 9, 255);
         SayOptionFlags(justifyleft);
@@ -385,7 +386,7 @@ procedure display_item_options begin
     
     craft_debug("display_item_options: SayStart()");
     SayStart;
-        MouseShape("pcx/st1.pcx", 0, 0);
+        MouseShape(pcx_path(st1), 0, 0);
         craft_debug("display_item_options SayReply: " + proto_data(cur_pid, it_description));
         SayReply("r_item_options", proto_data(cur_pid, it_description));
         call draw_item_pcx;
@@ -406,7 +407,7 @@ end
 procedure display_batch_ok begin
     craft_debug("display_batch_ok: SayStart()");
     SayStart;
-        MouseShape("pcx/st1.pcx", 0, 0);
+        MouseShape(pcx_path(st1), 0, 0);
         SayReply("r_batch_item", bstr(201));
         SayOption("0. "+bstr(100), item_options_mode);
         SayOption("Esc. " + bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
@@ -417,7 +418,7 @@ end
 procedure display_undo_ok begin
     craft_debug("display_undo_ok: SayStart()");
     SayStart;
-        MouseShape("pcx/st1.pcx", 0, 0);
+        MouseShape(pcx_path(st1), 0, 0);
         SayReply("r_undo_batch", bstr(202));
         SayOption("0. " + bstr(100), item_options_mode);
         SayOption("Esc. " + bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
@@ -440,13 +441,13 @@ end
 
 procedure redraw_win_dscr begin
     SelectWin("win_dscr");
-    Display("PCX/w_dscr.pcx");
+    Display(pcx_path(w_dscr));
     ShowWin;
 end
 
 procedure redraw_win_idle begin
     SelectWin("win_dscr");
-    Display("PCX/w_idle.pcx");
+    Display(pcx_path(w_idle));
     ShowWin;
 end
 
