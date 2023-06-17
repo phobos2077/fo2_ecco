@@ -61,7 +61,7 @@ def readFile(file_path: str, msgFiles: Dict) -> Dict:
         elif itemProtoDict['type'] == 'ITEM_TYPE_DRUG':
             drugData = struct.unpack('>iiiii' + 'iii' * 4, itemProtoData)
             itemProtoDict['drugData'] = {
-                'stat': [STATS[i] for i in drugData[:3]],
+                'stat': [DRUG_STATS[i] for i in drugData[:3]],
                 'amount': list(drugData[3:6]),
                 'duration1': drugData[6],
                 'amount1': list(drugData[7:10]),

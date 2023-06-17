@@ -18,9 +18,9 @@ inventoryFid: 117440605
 soundId: '0'
 drugData:
   stat:
-  - STAT_CURRENT_RADIATION_LEVEL
-  - STAT_CURRENT_RADIATION_LEVEL
-  - STAT_CURRENT_RADIATION_LEVEL
+  - NONE
+  - NONE
+  - NONE
   amount:
   - 0
   - 0

@@ -200,6 +200,13 @@ STATS = [
     'STAT_CURRENT_RADIATION_LEVEL'
 ]
 
+DRUG_STATS = {
+    -2: 'DRUG_STAT_1_RANDOM_MIN',
+    -1: 'NONE'
+}
+for i, n in enumerate(STATS):
+    DRUG_STATS[i] = n
+
 def parse_msg_file(file_path: str) -> dict:
     result = {}
     with open(file_path, 'r') as f:

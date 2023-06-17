@@ -1,0 +1,20 @@
+pid: 455
+messageId: 45500
+name: Car Trunk
+description: The trunk is a great place to store your stuff.
+fid: 170
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0001000'
+extendedFlags: '0x2000'
+sid: -1
+type: ITEM_TYPE_CONTAINER
+material: 1
+size: 1
+weight: 10
+cost: 0
+inventoryFid: -1
+soundId: '0'
+containerData:
+  maxSize: 300
+  openFlags: '0x0'

@@ -20,7 +20,7 @@ drugData:
   stat:
   - STAT_CARRY_WEIGHT
   - STAT_STRENGTH
-  - STAT_CURRENT_RADIATION_LEVEL
+  - NONE
   amount:
   - 150
   - 1

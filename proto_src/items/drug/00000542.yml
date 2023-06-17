@@ -18,8 +18,8 @@ soundId: '0'
 drugData:
   stat:
   - STAT_PERCEPTION
-  - STAT_CURRENT_RADIATION_LEVEL
-  - STAT_CURRENT_RADIATION_LEVEL
+  - NONE
+  - NONE
   amount:
   - -3
   - 0

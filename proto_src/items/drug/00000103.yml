@@ -18,15 +18,15 @@ soundId: '0'
 drugData:
   stat:
   - STAT_CURRENT_HIT_POINTS
-  - STAT_CURRENT_RADIATION_LEVEL
-  - STAT_CURRENT_RADIATION_LEVEL
+  - NONE
+  - NONE
   amount:
-  - 1
+  - 4
   - 0
   - 0
-  duration1: 0
+  duration1: 30
   amount1:
-  - 0
+  - 2
   - 0
   - 0
   duration2: 0

@@ -18,9 +18,9 @@ inventoryFid: 117440933
 soundId: '0'
 drugData:
   stat:
-  - STAT_CURRENT_POISON_LEVEL
+  - DRUG_STAT_1_RANDOM_MIN
   - STAT_CURRENT_HIT_POINTS
-  - STAT_CURRENT_RADIATION_LEVEL
+  - NONE
   amount:
   - 5
   - 10
