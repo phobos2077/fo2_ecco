@@ -3,24 +3,29 @@
  */
 
 #include "../sfall/define_lite.h"
+#include "../sfall/lib.arrays.h"
 #include "../sfall/lib.math.h"
+
 #include "../_pbs_headers/ecco.h"
 
 #define INI_SECTION        "EXP_FOR_KILL"
 
 #define debug_log(msg)       debug_msg("gl_expforkill_mod: "+msg)
 
-variable origExpMap; // associative array  pid => original exp value
+variable
+   origExpMap, // associative array  pid => original exp value
+   killExpMap; // associative array  killType => accumulated exp
+
 variable
    ini_min_exp_mult,
    ini_falloff_start,
    ini_falloff_end;
 
-procedure mod_exp(variable critterPid) begin
+procedure mod_exp(variable critterPid, variable isDeath) begin
    variable
       killType := get_proto_data(critterPid, PROTO_CR_KILL_TYPE),
       killExp := get_proto_data(critterPid, PROTO_CR_KILL_EXP),
-      killExpProto := killExp;
+      killExpProto := killExp; // current exp value in proto (gets changed by this script)
    
    if (origExpMap[critterPid] == 0) then begin
       // Save default value.
@@ -29,30 +34,54 @@ procedure mod_exp(variable critterPid) begin
       // Use previously saved default value as base.
       killExp := origExpMap[critterPid] if origExpMap[critterPid] > 0 else 0;
    end
+
+   // Update kill exp statistic.
+   if (isDeath) then begin
+      killExpMap[killType] += killExp;
+   end
    
    variable
-      numKills := player_kill_count(killType) + 1,
-      expMult := get_clamped(1.0 - (1.0 - ini_min_exp_mult) * (numKills - ini_falloff_start) / (ini_falloff_end - ini_falloff_start), ini_min_exp_mult, 1.0);
+      totalExpForType := killExpMap[killType] + killExp,
+      expMult := get_clamped(1.0 - (1.0 - ini_min_exp_mult) * (totalExpForType - ini_falloff_start) / (ini_falloff_end - ini_falloff_start), ini_min_exp_mult, 1.0);
 
    killExp := round(killExp * expMult);
    if (killExp != killExpProto) then begin
       set_proto_data(critterPid, PROTO_CR_KILL_EXP, killExp);
-      debug_log("Modified kill exp for "+proto_data(critterPid, cr_name)+" ("+critterPid+"): "+killExp+"/"+origExpMap[critterPid]+", killType: "+killType+", kills: "+numKills);
+      debug_log("Modified kill exp for "+proto_data(critterPid, cr_name)+" ("+critterPid+"): "+killExp+"/"+origExpMap[critterPid]+", killType: "+killType+", totalExpForType: "+totalExpForType);
    end
 end
-
 
 procedure ondeath_hook begin
    // Need to run mod_exp additionally after death to handle cases where we kill several critters in the same attack.
    variable critter := get_sfall_arg;
    if (critter and obj_type(critter) == OBJ_TYPE_CRITTER) then
-      call mod_exp(obj_pid(critter));
+      call mod_exp(obj_pid(critter), true);
 end
 
 procedure combatdamage_hook begin
    variable critter := get_sfall_arg;
    if (critter and obj_type(critter) == OBJ_TYPE_CRITTER) then
-      call mod_exp(obj_pid(critter));
+      call mod_exp(obj_pid(critter), false);
+end
+
+procedure migrate_kill_statistics begin
+   variable pid, killType, killExp;
+   variable minExpPerType := temp_array_map;
+   // Find minimum kill exp per type among all criter prototypes.
+   for (pid := 0x01000001; pid < 0x01000400; pid++) begin
+      if (not proto_data(pid, it_pid)) then break;
+
+      killType := get_proto_data(pid, PROTO_CR_KILL_TYPE);
+      killExp := get_proto_data(pid, PROTO_CR_KILL_EXP);
+      if minExpPerType[killType] == 0 or killExp < minExpPerType[killType] then
+         minExpPerType[killType] := killExp;
+   end
+   killExpMap := create_array_map;
+   save_array(ARR_KILL_EXP, killExpMap);
+   foreach (killType: killExp in minExpPerType) begin
+      killExpMap[killType] := player_kill_count(killType) * killExp;
+   end
+   debug_log("Migrated kill exp stats based on kill counts: "+debug_array_str(killExpMap));
 end
 
 procedure start begin
@@ -63,10 +92,16 @@ procedure start begin
    float_from_ini_file_clamped(min_exp_mult, INI_COMBAT, INI_SECTION, 0.0, 1.0);
    if (ini_min_exp_mult == 1.0) then return;
 
-   int_from_ini_file_clamped(falloff_start, INI_COMBAT, INI_SECTION, 0, 99999);
-   int_from_ini_file_clamped(falloff_end, INI_COMBAT, INI_SECTION, ini_falloff_start + 1, 99999);
+   int_from_ini_file_clamped(falloff_start, INI_COMBAT, INI_SECTION, 0, 999999);
+   int_from_ini_file_clamped(falloff_end, INI_COMBAT, INI_SECTION, ini_falloff_start + 1, 999999);
 
    origExpMap := create_array_map;
+   killExpMap := load_array(ARR_KILL_EXP);
+   if not killExpMap then
+      call migrate_kill_statistics;
+   else
+      debug_log("Loaded kill exp stats: "+debug_array_str(killExpMap));
+
    register_hook_proc(HOOK_ONDEATH, ondeath_hook);
    register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_hook);
 end
