@@ -1,17 +1,21 @@
 for *:
+- playtest
 
 
 for "future":
-- port "grenades anywhere" script from FO2Tweaks
+- port "grenades anywhere" script from FO2Tweaks?
+- port auto-cursor from FO2Tweaks (with modifications)
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - rewrite Mr.Fixit to read config from INI file and texts from game/craft.msg
 - sneak attack msg from combat.msg
 - replace "handmade grenade" sprite
 - add info about bonus move points to stat description
-- replace some of the map changes with scripts where possible
+- script for adding items to maps (universal with ini config or custom for Ecco?)
+- add some craft components to Klamath Trapper Town North
 
 
 IDEAS:
+- use Beer and Nuka Cola in crafting somehow
 - one more "unarmed" weapon above Spiked Knuckles (knuckles with knife?)
 - flashbang grenade (lose turn)
 - molotov creates a circle of flame for 1-2 turns that damage when stepped on

@@ -1,5 +1,20 @@
 -=== CHANGELOG ===-
 
+v0.9.1
+- fixed several broken global scripts
+- fixed several bugs with crafting UI
+- fix missing map tweaks in Redding
+- better exp for kill reduction (based on total exp per kill type)
+- portion of throwing crit chance bonus now depends on Luck
+- small adjustments to starting stats (skills & AC)
+- tweaked starting recipes and added a few items to Arroyo and Klamath to take advantage of crafting and traps early
+- remaining uses of a Spike Trap now shown in description
+- added full built-in support for Talking Heads and THAT mod
+- remove/decreased some unnecessary town demands
+- various small fixes and balance tweaks after playtest (Arroyo, Klamath)
+- updated sfall to latest dev version
+
+
 v0.9.0
 > Economy:
 (!) rebalanced barter - buy prices aligned with vanilla prices, sell prices higher at low skill and differ less between merchants
@@ -49,7 +64,7 @@ v0.9.0
 - all mod configs moved to "mods/ecco" folder
 
 
-v0.8.0
+v0.8.0:
 (!) rebuilt the mod from the ground up on the new RPU
 - restored single-shot mode for M60 to fix firing sound issue
 - added a few text corrections from Dravean

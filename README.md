@@ -32,7 +32,7 @@ Design goals:
 - throwing weapons expanded and made more useful with critical chance bonus for blades, much deadlier grenades and new types to choose from
 - improved stats of several critters (like weak types of Deathclaws, large scorpions, etc.)
 - new stealth elements: blackjack and sneak attack
-- "fair" inventory management in combat - no cost to open, 2 AP per action, 4 AP to reload
+- "fair" inventory management in combat - no cost to open, 2 AP per action, 4 AP to reload (mag sizes matter now)
 
 **Economy**:
 - prices in stores are affected stronger by Barter skill increases at lower levels and less at higher levels

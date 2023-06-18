@@ -8,6 +8,16 @@ ARCAVES:
 KLADWTWN:
 - added 1 Traps book to shelf at open part of Vic's and 1 Repair book to shelf at closed part
 
+KLARATCV:
+- E1: 1 rope to shelf near entrance (15337)
+- E1: replace Crowbar with Spear at bones (18262)
+- E2: 1 Junk to sentry bot corpse (23465)
+- E3: 1 Booze to shelf (17274)
+
+KLAMALL:
+- Footlocker in house: remove half of all pelts (20946)
+- North part, shelves: add 2 sharp poles (14089)
+
 KLATOXIC:
 - replaced combat armor MK2 with MK1
 - unloaded both energy pistols and Bozar

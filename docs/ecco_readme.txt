@@ -1,6 +1,6 @@
 -====================-
 -===   EcCo mod   ===-
--=== v0.9.0 BETA  ===-
+-=== v0.9.1 BETA  ===-
 -====================-
 						by phobos2077
 
@@ -82,6 +82,7 @@
 
 > GUNS:
 - New gun for .44 Magnum and 14mm calibers to add variety and make these calibers feel "complete".
+- Reload now costs 4 AP up from 2. This makes magazine capacity a much bigger factor.
 - Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
 - Sawed off shotgun have a duplet (burst) firing mode with single shot animation and correct death animations.
 - Some smaller pistols cost 4 AP to shoot to make them viable compared to "long" guns.
@@ -91,13 +92,13 @@
 - Burst sizes were reduced across the board and rebalanced. This should make bursts viable with the added ammo scarcity.
 - In critical bursts, only half of bullets will "inherit" the increased damage and penetration of the critical. This should balance against bursts being more "accurate".
 - Almost every weapon was subjectively improved (main concerns were: more interesting balance between weapons, taking new ammo behavior into account, BUT not going too far from vanilla stats, except those weapons mentioned specifically).
-- Reload AP cost is increased to 4 to make magazine capacity matter more.
 
 
 > BIG GUNS:
 - Two new 40mm Grenade weapons added to make Big Guns skill more useful in early-to-mid game.
 - Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
 - M60 is a true machine gun: more powerful with 100 rounds ammo capacity.
+- ST now adds to base skill
 
 
 > ENERGY WEAPONS:
@@ -119,6 +120,7 @@
 > MELEE & UNARMED:
 - Thrust attacks now do better against armored enemies, but will cost 1 AP more than swings.
 - The cost of unarmed special attacks has been lowered to 4 for punches and 5 for kicks (taken from Weapons Redone mod).
+- Increased melee damage bonus for high ST characters
 - Super sledge takes 4,5 AP instead of 3,4 (same as regular sledge).
 - Wakizashi blade is much more powerful.
 - New weapons: one spear and one sledge type.
@@ -126,6 +128,7 @@
 
 
 > ARMOR:
+- Base AC is now = AG * 1.5 (was AG * 1, applies to all critters)
 - Armor Class lowered for heavy armor (metal and power). AC only affects hit chance, so it makes sense bigger/bulkier target is easier to hit.
 - Laser resistance changed: leather - zero protection, combat - mediocre, metal - good, power armor & tesla - great protection.
 - Explosion and Fire resistance slightly lowered for some armor.
@@ -158,12 +161,28 @@
 
 
 > MISC:
+- Small adjustments to base value formulas of some skills for better balance
 - Some mine traps in the game became more dangerous.
 - Nerfed slot jinxer perk: slots break for month instead of 1 day, high rollers give 2/5 of initial money and there is a luck-based chance to fail. You can still become insanely rich by gambling.
 - Nerfed gambling dice: you can win maximum about 1000-5000 caps per table, per week (that's still a LOT of money).
 - People drop their weapon to the ground in front of them when they die.
 - Bonus Rate of Fire perk was removed (all pistols were completely OP if you take it, especially with the appropriate Trait).
 - Hakunin dreams delayed, so they happen at more appropriate pace (RP has more content...).
+
+
+
+-=== COMPATIBILITY ===-
+Talking Heads Addon & Talking Heads Actually Talk (THAT):
+- Full built-in support, no patches needed (if you previously used compatibility patches, DELETE them)
+
+Inventory Filter:
+- SmartBarter option seems to cause issues with barter, avoid!
+
+FO2Tweaks:
+- Don't use with default settings! Some of them has conflicts with EcCo features
+- Disable the following (EcCo already includes similar changes):
+molotov_fire=0
+damage_mod=0
 
 
 

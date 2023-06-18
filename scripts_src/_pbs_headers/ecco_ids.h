@@ -26,6 +26,7 @@
 #define ARR_TRAPS_LOCAL          "pbs_traps_local"
 #define ARR_TRAP_VICTIMS         "pbs_trap_victims"
 #define ARR_CRITTERS_SEE_DUDE    "pbs_see_dude"
+#define ARR_KILL_EXP             "pbs_kill_exp"
 
 // normal global variables
 #define GVAR_BOUNTY_REDDING         (644)
