@@ -1,15 +1,15 @@
 [Misc]
 
-VersionString=FALLOUT II 1.02d  RPU v2.7 + map_update_v2 + EcCo v0.9
+VersionString=FALLOUT II 1.02d  RPU v26 + map_update_v2 + EcCo v0.9.1
 
 DamageFormula=0
 
 ObjCanHearObjFix=1
 
 DerivedStats=sfall\stats.ini
+SkillsFile=sfall\skills.ini
 PerksFile=sfall\perks.ini
 BooksFile=sfall\books.ini
-
 
 MovieTimer_artimer1=120
 MovieTimer_artimer2=235

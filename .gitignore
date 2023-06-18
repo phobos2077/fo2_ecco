@@ -3,6 +3,7 @@
 *.nodat
 *.err
 *.exe
+*.dll
 *.log
 *.tmp
 *.zip
