@@ -175,9 +175,11 @@ procedure barterprice_handler begin
 		barter_mod := gdialog_get_barter_mod,
 		town_rep := 0,
 		party_barter,
-		selling_price_mod := 1,
+		sell_price_mult,
+		buy_price_mult,
 		dude_barter_mult,
-		final_price_goods;
+		final_price_goods,
+		stats;
 	
 	if (Sell_TownRepCoef != 0 or Buy_TownRepCoef != 0) then begin
 		town_rep := get_clamped(get_town_rep, -30, 30);
@@ -188,16 +190,26 @@ procedure barterprice_handler begin
 		+ "; base_price_goods: " + base_price_goods + "; offered_price_goods: " + offered_price_goods);*/
 
 	// modify buy prices
+	stats := "";
 	if (base_price != 0) then begin
 		if (Buy_Formula == 0 or Buy_Formula == 1 or Buy_Formula == 2) then begin
 			// VANILLA-based FORMULA (1 was deprecated and merged into 0)
+			// Calc multiplier
+			buy_price_mult := Buy_Bias;
+			if (Buy_Formula == 2) then begin
+				buy_price_mult *= (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
+			end
+			// Vanilla price without caps
 			vanilla_price_goods := vanilla_price - item_caps;
 			// Adjust demand and compensate for vanilla price multiplier
 			vanilla_price_goods += round(calc_items_demand_mod(item_table) * vanilla_price_goods / base_price_goods);
-			final_price_goods := vanilla_price_goods * Buy_Bias;
-			if (Buy_Formula == 2) then begin
-				final_price_goods *= (1 + arctan(Buy_ArctanCoef*dude_barter, 1.0)*Buy_DudeSkillCoef);
+			// Final price
+			final_price_goods := vanilla_price_goods * buy_price_mult;
+			// cap value against MinPriceCoef
+			if (final_price_goods < base_price_goods*Buy_MinPriceCoef) then begin
+				final_price_goods := base_price_goods*Buy_MinPriceCoef;
 			end
+			stats += sprintf("vanilla buy price mult: %.2f", buy_price_mult);
 		end else begin
 			// override price (formula 3 or 4)
 			// these two differ only in calculating dude_barter coefficient:
@@ -208,23 +220,25 @@ procedure barterprice_handler begin
 
 			party_barter := get_highest_barter_in_party_except_dude;
 
-			// adjust demand for buy prices
-			base_price_goods += calc_items_demand_mod(item_table);
-			final_price_goods := base_price_goods * Buy_Bias
-				* dude_barter_mult
+			// calc multiplier
+			buy_price_mult := Buy_Bias * dude_barter_mult
 				* (1 + merchant_barter * Buy_MerchantSkillCoef)
 				* (1 + dude_charisma * Buy_DudeCharismaCoef)
 				* (1 + town_rep * Buy_TownRepCoef)
 				* (1 + master_trader * Buy_PerkCoef)
 				* (1 + barter_mod * Buy_BarterModCoef)
 				* (1 + math_max(party_barter - Buy_PartySkillThreshold, 0) * Buy_PartySkillCoef);
+
+			// cap mult against MinPriceCoef
+			if (buy_price_mult < Buy_MinPriceCoef) then begin
+				buy_price_mult := Buy_MinPriceCoef;
+			end
+			// adjust demand for buy prices
+			base_price_goods += calc_items_demand_mod(item_table);
+			// Final price
+			final_price_goods := base_price_goods * buy_price_mult;
+			stats += sprintf("buy price mult: %.2f", buy_price_mult);
 		end
-		
-		// cap value against MinPriceCoef
-		if (final_price_goods < base_price_goods*Buy_MinPriceCoef) then begin
-			final_price_goods := base_price_goods*Buy_MinPriceCoef;
-		end
-		
 		set_sfall_return(round(final_price_goods) + item_caps); 
 	end else begin
 		set_sfall_return(0);
@@ -240,7 +254,7 @@ procedure barterprice_handler begin
 			or Sell_PerkCoef != 0
 			or Sell_BarterModCoef != 0)) then begin
 
-		selling_price_mod := Sell_Bias
+		sell_price_mult := Sell_Bias
 			* (1 + dude_barter * Sell_DudeSkillCoef)
 			* (1 + merchant_barter * Sell_MerchantSkillCoef)
 			* (1 + dude_charisma * Sell_DudeCharismaCoef)
@@ -249,14 +263,17 @@ procedure barterprice_handler begin
 			* (1 + barter_mod * Sell_BarterModCoef);
 
 		// cap multiplier
-		if (selling_price_mod > Sell_MaxPriceCoef) then selling_price_mod := Sell_MaxPriceCoef;
-		else if (selling_price_mod < 0) then selling_price_mod := 0;
+		if (sell_price_mult > Sell_MaxPriceCoef) then sell_price_mult := Sell_MaxPriceCoef;
+		else if (sell_price_mult < 0) then sell_price_mult := 0;
 
+		stats += sprintf("; sell price mult: %.2f", sell_price_mult);
 		offered_price_goods += calc_items_demand_mod(offered_table);
-		set_sfall_return(round(offered_price_goods * selling_price_mod) + offered_caps);
+		set_sfall_return(round(offered_price_goods * sell_price_mult) + offered_caps);
 	end else begin
 		set_sfall_return(0);
 	end
+
+	if stats != "" then debug_msg("pbs_barter: "+stats+". ");
 end
 
 procedure calc_items_demand_mod(variable containerObj) begin
