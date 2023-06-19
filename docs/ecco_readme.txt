@@ -175,7 +175,7 @@
 Talking Heads Addon & Talking Heads Actually Talk (THAT):
 - Full built-in support, no patches needed (if you previously used compatibility patches, DELETE them)
 
-Inventory Filter:
+Inventory Filter (2.0.2 from github):
 - SmartBarter option seems to cause issues with barter, avoid!
 
 FO2Tweaks:

@@ -67,43 +67,28 @@ For a detailed description of all features, see [full readme](https://github.com
 
 ## COMPATIBILITY
 
-ONLY installable above the Restoration Project Update v27 (with updated maps from Pixote)
-Following RP options **_MUST_** be installed:
-- New weapon animations (all of them)
+Can ONLY be installed on top of the *Restoration Project: Updated* v26 with *Maps Updated* by Pixote.
 
-Start of a new game is not required, but is **highly** recommended.
+Start of a new game is **required**, if you're updating from EcCo 0.6.2 or basic RPU.
 
-[sfall](https://github.com/sfall-team/sfall) **v4.3.9** or higher is required!
+### [Talking Heads Addon](https://www.nexusmods.com/fallout2/mods/45) & [Talking Heads Actually Talk (THAT)](https://www.nexusmods.com/fallout2/mods/67):
+- Full built-in support, no patches needed (if you previously used compatibility patches, DELETE them)
+
+### [Inventory Filter](https://github.com/rotators/InventoryFilter/raw/master/archive/F2-InventoryFilter_v2.0.2_en.rar) (2.0.2 from github):
+- SmartBarter option seems to cause issues with barter, avoid!
+
+### [FO2Tweaks](https://github.com/BGforgeNet/FO2tweaks/releases):
+- Don't use with default settings! Some of them has conflicts with EcCo features
+- Disable the following (EcCo already includes similar changes):
+```
+molotov_fire=0
+damage_mod=0
+```
+
+[sfall](https://github.com/sfall-team/sfall) **v4.4.0** or higher is required! (included in the mod package)
 
 ## INSTALLATION
 
-1. Install RPU v26 on a clean game installation (installer version is recommended):
-- **IMPORTANT**: install Rifle Animations and Wakizashi Animations mods!
-https://github.com/BGforgeNet/Fallout2_Restoration_Project/releases/tag/v26
-
-2. Download the archive and extract its contents into the folder where you installed RPU in step 1, overwriting any files.
-https://drive.google.com/file/d/1We_IETFZpbLh4ndGvHvMu0qrCtuFCOQH/view?usp=sharing
-
-3. Download the latest ecco_**.zip archive from [releases page](https://github.com/phobos2077/fo2_ecco/releases) and extract the contents into the game folder, overwriting files.
-
-4. Edit ddraw.ini, find keys listed below, uncomment them if they are commented (with a semicolon) and change values as follows:
-```
-DamageFormula=0
-
-ObjCanHearObjFix=1
-
-DerivedStats=sfall\stats.ini
-PerksFile=sfall\perks.ini
-BooksFile=sfall\books.ini
-
-MovieTimer_artimer1=120
-MovieTimer_artimer2=235
-MovieTimer_artimer3=350
-MovieTimer_artimer4=470
-
-```
-
-5. Start Fallout 2 and enjoy your game!
-
+Find the latest release on [releases page](https://github.com/phobos2077/fo2_ecco/releases) and follow instructions.
 
 If you don't like any changes to mechanics or some other aspects, feel free to read and edit the INI files in the mods/ecco folder.
