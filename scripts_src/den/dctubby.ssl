@@ -175,11 +175,11 @@ end
 procedure destroy_p_proc begin
    tubby_obj := 0;
    set_tubby_dead;
-   // phobos2077: reduce loot: 50% of items
+   // phobos2077: reduce loot: 50% of items and all weapons
    restock_amt := 0;
    while (inven_ptr(den_tubby_box_obj, restock_amt) != 0) do begin
       restock_obj := inven_ptr(den_tubby_box_obj, restock_amt);
-      if (random(0,99) < 50) then begin
+      if (obj_item_subtype(restock_obj) == item_type_weapon or random(0,99) < 50) then begin
       	rm_obj_from_inven(den_tubby_box_obj, restock_obj);
       	destroy_object(restock_obj);
       end else

@@ -1,0 +1,275 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location: Den
+        Description:
+
+        Log:
+
+           Created: August 22, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#define SCRIPT_REALNAME "dctubfri"
+#include "../headers/define.h"
+#define NAME                    SCRIPT_DCTUBFRI
+#define TOWN_REPUTATION         GVAR_TOWN_REP_THE_DEN
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/den.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_exit_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Flags                        (4)
+#define LVAR_Talker_Num                   (5)
+#define LVAR_Conversation_Line            (6)
+
+#define crack_low_bit                     bit_10
+
+#define crack_low                         lvar_bit(LVAR_Flags, crack_low_bit)
+#define set_crack_low                     set_lvar_bit_on(LVAR_Flags, crack_low_bit)
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+import variable junkie_talker_1;
+import variable junkie_talker_2;
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == timed_event_float) then begin
+      if ((junkie_talker_1 == self_obj) and (junkie_talker_2 != 0)) then begin
+         if ((combat_is_initialized == false) and (obj_on_screen(self_obj)) and (tile_distance_objs(self_obj, dude_obj) < 12)) then begin
+            call Node005;
+         end
+      end else if ((junkie_talker_2 == self_obj) and (junkie_talker_1 != 0)) then begin
+      end else begin
+         if (combat_is_initialized == false) then begin
+            if (self_is_male) then begin
+               if (tubby_dead) then begin
+                  call Node003;
+               end else if (hostile) then begin
+                  call Node007;
+               end else begin
+                  call Node004;
+               end
+            end else if (self_is_high == false) then begin
+               use_obj_on_obj(create_object(PID_JET,0,0),self_obj);
+            end
+         end
+      end
+      flush_add_timer_event_sec(self_obj, random(15, 45), timed_event_float);
+   end
+end
+
+procedure map_enter_p_proc begin
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         set_self_team(TEAM_DEN_TUBBYS);
+         set_self_ai(AI_TOUGH_CITIZEN); // pbs: changed from COWARD
+      end else if (tubby_dead) then begin
+         if (self_is_male) then begin
+            destroy_object(self_obj);
+         end else if (crack_low) then begin
+            if (random(1, 3) == 1) then begin
+               kill_critter(self_obj, random(ANIM_fall_back_blood, ANIM_fall_front_blood));
+            end
+         end else begin
+            set_crack_low;
+         end
+      end
+      flush_add_timer_event_sec(self_obj, random(15, 45), timed_event_float);
+   end
+   if (map_first_run) then begin
+      if (self_is_male) then begin
+         if (junkie_talker_1 == 0) then begin
+            junkie_talker_1 := self_obj;
+            set_local_var(LVAR_Talker_Num, 1);
+         end else if (junkie_talker_2 == 0) then begin
+            junkie_talker_2 := self_obj;
+            set_local_var(LVAR_Talker_Num, 2);
+         end
+      end
+   end else if (local_var(LVAR_Talker_Num) == 1) then begin
+      junkie_talker_1 := self_obj;
+   end else if (local_var(LVAR_Talker_Num) == 2) then begin
+      junkie_talker_2 := self_obj;
+   end
+end
+
+procedure map_exit_p_proc begin
+end
+
+procedure critter_p_proc begin
+   if (self_can_see_dude) then begin
+      if (hostile) then begin
+         self_attack_dude;
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   if (self_is_female) then begin
+      if (hostile) then begin
+         call Node009;
+      end else begin
+         call Node008;
+      end
+   end else if (tubby_dead) then begin
+      call Node001;
+   end else if (hostile) then begin
+      call Node006;
+   end else begin
+      call Node002;
+   end
+   set_herebefore;
+   flush_add_timer_event_sec(self_obj, random(15, 45), timed_event_float);
+end
+
+procedure destroy_p_proc begin
+   if (junkie_talker_1 == self_obj) then begin
+      junkie_talker_1 := 0;
+   end else if (junkie_talker_2 == self_obj) then begin
+      junkie_talker_2 := 0;
+   end
+   inc_neutral_critter
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   if (self_is_male) then begin
+      display_mstr(100);
+   end else begin
+      display_mstr(110 + examined);
+   end
+   set_examined;
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   if (self_is_male) then begin
+      display_mstr(150);
+   end else begin
+      display_mstr(160 + crack_low);
+   end
+   set_examined;
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node998 begin
+   set_hostile;
+end
+procedure Node999 begin
+end
+
+procedure Node001 begin
+   floater_rand(200,206);
+end
+procedure Node002 begin
+   if ((metzger_dead) and (random(0,1))) then begin
+      if (has_rep_slaver) then begin
+         floater(236);
+      end else begin
+         floater_rand(237,239);
+      end
+   end else if ((has_rep_slaver) and (random(0,1))) then begin
+      floater_rand(232,235);
+   end else if (check_title_bad(-100) and random(0,1)) then begin
+      floater(220);
+   end else if (check_title(100) and random(0,1)) then begin
+      floater(221 + dude_is_female);
+   end else begin
+      floater_rand(223,231);
+   end
+end
+procedure Node003 begin
+   floater_rand(251 - dude_is_male, 254 + dude_is_female);
+end
+procedure Node004 begin
+   floater_rand(260,265);
+end
+procedure Node005 begin
+   if ((local_var(LVAR_Conversation_Line) <= 9) or ((local_var(LVAR_Conversation_Line) >= 20) and (local_var(LVAR_Conversation_Line) <= 42))) then begin
+      if ((local_var(LVAR_Conversation_Line) % 2) == 0) then begin
+         floater(270 + local_var(LVAR_Conversation_Line));
+      end else if (junkie_talker_2 != 0) then begin
+         Face_Critter(junkie_talker_2, self_obj);
+         Face_Critter(self_obj, junkie_talker_2);
+         float_msg(junkie_talker_2, mstr(270 + local_var(LVAR_Conversation_Line)), FLOAT_COLOR_NORMAL);
+      end
+   end
+   inc_local_var(LVAR_Conversation_Line);
+   if (local_var(LVAR_Conversation_Line) > 42) then begin
+      junkie_talker_1 := 0;
+      set_local_var(LVAR_Talker_Num, -1);
+   end
+end
+procedure Node006 begin
+   floater_rand(321 - dude_is_male, 326 + dude_is_female);
+end
+procedure Node007 begin
+   floater_rand(340, 344);
+end
+procedure Node008 begin
+   if (crack_low) then begin
+      floater_rand(440, 446);
+   end else if (tubby_dead) then begin
+      floater_rand(420, 423);
+   end else begin
+      floater_rand(400, 408);
+   end
+end
+procedure Node009 begin
+   floater_rand(460, 465);
+   self_attack_dude;
+end
