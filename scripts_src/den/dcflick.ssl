@@ -99,7 +99,7 @@ procedure map_enter_p_proc begin
    if (is_loading_game == false) then begin
       if (map_first_run) then begin
          set_self_team(TEAM_THE_DEN);
-         set_self_ai(AI_LONER_CITIZEN);
+         set_self_ai(AI_TOUGH_MERCHANT); // pbs: changed from LONWER CITIZEN
       end
    end
 end

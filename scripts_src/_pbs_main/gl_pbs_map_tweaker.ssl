@@ -1,0 +1,232 @@
+/*
+   Map Object Tweaker
+
+   Allows to run commands at specific tiles to adjust objects on the map:
+   - Add/remove object to/from critter/container/ground.
+   - Wield weapons.
+   - Change object script.
+*/
+
+#include "../sfall/sfall.h"
+#include "../sfall/lib.arrays.h"
+#include "../sfall/lib.inven.h"
+#include "../sfall/define_lite.h"
+
+variable
+   config,
+   command_stats;
+
+#define CUR_MAP_CONFIG  config[""+cur_map_index]
+
+#define debug_log(msg)		debug_msg("pbs_map_tweaker: "+msg)
+#define debug_err(msg)		debug_msg("! ERROR ! pbs_map_tweaker: "+msg)
+
+#define format_cmd_log(msg, tile)   (tile + ": " + msg)
+#define debug_log_cmd(msg, tile)		debug_log(format_cmd_log(msg, tile))
+#define debug_err_cmd(msg, tile)		debug_err(format_cmd_log(msg, tile))
+
+procedure start begin
+   config := get_ini_config_db("config\\pbs_map_tweaks.ini");
+   debug_log("Loaded "+len_array(config)+" sections.");
+end
+
+procedure find_main_object_at(variable tileNum, variable elev) begin
+   variable obj, objs := tile_get_objs(tileNum, elev);
+   foreach (obj in objs) begin
+      if (obj_type(obj) == OBJ_TYPE_CRITTER) then
+         return obj;
+   end
+   foreach (obj in objs) begin
+      if (obj_type(obj) == OBJ_TYPE_ITEM and obj_item_subtype(obj) == item_type_container) then
+         return obj;
+   end
+   foreach (obj in objs) begin
+      if (obj_type(obj) == OBJ_TYPE_SCENERY) then
+         return obj;
+   end
+   return 0;
+end
+
+procedure create_loot_object(variable pid, variable tileNum, variable elev, variable ammo, variable ammoPid) begin
+   variable obj := create_object_sid(pid, tileNum, elev, -1);
+   if (obj_type(obj) == OBJ_TYPE_ITEM) then begin
+      if (ammo >= 0) then
+         set_weapon_ammo_count(obj, ammo);
+      if (ammoPid > 0) then
+         set_weapon_ammo_pid(obj, ammoPid);
+   end
+   return obj;
+end
+
+#define arg_or_default(i, def)     atoi(args[i]) if args[i] else def
+#define is_inven_object(obj)       (obj_type(obj) == OBJ_TYPE_CRITTER or (obj_type(obj) == OBJ_TYPE_ITEM and obj_item_subtype(obj) == item_type_container))
+#define loot_target_name(useInven, tileObj)  (obj_name(tileObj) if useInven else "ground")
+
+procedure command_add(variable tileNum, variable elev, variable tileObj, variable args) begin
+   variable
+      pid := arg_or_default(0, 0),
+      count := arg_or_default(1, 1),
+      ammo := arg_or_default(2, -1),
+      ammoPid := arg_or_default(3, -1);
+
+   if (not pid) then begin
+      debug_err_cmd("a: invalid pid", tileNum);
+      return;
+   end
+   variable i,
+      obj := create_loot_object(pid, tileNum, elev, ammo, ammoPid),
+      useInven := is_inven_object(tileObj);
+   if (useInven) then begin
+      add_mult_objs_to_inven(tileObj, obj, count);
+   end else begin
+      for (i := 1; i < count; i++) begin
+         call create_loot_object(pid, tileNum, elev, ammo, ammoPid);
+      end
+   end
+   debug_log_cmd(string_format3("added %s(%d) to %s", obj_name(obj), count, loot_target_name(useInven, tileObj)), tileNum);
+end
+
+procedure command_remove(variable tileNum, variable elev, variable tileObj, variable args) begin
+   variable
+      pid := arg_or_default(0, 0),
+      count := arg_or_default(1, 1),
+      numRemoved;
+
+   if (not pid) then begin
+      debug_err_cmd("r: invalid pid", tileNum);
+      return;
+   end
+   variable useInven := is_inven_object(tileObj);
+   if (useInven) then begin
+      // Remove from inventory.
+      numRemoved := remove_items_pid(tileObj, pid, count);
+   end else begin
+      // Remove from ground (this can delete any object, not just item!).
+      if (tileObj and obj_pid(tileObj) == pid) then begin
+         destroy_object(tileObj);
+         numRemoved++;
+      end
+      if (numRemoved < count) then begin
+         variable obj, objs := tile_get_objs(tileNum, elev);
+         foreach (obj in objs) begin
+            if (obj_pid(obj) == pid) then begin
+               destroy_object(obj);
+               numRemoved++;
+               if (numRemoved == count) then
+                  break;
+            end
+         end
+      end
+   end
+   debug_log_cmd(string_format3("removed %s(%d) from %s", proto_data(pid, it_name), count, loot_target_name(useInven, tileObj)), tileNum);
+end
+
+procedure command_wield(variable tileNum, variable elev, variable tileObj, variable args) begin
+   variable
+      pid := arg_or_default(0, 0),
+      inactiveFlag := arg_or_default(1, 0);
+
+   if (not pid) then begin
+      debug_err_cmd("w: invalid pid", tileNum);
+      return;
+   end
+   if (not tileObj or obj_type(tileObj) != OBJ_TYPE_CRITTER) then begin
+      debug_err_cmd("w: no critter found!", tileNum);
+      return;
+   end
+   variable item := obj_carrying_pid_obj(tileObj, pid);
+   if (not item) then begin
+      debug_err_cmd("w: item not found by pid: "+pid, tileNum);
+      return;
+   end
+   if (inactiveFlag and obj_item_subtype(item) != item_type_armor) then begin
+      variable inactiveItem := critter_inven_obj(tileObj, INVEN_TYPE_LEFT_HAND);
+      if (inactiveItem) then begin
+         set_flags(item, get_flags(item) bwand (bwnot FLAG_LEFT_HAND));
+      end
+      set_flags(item, get_flags(item) bwor FLAG_LEFT_HAND);
+      // If critter had item in inactive slot, and active slot is free then put this item to active slot
+      if (inactiveItem and not critter_inven_obj(tileObj, INVEN_TYPE_RIGHT_HAND)) then begin
+         wield_obj_critter(tileObj, inactiveItem);
+      end
+      debug_log_cmd(obj_name(tileObj) + " puts " + obj_name(item) + " in off hand", tileNum);
+   end else begin
+      variable activeItem := critter_inven_obj(tileObj, INVEN_TYPE_RIGHT_HAND);
+      wield_obj_critter(tileObj, item);
+      // If critter had item in active slot and inactive slot is empty, put this item to inactive slot.
+      if (activeItem and not critter_inven_obj(tileObj, INVEN_TYPE_LEFT_HAND)) then begin
+         set_flags(activeItem, get_flags(activeItem) bwor FLAG_LEFT_HAND);
+      end
+      debug_log_cmd(obj_name(tileObj) + " wields " + obj_name(item), tileNum);
+   end
+end
+
+procedure command_script(variable tileNum, variable elev, variable tileObj, variable args) begin
+   variable
+      sid := arg_or_default(0, 0);
+
+   if (sid < 0) then begin
+      debug_err_cmd("s: invalid sid", tileNum);
+      return;
+   end
+   if (not tileObj) then begin
+      debug_err_cmd("s: target not found!", tileNum);
+      return;
+   end
+   if (sid > 0) then
+      set_script(tileObj, sid);
+   else
+      remove_script(tileObj);
+
+   debug_log_cmd("set " + obj_name(tileObj) + " script to " + sid, tileNum);
+end
+
+procedure get_command_handler(variable cmd) begin
+   switch (cmd) begin
+      case "a":
+         return @command_add;
+      case "r":
+         return @command_remove;
+      case "w":
+         return @command_wield;
+      case "s":
+         return @command_script;
+      default:
+         return 0;
+   end
+end
+
+procedure execute_command(variable cmdStr, variable tileNum, variable elev) begin
+   variable
+      cmd := cmdStr[0],
+      args := string_split(substr(cmdStr, 1, 0), ":"),
+      handler := get_command_handler(cmd);
+
+   if (not handler) then begin
+      debug_err_cmd("unknown command: "+cmd, tileNum);
+   end
+   variable tileObj := find_main_object_at(tileNum, elev);
+   call handler(tileNum, elev, tileObj, args);
+end
+
+// Main logic goes here
+procedure map_enter_p_proc begin
+   debug_log("cur_town = "+cur_town+", is_loading = "+is_loading_game+", map_first_run = "+map_first_run);
+   if (cur_town == -1 or is_loading_game or not map_first_run) then return;
+
+   variable elev;
+   for (elev := 0; elev <= 2; elev++) begin
+      variable mapElevConfig := config[cur_map_index + "_" + elev];
+      if (not mapElevConfig) then continue;
+
+      debug_log("Running commands for elev "+elev);
+      variable tileNum, cmds, cmd, tileObj;
+      foreach (tileNum: cmds in mapElevConfig) begin
+         tileNum := atoi(tileNum);
+         cmds := string_split(cmds, ",");
+         foreach (cmd in cmds) begin
+            call execute_command(cmd, tileNum, elev);
+         end
+      end
+   end
+end
