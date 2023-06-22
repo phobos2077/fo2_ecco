@@ -132,9 +132,9 @@ end
 procedure create_button begin
    if crafting_button_shown then return;
 
-   create_win_flag(WIN_CRAFT_BTN, (screen_center_x + 237), (get_screen_height - 98), 20, 18, WIN_FLAG_DONTMOVE /*bwor WIN_FLAG_TRANSPARENT*/);
+   create_win_flag(WIN_CRAFT_BTN, (screen_center_x + 238), (get_screen_height - 98), 24, 23, WIN_FLAG_DONTMOVE bwor WIN_FLAG_TRANSPARENT);
    SelectWin(WIN_CRAFT_BTN);
-   AddButton("but", 0, 0, 20, 18);
+   AddButton("but", 0, 0, 24, 23);
    AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);
    AddButtonProc("but", do_on, do_off, do_down, do_up);
    ShowWin;
