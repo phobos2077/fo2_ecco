@@ -1150,7 +1150,7 @@ outline_color=55
 packet_num=11
 run_end=3205
 run_start=3200
-secondary_freq=30
+secondary_freq=4
 
 [Drug Dealer]
 aggression=2
@@ -1190,7 +1190,7 @@ outline_color=55
 packet_num=42
 run_end=2219
 run_start=2200
-secondary_freq=20
+secondary_freq=2
 
 [Dumar]
 aggression=10
@@ -1354,6 +1354,7 @@ secondary_freq=5000
 
 [Enclave Patrol]
 aggression=90
+area_attack_mode=be_sure
 attack_end=2552
 attack_start=2540
 body_type=Tough Person
@@ -1763,7 +1764,7 @@ outline_color=55
 packet_num=37
 run_end=3119
 run_start=3100
-secondary_freq=20
+secondary_freq=4
 
 [Ghoul Peasant]
 aggression=50
@@ -1803,7 +1804,7 @@ outline_color=55
 packet_num=35
 run_end=3119
 run_start=3100
-secondary_freq=20
+secondary_freq=10
 
 [Gun Turret]
 aggression=10
@@ -6438,7 +6439,7 @@ outline_color=55
 packet_num=41
 run_end=2119
 run_start=2100
-secondary_freq=20
+secondary_freq=10
 
 [Peasant - Kamakazi]
 aggression=100
@@ -6566,7 +6567,7 @@ packet_num=14
 run_away_mode=bleeding
 run_end=2019
 run_start=2000
-secondary_freq=30
+secondary_freq=5
 
 [Pimp]
 aggression=35
@@ -6608,7 +6609,7 @@ packet_num=44
 run_away_mode=not_feeling_good
 run_end=2219
 run_start=2200
-secondary_freq=15
+secondary_freq=2
 
 [Player AI]
 aggression=10
@@ -6781,7 +6782,7 @@ packet_num=45
 run_away_mode=not_feeling_good
 run_end=2019
 run_start=2000
-secondary_freq=15
+secondary_freq=5
 
 [Punk]
 aggression=10
@@ -7077,7 +7078,7 @@ outline_color=55
 packet_num=30
 run_end=3005
 run_start=3000
-secondary_freq=20
+secondary_freq=5
 
 [Robot Turret]
 aggression=100
@@ -7332,7 +7333,7 @@ outline_color=55
 packet_num=31
 run_end=3005
 run_start=3000
-secondary_freq=20
+secondary_freq=5
 
 [Shadow_Who_Walks]
 aggression=90
@@ -7504,7 +7505,7 @@ packet_num=20
 run_away_mode=not_feeling_good
 run_end=2019
 run_start=2000
-secondary_freq=30
+secondary_freq=5
 
 [Slave]
 aggression=0
@@ -7550,7 +7551,7 @@ packet_num=46
 run_away_mode=bleeding
 run_end=2019
 run_start=2000
-secondary_freq=15
+secondary_freq=5
 
 [Slaver]
 aggression=65
@@ -7639,7 +7640,7 @@ secondary_freq=10
 
 [Store Owner]
 aggression=33
-area_attack_mode=sometimes
+area_attack_mode=be_careful
 attack_end=2159
 attack_start=2140
 attack_who=closest
@@ -7720,7 +7721,7 @@ outline_color=55
 packet_num=47
 run_end=36705
 run_start=36700
-secondary_freq=15
+secondary_freq=2
 
 [The Brain]
 aggression=100
@@ -7847,7 +7848,7 @@ packet_num=13
 run_away_mode=not_feeling_good
 run_end=2219
 run_start=2200
-secondary_freq=15
+secondary_freq=2
 
 [Torr]
 aggression=40
@@ -7935,7 +7936,7 @@ packet_num=32
 run_away_mode=never
 run_end=3005
 run_start=3000
-secondary_freq=10
+secondary_freq=2
 
 [Tough Citizen]
 aggression=60
@@ -7978,7 +7979,7 @@ packet_num=24
 run_away_mode=tourniquet
 run_end=2219
 run_start=2200
-secondary_freq=20
+secondary_freq=3
 
 [Tough Guard]
 aggression=95
@@ -8195,7 +8196,7 @@ outline_color=55
 packet_num=18
 run_end=2505
 run_start=2500
-secondary_freq=8
+secondary_freq=2
 
 [Wimpy Gecko]
 aggression=20
