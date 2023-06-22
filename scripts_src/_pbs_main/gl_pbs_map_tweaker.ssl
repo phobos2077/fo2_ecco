@@ -18,6 +18,8 @@ variable
 
 #define CUR_MAP_CONFIG  config[""+cur_map_index]
 
+#define OBJ_IS_FLAT(obj)   (get_flags(obj) bwand FLAG_FLAT)
+
 #define debug_log(msg)		debug_msg("pbs_map_tweaker: "+msg)
 #define debug_err(msg)		debug_msg("! ERROR ! pbs_map_tweaker: "+msg)
 
@@ -33,15 +35,9 @@ end
 procedure find_main_object_at(variable tileNum, variable elev) begin
    variable obj, objs := tile_get_objs(tileNum, elev);
    foreach (obj in objs) begin
-      if (obj_type(obj) == OBJ_TYPE_CRITTER) then
-         return obj;
-   end
-   foreach (obj in objs) begin
-      if (obj_type(obj) == OBJ_TYPE_ITEM and obj_item_subtype(obj) == item_type_container) then
-         return obj;
-   end
-   foreach (obj in objs) begin
-      if (obj_type(obj) == OBJ_TYPE_SCENERY) then
+      if ((obj_type(obj) == OBJ_TYPE_CRITTER) or 
+         (obj_type(obj) == OBJ_TYPE_ITEM and obj_item_subtype(obj) == item_type_container and not OBJ_IS_FLAT(obj)) or
+         (obj_type(obj) == OBJ_TYPE_SCENERY and not OBJ_IS_FLAT(obj))) then
          return obj;
    end
    return 0;
@@ -211,7 +207,7 @@ end
 
 // Main logic goes here
 procedure map_enter_p_proc begin
-   debug_log("cur_town = "+cur_town+", is_loading = "+is_loading_game+", map_first_run = "+map_first_run);
+   //debug_log("cur_town = "+cur_town+", is_loading = "+is_loading_game+", map_first_run = "+map_first_run);
    if (cur_town == -1 or is_loading_game or not map_first_run) then return;
 
    variable elev;
