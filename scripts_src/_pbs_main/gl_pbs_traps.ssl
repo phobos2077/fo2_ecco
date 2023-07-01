@@ -41,6 +41,21 @@ variable angry_set;
 variable attack_delay := -1;
 variable ini_assemble_hotkey;
 
+/*procedure roll_test(variable rollMod, variable critChance, variable successOffset, variable successMult, variable failMult) begin
+	variable stats := temp_array(4, 0);
+	variable i, delta, roll;
+	for (i := 0; i < 10000; i++) begin
+		delta := rollMod - random(1, 100);
+		if (delta < 0) then begin
+			roll := ROLL_CRITICAL_FAILURE if (random(1, 100) <= -delta*failMult) else ROLL_FAILURE;
+		end else begin
+			roll := ROLL_CRITICAL_SUCCESS if (random(1, 100) <= math_max(delta + successOffset, 0)*successMult + critChance) else ROLL_SUCCESS;
+		end
+		stats[roll] += 1;
+	end
+	debug_log("Roll stats: "+debug_array_str(stats));
+end*/
+
 procedure start begin
 	variable arr, savedArrays, ini_remove_numeric_arrays;
 	variable i, k, v;
@@ -60,6 +75,8 @@ procedure start begin
   	//display_msg("traps init yo "+cur_map_index);
 	set_global_script_type(0);
 	set_global_script_repeat(50);
+
+	//call roll_test(100, 5, -50, 5, 0.2);
 
 	// init variables
 	call traps_common_init;
@@ -216,17 +233,13 @@ procedure movecost_hook begin
 	call check_setoff_traps(critter, 0);
 end
 
+// TODO: use or remove
 procedure ondeath_hook begin
 	variable critter := get_sfall_arg;
 	debug_log_fmt("ondeath: %d, lastTarget: %d", critter, pbs_trap_last_target);
 
 	if (critter and critter == pbs_trap_last_target) then begin
 		pbs_trap_last_target_dead := true;
-		// TODO: exp for kill?
-		/*if (not combat_is_initialized) then begin
-			gain_exp_for_trapkill(exp_for_kill_critter_pid(obj_pid(critter)))
-			mod_kill_counter(critter_kill_type(critter), 1);
-		end*/
 	end
 end
 

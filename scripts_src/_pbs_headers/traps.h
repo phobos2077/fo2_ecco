@@ -149,7 +149,7 @@ procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, 
 
 
 // Normal variables
-
+variable traps_how_much;
 
 // Exported variables
 
@@ -354,6 +354,7 @@ procedure remove_trap_info(variable index) begin
   pbs_traps_last_map := -1;
 end
 
+// TODO: use spatial scripts instead
 procedure check_setoff_traps(variable obj, variable arr) begin
   variable begin
     i;
@@ -385,6 +386,29 @@ procedure check_setoff_traps(variable obj, variable arr) begin
       i += TRAPINFO_SIZE;
     end
   end
+end
+
+procedure random_roll_ext(variable rollMod, variable critChance, variable successOffset, variable successMult, variable failMult) begin
+   variable
+      delta := rollMod - random(1, 100),
+      roll;
+
+   traps_how_much := delta;
+   if (delta < 0) then begin
+      return ROLL_CRITICAL_FAILURE if (random(1, 100) <= -delta*failMult) else ROLL_FAILURE;
+   end
+   return ROLL_CRITICAL_SUCCESS if (random(1, 100) <= math_max(delta + successOffset, 0)*successMult + critChance) else ROLL_SUCCESS;
+end
+
+procedure roll_vs_traps_ext(variable critter, variable rollMod) begin
+   variable
+      skillValue := has_skill(critter, SKILL_TRAPS),
+      critChance := get_critter_stat(critter, STAT_crit_chance),
+      diffMult := (difficulty_level - 1) * (1 if (critter == dude_obj) else -1),
+      successMult := (5 - diffMult),
+      failMult := (0.2 + 0.1 * diffMult);
+
+   return random_roll_ext(skillValue + rollMod, critChance, -50, successMult, failMult);
 end
 
 procedure roll_critical(variable critter, variable bodyPart) begin

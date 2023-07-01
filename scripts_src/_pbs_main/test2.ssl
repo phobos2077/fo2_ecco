@@ -30,7 +30,7 @@ procedure use_obj_on_p_proc;
 procedure use_skill_on_p_proc;
 procedure identify_me;
 procedure dude_disarm_and_pickup_trap;
-procedure dude_try_to_arm_trap(variable armament_obj);
+procedure dude_try_to_arm_trap(variable armamentObj);
 
 variable ar_global;
 
@@ -254,15 +254,17 @@ procedure dude_disarm_and_pickup_trap begin
 	destroy_trap_object(self_obj);
 end
 
-procedure dude_try_to_arm_trap(variable armament_obj) 
-begin
+procedure dude_try_to_arm_trap(variable armamentObj) begin
 	variable begin
 		rollMod;
+		trapTypeMod;
+		groundTypeMod;
+		armTypeMod;
 		roll;
 		groundType;
 		arr;
 		i;
-		armament_pid := 0;
+		armamentPid := 0;
 		groundFid;
 	end
 
@@ -277,34 +279,37 @@ begin
 	else
 		groundType:="other";
 		
-	rollMod := -(get_int_from_ini(INI_FILE, INI_SECTION, "skill_type_" + my_trap_type) + get_int_from_ini(INI_FILE, INI_SECTION, "skill_ground_"+groundType));
-	if (armament_obj) then begin
-		armament_pid := obj_pid(armament_obj);
-		rollMod -= get_int_from_ini(INI_FILE, INI_SECTION, "skill_arm_" + armament_pid);
+	trapTypeMod := get_int_from_ini(INI_FILE, INI_SECTION, "skill_type_" + my_trap_type);
+	groundTypeMod := get_int_from_ini(INI_FILE, INI_SECTION, "skill_ground_" + groundType);
+	if (armamentObj) then begin
+		armamentPid := obj_pid(armamentObj);
+		armTypeMod := get_int_from_ini(INI_FILE, INI_SECTION, "skill_arm_" + armamentPid);
 		// remember last used armament (if any), regardless if it will be success or fail
-		set_sfall_global(SGVAR_TRAPS_LAST_ARMAMENT, armament_pid);
+		set_sfall_global(SGVAR_TRAPS_LAST_ARMAMENT, armamentPid);
 	end
-	roll := roll_vs_skill(dude_obj, SKILL_TRAPS, rollMod);
-	debug_log(string_format3("roll-vs-traps. Mod: %d, Roll: %d, How Much: %d", rollMod, roll, how_much(1)));
+	rollMod := -(trapTypeMod + groundTypeMod + armTypeMod);
+	roll := roll_vs_traps_ext(dude_obj, rollMod);
+	//debug_log_fmt("Armament: %s (%d)", obj_name(armamentObj), armamentPid);
+	debug_log_fmt("roll-vs-traps: %d, Mod: %s, How Much: %d (difficulty: %d)", roll, string_format("%d=%d+%d+%d", rollMod, -groundTypeMod, -trapTypeMod, -armTypeMod), traps_how_much, difficulty_level);
 	
 	if (is_success(roll)) then begin
-		if (armament_obj) then begin
-			rm_obj_from_inven(source_obj, armament_obj);
-			destroy_object(armament_obj);
+		if (armamentObj) then begin
+			rm_obj_from_inven(source_obj, armamentObj);
+			destroy_object(armamentObj);
 		end
-		call arm_trap(my_trap_index, armament_pid, is_critical(roll));
-		if (armament_pid) then display_msg(parse_str_2(mstr(201), proto_data(armament_pid, it_name), ""));
+		call arm_trap(my_trap_index, armamentPid, is_critical(roll));
+		if (armamentPid) then display_msg(parse_str_2(mstr(201), proto_data(armamentPid, it_name), ""));
 		else display_mstr(200);
 	end else begin
 		if (is_critical(roll)) then begin
-			if (armament_obj) then begin
-				rm_obj_from_inven(source_obj, armament_obj);
-				destroy_object(armament_obj);
+			if (armamentObj) then begin
+				rm_obj_from_inven(source_obj, armamentObj);
+				destroy_object(armamentObj);
 			end
-			call setoff_trap(my_trap_index, source_obj, armament_pid);
+			call setoff_trap(my_trap_index, source_obj, armamentPid);
 			display_mstr(311);
 		end else begin
-			if (armament_pid) then display_msg(parse_str_2(mstr(301), proto_data(armament_pid, it_name), ""));
+			if (armamentPid) then display_msg(parse_str_2(mstr(301), proto_data(armamentPid, it_name), ""));
 			else display_mstr(300);
 		end
 	end
