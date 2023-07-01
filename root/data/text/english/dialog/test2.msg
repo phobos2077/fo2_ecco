@@ -47,8 +47,7 @@
 {1365}{}{enhanced spike-trap}
 {1613}{}{home-made grenade trap}
 # trap events
-{2001}{}{You gain }
-{2002}{}{ experience points for a trap kill.}
+{2001}{}{You gain %d experience points for a trap kill.}
 # inventory description
 {2010}{}{Uses: %d/%d.}
 

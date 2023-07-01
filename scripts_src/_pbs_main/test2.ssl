@@ -12,6 +12,8 @@
 
 #define NAME	SCRIPT_TEST2
 
+#define SCRIPT_REALNAME		"test2 (traps)"
+
 #include "../sfall/define_lite.h"
 #include "../sfall/command_lite.h"
 #include "../_pbs_headers/traps.h"
@@ -55,9 +57,6 @@ variable my_trap_type;
 #define i_am_customizable	(is_trap_customizable_type(my_trap_type))
 
 #define is_in_inventory 	(self_tile == -1)
-
-#define debug_log(msg)		debug_msg("test2 (traps): "+msg)
-#define debug_err(msg)		debug_msg("! ERROR ! test2 (traps): "+msg)
 
 procedure identify_me begin
 	variable i;
@@ -258,7 +257,7 @@ end
 procedure dude_try_to_arm_trap(variable armament_obj) 
 begin
 	variable begin
-		roll_mod;
+		rollMod;
 		roll;
 		groundType;
 		arr;
@@ -278,22 +277,22 @@ begin
 	else
 		groundType:="other";
 		
-	roll_mod := -(get_int_from_ini(INI_FILE, INI_SECTION, "skill_type_" + my_trap_type) + get_int_from_ini(INI_FILE, INI_SECTION, "skill_ground_"+groundType));
+	rollMod := -(get_int_from_ini(INI_FILE, INI_SECTION, "skill_type_" + my_trap_type) + get_int_from_ini(INI_FILE, INI_SECTION, "skill_ground_"+groundType));
 	if (armament_obj) then begin
 		armament_pid := obj_pid(armament_obj);
-		roll_mod -= get_int_from_ini(INI_FILE, INI_SECTION, "skill_arm_" + armament_pid);
+		rollMod -= get_int_from_ini(INI_FILE, INI_SECTION, "skill_arm_" + armament_pid);
 		// remember last used armament (if any), regardless if it will be success or fail
 		set_sfall_global(SGVAR_TRAPS_LAST_ARMAMENT, armament_pid);
 	end
-	debug_log("roll-vs-traps: "+roll_mod);
-	roll := roll_vs_skill(dude_obj, SKILL_TRAPS, roll_mod);
+	roll := roll_vs_skill(dude_obj, SKILL_TRAPS, rollMod);
+	debug_log(string_format3("roll-vs-traps. Mod: %d, Roll: %d, How Much: %d", rollMod, roll, how_much(1)));
 	
 	if (is_success(roll)) then begin
 		if (armament_obj) then begin
 			rm_obj_from_inven(source_obj, armament_obj);
 			destroy_object(armament_obj);
 		end
-		call arm_trap(my_trap_index, armament_pid);
+		call arm_trap(my_trap_index, armament_pid, is_critical(roll));
 		if (armament_pid) then display_msg(parse_str_2(mstr(201), proto_data(armament_pid, it_name), ""));
 		else display_mstr(200);
 	end else begin

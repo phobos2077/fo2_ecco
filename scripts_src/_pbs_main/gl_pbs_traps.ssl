@@ -2,6 +2,7 @@ procedure start;
 procedure keypress_hook;
 procedure useobj_hook;
 procedure movecost_hook;
+procedure ondeath_hook;
 procedure deathanim2_hook;
 procedure description_hook;
 
@@ -27,6 +28,8 @@ procedure description_hook;
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/lib.misc.h"
+
+#define SCRIPT_REALNAME		"gl_pbs_traps"
 
 #define _TRAPS_EXPORT
 #include "../_pbs_headers/traps.h"
@@ -88,6 +91,7 @@ procedure start begin
   	register_hook_proc(HOOK_KEYPRESS, keypress_hook);
   	register_hook_proc(HOOK_USEOBJ, useobj_hook);
   	register_hook_proc(HOOK_MOVECOST, movecost_hook);
+	register_hook_proc(HOOK_ONDEATH, ondeath_hook);
 	register_hook_proc(HOOK_DEATHANIM2, deathanim2_hook);
 
   end else begin
@@ -212,6 +216,20 @@ procedure movecost_hook begin
 	call check_setoff_traps(critter, 0);
 end
 
+procedure ondeath_hook begin
+	variable critter := get_sfall_arg;
+	debug_log_fmt("ondeath: %d, lastTarget: %d", critter, pbs_trap_last_target);
+
+	if (critter and critter == pbs_trap_last_target) then begin
+		pbs_trap_last_target_dead := true;
+		// TODO: exp for kill?
+		/*if (not combat_is_initialized) then begin
+			gain_exp_for_trapkill(exp_for_kill_critter_pid(obj_pid(critter)))
+			mod_kill_counter(critter_kill_type(critter), 1);
+		end*/
+	end
+end
+
 procedure deathanim2_hook begin
    variable weaponPID, attacker, target, damage, animID, rotToAttacker, targetRot;
    variable wpn, kt;
@@ -222,10 +240,11 @@ procedure deathanim2_hook begin
    damage := get_sfall_arg;
    animID := get_sfall_arg;
 
-   //debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID+", calling_critter_dmg_trap: "+calling_critter_dmg_trap);
+   debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID+", pbs_trap_last_target: "+pbs_trap_last_target);
 
-   // Override death animation when critter_dmg function is used from a trp
-   if (obj_art_fid(attacker) == 0x20001F5 and calling_critter_dmg_trap and animID == ANIM_chunks_of_flesh) then begin
+   // Override death animation when critter_dmg function is used from a trap
+   if (obj_art_fid(attacker) == 0x20001F5 and pbs_trap_last_target == target and animID == ANIM_chunks_of_flesh) then begin
+		pbs_trap_last_target_dead := true;
       set_sfall_return(ANIM_fall_front);
 		set_sfall_arg(4, ANIM_fall_front);
       return;
