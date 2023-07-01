@@ -13,6 +13,10 @@
 
 #define msg(x)                      display_msg(x)
 
+#define debug_log(msg)		debug_msg(SCRIPT_REALNAME": "+msg)
+#define debug_log_fmt(msg, ...)		debug_msg(SCRIPT_REALNAME": "+string_format(msg, __VA_ARGS__))
+#define debug_err(msg)		debug_msg("! ERROR ! "SCRIPT_REALNAME": "+msg)
+
 // macros for arrays
 #define is_in_array(item, array)    (scan_array(array, item) != -1)
 
@@ -40,11 +44,10 @@
 #define get_proto_dmg_min(pid)       (get_proto_data(pid, PROTO_WP_DMG_MIN))
 #define get_proto_dmg_max(pid)       (get_proto_data(pid, PROTO_WP_DMG_MAX))
 
-//#define is_unarmed_weapon_pid(pid)      (get_proto_data(pid, 36) == 0)
-#define is_unarmed_weapon_pid(pid)      (get_proto_data(pid, PROTO_IT_FLAGS) bwand 0x000000FF == 0x01)
+#define is_unarmed_weapon_pid(pid)            (weapon_attack_mode1(pid) == ATTACK_MODE_PUNCH)
 
-#define critter_dt_by_dmg_type(crit, type)    (get_critter_stat(crit, 17 + type))
-#define critter_dr_by_dmg_type(crit, type)    (get_critter_stat(crit, 24 + type))
+#define critter_dt_by_dmg_type(crit, type)    (get_critter_stat(crit, STAT_dmg_thresh + type))
+#define critter_dr_by_dmg_type(crit, type)    (get_critter_stat(crit, STAT_dmg_resist + type))
 #define critter_max_hp(crit)                  (get_critter_stat(crit, STAT_max_hp))
 #define exp_for_kill_critter_pid(pid)         (get_proto_data(pid, PROTO_CR_KILL_EXP))
 #define critter_flags_by_pid(pid)             (get_proto_data(pid, PROTO_CR_FLAGS))
@@ -112,18 +115,6 @@
 
 //weapon definez
 
-#define no_anim(x)                (get_proto_data(x, PROTO_WP_ANIM) == 0)
-#define knife_anim(x)             (get_proto_data(x, PROTO_WP_ANIM) == 1)
-#define club_anim(x)              (get_proto_data(x, PROTO_WP_ANIM) == 2)
-#define sledge_anim(x)            (get_proto_data(x, PROTO_WP_ANIM) == 3)
-#define spear_anim(x)             (get_proto_data(x, PROTO_WP_ANIM) == 4)
-#define pistol_anim(x)            (get_proto_data(x, PROTO_WP_ANIM) == 5)
-#define smg_anim(x)               (get_proto_data(x, PROTO_WP_ANIM) == 6)
-#define rifle_anim(x)             (get_proto_data(x, PROTO_WP_ANIM) == 7)
-#define big_gun_anim(x)           (get_proto_data(x, PROTO_WP_ANIM) == 8)
-#define minigun_anim(x)           (get_proto_data(x, PROTO_WP_ANIM) == 9)
-#define rocket_launcher_anim(x)   (get_proto_data(x, PROTO_WP_ANIM) == 10)
-
 
 #define is_melee_attack(type)   (type == ATTACK_MODE_PUNCH or type == ATTACK_MODE_KICK or type == ATTACK_MODE_SWING or type == ATTACK_MODE_THRUST)
 
@@ -140,12 +131,12 @@
 //#define sneak_damage_bonus(x)
 
 // is weapon club-like
-#define is_club_weapon_pid(x)   ((x==5) or (x==20) or (x==384) or (x==386))
-#define is_club_weapon(x)      is_club_weapon_pid(obj_pid(x))
+#define is_club_weapon_pid(x)   (get_proto_data(x, PROTO_WP_ANIM) == WPN_ANIM_CLUB)
+#define is_club_weapon(x)       is_club_weapon_pid(obj_pid(x))
 
 // is weapon hammer-like
-#define is_hammer_weapon_pid(x)   ((x==6) or (x==115))
-#define is_hammer_weapon(x)      is_club_weapon_pid(obj_pid(x))
+#define is_hammer_weapon_pid(x)   (get_proto_data(x, PROTO_WP_ANIM) == WPN_ANIM_SLEDGEHAMMER)
+#define is_hammer_weapon(x)       is_hammer_weapon_pid(obj_pid(x))
 
 #define is_humanoid(crit)    (proto_data(obj_pid(crit), cr_body_type) == CR_BODY_BIPED)
 #define is_weapon_pid(pid)   (proto_data(pid, it_type) == item_type_weapon)

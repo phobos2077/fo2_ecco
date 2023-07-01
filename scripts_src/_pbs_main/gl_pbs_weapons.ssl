@@ -2,6 +2,8 @@
    Scripting support for various custom weapon features in EcCo.
 */
 
+#define SCRIPT_REALNAME       "gl_pbs_weapons"
+
 #include "../sfall/command_lite.h"
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.strings.h"
@@ -13,7 +15,7 @@
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 #define INI_EFFECTS_SECTION       "EFFECTS"
 #define INI_DEATHANIM_SECTION     "DEATHANIM"
-
+#define INI_EXPLOSIVES_SECTION    "EXPLOSIVES"
 
 // These are used in custom door script.
 export variable pbs_last_burst_size;
@@ -52,9 +54,30 @@ procedure load_settings begin
    //debug_msg("Loaded emp effects for armor pids: "+debug_array_str(array_keys(emp_effect_armor_pids))+" and fids: "+debug_array_str(array_keys(emp_effect_armor_fids)));
 end
 
+procedure load_explosives begin
+   // Explosion damage
+   variable
+      section := get_ini_section(INI_COMBAT, INI_EXPLOSIVES_SECTION),
+      pid, val, dmg;
+   foreach (pid: val in section) begin
+      dmg := string_split_ints(val, ",");
+      if (pid == PID_DYNAMITE) then begin
+         set_dynamite_damage(dmg[0], dmg[1]);
+         debug_log(string_format("Dynamite damage: %d-%d.", dmg[0], dmg[1]));
+      end else if (pid == PID_PLASTIC_EXPLOSIVES) then begin
+         set_plastic_damage(dmg[0], dmg[1]);
+         debug_log(string_format("Plastic Explosive damage: %d-%d.", dmg[0], dmg[1]));
+      end else begin
+         item_make_explosive(pid, dmg[2], dmg[0], dmg[1]);
+         debug_log(string_format("Adding custom explosive. Pid: %d (%d), damage: %d-%d.", pid, dmg[2], dmg[0], dmg[1]));
+      end
+   end
+end
+
 procedure start begin
    if game_loaded then begin
       call load_settings;
+      call load_explosives;
 
       register_hook_proc(HOOK_AFTERHITROLL, afterhitroll_handler);
       register_hook_proc(HOOK_AMMOCOST, ammocost_handler);
