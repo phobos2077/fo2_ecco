@@ -9,7 +9,7 @@
 #include "../headers/animcomd.h"
 
 #ifndef FOOD_DETECT_RADIUS
-   #define FOOD_DETECT_RADIUS (15)
+   #define FOOD_DETECT_RADIUS (20)
 #endif
 
 #ifndef FOOD_SEEK_IMPROBABILITY
@@ -83,7 +83,7 @@ procedure forgetFood begin
    food := 0; // forget about food in combat
 end
 
-#define SEEK_AND_EAT_FOOD_GECKO  call seekAndEatFood(15, 50, FOOD_PREFERENCE_GECKO);
-#define SEEK_AND_EAT_FOOD_RAT  call seekAndEatFood(15, 50, FOOD_PREFERENCE_RAT);
+#define SEEK_AND_EAT_FOOD_GECKO  call seekAndEatFood(15, FOOD_DETECT_RADIUS, FOOD_PREFERENCE_GECKO);
+#define SEEK_AND_EAT_FOOD_RAT  call seekAndEatFood(15, FOOD_DETECT_RADIUS, FOOD_PREFERENCE_RAT);
 
 #endif
