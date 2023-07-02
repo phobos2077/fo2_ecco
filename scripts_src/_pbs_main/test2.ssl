@@ -151,7 +151,7 @@ end*/
 procedure look_at_p_proc begin
 	call identify_me;
 	//display_msg("trap id:"+my_trap_index /*+", pid:" +my_arm_pid*/ +"obj.pid:"+obj_pid(self_obj)/*+", inv:"+ inven_ptr(self_obj, 0)*/);
-	debug_log("Trap charges: "+my_trap_charges);
+	//debug_log("Trap charges: "+my_trap_charges);
 	if (i_am_trap) then begin
 		script_overrides;
 		display_msg(sprintf(mstr(50), mstr(10 + my_trap_type)));
@@ -177,7 +177,16 @@ procedure description_p_proc begin
 	call identify_me;
 	if (i_am_trap) then begin
 		script_overrides;
-		display_msg(get_trap_description);
+
+		variable
+			desc := get_trap_description,
+			kitPid := trapkit_pid_by_trap_type(my_trap_type),
+			maxUses := get_proto_data(kitPid, PROTO_MI_CHARGES);
+		
+		if (maxUses > 1) then begin
+			desc += string_format(traps_mstr(2010), my_trap_charges, maxUses);
+		end
+		display_msg(desc);
 	end
 end
 

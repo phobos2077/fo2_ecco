@@ -48,7 +48,7 @@
 # trap events
 {2001}{}{Вы получили %d ед. опыта за убийство при помощи ловушки.}
 # inventory description
-{2010}{}{Исп.: %d/%d.}
+{2010}{}{ Исп.: %d/%d.}
 
 # combat messages
 # stealth

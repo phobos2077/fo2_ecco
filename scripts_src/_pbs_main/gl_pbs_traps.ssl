@@ -58,6 +58,17 @@ variable last_hold_reset_time := -1;
 	debug_log("Roll stats: "+debug_array_str(stats));
 end*/
 
+procedure dec_trap_hold_critter(variable critter) begin
+   variable hold := pbs_trap_hold_critters[critter];
+   if (not hold) then return;
+
+   variable v := hold[0] - 1;
+   if (v > 0) then hold[0] := v;
+   else begin
+      unset_array(pbs_trap_hold_critters, critter);
+   end
+end
+
 procedure start begin
    variable arr;
    variable i, k, v;
@@ -148,15 +159,16 @@ procedure start begin
    // Hold critters
    if (not combat_is_initialized) then begin
       foreach (k: v in pbs_trap_hold_critters) begin
-         reg_anim_clear(k);
+         if (anim_busy(k)) then begin
+            reg_anim_clear(k);
+            move_to(k, v[1], elevation(k));
+         end
       end
       if (game_time > last_hold_reset_time + 20 * 10) then begin
          last_hold_reset_time = game_time;
          if (len_array(pbs_trap_hold_critters) > 0) then begin
             foreach (k: v in pbs_trap_hold_critters) begin
-               v--;
-               if (v > 0) then pbs_trap_hold_critters[k] := v;
-               else unset_array(pbs_trap_hold_critters, k);
+               call dec_trap_hold_critter(k);
             end
             debug_log("Decremented critter hold: "+debug_array_str(pbs_trap_hold_critters));
          end
@@ -246,14 +258,17 @@ procedure movecost_hook begin
       critter := get_sfall_arg,
 		hexes := get_sfall_arg,
 		cost := get_sfall_arg;
-
 	//debug_msg(proto_data(obj_pid(critter), cr_name)+" move_by "+hexes+"cost"+cost);
-	// traps setoff, turn-based
-	if pbs_trap_hold_critters[critter] then begin
+
+	// Holding critters in place.
+   variable hold := pbs_trap_hold_critters[critter]; 
+	if hold then begin
       debug_log_fmt("Attemp to prevent critter %d from moving.", critter);
 		set_sfall_return(999); // you're not going anywhere, pal..
       set_sfall_arg(2, 999);
+      move_to(critter, hold[1], elevation(critter));
    end else begin
+      // traps setoff, turn-based
 	   call check_setoff_traps(critter, 0);
    end
 end
@@ -301,7 +316,7 @@ procedure description_hook begin
 
 	variable 
 		uses := get_weapon_ammo_count(item),
-		desc = proto_data(obj_pid(item), it_description) + " "+ string_format2(traps_mstr(2010), uses, maxUses);
+		desc = proto_data(obj_pid(item), it_description) + string_format2(traps_mstr(2010), uses, maxUses);
 
 	set_sfall_return(desc);
 end
@@ -325,7 +340,7 @@ procedure combatturn_hook begin
       eventType := get_sfall_arg,
       critter := get_sfall_arg;
    if eventType == 1 and pbs_trap_hold_critters[critter] then begin
-      pbs_trap_hold_critters[critter]--;
+      call dec_trap_hold_critter(critter);
       debug_log("Decremented critter hold: "+debug_array_str(pbs_trap_hold_critters));
    end
 end

@@ -47,7 +47,7 @@
 # trap events
 {2001}{}{You gain %d experience points for a trap kill.}
 # inventory description
-{2010}{}{Uses: %d/%d.}
+{2010}{}{ Uses: %d/%d.}
 
 
 # combat messages
