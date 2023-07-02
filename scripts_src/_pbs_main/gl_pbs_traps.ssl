@@ -5,6 +5,7 @@ procedure movecost_hook;
 procedure ondeath_hook;
 procedure deathanim2_hook;
 procedure description_hook;
+procedure combatturn_hook;
 
 /**
 
@@ -40,6 +41,7 @@ variable angry_set;
 
 variable attack_delay := -1;
 variable ini_assemble_hotkey;
+variable last_hold_reset_time := -1;
 
 /*procedure roll_test(variable rollMod, variable critChance, variable successOffset, variable successMult, variable failMult) begin
 	variable stats := temp_array(4, 0);
@@ -57,35 +59,28 @@ variable ini_assemble_hotkey;
 end*/
 
 procedure start begin
-	variable arr, savedArrays, ini_remove_numeric_arrays;
-	variable i, k, v;
-
-	variable list;
-	variable list2;
-	variable obj;
-	variable closest_crit;
-	variable item;
-	variable flag;
-	variable n:=0;
-	variable len;
-
-	variable key1;
+   variable arr;
+   variable i, k, v;
+   variable obj, closestCrit;
+   variable flag;
+   variable n:=0;
+   variable len;
 
   if game_loaded then begin
-  	//display_msg("traps init yo "+cur_map_index);
-	set_global_script_type(0);
-	set_global_script_repeat(50);
+   //display_msg("traps init yo "+cur_map_index);
+   set_global_script_type(0);
+   set_global_script_repeat(50);
 
-	//call roll_test(100, 5, -50, 5, 0.2);
+   //call roll_test(100, 5, -50, 5, 0.2);
 
-	// init variables
-	call traps_common_init;
+   // init variables
+   call traps_common_init;
 
-  	// exported settings
-	pbs_ini_trap_reveals_dude := get_int_from_ini(INI_FILE, INI_SECTION, "trap_reveals_dude");
-	pbs_ini_trap_friendfoe := get_int_from_ini(INI_FILE, INI_SECTION, "trap_friendfoe");
-	pbs_ini_trap_is_crime := get_int_from_ini(INI_FILE, INI_SECTION, "trap_is_crime");
-	ini_assemble_hotkey := parse_hotkey(get_str_from_ini(INI_FILE, INI_SECTION, "assemble_hotkey"));
+   // exported settings
+   pbs_ini_trap_reveals_dude := get_int_from_ini(INI_FILE, INI_SECTION, "trap_reveals_dude");
+   pbs_ini_trap_friendfoe := get_int_from_ini(INI_FILE, INI_SECTION, "trap_friendfoe");
+   pbs_ini_trap_is_crime := get_int_from_ini(INI_FILE, INI_SECTION, "trap_is_crime");
+   ini_assemble_hotkey := parse_hotkey(get_str_from_ini(INI_FILE, INI_SECTION, "assemble_hotkey"));
 
 	// migrate from old saves - nonzero value of this global indicates save from pre-3.4 sfall era
 	// TODO: probably don't need this anymore..
@@ -99,20 +94,21 @@ procedure start begin
    	end
 	end
 
-	// initialize global and exported arrays
-  	angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
-  	pbs_local_traps := create_array_list(0);
-  	pbs_trap_victims := create_array_map;
+   // initialize global and exported arrays
+   angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
+   pbs_local_traps := create_array_list(0);
+   pbs_trap_victims := create_array_map;
+   pbs_trap_hold_critters := create_array_map;
 
-	register_hook_proc(HOOK_DESCRIPTIONOBJ, description_hook);
-  	register_hook_proc(HOOK_KEYPRESS, keypress_hook);
-  	register_hook_proc(HOOK_USEOBJ, useobj_hook);
-  	register_hook_proc(HOOK_MOVECOST, movecost_hook);
-	register_hook_proc(HOOK_ONDEATH, ondeath_hook);
-	register_hook_proc(HOOK_DEATHANIM2, deathanim2_hook);
+   register_hook_proc(HOOK_DESCRIPTIONOBJ, description_hook);
+   register_hook_proc(HOOK_KEYPRESS, keypress_hook);
+   register_hook_proc(HOOK_USEOBJ, useobj_hook);
+   register_hook_proc(HOOK_MOVECOST, movecost_hook);
+   register_hook_proc(HOOK_ONDEATH, ondeath_hook);
+   register_hook_proc(HOOK_DEATHANIM2, deathanim2_hook);
+   register_hook_proc(HOOK_COMBATTURN, combatturn_hook);
 
   end else begin
-
 	// check for angry people
 	if (len_array(angry_set) > 0) then begin
 		if (attack_delay == -1) then begin
@@ -120,18 +116,18 @@ procedure start begin
 		end else if (get_uptime > attack_delay) then begin
 			debug_msg("angry: " + angry_set[0]);
 			foreach n in angry_set begin
-				closest_crit := 0;
+				closestCrit := 0;
 				len := 999999;
 				if (n) then begin
 					foreach (obj in list_as_array(LIST_CRITTERS)) if obj then begin
 						if (obj != dude_obj and not(is_critter_dead(obj)) and has_trait(TRAIT_OBJECT, obj, OBJECT_TEAM_NUM) == n and tile_distance_objs(obj, dude_obj) < len) then begin
-							closest_crit := obj;
+							closestCrit := obj;
 							len := tile_distance_objs(obj, dude_obj);
 						end
 					end
 				end
-				if (closest_crit) then begin
-					attack_setup(closest_crit, dude_obj);
+				if (closestCrit) then begin
+					attack_setup(closestCrit, dude_obj);
 				end
 			end
 			resize_array(angry_set, 0);
@@ -149,7 +145,30 @@ procedure start begin
    	end
 	end
 
+   // Hold critters
+   if (not combat_is_initialized) then begin
+      foreach (k: v in pbs_trap_hold_critters) begin
+         reg_anim_clear(k);
+      end
+      if (game_time > last_hold_reset_time + 20 * 10) then begin
+         last_hold_reset_time = game_time;
+         if (len_array(pbs_trap_hold_critters) > 0) then begin
+            foreach (k: v in pbs_trap_hold_critters) begin
+               v--;
+               if (v > 0) then pbs_trap_hold_critters[k] := v;
+               else unset_array(pbs_trap_hold_critters, k);
+            end
+            debug_log("Decremented critter hold: "+debug_array_str(pbs_trap_hold_critters));
+         end
+      end 
+   end
   end
+end
+
+
+procedure map_enter_p_proc begin
+   clear_array(pbs_trap_victims);
+   clear_array(pbs_trap_hold_critters);
 end
 
 
@@ -230,7 +249,13 @@ procedure movecost_hook begin
 
 	//debug_msg(proto_data(obj_pid(critter), cr_name)+" move_by "+hexes+"cost"+cost);
 	// traps setoff, turn-based
-	call check_setoff_traps(critter, 0);
+	if pbs_trap_hold_critters[critter] then begin
+      debug_log_fmt("Attemp to prevent critter %d from moving.", critter);
+		set_sfall_return(999); // you're not going anywhere, pal..
+      set_sfall_arg(2, 999);
+   end else begin
+	   call check_setoff_traps(critter, 0);
+   end
 end
 
 // TODO: use or remove
@@ -281,6 +306,26 @@ procedure description_hook begin
 	set_sfall_return(desc);
 end
 
-procedure map_enter_p_proc begin
-   clear_array(pbs_trap_victims);
+
+/*
+Runs before and after each turn in combat (for both PC and NPC).
+
+int     arg0 - event type:
+               1 - start of turn
+               0 - normal end of turn
+              -1 - combat ends abruptly (by script or by pressing Enter during PC turn)
+              -2 - combat ends normally (hook always runs at the end of combat)
+Critter arg1 - critter doing the turn
+bool    arg2 - 1 at the start/end of the player's turn after loading a game saved in combat mode, 0 otherwise
+
+int     ret0 - pass 1 at the start of turn to skip the turn, pass -1 at the end of turn to force end of combat
+*/
+procedure combatturn_hook begin
+   variable
+      eventType := get_sfall_arg,
+      critter := get_sfall_arg;
+   if eventType == 1 and pbs_trap_hold_critters[critter] then begin
+      pbs_trap_hold_critters[critter]--;
+      debug_log("Decremented critter hold: "+debug_array_str(pbs_trap_hold_critters));
+   end
 end

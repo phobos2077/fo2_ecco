@@ -2381,9 +2381,9 @@ VLTVENT1.frm
 VLTVENT2.frm
 VLTVENT3.frm
 VLTVENT4.frm
-SPIKTRP0.FRM
-SPIKTRP1.FRM
-MINTRAP0.FRM
+spiktrap.frm
+beartrap.frm
+minetrap.frm
 MINTRAP1.FRM
-sensmin0.FRM
+sensmine.frm
 sensmin1.FRM

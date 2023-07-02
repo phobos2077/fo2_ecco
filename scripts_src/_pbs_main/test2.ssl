@@ -47,11 +47,6 @@ variable my_trap_type;
 #define LVAR_index			(1)
 #define LVAR_identified		(2)
 
-#define set_charges_left(x)	 set_charges(ar_global, my_trap_index, x)
-
-//#define is_explosive_trap	(is_explosive_trap_pid(obj_pid(self_obj)))
-//#define is_melee_trap		(is_melee_trap_pid(obj_pid(self_obj)))
-
 #define i_am_trap			(my_trap_index >= 0)
 #define i_am_armed			(my_trap_state == TRAP_STATE_ACTIVE)
 #define i_am_customizable	(is_trap_customizable_type(my_trap_type))
@@ -94,6 +89,7 @@ procedure identify_me begin
  		my_trap_armpid := trap_armpid(ar_global, my_trap_index);
 		my_trap_charges := trap_charges(ar_global, my_trap_index);
 		my_trap_type := trap_type(ar_global, my_trap_index);
+		animate_set_frame(TRAP_FRAME_ACTIVE if (my_trap_state == TRAP_STATE_ACTIVE) else TRAP_FRAME_DEFAULT);
 	end
 	debug_log("identify_me: "+my_trap_index);
 end
@@ -120,6 +116,8 @@ procedure timed_event_p_proc begin
 		// DO NOTHING
 	end else if (fixed_param == TRAP_EVENT_DESTROY) then begin
 		destroy_object(self_obj);
+	end else if (fixed_param == TRAP_EVENT_DEACTIVATE) then begin
+		animate_set_frame(TRAP_FRAME_DEFAULT);
 	end
 end
 
@@ -156,24 +154,30 @@ procedure look_at_p_proc begin
 	debug_log("Trap charges: "+my_trap_charges);
 	if (i_am_trap) then begin
 		script_overrides;
-		display_mstr((my_trap_type == TRAP_TYPE_SPIKE)*50 + (my_trap_type == TRAP_TYPE_MINE)*60 + (my_trap_type == TRAP_TYPE_SENSOR)*70);
+		display_msg(sprintf(mstr(50), mstr(10 + my_trap_type)));
 	end else if (my_trap_index == INDEX_UNKNOWN) then begin
 		debug_err("Cannot identify trap!");
 	end
 end
 
+procedure get_trap_description begin
+	variable trapName, armName := "", str;
+	trapName := mstr(10+my_trap_type);
+	if (i_am_armed) then begin
+		if (my_trap_armpid > 0) then begin
+			armName := proto_data(my_trap_armpid, it_name);
+			return string_format(mstr(102), trapName, armName);
+		end
+		return sprintf(mstr(101), trapName);
+	end
+	return sprintf(mstr(100), trapName);
+end
+
 procedure description_p_proc begin
-	variable n, arm_name := "";
 	call identify_me;
 	if (i_am_trap) then begin
 		script_overrides;
-		n := (my_trap_type == TRAP_TYPE_SPIKE)*100 + (my_trap_type == TRAP_TYPE_MINE)*110 + (my_trap_type == TRAP_TYPE_SENSOR)*120;
-		if (i_am_armed) then begin
-			if (my_trap_armpid > 0) then arm_name := proto_data(my_trap_armpid, it_name);
-			display_msg(parse_str_2(mstr(n + 1), arm_name, ""));
-		end else begin
-			display_mstr(n);
-		end
+		display_msg(get_trap_description);
 	end
 end
 
@@ -298,7 +302,8 @@ procedure dude_try_to_arm_trap(variable armamentObj) begin
 			destroy_object(armamentObj);
 		end
 		call arm_trap(my_trap_index, armamentPid, is_critical(roll));
-		if (armamentPid) then display_msg(parse_str_2(mstr(201), proto_data(armamentPid, it_name), ""));
+		animate_set_frame(TRAP_FRAME_ACTIVE);
+		if (armamentPid) then display_msg(sprintf(mstr(201), proto_data(armamentPid, it_name)));
 		else display_mstr(200);
 	end else begin
 		if (is_critical(roll)) then begin
@@ -309,7 +314,7 @@ procedure dude_try_to_arm_trap(variable armamentObj) begin
 			call setoff_trap(my_trap_index, source_obj, armamentPid);
 			display_mstr(311);
 		end else begin
-			if (armamentPid) then display_msg(parse_str_2(mstr(301), proto_data(armamentPid, it_name), ""));
+			if (armamentPid) then display_msg(sprintf(mstr(301), proto_data(armamentPid, it_name)));
 			else display_mstr(300);
 		end
 	end

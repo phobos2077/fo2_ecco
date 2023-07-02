@@ -1226,3 +1226,5 @@
 {64301}{}{Winchester lever-action rifle, in .44 magnum. Min ST: 4.}
 {64400}{}{14mm SMG}
 {64401}{}{When you need the most firepower in the smallest package. Caliber: 14mm. Min ST: 6.}
+{64500}{}{Bear Trap}
+{64501}{}{This trap can hold down a large animal, like a bear. But there are no bears around here...}

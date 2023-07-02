@@ -355,7 +355,7 @@ REPAIR:60
 # TRAPS
 
 [ITEM]
-618:4                            # Trap kit Melee
+618:4                            # Trap kit Spike
 pcx/items/spiketrap.pcx
 85055
                                  # ALWAYS
@@ -369,6 +369,23 @@ REPAIR+TRAPS:50
 [COMPONENTS]
 127:1                            # Rope
 365:8|320:4|7:2|280:2            # Plant Spikes OR Sharp Poles OR Spears OR Sharp Spears
+
+
+[ITEM]
+645                              # Bear Trap
+pcx/items/spiketrap.pcx
+69055
+CRFT_BLD                         # blades schematics
+162000                           # 4 h 30 m
+NO
+6                                # Traps
+[TOOLS]
+308                              # PID_SUPER_TOOL_KIT
+[SKILLS]
+REPAIR+TRAPS:100
+[COMPONENTS]
+98:1                             # Junk
+7:2|280:2|45:2                   # Spears OR Sharp Spears OR throwing knives
 
 
 [ITEM]

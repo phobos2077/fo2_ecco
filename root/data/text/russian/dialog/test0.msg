@@ -480,7 +480,7 @@
 # TRAPS
 
 {2900}{}{[ITEM]}
-{2901}{}{618:4}                            # Trap kit Melee
+{2901}{}{618:4}                            # Trap kit Spike
 {2902}{}{pcx/items/spiketrap.pcx}
 {2903}{}{85055}
 {2904}{}{}                                 # ALWAYS
@@ -497,79 +497,79 @@
 
 
 {3000}{}{[ITEM]}
-{3001}{}{616:4}                            # Trap kit Mine
-{3002}{}{pcx/items/trapkit.pcx}
-{3003}{}{68061}
-{3004}{}{CRFT_EXP}                         # explosive schematics 644
-{3005}{}{108000}                           # 3 h 00 m
+{3001}{}{645}                              # Bear Trap
+{3002}{}{pcx/items/spiketrap.pcx}
+{3003}{}{69055}
+{3004}{}{CRFT_BLD}                         # blades schematics
+{3005}{}{162000}                           # 4 h 30 m
 {3006}{}{NO}
 {3007}{}{6}                                # Traps
 {3008}{}{[TOOLS]}
 {3009}{}{308}                              # PID_SUPER_TOOL_KIT
 {3010}{}{[SKILLS]}
-{3011}{}{REPAIR+TRAPS:80}
+{3011}{}{REPAIR+TRAPS:100}
 {3012}{}{[COMPONENTS]}
-{3013}{}{127:1}                            # Rope
-{3014}{}{98:1}                             # Junk
+{3013}{}{98:1}                             # Junk
+{3014}{}{7:2|280:2|45:2}                   # Spears OR Sharp Spears OR throwing knives
 
 
 {3100}{}{[ITEM]}
-{3101}{}{619:2}                            # Trap kit Proximity
-{3102}{}{pcx/items/sensmine.pcx}
-{3103}{}{55054}
-{3104}{}{CRFT_ELE}                         # Electronics
+{3101}{}{616:4}                            # Trap kit Mine
+{3102}{}{pcx/items/trapkit.pcx}
+{3103}{}{68061}
+{3104}{}{CRFT_EXP}                         # explosive schematics 644
 {3105}{}{108000}                           # 3 h 00 m
 {3106}{}{NO}
 {3107}{}{6}                                # Traps
 {3108}{}{[TOOLS]}
 {3109}{}{308}                              # PID_SUPER_TOOL_KIT
 {3110}{}{[SKILLS]}
-{3111}{}{REPAIR+TRAPS:110}
-{3112}{}{SCIENCE:60}
-{3113}{}{[COMPONENTS]}
-{3114}{}{38:1}                             # SEC
-{3115}{}{98:1}                             # Junk
+{3111}{}{REPAIR+TRAPS:80}
+{3112}{}{[COMPONENTS]}
+{3113}{}{127:1}                            # Rope
+{3114}{}{98:1}                             # Junk
+
+
+{3200}{}{[ITEM]}
+{3201}{}{619:2}                            # Trap kit Proximity
+{3202}{}{pcx/items/sensmine.pcx}
+{3203}{}{55054}
+{3204}{}{CRFT_ELE}                         # Electronics
+{3205}{}{108000}                           # 3 h 00 m
+{3206}{}{NO}
+{3207}{}{6}                                # Traps
+{3208}{}{[TOOLS]}
+{3209}{}{308}                              # PID_SUPER_TOOL_KIT
+{3210}{}{[SKILLS]}
+{3211}{}{REPAIR+TRAPS:110}
+{3212}{}{SCIENCE:60}
+{3213}{}{[COMPONENTS]}
+{3214}{}{38:1}                             # SEC
+{3215}{}{98:1}                             # Junk
 
 
 # LEATHER ARMOR
 
-{3200}{}{[ITEM]}
-{3201}{}{74}                                # PID_LEATHER_JACKET
-{3202}{}{pcx/items/maxinv.pcx}
-{3203}{}{62060}
-{3204}{}{CRFT_LTJ}                          # Leather Jacket schematics
-{3205}{}{180000}                            # 5 h 00 m
-{3206}{}{NO}
-{3207}{}{7}                                 # Armor
-{3208}{}{[TOOLS]}
-{3209}{}{4|236}                             # PID_KNIFE|PID_COMBAT_KNIFE
-{3210}{}{[SKILLS]}
-{3211}{}{REPAIR:35}
-{3212}{}{[COMPONENTS]}
-{3213}{}{127:1}                             # PID_ROPE
-{3214}{}{276:2|623:2}                       # PID_GECKO_PELT or Molerat Hide
-
-
 {3300}{}{[ITEM]}
-{3301}{}{1}                                 # PID_LEATHER_ARMOR
-{3302}{}{pcx/items/ltharmor.pcx}
-{3303}{}{88055}
-{3304}{}{CRFT_LTH}                          # Leather armor schematics
+{3301}{}{74}                                # PID_LEATHER_JACKET
+{3302}{}{pcx/items/maxinv.pcx}
+{3303}{}{62060}
+{3304}{}{CRFT_LTJ}                          # Leather Jacket schematics
 {3305}{}{180000}                            # 5 h 00 m
 {3306}{}{NO}
 {3307}{}{7}                                 # Armor
 {3308}{}{[TOOLS]}
 {3309}{}{4|236}                             # PID_KNIFE|PID_COMBAT_KNIFE
 {3310}{}{[SKILLS]}
-{3311}{}{REPAIR:50}
+{3311}{}{REPAIR:35}
 {3312}{}{[COMPONENTS]}
 {3313}{}{127:1}                             # PID_ROPE
-{3314}{}{276:4|623:4}                       # PID_GECKO_PELT or Molerat Hide
+{3314}{}{276:2|623:2}                       # PID_GECKO_PELT or Molerat Hide
 
 
 {3400}{}{[ITEM]}
-{3401}{}{379}                               # PID_LEATHER_ARMOR_MK_II
-{3402}{}{pcx/items/ltharmr2.pcx}
+{3401}{}{1}                                 # PID_LEATHER_ARMOR
+{3402}{}{pcx/items/ltharmor.pcx}
 {3403}{}{88055}
 {3404}{}{CRFT_LTH}                          # Leather armor schematics
 {3405}{}{180000}                            # 5 h 00 m
@@ -578,33 +578,33 @@
 {3408}{}{[TOOLS]}
 {3409}{}{4|236}                             # PID_KNIFE|PID_COMBAT_KNIFE
 {3410}{}{[SKILLS]}
-{3411}{}{REPAIR:75}
+{3411}{}{REPAIR:50}
 {3412}{}{[COMPONENTS]}
-{3413}{}{1:1}                               # PID_LEATHER_ARMOR
-{3414}{}{277:2}                             # PID_GOLDEN_GECKO_PELT
+{3413}{}{127:1}                             # PID_ROPE
+{3414}{}{276:4|623:4}                       # PID_GECKO_PELT or Molerat Hide
 
 
 {3500}{}{[ITEM]}
-{3501}{}{2}                                 # PID_METAL_ARMOR
-{3502}{}{pcx/items/ltharmor.pcx}
-{3503}{}{81065}
-{3504}{}{CRFT_LTH}                          # Leather (yeah, I know...)
+{3501}{}{379}                               # PID_LEATHER_ARMOR_MK_II
+{3502}{}{pcx/items/ltharmr2.pcx}
+{3503}{}{88055}
+{3504}{}{CRFT_LTH}                          # Leather armor schematics
 {3505}{}{180000}                            # 5 h 00 m
 {3506}{}{NO}
 {3507}{}{7}                                 # Armor
 {3508}{}{[TOOLS]}
-{3509}{}{75|308}                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+{3509}{}{4|236}                             # PID_KNIFE|PID_COMBAT_KNIFE
 {3510}{}{[SKILLS]}
-{3511}{}{REPAIR:60}
+{3511}{}{REPAIR:75}
 {3512}{}{[COMPONENTS]}
-{3513}{}{74:1}                              # PID_LEATHER_JACKET
-{3514}{}{98:2|269:1}                        # Junk or Robot Parts
+{3513}{}{1:1}                               # PID_LEATHER_ARMOR
+{3514}{}{277:2}                             # PID_GOLDEN_GECKO_PELT
 
 
 {3600}{}{[ITEM]}
-{3601}{}{380}                               # PID_METAL_ARMOR_MK2
+{3601}{}{2}                                 # PID_METAL_ARMOR
 {3602}{}{pcx/items/ltharmor.pcx}
-{3603}{}{79063}
+{3603}{}{81065}
 {3604}{}{CRFT_LTH}                          # Leather (yeah, I know...)
 {3605}{}{180000}                            # 5 h 00 m
 {3606}{}{NO}
@@ -612,73 +612,73 @@
 {3608}{}{[TOOLS]}
 {3609}{}{75|308}                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 {3610}{}{[SKILLS]}
-{3611}{}{REPAIR:90}
+{3611}{}{REPAIR:60}
 {3612}{}{[COMPONENTS]}
-{3613}{}{2:1}                               # PID_METAL_ARMOR
-{3614}{}{32:2|382:2}                        # Flamethrower fuel
+{3613}{}{74:1}                              # PID_LEATHER_JACKET
+{3614}{}{98:2|269:1}                        # Junk or Robot Parts
+
+
+{3700}{}{[ITEM]}
+{3701}{}{380}                               # PID_METAL_ARMOR_MK2
+{3702}{}{pcx/items/ltharmor.pcx}
+{3703}{}{79063}
+{3704}{}{CRFT_LTH}                          # Leather (yeah, I know...)
+{3705}{}{180000}                            # 5 h 00 m
+{3706}{}{NO}
+{3707}{}{7}                                 # Armor
+{3708}{}{[TOOLS]}
+{3709}{}{75|308}                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+{3710}{}{[SKILLS]}
+{3711}{}{REPAIR:90}
+{3712}{}{[COMPONENTS]}
+{3713}{}{2:1}                               # PID_METAL_ARMOR
+{3714}{}{32:2|382:2}                        # Flamethrower fuel
 
 
 # ELECTRONICS
 
-{3700}{}{[ITEM]}
-{3701}{}{77}                                # PID_ELECTRONIC_LOCKPICKS
-{3702}{}{pcx/items/elecpic.pcx}
-{3703}{}{91060}
-{3704}{}{CRFT_EL2}                          # advanced electronics schematic
-{3705}{}{288000}                            # 8 h 00 m
-{3706}{}{NO}
-{3707}{}{8}                                 # Electronics
-{3708}{}{[TOOLS]}
-{3709}{}{228}                               # PID_TECHNICAL_MANUAL
-{3710}{}{75|308}                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
-{3711}{}{[SKILLS]}
-{3712}{}{REPAIR+LOCKPICK:100}
-{3713}{}{SCIENCE:60}
-{3714}{}{[COMPONENTS]}
-{3715}{}{59:1}                              # PID_MOTION_SENSOR
-{3716}{}{52:1}                              # PID_GEIGER_COUNTER
-
-
 {3800}{}{[ITEM]}
-{3801}{}{411}                               # PID_ELEC_LOCKPICK_MKII
-{3802}{}{pcx/items/elockpk2.pcx}
-{3803}{}{86056}
+{3801}{}{77}                                # PID_ELECTRONIC_LOCKPICKS
+{3802}{}{pcx/items/elecpic.pcx}
+{3803}{}{91060}
 {3804}{}{CRFT_EL2}                          # advanced electronics schematic
-{3805}{}{216000}                            # 6 h
+{3805}{}{288000}                            # 8 h 00 m
 {3806}{}{NO}
 {3807}{}{8}                                 # Electronics
 {3808}{}{[TOOLS]}
 {3809}{}{228}                               # PID_TECHNICAL_MANUAL
-{3810}{}{308}                               # PID_SUPER_TOOL_KIT
+{3810}{}{75|308}                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 {3811}{}{[SKILLS]}
-{3812}{}{REPAIR+LOCKPICK:120}
-{3813}{}{SCIENCE:80}
+{3812}{}{REPAIR+LOCKPICK:100}
+{3813}{}{SCIENCE:60}
 {3814}{}{[COMPONENTS]}
-{3815}{}{77:1}                              # PID_ELECTRONIC_LOCKPICKS
+{3815}{}{59:1}                              # PID_MOTION_SENSOR
+{3816}{}{52:1}                              # PID_GEIGER_COUNTER
+
+
+{3900}{}{[ITEM]}
+{3901}{}{411}                               # PID_ELEC_LOCKPICK_MKII
+{3902}{}{pcx/items/elockpk2.pcx}
+{3903}{}{86056}
+{3904}{}{CRFT_EL2}                          # advanced electronics schematic
+{3905}{}{216000}                            # 6 h
+{3906}{}{NO}
+{3907}{}{8}                                 # Electronics
+{3908}{}{[TOOLS]}
+{3909}{}{228}                               # PID_TECHNICAL_MANUAL
+{3910}{}{308}                               # PID_SUPER_TOOL_KIT
+{3911}{}{[SKILLS]}
+{3912}{}{REPAIR+LOCKPICK:120}
+{3913}{}{SCIENCE:80}
+{3914}{}{[COMPONENTS]}
+{3915}{}{77:1}                              # PID_ELECTRONIC_LOCKPICKS
 
 
 # SHARPENING
 
-{3900}{}{[ITEM]}
-{3901}{}{7}                                 # PID_SPEAR
-{3902}{}{pcx/items/spear.pcx}
-{3903}{}{159039}
-{3904}{}{CRFT_BLD}                          # blades schematics
-{3905}{}{27000}                             # 45 m
-{3906}{}{NO}
-{3907}{}{10}                                # Weapons
-{3908}{}{[TOOLS]}
-{3909}{}{278}                               # PID_FLINT
-{3910}{}{[SKILLS]}
-{3911}{}{REPAIR+MELEE_WEAPONS:60}
-{3912}{}{[COMPONENTS]}
-{3913}{}{4:1}                               # PID_KNIFE
-{3914}{}{320:1}                             # PID_SHARPENED_POLE
-
-
 {4000}{}{[ITEM]}
-{4001}{}{280}                               # PID_SHARP_SPEAR
-{4002}{}{pcx/items/spear2.pcx}
+{4001}{}{7}                                 # PID_SPEAR
+{4002}{}{pcx/items/spear.pcx}
 {4003}{}{159039}
 {4004}{}{CRFT_BLD}                          # blades schematics
 {4005}{}{27000}                             # 45 m
@@ -687,63 +687,80 @@
 {4008}{}{[TOOLS]}
 {4009}{}{278}                               # PID_FLINT
 {4010}{}{[SKILLS]}
-{4011}{}{MELEE_WEAPONS+THROWING:60}
+{4011}{}{REPAIR+MELEE_WEAPONS:60}
 {4012}{}{[COMPONENTS]}
-{4013}{}{7:1}                               # PID_SPEAR
+{4013}{}{4:1}                               # PID_KNIFE
+{4014}{}{320:1}                             # PID_SHARPENED_POLE
+
+
+{4100}{}{[ITEM]}
+{4101}{}{280}                               # PID_SHARP_SPEAR
+{4102}{}{pcx/items/spear2.pcx}
+{4103}{}{159039}
+{4104}{}{CRFT_BLD}                          # blades schematics
+{4105}{}{27000}                             # 45 m
+{4106}{}{NO}
+{4107}{}{10}                                # Weapons
+{4108}{}{[TOOLS]}
+{4109}{}{278}                               # PID_FLINT
+{4110}{}{[SKILLS]}
+{4111}{}{MELEE_WEAPONS+THROWING:60}
+{4112}{}{[COMPONENTS]}
+{4113}{}{7:1}                               # PID_SPEAR
 
 
 # WEAPONS
 
-{4100}{}{[ITEM]}
-{4101}{}{300}                              # Zip Gun
-{4102}{}{pcx/items/zipgun.pcx}
-{4103}{}{90060}
-{4104}{}{}                                 # ALWAYS
-{4105}{}{108000}                           # 3 h 00 m
-{4106}{}{NO}
-{4107}{}{10}                               # Weapons
-{4108}{}{[TOOLS]}
-{4109}{}{4}                                # PID_KNIFE
-{4110}{}{[SKILLS]}
-{4111}{}{REPAIR+SMALL_GUNS:60}
-{4112}{}{[COMPONENTS]}
-{4113}{}{7:1|280:1}                        # Spear OR Sharp Spear
-
-
 {4200}{}{[ITEM]}
-{4201}{}{640}                              # Deathclaw Gauntlet
-{4202}{}{pcx/items/clawgntl.pcx}
-{4203}{}{82053}
-{4204}{}{CRFT_GNT}                         # special recipe
+{4201}{}{300}                              # Zip Gun
+{4202}{}{pcx/items/zipgun.pcx}
+{4203}{}{90060}
+{4204}{}{}                                 # ALWAYS
 {4205}{}{108000}                           # 3 h 00 m
 {4206}{}{NO}
 {4207}{}{10}                               # Weapons
 {4208}{}{[TOOLS]}
-{4209}{}{308}                              # PID_SUPER_TOOL_KIT
+{4209}{}{4}                                # PID_KNIFE
 {4210}{}{[SKILLS]}
-{4211}{}{MELEE_WEAPONS:70}
-{4212}{}{REPAIR:80}
-{4213}{}{[COMPONENTS]}
-{4214}{}{622:3}                            # 3 death claws
-{4215}{}{235:1}                            # 1 power fist
+{4211}{}{REPAIR+SMALL_GUNS:60}
+{4212}{}{[COMPONENTS]}
+{4213}{}{7:1|280:1}                        # Spear OR Sharp Spear
+
+
+{4300}{}{[ITEM]}
+{4301}{}{640}                              # Deathclaw Gauntlet
+{4302}{}{pcx/items/clawgntl.pcx}
+{4303}{}{82053}
+{4304}{}{CRFT_GNT}                         # special recipe
+{4305}{}{108000}                           # 3 h 00 m
+{4306}{}{NO}
+{4307}{}{10}                               # Weapons
+{4308}{}{[TOOLS]}
+{4309}{}{308}                              # PID_SUPER_TOOL_KIT
+{4310}{}{[SKILLS]}
+{4311}{}{MELEE_WEAPONS:70}
+{4312}{}{REPAIR:80}
+{4313}{}{[COMPONENTS]}
+{4314}{}{622:3}                            # 3 death claws
+{4315}{}{235:1}                            # 1 power fist
 
 
 # MISC
 
-{4300}{}{[ITEM]}
-{4301}{}{308}                               # PID_SUPER_TOOL_KIT
-{4302}{}{pcx/items/suprtool.pcx}
-{4303}{}{57055}
-{4304}{}{CRFT_TOL}                          # tool schematics
-{4305}{}{72000}                             # 2 h 00 m
-{4306}{}{NO}
-{4307}{}{11}                                # Misc
-{4308}{}{[TOOLS]}
-{4309}{}{[SKILLS]}
-{4310}{}{REPAIR:70}
-{4311}{}{SCIENCE:30}
-{4312}{}{[COMPONENTS]}
-{4313}{}{75:1}                              # PID_MULTI_TOOL
-{4314}{}{384:1}                             # PID_WRENCH
-{4315}{}{98:1}                              # Junk
+{4400}{}{[ITEM]}
+{4401}{}{308}                               # PID_SUPER_TOOL_KIT
+{4402}{}{pcx/items/suprtool.pcx}
+{4403}{}{57055}
+{4404}{}{CRFT_TOL}                          # tool schematics
+{4405}{}{72000}                             # 2 h 00 m
+{4406}{}{NO}
+{4407}{}{11}                                # Misc
+{4408}{}{[TOOLS]}
+{4409}{}{[SKILLS]}
+{4410}{}{REPAIR:70}
+{4411}{}{SCIENCE:30}
+{4412}{}{[COMPONENTS]}
+{4413}{}{75:1}                              # PID_MULTI_TOOL
+{4414}{}{384:1}                             # PID_WRENCH
+{4415}{}{98:1}                              # Junk
 

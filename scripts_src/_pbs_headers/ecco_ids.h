@@ -70,14 +70,15 @@
 #define PID_PBS_7_62MM_AP           (642)
 #define PID_PBS_COWBOY_REPEATER     (643)
 #define PID_PBS_14MM_SMG            (644)
+#define PID_PBS_TRAP_KIT_BEAR       (645)
 
 // new scenery
-#define PID_PBS_SPIKE_TRAP_DISARMED  (0x02000000 + 2335)
-#define PID_PBS_SPIKE_TRAP           (0x02000000 + 2336)
-#define PID_PBS_MINE_DISARMED        (0x02000000 + 2337)
-#define PID_PBS_MINE                 (0x02000000 + 2338)
-#define PID_PBS_SENSOR_MINE_DISARMED (0x02000000 + 2339)
-#define PID_PBS_SENSOR_MINE          (0x02000000 + 2340)
+#define PID_PBS_SPIKE_TRAP           (0x02000000 + 2335)
+#define PID_PBS_BEAR_TRAP            (0x02000000 + 2336)
+#define PID_PBS_MINE_TRAP            (0x02000000 + 2337)
+#define PID_PBS_TRAP_RESERVED_4      (0x02000000 + 2338)
+#define PID_PBS_SENSOR_MINE          (0x02000000 + 2339)
+#define PID_PBS_TRAP_RESERVED_6      (0x02000000 + 2340)
 // some old scenery
 #define PID_STEAM                   (0x020004A4)
 #define PID_STEAM_2                 (0x0200073B)

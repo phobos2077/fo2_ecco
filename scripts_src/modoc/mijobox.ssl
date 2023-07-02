@@ -34,11 +34,12 @@
                                                          check_restock_item(PID_COMBAT_KNIFE, 1, 2, 75)        \
                                                          check_restock_item(PID_7_62MM_AMMO, 1, 1, 45)         \
                                                          check_restock_item(PID_STIMPAK, 1, 3, 100)            \
-                                                         /* pbs: removed 14mm, added .44 ammo & Rifle: */      \
+                                                         /* pbs: removed 14mm, added .44 ammo & Rifle, trap: */      \
                                                          /*check_restock_item(PID_14MM_AP, 1, 1, 100)*/            \
                                                          /*check_restock_item(PID_14MM_PISTOL, 1, 1, 40)*/         \
                                                          check_restock_item(PID_PBS_COWBOY_REPEATER, 1, 1, 100) \
                                                          check_restock_item(PID_44_FMJ_MAGNUM, 1, 2, 100)      \
+                                                         check_restock_item(PID_PBS_TRAP_KIT_BEAR, 1, 3, 75)   \
                                                          check_restock_item(PID_DYNAMITE, 1, 3, 100)           \
                                                       end else begin                                           \
                                                          check_restock_item(PID_DYNAMITE, 2, 2, 100)           \
