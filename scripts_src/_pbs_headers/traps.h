@@ -21,11 +21,11 @@
 #define INI_FILE          "ecco\\traps.ini"
 #define INI_SECTION        "TRAPS"
 
+#define SCRIPT_PBS_TRAPS     SCRIPT_TEST2
+
 #define is_explosive_pid(pid)		(pid == PID_FRAG_GRENADE or pid == PID_PBS_HOMEMADE_GRENADE \
                 or pid == PID_DYNAMITE or pid == PID_PLASTIC_EXPLOSIVES \
                 or pid == PID_PULSE_GRENADE or pid == PID_PLASMA_GRENADE or pid == PID_MOLOTOV_COCKTAIL)
-
-#define is_explosion_misc_pid(pid)  (pid == PID_EXPLOSION_1 or pid == PID_EXPLOSION_2 or pid == PID_EXPLOSION_3 or pid == PID_EXPLOSION_4 or pid == PID_EXPLOSION_5 or pid == PID_EXPLOSION_6 or pid == PID_EXPLOSION_EMP_1 or pid == PID_EXPLOSION_EMP_2 or pid == PID_EXPLOSION_PLASMA_1)
 
 #define TRAPINFO_SIZE        (10)
 
@@ -52,8 +52,6 @@
 #define TRAP_TYPE_MINE       (1)
 #define TRAP_TYPE_SENSOR     (2)
 #define TRAP_TYPE_BEAR       (3)
-
-#define TRAP_FLAG_CRITICAL   (1) // grants critical hit
 
 //#define TRAP_OBJECT_PID             PID_METAL_FLOOR_TRAP_VISIBLE
 //#define TRAP_OBJECT_PID_DISARMED    PID_METAL_FLOOR_TRAP_DISARMED
@@ -91,28 +89,29 @@ end
 #define trap_flags(x,y)   get_array(x, y + TRAPINFO_OFS_FLAGS)
 #define trap_object(x,y)  tile_contains_pid_obj(trap_tile(x,y), trap_elev(x,y), trap_objpid(x,y))
 
+// TODO: use config?
 #define is_trap_customizable_type(type)     (type == TRAP_TYPE_MINE or type == TRAP_TYPE_SENSOR)
 
+// TODO: 100% or config?
 #define TRAP_SENSOR_CHANCE	 (70)
 
 // custom timed_event's
-#define TRAP_EVENT_INIT				(0)  // does nothing, just init the script to map_exit_p_proc will always run
+#define TRAP_EVENT_INIT				(0)
 #define TRAP_EVENT_DESTROY			(1)
 #define TRAP_EVENT_DEACTIVATE		(2)
+#define TRAP_EVENT_SETOFF  		(3)
 
 #define TRAP_FRIENDFOE_DUDE		(1)
 #define TRAP_FRIENDFOE_PARTY		(2)
 
-#define traps_mstr(msg)      message_str(SCRIPT_TEST2, msg)
-
-//#define send_trap_signal(obj, signal, param)				add_timer_event(obj, 3, ((param) * 0x100) + signal)
-#define destroy_trap_object(obj)				add_timer_event(obj, 0, TRAP_EVENT_DESTROY)
+#define traps_mstr(msg)      message_str(SCRIPT_PBS_TRAPS, msg)
 
 #define gain_exp_for_trapkill(exp)			give_exp_points(exp); \
 											         display_msg(sprintf(traps_mstr(2001), exp));
 
 #define make_critter_angry(obj)         add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(obj))
 
+// TODO: better solution? arrays? based on config data?
 #define trapkit_pid_by_trap_type(type)    ((type == TRAP_TYPE_SPIKE)*PID_PBS_TRAP_KIT_SPIKE \
                                           +(type == TRAP_TYPE_MINE)*PID_PBS_TRAP_KIT_MINE \
                                           +(type == TRAP_TYPE_SENSOR)*PID_PBS_TRAP_KIT_SENSOR \
@@ -124,27 +123,19 @@ end
                                           +(pid == PID_PBS_TRAP_KIT_BEAR)*TRAP_TYPE_BEAR)
 
 
-
-procedure get_traps_for_map;
-procedure create_trap_object(variable source, variable state, variable tile, variable elev);
-procedure add_trap_info(variable trapObj, variable type, variable charges);
-procedure arm_trap(variable index, variable pid, variable isCrit);
-procedure setoff_trap(variable index, variable victim, variable armpid);
+procedure create_trap_object(variable trapType, variable tile, variable elev, variable charges);
 
 procedure react_hostile_action;
-procedure remove_trap_info(variable index);
 
-procedure check_setoff_traps(variable obj, variable arr);
-procedure trap_setoff_effect(variable pid, variable index, variable critter);
+procedure trap_setoff_explosion(variable trapObj, variable mainTarget, variable dmgMin, variable dmgMax, variable radius, variable dmgType, variable isCritical, variable pid, variable sfx);
+procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, variable dmgType, variable isCritical, variable stopTurns);
 
-procedure trap_setoff_explosion(variable trapObj, variable mainTarget, variable dmgMin, variable dmgMax, variable radius, variable dmgType, variable trapFlags, variable pid, variable sfx);
-procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, variable dmgType, variable trapFlags, variable stopTurns);
+#define send_trap_init_event(obj, type, charges)       add_timer_event(obj, 0, TRAP_EVENT_INIT + 0x100 * (type bwand 0xFF) + 0x10000 * (charges bwand 0xFF))
 
 
 // Normal variables
 variable begin
    traps_how_much;
-   global_traps;
 end
 
 // Exported variables
@@ -155,9 +146,7 @@ end
 #define _EXPORT_VAR(name, value)    import variable name;
 #endif
 
-_EXPORT_VAR(pbs_local_traps, 0)
-_EXPORT_VAR(pbs_trap_victims, 0)
-_EXPORT_VAR(pbs_traps_last_map, -1)
+_EXPORT_VAR(pbs_trap_victims, 0)  // maps trap object to it's victim, used to "send" object from spatial script
 _EXPORT_VAR(pbs_ini_trap_is_crime, 1)
 _EXPORT_VAR(pbs_ini_trap_reveals_dude, 1)
 _EXPORT_VAR(pbs_ini_trap_friendfoe, 1)
@@ -167,208 +156,35 @@ _EXPORT_VAR(pbs_trap_hold_critters, 0)
 
 #undef _EXPORT_VAR
 
-
-// initialize common variables
-procedure traps_common_init begin
-   // vars
-   // trapv := load_create_array_map(ARR_TRAPVARS); // always clean array
-   // arrays
-   // pbs_local_traps := load_create_array(ARR_TRAPS_LOCAL, 0);
-   // pbs_trap_victims := load_create_array_map(ARR_TRAP_VICTIMS);
-   
-   global_traps := load_create_array(ARR_TRAPS, 0);
-end
-
-procedure get_traps_for_map begin
-   variable ar_map;
-   variable i := 0;
-   variable local_i := 0;
-   variable j := 0;
-   //variable num := 0;
-   if (cur_map_index != pbs_traps_last_map) then begin
-      debug_log("pbs_traps: Rebuilding local traps");
-      if (pbs_local_traps) then
-         clear_array(pbs_local_traps);
-      while (i < len_array(global_traps)) do begin
-         // copy only active traps in current map, for optimization
-         if (trap_map(global_traps, i) == cur_map_index and trap_state(global_traps, i) == TRAP_STATE_ACTIVE) then begin
-            resize_array(pbs_local_traps, len_array(pbs_local_traps) + TRAPINFO_SIZE);
-            call copy_array(global_traps, i, pbs_local_traps, local_i, TRAPINFO_SIZE);
-            local_i += TRAPINFO_SIZE;
-         end
-         i += TRAPINFO_SIZE;
-      end
-      pbs_traps_last_map := cur_map_index;
-      //debug_msg("Local traps: "+(local_i/TRAPINFO_SIZE) + ", of total: "+(len_array(global_traps)/TRAPINFO_SIZE));
-   end
-   i := pbs_local_traps;
-   return i;
-end
-
 /**
 	Create new trap object with correct PID, and init properly. Used when creating and transforming trap.
 	@param type   - type of trap
-	@param state  - desired state (TRAP_STATE_..), not linked to global array
 */
 // TODO: remove state
-procedure create_trap_object(variable type, variable state, variable tile, variable elev) begin
-	variable begin
-		newPid := 0;
-		newObj;
-	end
-	if (type == TRAP_TYPE_SPIKE) then begin
-      //   if (state == TRAP_STATE_ACTIVE)    then 
+procedure create_trap_object(variable type, variable tile, variable elev, variable charges) begin
+   variable begin
+      newPid := 0;
+      newObj;
+   end
+   // TODO: use one PID and just change FID instead?
+   if (type == TRAP_TYPE_SPIKE) then begin
       newPid := PID_PBS_SPIKE_TRAP;
-		//else if (state == TRAP_STATE_DISARMED)  then newPid := PID_PBS_SPIKE_TRAP_DISARMED;
-		//else if (state == TRAP_STATE_SETOFF)    then newPid := PID_PBS_SPIKE_TRAP_DISARMED;
-	end else if (type == TRAP_TYPE_MINE)      then begin
-      //   if (state == TRAP_STATE_ACTIVE)    then 
+   end else if (type == TRAP_TYPE_MINE) then begin
       newPid := PID_PBS_MINE_TRAP;
-		//else if (state == TRAP_STATE_DISARMED)  then newPid := PID_PBS_MINE_DISARMED;
-		//else if (state == TRAP_STATE_SETOFF)    then newPid := PID_PBS_MINE_DISARMED; // should not be used
-	end else if (type == TRAP_TYPE_SENSOR)    then begin
-      //   if (state == TRAP_STATE_ACTIVE)    then 
+   end else if (type == TRAP_TYPE_SENSOR) then begin
       newPid := PID_PBS_SENSOR_MINE;
-		//else if (state == TRAP_STATE_DISARMED)  then newPid := PID_PBS_SENSOR_MINE_DISARMED;
-		//else if (state == TRAP_STATE_SETOFF)    then newPid := PID_PBS_SENSOR_MINE_DISARMED; // should not be used
-	end else if (type == TRAP_TYPE_BEAR)    then begin
+   end else if (type == TRAP_TYPE_BEAR) then begin
       newPid := PID_PBS_BEAR_TRAP;
    end else begin
       debug_err("Invalid trap type: "+type);
       return 0;
-	end
-	newObj := create_object_sid(newPid, tile, elev, SCRIPT_TEST2);
-	add_timer_event(newObj, 0, TRAP_EVENT_INIT);
-	return newObj;
+   end
+   newObj := create_object_sid(newPid, tile, elev, SCRIPT_TEST2);
+   // art_change_fid_num()
+   send_trap_init_event(newObj, type, charges);
+   return newObj;
 end
 
-/**
-  Add new record into trapinfo array
-  @param trapObj - objPtr to visual trap object (in unarmed state)
-  @param type    - trap type
-  @param charges - int, number of charges left in trap
-*/
-procedure add_trap_info(variable trapObj, variable type, variable charges) begin
-   variable begin
-      index := 0;
-      zero := false;
-      ar_global;
-      tile;
-      elev;
-   end
-   ar_global := global_traps;
-   index := add_array_block(ar_global, TRAPINFO_SIZE);
-   tile := tile_num(trapObj);
-   elev := elevation(trapObj);
-   ar_global[index + TRAPINFO_OFS_INDEX] := index;
-   ar_global[index + TRAPINFO_OFS_TILE] := tile;
-   ar_global[index + TRAPINFO_OFS_ELEV] := elev;
-   ar_global[index + TRAPINFO_OFS_TYPE] := type;
-   ar_global[index + TRAPINFO_OFS_OBJPID] := obj_pid(trapObj);
-   ar_global[index + TRAPINFO_OFS_MAP] := cur_map_index;
-   ar_global[index + TRAPINFO_OFS_STATE] := TRAP_STATE_DISARMED;
-   ar_global[index + TRAPINFO_OFS_CHARGES] := charges;
-end
-
-/**
-  Turn object into a functional trap
-  @param index - index of trap info record
-  @param pid   - PID of armament object (grenade, dynamite, etc), 0 for non-customizable traps
-  @param isCrit - trap is critical
-*/
-procedure arm_trap(variable index, variable pid, variable isCrit) begin
-   variable begin
-      ar_global;
-      //newObj;
-      flags := 0;
-   end
-   ar_global := global_traps;
-   //newObj := create_trap_object(trap_type(ar_global, index), TRAP_STATE_ACTIVE, tile_num(trapObj), elevation(trapObj));
-   if (isCrit) then begin
-      flags := flags bwor TRAP_FLAG_CRITICAL;
-      debug_msg("Critical trap!");
-   end
-   // update trap info
-   ar_global[index + TRAPINFO_OFS_STATE] := TRAP_STATE_ACTIVE;
-   ar_global[index + TRAPINFO_OFS_ARMPID] := pid;
-   //ar_global[index + TRAPINFO_OFS_OBJPID] := obj_pid(newObj);
-   ar_global[index + TRAPINFO_OFS_FLAGS] := flags;
-   // this will rebuild local array for next run
-   pbs_traps_last_map := -1;
-   if (pbs_ini_trap_is_crime) then begin
-      call react_hostile_action;
-   end
-end
-
-/**
-	Make trap setoff effect (explosion) and change trap state (or destroy it)
-*/
-procedure setoff_trap(variable index, variable victim, variable armpid) begin
-   variable begin
-      ar_global;
-      trapObj;
-      charges;
-      newObj;
-   end
-   ar_global := global_traps;
-   trapObj := trap_object(ar_global, index);
-   if armpid == 0 then armpid := trap_armpid(ar_global, index);
-   call trap_setoff_effect(armpid, index, victim);
-   charges := trap_charges(ar_global, index);
-   if (charges > 1) then begin
-      // switch to disarmed state
-      add_timer_event(trapObj, 0, TRAP_EVENT_DEACTIVATE);
-      ar_global[index + TRAPINFO_OFS_CHARGES] := charges - 1;
-      ar_global[index + TRAPINFO_OFS_STATE] := TRAP_STATE_SETOFF;
-   end else begin
-      // destroy
-      call remove_trap_info(index);
-      destroy_trap_object(trapObj);
-   end
-   pbs_traps_last_map := -1;
-end
-
-/*
-	remove trap info from global array
-*/
-procedure remove_trap_info(variable index) begin
-   variable ar_global;
-   ar_global := global_traps;
-   call remove_array_block(ar_global, TRAPINFO_SIZE, index);
-   pbs_traps_last_map := -1;
-end
-
-// TODO: use spatial scripts instead
-procedure check_setoff_traps(variable obj, variable arr) begin
-   variable begin
-      i;
-      flag;
-   end
-   if not(is_critter_dead(obj)
-      or (obj == dude_obj and (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_DUDE))
-      or (obj != dude_obj and obj_in_party(obj) and (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_PARTY))) then
-   begin
-      if (arr == 0) then begin
-         arr := get_traps_for_map;
-      end
-      i := 0;
-      while (i < len_array(arr)) do begin
-         flag := (trap_elev(arr, i) == elevation(obj) and trap_state(arr, i) == TRAP_STATE_ACTIVE);
-         if (flag) then begin
-            flag := flag and (trap_tile(arr, i) == tile_num(obj));
-            // spike or sensor traps go off at 1 hex radius
-            if not(flag)
-               and (trap_type(arr, i) == TRAP_TYPE_SENSOR or trap_type(arr, i) == TRAP_TYPE_SPIKE)
-               and tile_distance(trap_tile(arr, i), tile_num(obj)) == 1
-               and random(0, 99) < TRAP_SENSOR_CHANCE then flag := true;
-         end
-         if (flag) then begin
-            call setoff_trap(trap_index(arr, i), obj, 0);
-         end
-         i += TRAPINFO_SIZE;
-      end
-   end
-end
 
 procedure random_roll_ext(variable rollMod, variable critChance, variable successOffset, variable successMult, variable failMult) begin
    variable
@@ -419,69 +235,12 @@ procedure roll_critical(variable critter, variable bodyPart) begin
    return {"mult": dmgMult * 0.5, "effects": effects};
 end
 
-
-/**
-  Make explosion or other damaging effect based on trap PID
-  @param armPid  - pid of trap armament
-  @param index   - trap index
-  @param critter - critter recieving the damage
-*/
-procedure trap_setoff_effect(variable armPid, variable index, variable critter) begin
-   variable trapFlags := trap_flags(global_traps, index);
-   if (armPid) then begin
-      // explosive trap
-      variable
-         dmgMinMax := get_explosion_damage(armPid),
-         dmgMin := dmgMinMax[0],
-         dmgMax := dmgMinMax[1],
-         radius := 3,
-         dmgType := DMG_explosion,
-         effectPid, audioSfx;
-
-      if (dmgMin <= 0 and dmgMax <= 0) then begin
-         if (proto_data(armPid, it_type) != item_type_weapon) then begin
-            debug_err("trap_setoff_effect: Invalid trap armanent pid: "+armPid);
-            return;
-         end
-         // NOT Dynamite, Plastic or custom explosive type
-         dmgMin := get_proto_data(armPid, PROTO_WP_DMG_MIN);
-         dmgMax := get_proto_data(armPid, PROTO_WP_DMG_MAX);
-         dmgType := get_proto_data(armPid, PROTO_WP_DMG_TYPE);
-         radius := 2; // default grenade radius
-         if (armPid == PID_FRAG_GRENADE or armPid == PID_PBS_HOMEMADE_GRENADE) then begin
-            audioSfx := "WHO1XXX" + random(1,2);
-         end else if (armPid == PID_MOLOTOV_COCKTAIL) then begin
-            dmgType := DMG_fire;
-            audioSfx := "WHO1XXX2";
-         end else if (armPid == PID_PLASMA_GRENADE) then begin
-            effectPid := PID_EXPLOSION_PLASMA_1;
-            audioSfx := "WHP1XXX1";
-         end else if (armPid == PID_PULSE_GRENADE) then begin
-            effectPid := PID_EXPLOSION_EMP_1;
-            audioSfx := "WHQ1XXX1";
-         end
-      end
-      call trap_setoff_explosion(trap_object(global_traps, index), critter, dmgMin, dmgMax, radius, dmgType, trapFlags, effectPid, audioSfx);
-   end else begin
-      variable
-         trapType := trap_type(global_traps, index),
-         trapCharges := trap_charges(global_traps, index);
-
-      // "melee" trap
-      dmgMin := math_max(get_int_from_ini(INI_FILE, INI_SECTION, "damage_min_"+trapType), 0);
-      dmgMax := math_max(get_int_from_ini(INI_FILE, INI_SECTION, "damage_max_"+trapType), 0);
-
-      call trap_setoff_melee(critter, dmgMin, dmgMax, DMG_normal_dam, trapFlags, 3 if (trapType == TRAP_TYPE_BEAR and trapCharges > 1) else 1);
-   end
-end
-
 // dude made a hostile act (installed trap), need reaction of nearby critters
 procedure react_hostile_action begin
    variable obj;
-   foreach (obj in list_as_array(LIST_CRITTERS)) if (obj) then begin
+   foreach (obj in objects_in_radius(dude_tile, 15, dude_elevation, OBJ_TYPE_CRITTER)) begin
       if (obj != dude_obj
          and not(obj_in_party(obj))
-         and tile_distance_objs(obj, dude_obj) <= 15
          and is_human(obj)
          and obj_can_see_obj(obj, dude_obj)) then
       begin
@@ -552,12 +311,12 @@ end
 /**
   Make explosion by emulating all of it's components: area damage, explosion effect, sound
 */
-procedure trap_setoff_explosion(variable trapObj, variable mainTarget, variable dmgMin, variable dmgMax, variable radius, variable dmgType, variable trapFlags, variable effectPid, variable sfx) begin
+procedure trap_setoff_explosion(variable trapObj, variable mainTarget, variable dmgMin, variable dmgMax, variable radius, variable dmgType, variable isCritical, variable effectPid, variable sfx) begin
    variable obj, totalExp := 0, extraTargets;
    variable
       tile := tile_num(trapObj),
       elev := elevation(trapObj),
-      criticalBodyPart := BODY_UNCALLED if (trapFlags bwand TRAP_FLAG_CRITICAL) else -1;
+      criticalBodyPart := BODY_UNCALLED if isCritical else -1;
 
    // Main target always gets damaged.
    totalExp += trap_damage_critter(mainTarget, dmgMin, dmgMax, dmgType, criticalBodyPart, 0);
@@ -579,7 +338,6 @@ procedure trap_setoff_explosion(variable trapObj, variable mainTarget, variable 
    reg_anim_animate_and_hide(effectObj, ANIM_stand, 0);
    reg_anim_destroy(effectObj);
    reg_anim_end();
-   //add_timer_event(effectObj, 13, TRAP_EVENT_DESTROY);
    play_sfx("CMBTFLX"); // trap sound
    play_sfx(sfx);
    // give exp when triggering trap out of combat
@@ -592,9 +350,9 @@ end
 /**
   Hit critter by "melee" trap (spikes, etc.)
 */
-procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, variable dmgType, variable trapFlags, variable stopTurns) begin
+procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, variable dmgType, variable isCritical, variable stopTurns) begin
    variable
-      criticalBodyPart := (BODY_HIT_RIGHT_LEG + random(0, 1)) if (trapFlags bwand TRAP_FLAG_CRITICAL) else -1,
+      criticalBodyPart := (BODY_HIT_RIGHT_LEG + random(0, 1)) if isCritical else -1,
       killExp := trap_damage_critter(critter, dmgMin, dmgMax, dmgType, criticalBodyPart, stopTurns);
 
    play_sfx("FLRTRAP");
@@ -641,8 +399,8 @@ end
          end
          //display_msg("charges: "+charges);
          trapType := trap_type_by_trapkit_pid(trapKitPid);
-         trapObj := create_trap_object(trapType, TRAP_STATE_DISARMED, tile_num(critter), elevation(critter));
-         call add_trap_info(trapObj, trapType, charges);
+         trapObj := create_trap_object(trapType, tile_num(critter), elevation(critter), charges);
+         //call add_trap_info(trapObj, trapType, charges);
          display_msg(traps_mstr(203));
          return true;
       end

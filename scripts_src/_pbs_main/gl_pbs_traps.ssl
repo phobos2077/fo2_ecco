@@ -69,6 +69,57 @@ procedure dec_trap_hold_critter(variable critter) begin
    end
 end
 
+procedure check_angry_critters begin
+   if (len_array(angry_set) == 0) then return;
+
+   if (attack_delay == -1) then begin
+      attack_delay := get_uptime + 1500;
+      return;
+   end
+   if (get_uptime < attack_delay) then return;
+
+   debug_msg("angry: " + angry_set[0]);
+   variable n, closestCrit, obj, len;
+   foreach n in angry_set begin
+      closestCrit := 0;
+      len := 999999;
+      if (n) then begin
+         foreach (obj in list_as_array(LIST_CRITTERS)) if obj then begin
+            if (obj != dude_obj and not(is_critter_dead(obj)) and has_trait(TRAIT_OBJECT, obj, OBJECT_TEAM_NUM) == n and tile_distance_objs(obj, dude_obj) < len) then begin
+               closestCrit := obj;
+               len := tile_distance_objs(obj, dude_obj);
+            end
+         end
+      end
+      if (closestCrit) then begin
+         attack_setup(closestCrit, dude_obj);
+      end
+   end
+   resize_array(angry_set, 0);
+   attack_delay := -1;
+end
+
+procedure hold_critters_realtime begin
+   if combat_is_initialized then return;
+
+   variable k, v;
+   foreach (k: v in pbs_trap_hold_critters) begin
+      if (anim_busy(k)) then begin
+         reg_anim_clear(k);
+         move_to(k, v[1], elevation(k));
+      end
+   end
+   if (game_time > last_hold_reset_time + 20 * 10) then begin
+      last_hold_reset_time = game_time;
+      if (len_array(pbs_trap_hold_critters) > 0) then begin
+         foreach (k: v in pbs_trap_hold_critters) begin
+            call dec_trap_hold_critter(k);
+         end
+         debug_log("Decremented critter hold: "+debug_array_str(pbs_trap_hold_critters));
+      end
+   end
+end
+
 procedure start begin
    variable arr;
    variable i, k, v;
@@ -77,104 +128,36 @@ procedure start begin
    variable n:=0;
    variable len;
 
-  if game_loaded then begin
-   //display_msg("traps init yo "+cur_map_index);
-   set_global_script_type(0);
-   set_global_script_repeat(50);
+   if game_loaded then begin
+      //display_msg("traps init yo "+cur_map_index);
+      set_global_script_type(0);
+      set_global_script_repeat(50);
 
-   //call roll_test(100, 5, -50, 5, 0.2);
+      //call roll_test(100, 5, -50, 5, 0.2);
 
-   // init variables
-   call traps_common_init;
+      // exported settings
+      pbs_ini_trap_reveals_dude := get_int_from_ini(INI_FILE, INI_SECTION, "trap_reveals_dude");
+      pbs_ini_trap_friendfoe := get_int_from_ini(INI_FILE, INI_SECTION, "trap_friendfoe");
+      pbs_ini_trap_is_crime := get_int_from_ini(INI_FILE, INI_SECTION, "trap_is_crime");
+      ini_assemble_hotkey := parse_hotkey(get_str_from_ini(INI_FILE, INI_SECTION, "assemble_hotkey"));
 
-   // exported settings
-   pbs_ini_trap_reveals_dude := get_int_from_ini(INI_FILE, INI_SECTION, "trap_reveals_dude");
-   pbs_ini_trap_friendfoe := get_int_from_ini(INI_FILE, INI_SECTION, "trap_friendfoe");
-   pbs_ini_trap_is_crime := get_int_from_ini(INI_FILE, INI_SECTION, "trap_is_crime");
-   ini_assemble_hotkey := parse_hotkey(get_str_from_ini(INI_FILE, INI_SECTION, "assemble_hotkey"));
+      // initialize global and exported arrays
+      angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
+      pbs_trap_victims := create_array_map;
+      pbs_trap_hold_critters := create_array_map;
 
-	// migrate from old saves - nonzero value of this global indicates save from pre-3.4 sfall era
-	// TODO: probably don't need this anymore..
-	if (get_sfall_global_int(SGVAR_TRAPS_BY_DUDE_LOCAL) != 0) then begin
-	   display_msg("Migrating traps data to new format...");
-   	foreach (k: v in ({SGVAR_TRAPS_BY_DUDE: ARR_TRAPS, SGVAR_TRAPS_BY_DUDE_LOCAL: -1, SGVAR_ANGRY_TEAMS: ARR_ANGRY_TEAMS, SGVAR_TRAPS_LAST_MAP: -1})) begin
-      	arr := get_sfall_global_int(k);
-      	if (arr and v != -1) then
-      	   save_array(v, arr); // save
-      	set_sfall_global(k, 0); // clear sfall global
-   	end
-	end
-
-   // initialize global and exported arrays
-   angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
-   pbs_local_traps := create_array_list(0);
-   pbs_trap_victims := create_array_map;
-   pbs_trap_hold_critters := create_array_map;
-
-   register_hook_proc(HOOK_DESCRIPTIONOBJ, description_hook);
-   register_hook_proc(HOOK_KEYPRESS, keypress_hook);
-   register_hook_proc(HOOK_USEOBJ, useobj_hook);
-   register_hook_proc(HOOK_MOVECOST, movecost_hook);
-   register_hook_proc(HOOK_ONDEATH, ondeath_hook);
-   register_hook_proc(HOOK_DEATHANIM2, deathanim2_hook);
-   register_hook_proc(HOOK_COMBATTURN, combatturn_hook);
+      register_hook_proc(HOOK_DESCRIPTIONOBJ, description_hook);
+      register_hook_proc(HOOK_KEYPRESS, keypress_hook);
+      register_hook_proc(HOOK_USEOBJ, useobj_hook);
+      register_hook_proc(HOOK_MOVECOST, movecost_hook);
+      register_hook_proc(HOOK_ONDEATH, ondeath_hook);
+      register_hook_proc(HOOK_DEATHANIM2, deathanim2_hook);
+      register_hook_proc(HOOK_COMBATTURN, combatturn_hook);
 
   end else begin
-	// check for angry people
-	if (len_array(angry_set) > 0) then begin
-		if (attack_delay == -1) then begin
-			attack_delay := get_uptime + 1500;
-		end else if (get_uptime > attack_delay) then begin
-			debug_msg("angry: " + angry_set[0]);
-			foreach n in angry_set begin
-				closestCrit := 0;
-				len := 999999;
-				if (n) then begin
-					foreach (obj in list_as_array(LIST_CRITTERS)) if obj then begin
-						if (obj != dude_obj and not(is_critter_dead(obj)) and has_trait(TRAIT_OBJECT, obj, OBJECT_TEAM_NUM) == n and tile_distance_objs(obj, dude_obj) < len) then begin
-							closestCrit := obj;
-							len := tile_distance_objs(obj, dude_obj);
-						end
-					end
-				end
-				if (closestCrit) then begin
-					attack_setup(closestCrit, dude_obj);
-				end
-			end
-			resize_array(angry_set, 0);
-			attack_delay := -1;
-		end
-	end
-
-	// traps setoff, realtime
-	if (not(combat_is_initialized)) then begin
-   	arr := get_traps_for_map();
-   	if (len_array(arr) > 0) then begin
-   		foreach (obj in list_as_array(LIST_CRITTERS)) if (obj) then begin
-   			call check_setoff_traps(obj, arr);
-   		end
-   	end
-	end
-
-   // Hold critters
-   if (not combat_is_initialized) then begin
-      foreach (k: v in pbs_trap_hold_critters) begin
-         if (anim_busy(k)) then begin
-            reg_anim_clear(k);
-            move_to(k, v[1], elevation(k));
-         end
-      end
-      if (game_time > last_hold_reset_time + 20 * 10) then begin
-         last_hold_reset_time = game_time;
-         if (len_array(pbs_trap_hold_critters) > 0) then begin
-            foreach (k: v in pbs_trap_hold_critters) begin
-               call dec_trap_hold_critter(k);
-            end
-            debug_log("Decremented critter hold: "+debug_array_str(pbs_trap_hold_critters));
-         end
-      end 
+      call check_angry_critters;
+      call hold_critters_realtime;
    end
-  end
 end
 
 
@@ -267,9 +250,6 @@ procedure movecost_hook begin
 		set_sfall_return(999); // you're not going anywhere, pal..
       set_sfall_arg(2, 999);
       move_to(critter, hold[1], elevation(critter));
-   end else begin
-      // traps setoff, turn-based
-	   call check_setoff_traps(critter, 0);
    end
 end
 
