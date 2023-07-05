@@ -5,7 +5,6 @@
 #ifndef PBS_TRAPS_H
 #define PBS_TRAPS_H
 
-
 #include "../sfall/sfall.h"
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.strings.h"
@@ -23,27 +22,8 @@
 
 #define SCRIPT_PBS_TRAPS     SCRIPT_TEST2
 
-#define is_explosive_pid(pid)		(pid == PID_FRAG_GRENADE or pid == PID_PBS_HOMEMADE_GRENADE \
-                or pid == PID_DYNAMITE or pid == PID_PLASTIC_EXPLOSIVES \
-                or pid == PID_PULSE_GRENADE or pid == PID_PLASMA_GRENADE or pid == PID_MOLOTOV_COCKTAIL)
-
-#define TRAPINFO_SIZE        (10)
-
-#define TRAPINFO_OFS_INDEX   (0) // trap record start index in SGVAR_TRAPS_BY_DUDE array
-#define TRAPINFO_OFS_TILE    (1) // trap tile
-#define TRAPINFO_OFS_ELEV    (2) // elevation
-#define TRAPINFO_OFS_MAP     (3) // map index
-#define TRAPINFO_OFS_TYPE    (4) // trap type
-#define TRAPINFO_OFS_ARMPID  (5) // trap armament item PID
-#define TRAPINFO_OFS_STATE   (6) // see below
-#define TRAPINFO_OFS_OBJPID  (7) // pid of visual object (eg. floor plate)
-#define TRAPINFO_OFS_CHARGES (8) // number of uses left
-#define TRAPINFO_OFS_FLAGS   (9) // flags, see below
-// reserved up to (9)
-
-#define TRAP_STATE_ACTIVE    (0)
-#define TRAP_STATE_SETOFF    (1)
-#define TRAP_STATE_DISARMED  (2)
+#define TRAP_STATE_DISARMED  (0)
+#define TRAP_STATE_ACTIVE    (1)
 
 #define TRAP_FRAME_DEFAULT   (0)
 #define TRAP_FRAME_ACTIVE    (1)
@@ -52,48 +32,6 @@
 #define TRAP_TYPE_MINE       (1)
 #define TRAP_TYPE_SENSOR     (2)
 #define TRAP_TYPE_BEAR       (3)
-
-//#define TRAP_OBJECT_PID             PID_METAL_FLOOR_TRAP_VISIBLE
-//#define TRAP_OBJECT_PID_DISARMED    PID_METAL_FLOOR_TRAP_DISARMED
-
-#define is_trap_kit_pid(pid)			(pid == PID_PBS_TRAP_KIT_MINE or pid == PID_PBS_TRAP_KIT_SPIKE or pid == PID_PBS_TRAP_KIT_SENSOR or pid == PID_PBS_TRAP_KIT_BEAR)
-
-pure procedure tile_contains_any_trap(variable tile, variable elev) begin
-  variable pids, pid;
-  pids := [PID_METAL_FLOOR_TRAP_VISIBLE, PID_METAL_FLOOR_TRAP_DISARMED, PID_METAL_FLOOR_TRAP_DEPRESSED,
-            PID_CAVE_FLOOR_TRAP_VISIBLE, PID_CAVE_FLOOR_TRAP_DISARMED, PID_CAVE_FLOOR_TRAP_DEPRESSED,
-            PID_PBS_SPIKE_TRAP, PID_PBS_MINE_TRAP, PID_PBS_SENSOR_MINE, PID_PBS_BEAR_TRAP,
-            PID_PBS_TRAP_RESERVED_4, PID_PBS_TRAP_RESERVED_6];
-  foreach (pid in pids) begin
-    if (tile_contains_obj_pid(tile, elev, pid)) then return true;
-  end
-  return false;
-end
-
-/*#define tile_contains_any_trap(tile, elev)		(tile_contains_obj_pid(tile, elev, PID_METAL_FLOOR_TRAP_VISIBLE) \
-	or tile_contains_obj_pid(tile, elev, PID_METAL_FLOOR_TRAP_DISARMED) \
-	or tile_contains_obj_pid(tile, elev, PID_METAL_FLOOR_TRAP_DEPRESSED) \
-	or tile_contains_obj_pid(tile, elev, PID_CAVE_FLOOR_TRAP_VISIBLE) \
-	or tile_contains_obj_pid(tile, elev, PID_CAVE_FLOOR_TRAP_DISARMED) \
-	or tile_contains_obj_pid(tile, elev, PID_CAVE_FLOOR_TRAP_DEPRESSED))*/
-
-#define trap_index(x,y)  	get_array(x, y + TRAPINFO_OFS_INDEX)
-#define trap_tile(x,y)  	get_array(x, y + TRAPINFO_OFS_TILE)
-#define trap_elev(x,y)  	get_array(x, y + TRAPINFO_OFS_ELEV)
-#define trap_map(x,y)  		get_array(x, y + TRAPINFO_OFS_MAP)
-#define trap_type(x,y)  	get_array(x, y + TRAPINFO_OFS_TYPE)
-#define trap_armpid(x,y)  get_array(x, y + TRAPINFO_OFS_ARMPID)
-#define trap_state(x,y)  	get_array(x, y + TRAPINFO_OFS_STATE)
-#define trap_objpid(x,y)  get_array(x, y + TRAPINFO_OFS_OBJPID)
-#define trap_charges(x,y) get_array(x, y + TRAPINFO_OFS_CHARGES)
-#define trap_flags(x,y)   get_array(x, y + TRAPINFO_OFS_FLAGS)
-#define trap_object(x,y)  tile_contains_pid_obj(trap_tile(x,y), trap_elev(x,y), trap_objpid(x,y))
-
-// TODO: use config?
-#define is_trap_customizable_type(type)     (type == TRAP_TYPE_MINE or type == TRAP_TYPE_SENSOR)
-
-// TODO: 100% or config?
-#define TRAP_SENSOR_CHANCE	 (70)
 
 // custom timed_event's
 #define TRAP_EVENT_INIT				(0)
@@ -111,24 +49,11 @@ end
 
 #define make_critter_angry(obj)         add_array_set(load_create_array(ARR_ANGRY_TEAMS, 0), obj_team(obj))
 
-// TODO: better solution? arrays? based on config data?
-#define trapkit_pid_by_trap_type(type)    ((type == TRAP_TYPE_SPIKE)*PID_PBS_TRAP_KIT_SPIKE \
-                                          +(type == TRAP_TYPE_MINE)*PID_PBS_TRAP_KIT_MINE \
-                                          +(type == TRAP_TYPE_SENSOR)*PID_PBS_TRAP_KIT_SENSOR \
-                                          +(type == TRAP_TYPE_BEAR)*PID_PBS_TRAP_KIT_BEAR)
 
-#define trap_type_by_trapkit_pid(pid)     ((pid == PID_PBS_TRAP_KIT_SPIKE)*TRAP_TYPE_SPIKE \
-                                          +(pid == PID_PBS_TRAP_KIT_MINE)*TRAP_TYPE_MINE \
-                                          +(pid == PID_PBS_TRAP_KIT_SENSOR)*TRAP_TYPE_SENSOR \
-                                          +(pid == PID_PBS_TRAP_KIT_BEAR)*TRAP_TYPE_BEAR)
+#define trapkit_pid_by_trap_type(type)    (pbs_trap_config.types[type].item_pid)
+#define trap_type_by_trapkit_pid(pid)     (pbs_trap_config.item_to_type[pid])
+#define is_trap_kit_pid(pid)			      (trap_type_by_trapkit_pid(pid) != 0)
 
-
-procedure create_trap_object(variable trapType, variable tile, variable elev, variable charges);
-
-procedure react_hostile_action;
-
-procedure trap_setoff_explosion(variable trapObj, variable mainTarget, variable dmgMin, variable dmgMax, variable radius, variable dmgType, variable isCritical, variable pid, variable sfx);
-procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, variable dmgType, variable isCritical, variable stopTurns);
 
 #define send_trap_init_event(obj, type, charges)       add_timer_event(obj, 0, TRAP_EVENT_INIT + 0x100 * (type bwand 0xFF) + 0x10000 * (charges bwand 0xFF))
 
@@ -146,36 +71,52 @@ end
 #define _EXPORT_VAR(name, value)    import variable name;
 #endif
 
+_EXPORT_VAR(pbs_trap_config, 0)
 _EXPORT_VAR(pbs_trap_victims, 0)  // maps trap object to it's victim, used to "send" object from spatial script
-_EXPORT_VAR(pbs_ini_trap_is_crime, 1)
-_EXPORT_VAR(pbs_ini_trap_reveals_dude, 1)
-_EXPORT_VAR(pbs_ini_trap_friendfoe, 1)
 _EXPORT_VAR(pbs_trap_last_target, 0)
 _EXPORT_VAR(pbs_trap_last_target_dead, 0)
 _EXPORT_VAR(pbs_trap_hold_critters, 0)
 
 #undef _EXPORT_VAR
 
+
+procedure create_trap_object(variable trapType, variable tile, variable elev, variable charges);
+procedure react_hostile_action;
+procedure trap_setoff_explosion(variable trapObj, variable mainTarget, variable dmgMin, variable dmgMax, variable radius, variable dmgType, variable isCritical, variable pid, variable sfx);
+procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, variable dmgType, variable isCritical, variable stopTurns);
+
+variable trap_object_pid_set;
+
+pure procedure tile_contains_any_trap(variable tile, variable elev) begin
+   if not trap_object_pid_set then begin
+      trap_object_pid_set := array_fixed(array_to_set(array_keys(pbs_trap_config.pid_to_type)));
+      call array_append(trap_object_pid_set, array_to_set([
+         PID_METAL_FLOOR_TRAP_VISIBLE, PID_METAL_FLOOR_TRAP_DISARMED, PID_METAL_FLOOR_TRAP_DEPRESSED,
+         PID_CAVE_FLOOR_TRAP_VISIBLE, PID_CAVE_FLOOR_TRAP_DISARMED, PID_CAVE_FLOOR_TRAP_DEPRESSED]));
+      debug_log("trap_object_pid_set: "+debug_array_str(trap_object_pid_set));
+   end
+   variable obj, objs := tile_get_objs(tile, elev);
+   foreach (obj in objs) begin
+     if (trap_object_pid_set[obj_pid(obj)]) then return true;
+   end
+   return false;
+end
+
+pure procedure is_suitable_armament(variable pid, variable type) begin
+   variable arms := pbs_trap_config.types[type].armaments;
+   debug_log("arms="+debug_array_str(arms));
+   return is_in_array(pid, arms) if arms else false;
+end
+
+
 /**
 	Create new trap object with correct PID, and init properly. Used when creating and transforming trap.
 	@param type   - type of trap
 */
-// TODO: remove state
 procedure create_trap_object(variable type, variable tile, variable elev, variable charges) begin
-   variable begin
-      newPid := 0;
-      newObj;
-   end
-   // TODO: use one PID and just change FID instead?
-   if (type == TRAP_TYPE_SPIKE) then begin
-      newPid := PID_PBS_SPIKE_TRAP;
-   end else if (type == TRAP_TYPE_MINE) then begin
-      newPid := PID_PBS_MINE_TRAP;
-   end else if (type == TRAP_TYPE_SENSOR) then begin
-      newPid := PID_PBS_SENSOR_MINE;
-   end else if (type == TRAP_TYPE_BEAR) then begin
-      newPid := PID_PBS_BEAR_TRAP;
-   end else begin
+   variable newPid := 0, newObj;
+   newPid := 0x02000000 + pbs_trap_config.types[type].trap_pid;
+   if (newPid == 0) then begin
       debug_err("Invalid trap type: "+type);
       return 0;
    end
@@ -293,7 +234,7 @@ procedure trap_damage_critter(variable critter, variable dmgMin, variable dmgMax
          pbs_trap_hold_critters[critter] := array_fixed([stop, tile_num(critter)]);
          debug_log("Stopping critter: "+debug_array_str(pbs_trap_hold_critters));
       end
-      if (pbs_ini_trap_reveals_dude) then begin
+      if (pbs_trap_config.reveal_dude) then begin
          debug_log("Making angry!");
          call make_critter_angry(critter);
       end
@@ -363,7 +304,7 @@ procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, 
    end
 end
 
-procedure get_suitable_armament_in_inventory(variable critter) begin
+procedure get_suitable_armament_in_inventory(variable critter, variable trapType) begin
    variable item, lastPid, list;
    lastPid := get_sfall_global_int(SGVAR_TRAPS_LAST_ARMAMENT);
    // first search for last used item PID
@@ -374,7 +315,7 @@ procedure get_suitable_armament_in_inventory(variable critter) begin
    // if none, then search for any suitable armament
    list := inven_as_array(critter);
    foreach item in list begin
-      if is_explosive_pid(obj_pid(item)) then return item;
+      if is_suitable_armament(obj_pid(item), trapType) then return item;
    end
    return 0;
 end

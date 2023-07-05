@@ -41,12 +41,13 @@ variable angry_set;
 //variable ar_explosions;
 
 variable attack_delay := -1;
-variable ini_assemble_hotkey;
+variable assemble_hotkey;
 variable last_hold_reset_time := -1;
 
-#define cfg_parse_int(cfg, ini, name)       if (ini.name) then cfg.name := atoi(ini.name)
-#define cfg_parse_intlist(cfg, ini, name)   if (ini.name) then cfg.name := string_split_ints(ini.name, ",")
-#define cfg_parse_hotkey(cfg, ini, name)    if (ini.name) then cfg.name := parse_hotkey(ini.name)
+#define cfg_parse_int(cfg, ini, name)            if (ini.name) then cfg.name := atoi(ini.name)
+#define cfg_parse_int_def(cfg, ini, name, def)   cfg.name := atoi(ini.name) if ini.name else def
+#define cfg_parse_intlist(cfg, ini, name)        if (ini.name) then cfg.name := array_fixed(string_split_ints(ini.name, ","))
+#define cfg_parse_hotkey(cfg, ini, name)         if (ini.name) then cfg.name := parse_hotkey(ini.name)
 
 procedure load_traps_config begin
    variable
@@ -55,31 +56,48 @@ procedure load_traps_config begin
       cfg := create_array_map;
    
    cfg_parse_hotkey(cfg, iniMain, assemble_hotkey);
-   cfg_parse_int(cfg, iniMain, friendfoe);
-   cfg_parse_int(cfg, iniMain, arming_is_crime);
-   cfg_parse_int(cfg, iniMain, reveal_dude);
+   cfg_parse_int_def(cfg, iniMain, friendfoe, 1);
+   cfg_parse_int_def(cfg, iniMain, arming_is_crime, 0);
+   cfg_parse_int_def(cfg, iniMain, reveal_dude, 0);
 
-   cfg.armament_skill := array_fixed(array_transform_kv(ini["Armament_Skill"], @string_to_int, @string_to_int));
+   //cfg.armament_skill := array_fixed(array_transform_kv(ini["Armament_Skill"], @string_to_int, @string_to_int));
    cfg.ground_skill := array_fixed(array_transform(ini["Ground_Skill"], @string_to_int));
    cfg.types := create_array_map;
-   
+   cfg.item_to_type := create_array_map;
+   cfg.pid_to_type := create_array_map;
+   cfg.armaments := create_array_map;
+
    variable sectName, section;
-   variable prefix := "Trap_";
+   variable trapPrefix := "Trap_", armamentPrefix := "Armament_";
    foreach (sectName: section in ini) begin
-      if (string_starts_with(sectName, prefix)) then begin
+      if (string_starts_with(sectName, trapPrefix)) then begin
          variable
-            type := atoi(substr(sectName, strlen(prefix), 0)),
+            type := atoi(substr(sectName, strlen(trapPrefix), 0)),
             typeCfg := create_array_map;
 
-         cfg_parse_int(typeCfg, section, name_msg);
          cfg_parse_int(typeCfg, section, item_pid);
          cfg_parse_int(typeCfg, section, trap_pid);
+         cfg_parse_int(typeCfg, section, radius);
          cfg_parse_int(typeCfg, section, stop);
          cfg_parse_int(typeCfg, section, dmg_min);
          cfg_parse_int(typeCfg, section, dmg_max);
          cfg_parse_int(typeCfg, section, skill_mod);
          cfg_parse_intlist(typeCfg, section, armaments);
          cfg.types[type] := typeCfg;
+         if (typeCfg.item_pid) then cfg.item_to_type[typeCfg.item_pid] := type;
+         if (typeCfg.trap_pid) then cfg.pid_to_type[typeCfg.trap_pid] := type;
+      end else if (string_starts_with(sectName, armamentPrefix)) then begin
+         variable armPid := atoi(substr(sectName, strlen(armamentPrefix), 0));
+         if (armPid > 0) then begin
+            variable armCfg := create_array_map;
+            cfg_parse_int(armCfg, section, skill_mod);
+            cfg_parse_int_def(armCfg, section, radius, -1);
+            cfg_parse_int(armCfg, section, dmg_min);
+            cfg_parse_int(armCfg, section, dmg_max);
+            cfg_parse_int_def(armCfg, section, dmg_type, -1); // differentiate 0 (DMG_normal_dam) from no value
+            // audio_sfx
+            cfg.armaments[armPid] := armCfg;
+         end
       end
    end
    return cfg;
@@ -177,16 +195,13 @@ procedure start begin
 
       //call roll_test(100, 5, -50, 5, 0.2);
 
-      // exported settings
-      pbs_ini_trap_reveals_dude := get_int_from_ini(INI_FILE, INI_SECTION, "trap_reveals_dude");
-      pbs_ini_trap_friendfoe := get_int_from_ini(INI_FILE, INI_SECTION, "trap_friendfoe");
-      pbs_ini_trap_is_crime := get_int_from_ini(INI_FILE, INI_SECTION, "trap_is_crime");
-      ini_assemble_hotkey := parse_hotkey(get_str_from_ini(INI_FILE, INI_SECTION, "assemble_hotkey"));
-
       pbs_trap_config := load_traps_config;
+      
+      assemble_hotkey := pbs_trap_config.assemble_hotkey;
+
       debug_log(debug_array_str(pbs_trap_config));
       debug_log("types: "+debug_array_str_deep(pbs_trap_config.types, 2));
-      debug_log("armaments: "+debug_array_str(pbs_trap_config.armament_skill));
+      debug_log("armaments: "+debug_array_str_deep(pbs_trap_config.armaments, 2));
       debug_log("ground: "+debug_array_str(pbs_trap_config.ground_skill));
 
       // initialize global and exported arrays
@@ -218,7 +233,7 @@ end
 procedure keypress_hook begin
    variable pressed := get_sfall_arg,
             key := get_sfall_arg;
-   if (pressed and not(get_game_mode bwand bwnot(COMBAT + PCOMBAT))) then if (hotkey_pressed_now(ini_assemble_hotkey, key)) then begin
+   if (pressed and not(get_game_mode bwand bwnot(COMBAT + PCOMBAT))) then if (hotkey_pressed_now(assemble_hotkey, key)) then begin
       variable item;
       item := critter_inven_obj(dude_obj, 2 - active_hand);
       if (item) then if (is_trap_kit_pid(obj_pid(item))) then begin

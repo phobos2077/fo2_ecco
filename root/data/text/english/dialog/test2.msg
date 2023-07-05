@@ -1,9 +1,9 @@
 # 0 - 5000  reserved for traps
 # trap types
-{10}{}{spike trap}
-{11}{}{pressure plate trap}
-{12}{}{proximity sensor trap}
-{13}{}{bear trap}
+{11}{}{spike trap}
+{12}{}{bear trap}
+{13}{}{mine trap}
+{14}{}{proximity sensor trap}
 
 # traps look at
 {50}{}{You see a %s.}

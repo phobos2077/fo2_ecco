@@ -15,6 +15,7 @@
 #include "../sfall/define_lite.h"
 #include "../sfall/command_lite.h"
 #include "../sfall/command_extra.h"
+#include "../sfall/lib.strings.h"
 #include "../_pbs_headers/traps.h"
 
 procedure start;
@@ -59,16 +60,18 @@ procedure trap_setoff_effect(variable pid, variable critter);
 #define my_trap_charges          local_var(LVAR_Charges)
 #define set_my_trap_charges(x)   set_local_var(LVAR_Charges, x)
 
+#define my_trap_cfg           pbs_trap_config.types[my_trap_type]
 
-#define i_am_trap             (my_trap_type >= 0)
+#define i_am_trap             (my_trap_type > 0)
 #define i_am_armed            (my_trap_state == TRAP_STATE_ACTIVE)
-#define i_am_customizable     (is_trap_customizable_type(my_trap_type))
+#define i_am_customizable     (my_trap_cfg.armaments != 0)
 
 /*
 procedure try_initialize begin
    if (initialized) then return;
 
-   if (self_pid == -1) then begin
+   variable pid := self_pid;
+   if (pid == -1) then begin
       set_my_trap_type(TRAP_TYPE_SPATIAL);
    end else begin
       // Trap type will be passed via TRAP_EVENT_INIT
@@ -111,7 +114,7 @@ procedure timed_event_p_proc begin
       set_my_trap_type((fixed_param / 0x100) bwand 0xFF);
       set_my_trap_charges((fixed_param / 0x10000) bwand 0xFF);
       set_my_trap_state(TRAP_STATE_DISARMED);
-      debug_log_fmt("Init event. Type: %d, charges: %d, spatial: %d, id: %d.", my_trap_type, my_trap_charges, self_pid == -1, get_object_data(self_obj, OBJ_DATA_ID));
+      debug_log_fmt("Init event. Type: %d, charges: %d, spatial: %d.", my_trap_type, my_trap_charges, self_pid == -1);
    end else if (eventType == TRAP_EVENT_DESTROY) then begin
       destroy_object(self_obj);
    end else if (eventType == TRAP_EVENT_SETOFF) then begin
@@ -143,26 +146,20 @@ end
 
 procedure spatial_p_proc begin
    script_overrides;
-   debug_log("SPATIAL!!! "+(obj_name(source_obj) if source_obj else "none"));
 
    variable critter := source_obj;
    if (not is_critter_dead(critter))
-      and (critter != dude_obj or (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_DUDE) == 0)
-      and (critter == dude_obj or not obj_in_party(critter) or (pbs_ini_trap_friendfoe bwand TRAP_FRIENDFOE_PARTY) == 0) then
+      and (critter != dude_obj or (pbs_trap_config.friendfoe bwand TRAP_FRIENDFOE_DUDE) == 0)
+      and (critter == dude_obj or not obj_in_party(critter) or (pbs_trap_config.friendfoe bwand TRAP_FRIENDFOE_PARTY) == 0) then
    begin
-      // spike or sensor traps go off at 1 hex radius
-      variable critterTile := tile_num(critter);
-      if (critterTile == self_tile
-         or ((my_trap_type == TRAP_TYPE_SENSOR or my_trap_type == TRAP_TYPE_SPIKE) and random(0, 99) < TRAP_SENSOR_CHANCE)) then
-      begin
-         // This is run on a separate spatial script, so we can't call setoff directly, use events.
-         variable obj;
-         foreach (obj in tile_get_objs(self_tile, self_elevation)) begin
-            // Setoff all trap objects we can find on this tile.
-            if (get_script(obj) == SCRIPT_PBS_TRAPS and obj_pid(obj) != -1) then begin
-               pbs_trap_victims[obj] := critter;
-               add_timer_event(obj, 0, TRAP_EVENT_SETOFF);
-            end
+      debug_log("Triggering trap! "+obj_name_safe(source_obj));
+      // This is run on a separate spatial script, so we can't call setoff directly, use events.
+      variable obj;
+      foreach (obj in tile_get_objs(self_tile, self_elevation)) begin
+         // Setoff all trap objects we can find on this tile.
+         if (get_script(obj) == SCRIPT_PBS_TRAPS and obj_pid(obj) != -1) then begin
+            pbs_trap_victims[obj] := critter;
+            add_timer_event(obj, 0, TRAP_EVENT_SETOFF);
          end
       end
    end
@@ -224,7 +221,7 @@ procedure use_obj_on_p_proc begin
    if (i_am_trap and not(i_am_armed)) then begin
       script_overrides;
       if (i_am_customizable) then begin
-         if (is_explosive_pid(pid)) then begin
+         if (is_suitable_armament(pid, my_trap_type)) then begin
             call dude_try_to_arm_trap(obj_being_used_with);
          end else begin
             display_mstr(411);
@@ -247,7 +244,7 @@ procedure use_skill_on_p_proc begin
          end else begin
             if (i_am_customizable) then begin
                // try to automatically find suited armament for trap
-               item := get_suitable_armament_in_inventory(source_obj);
+               item := get_suitable_armament_in_inventory(source_obj, my_trap_type);
                if (item) then begin
                   call dude_try_to_arm_trap(item);
                end else begin
@@ -268,9 +265,14 @@ procedure use_skill_on_p_proc begin
 end
 
 procedure dude_disarm_and_pickup_trap begin
-   variable item;
-   item := create_object(trapkit_pid_by_trap_type(my_trap_type), 0, 0);
-   set_weapon_ammo_count(item, my_trap_charges);
+   variable
+      itemPid := trapkit_pid_by_trap_type(my_trap_type),
+      item := create_object(itemPid, 0, 0);
+
+   variable charges := my_trap_charges;
+   if (charges <= 0) then charges := get_proto_data(itemPid, PROTO_MI_CHARGES);
+
+   set_weapon_ammo_count(item, charges);
    add_obj_to_inven(source_obj, item);
    if (my_trap_armpid > 0) then begin
       item := create_object(my_trap_armpid, 0, 0);
@@ -293,6 +295,7 @@ procedure dude_try_to_arm_trap(variable armamentObj) begin
       arr;
       i;
       armamentPid := 0;
+      armamentCfg;
       groundFid;
    end
 
@@ -307,18 +310,19 @@ procedure dude_try_to_arm_trap(variable armamentObj) begin
    else
       groundType:="other";
       
-   trapTypeMod := get_int_from_ini(INI_FILE, INI_SECTION, "skill_type_" + my_trap_type);
-   groundTypeMod := get_int_from_ini(INI_FILE, INI_SECTION, "skill_ground_" + groundType);
+   trapTypeMod := pbs_trap_config.types[my_trap_type].skill_mod;
+   groundTypeMod := pbs_trap_config.ground_skill[groundType];
    if (armamentObj) then begin
       armamentPid := obj_pid(armamentObj);
-      armTypeMod := get_int_from_ini(INI_FILE, INI_SECTION, "skill_arm_" + armamentPid);
+      armamentCfg := pbs_trap_config.armaments[armamentPid];
+      armTypeMod := armamentCfg.skill_mod if armamentCfg else 0;
       // remember last used armament (if any), regardless if it will be success or fail
       set_sfall_global(SGVAR_TRAPS_LAST_ARMAMENT, armamentPid);
    end
-   rollMod := -(trapTypeMod + groundTypeMod + armTypeMod);
+   rollMod := trapTypeMod + groundTypeMod + armTypeMod;
    roll := roll_vs_traps_ext(dude_obj, rollMod);
    //debug_log_fmt("Armament: %s (%d)", obj_name(armamentObj), armamentPid);
-   debug_log_fmt("roll-vs-traps: %d, Mod: %s, How Much: %d (difficulty: %d)", roll, string_format("%d=%d+%d+%d", rollMod, -groundTypeMod, -trapTypeMod, -armTypeMod), traps_how_much, difficulty_level);
+   debug_log_fmt("roll-vs-traps: %d, Mod: %s, How Much: %d (difficulty: %d)", roll, string_format("%d=%d+%d+%d", rollMod, groundTypeMod, trapTypeMod, armTypeMod), traps_how_much, difficulty_level);
    
    if (is_success(roll)) then begin
       if (armamentObj) then begin
@@ -357,10 +361,10 @@ procedure arm_trap(variable armPid, variable isCrit) begin
    set_my_trap_state(TRAP_STATE_ACTIVE);
    set_my_trap_armpid(armPid);
    debug_log("Creating spatial.");
-   variable spatialObj := create_spatial(SCRIPT_PBS_TRAPS, self_tile, self_elevation, 1);
+   variable spatialObj := create_spatial(SCRIPT_PBS_TRAPS, self_tile, self_elevation, my_trap_cfg.radius); // 0 radius by default
    send_trap_init_event(spatialObj, my_trap_type, my_trap_charges);
 
-   if (pbs_ini_trap_is_crime) then begin
+   if (pbs_trap_config.arming_is_crime) then begin
       call react_hostile_action;
    end
 end
@@ -388,50 +392,50 @@ end
   @param armPid  - pid of trap armament
   @param critter - critter recieving the damage
 */
-procedure trap_setoff_effect(variable armPid, variable critter) begin
+procedure trap_setoff_effect(variable armPid, variable critter) begin\
+   variable typeCfg := pbs_trap_config.types[my_trap_type];
    if (armPid) then begin
       // explosive trap
       variable
-         dmgMinMax := get_explosion_damage(armPid),
-         dmgMin := dmgMinMax[0],
-         dmgMax := dmgMinMax[1],
-         radius := 3,
-         dmgType := DMG_explosion,
-         effectPid, audioSfx;
+         armCfg := pbs_trap_config.armaments[armPid],
+         dmgMin := armCfg.dmg_min,
+         dmgMax := armCfg.dmg_max,
+         dmgType := armCfg.dmg_type,
+         radius := armCfg.radius,
+         audioSfx := armCfg.audio_sfx,
+         explDmg := get_explosion_damage(armPid),
+         effectPid;
 
-      if (dmgMin <= 0 and dmgMax <= 0) then begin
+      if (explDmg[0] > 0 or explDmg[1] > 0) then begin // explosive item
+         if (dmgMin == 0 and dmgMax == 0) then begin
+            dmgMin := explDmg[0];
+            dmgMax := explDmg[1];
+         end
+         if (dmgType < 0) then dmgType := DMG_explosion;
+         if (radius < 0) then radius := 3; // vanilla explosive radius
+      end else begin // not explosive, must be weapon (grenade)
          if (proto_data(armPid, it_type) != item_type_weapon) then begin
             debug_err("trap_setoff_effect: Invalid trap armanent pid: "+armPid);
             return;
          end
-         // NOT Dynamite, Plastic or custom explosive type
-         dmgMin := get_proto_data(armPid, PROTO_WP_DMG_MIN);
-         dmgMax := get_proto_data(armPid, PROTO_WP_DMG_MAX);
-         dmgType := get_proto_data(armPid, PROTO_WP_DMG_TYPE);
-         radius := 2; // default grenade radius
-         if (armPid == PID_FRAG_GRENADE or armPid == PID_PBS_HOMEMADE_GRENADE) then begin
-            audioSfx := "WHO1XXX" + random(1,2);
-         end else if (armPid == PID_MOLOTOV_COCKTAIL) then begin
-            dmgType := DMG_fire;
-            audioSfx := "WHO1XXX2";
-         end else if (armPid == PID_PLASMA_GRENADE) then begin
-            effectPid := PID_EXPLOSION_PLASMA_1;
-            audioSfx := "WHP1XXX1";
-         end else if (armPid == PID_PULSE_GRENADE) then begin
-            effectPid := PID_EXPLOSION_EMP_1;
-            audioSfx := "WHQ1XXX1";
+         if (dmgMin == 0 and dmgMax == 0) then begin
+            dmgMin := get_proto_data(armPid, PROTO_WP_DMG_MIN);
+            dmgMax := get_proto_data(armPid, PROTO_WP_DMG_MAX);
+         end
+         if (dmgType < 0) then dmgType := get_proto_data(armPid, PROTO_WP_DMG_TYPE);
+         if (radius < 0) then radius := 2; // vanilla grenade radius
+         if (audioSfx == 0) then begin
+            variable soundCode := get_proto_data(armPid, PROTO_WP_SOUND);
+            audioSfx := sprintf("WH%c1XXX1", soundCode);
          end
       end
       call trap_setoff_explosion(self_obj, critter, dmgMin, dmgMax, radius, dmgType, is_critical_hit, effectPid, audioSfx);
-   end else begin
-      variable
-         trapType := my_trap_type,
-         trapCharges := my_trap_charges;
+   end else begin // "melee" trap
+      variable stop := typeCfg.stop;
+      if (my_trap_charges <= 1 and stop > 1) then stop := 1; // trap can't hold critter if it's destroyed
+      dmgMin := typeCfg.dmg_min;
+      dmgMax := typeCfg.dmg_max;
 
-      // "melee" trap
-      dmgMin := math_max(get_int_from_ini(INI_FILE, INI_SECTION, "damage_min_"+trapType), 0);
-      dmgMax := math_max(get_int_from_ini(INI_FILE, INI_SECTION, "damage_max_"+trapType), 0);
-
-      call trap_setoff_melee(critter, dmgMin, dmgMax, DMG_normal_dam, is_critical_hit, 3 if (trapType == TRAP_TYPE_BEAR and trapCharges > 1) else 1);
+      call trap_setoff_melee(critter, dmgMin, dmgMax, DMG_normal_dam, is_critical_hit, stop);
    end
 end
