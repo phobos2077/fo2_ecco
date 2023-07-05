@@ -168,10 +168,10 @@ procedure barterprice_handler begin
 		offered_caps := obj_is_carrying_obj_pid(offered_table, PID_BOTTLE_CAPS),
 		offered_price_goods := offered_price - offered_caps,
 		base_price_goods := base_price - item_caps,
-		dude_barter := get_clamped(barter_skill(dude_obj), 0, 300),
+		dude_barter := math_clamp(barter_skill(dude_obj), 0, 300),
 		dude_charisma := get_critter_stat(dude_obj, STAT_ch),
 		master_trader := has_trait(TRAIT_PERK, dude_obj, PERK_master_trader),
-		merchant_barter := get_clamped(barter_skill(merchant), 0, 300),
+		merchant_barter := math_clamp(barter_skill(merchant), 0, 300),
 		barter_mod := gdialog_get_barter_mod,
 		town_rep := 0,
 		party_barter,
@@ -182,7 +182,7 @@ procedure barterprice_handler begin
 		stats;
 	
 	if (Sell_TownRepCoef != 0 or Buy_TownRepCoef != 0) then begin
-		town_rep := get_clamped(get_town_rep, -30, 30);
+		town_rep := math_clamp(get_town_rep, -30, 30);
 		//debug_msg("town_rep " + town_rep);
 	end
 	

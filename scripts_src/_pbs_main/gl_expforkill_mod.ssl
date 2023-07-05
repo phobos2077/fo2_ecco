@@ -42,7 +42,7 @@ procedure mod_exp(variable critterPid, variable isDeath) begin
    
    variable
       totalExpForType := killExpMap[killType] + killExp,
-      expMult := get_clamped(1.0 - (1.0 - ini_min_exp_mult) * (totalExpForType - ini_falloff_start) / (ini_falloff_end - ini_falloff_start), ini_min_exp_mult, 1.0);
+      expMult := math_clamp(1.0 - (1.0 - ini_min_exp_mult) * (totalExpForType - ini_falloff_start) / (ini_falloff_end - ini_falloff_start), ini_min_exp_mult, 1.0);
 
    killExp := round(killExp * expMult);
    if (killExp != killExpProto) then begin

@@ -171,7 +171,7 @@
 #define float_from_ini_file(name, file, section)       ini_##name := get_float_from_ini(file, section, #name)
 
 #define int_list_from_ini_file(name, file, section)    ini_##name := get_int_list_from_ini(file, section, #name)
-#define int_from_ini_file_clamped(name, file, section, min, max)    ini_##name := get_clamped(get_int_from_ini(file, section, #name), min, max)
-#define float_from_ini_file_clamped(name, file, section, min, max)  ini_##name := get_clamped(get_float_from_ini(file, section, #name), min, max)
+#define int_from_ini_file_clamped(name, file, section, min, max)    ini_##name := math_clamp(get_int_from_ini(file, section, #name), min, max)
+#define float_from_ini_file_clamped(name, file, section, min, max)  ini_##name := math_clamp(get_float_from_ini(file, section, #name), min, max)
 
 #endif

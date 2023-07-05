@@ -28,6 +28,7 @@ procedure combatturn_hook;
 
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
+#include "../sfall/lib.strings.h"
 #include "../sfall/lib.misc.h"
 
 #define SCRIPT_REALNAME		"gl_pbs_traps"
@@ -42,6 +43,47 @@ variable angry_set;
 variable attack_delay := -1;
 variable ini_assemble_hotkey;
 variable last_hold_reset_time := -1;
+
+#define cfg_parse_int(cfg, ini, name)       if (ini.name) then cfg.name := atoi(ini.name)
+#define cfg_parse_intlist(cfg, ini, name)   if (ini.name) then cfg.name := string_split_ints(ini.name, ",")
+#define cfg_parse_hotkey(cfg, ini, name)    if (ini.name) then cfg.name := parse_hotkey(ini.name)
+
+procedure load_traps_config begin
+   variable
+      ini := get_ini_config_db("config\\traps.ini"),
+      iniMain := ini["Main"],
+      cfg := create_array_map;
+   
+   cfg_parse_hotkey(cfg, iniMain, assemble_hotkey);
+   cfg_parse_int(cfg, iniMain, friendfoe);
+   cfg_parse_int(cfg, iniMain, arming_is_crime);
+   cfg_parse_int(cfg, iniMain, reveal_dude);
+
+   cfg.armament_skill := array_fixed(array_transform_kv(ini["Armament_Skill"], @string_to_int, @string_to_int));
+   cfg.ground_skill := array_fixed(array_transform(ini["Ground_Skill"], @string_to_int));
+   cfg.types := create_array_map;
+   
+   variable sectName, section;
+   variable prefix := "Trap_";
+   foreach (sectName: section in ini) begin
+      if (string_starts_with(sectName, prefix)) then begin
+         variable
+            type := atoi(substr(sectName, strlen(prefix), 0)),
+            typeCfg := create_array_map;
+
+         cfg_parse_int(typeCfg, section, name_msg);
+         cfg_parse_int(typeCfg, section, item_pid);
+         cfg_parse_int(typeCfg, section, trap_pid);
+         cfg_parse_int(typeCfg, section, stop);
+         cfg_parse_int(typeCfg, section, dmg_min);
+         cfg_parse_int(typeCfg, section, dmg_max);
+         cfg_parse_int(typeCfg, section, skill_mod);
+         cfg_parse_intlist(typeCfg, section, armaments);
+         cfg.types[type] := typeCfg;
+      end
+   end
+   return cfg;
+end
 
 /*procedure roll_test(variable rollMod, variable critChance, variable successOffset, variable successMult, variable failMult) begin
 	variable stats := temp_array(4, 0);
@@ -140,6 +182,12 @@ procedure start begin
       pbs_ini_trap_friendfoe := get_int_from_ini(INI_FILE, INI_SECTION, "trap_friendfoe");
       pbs_ini_trap_is_crime := get_int_from_ini(INI_FILE, INI_SECTION, "trap_is_crime");
       ini_assemble_hotkey := parse_hotkey(get_str_from_ini(INI_FILE, INI_SECTION, "assemble_hotkey"));
+
+      pbs_trap_config := load_traps_config;
+      debug_log(debug_array_str(pbs_trap_config));
+      debug_log("types: "+debug_array_str_deep(pbs_trap_config.types, 2));
+      debug_log("armaments: "+debug_array_str(pbs_trap_config.armament_skill));
+      debug_log("ground: "+debug_array_str(pbs_trap_config.ground_skill));
 
       // initialize global and exported arrays
       angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);
