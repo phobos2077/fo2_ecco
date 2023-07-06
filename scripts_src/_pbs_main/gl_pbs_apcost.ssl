@@ -61,6 +61,14 @@ procedure useobjon_handler begin
    call reduce_ap_from_inventory(critter, ITEM_USE_COST);
 end
 
+procedure useobj_handler begin
+   variable critter, item;
+   critter := get_sfall_arg;
+   item := get_sfall_arg;
+
+   call reduce_ap_from_inventory(critter, ITEM_USE_COST);
+end
+
 #define ammo_caliber(ammoPid)       get_proto_data(ammoPid, PROTO_AM_CALIBER)
 #define mag_size(weaponPid)         get_proto_data(weaponPid, PROTO_WP_MAG_SIZE)
 #define weapon_caliber(weaponPid)   get_proto_data(weaponPid, PROTO_WP_CALIBER)
@@ -198,6 +206,7 @@ procedure start begin
    if game_loaded then begin
       if (get_int_from_ini(INI_COMBAT, INI_SECTION, "inventory_cost_per_action")) then begin
          register_hook_proc(HOOK_USEOBJON, useobjon_handler);
+         register_hook_proc(HOOK_USEOBJ, useobj_handler);
          register_hook_proc(HOOK_INVENTORYMOVE, inventorymove_handler);
 
          // This mod will override the inventory opening ap costs from the ddraw.ini
