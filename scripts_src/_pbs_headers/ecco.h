@@ -17,9 +17,6 @@
 #define debug_log_fmt(msg, ...)		debug_msg(SCRIPT_REALNAME": "+string_format(msg, __VA_ARGS__))
 #define debug_err(msg)		debug_msg("! ERROR ! "SCRIPT_REALNAME": "+msg)
 
-// macros for arrays
-#define is_in_array(item, array)    (scan_array(array, item) != -1)
-
 #define dude_skill(x)               (has_skill(dude_obj, x))
 #define dude_perk(x)                (has_trait(TRAIT_PERK,dude_obj,x))
 

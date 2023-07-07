@@ -1,17 +1,18 @@
 for 0.9.2:
 - playtest
+- finish Den & Modoc
 
 
 for "future":
+- Traps: a list of critter exceptions (for temporary followers, like Smiley)
+- Crafting: use items from party members inventory
+- Crafting: read config from INI file and texts from game/craft.msg
 - port "grenades anywhere" script from FO2Tweaks?
 - port auto-cursor from FO2Tweaks (with modifications)
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
-- rewrite Mr.Fixit to read config from INI file and texts from game/craft.msg
 - sneak attack msg from combat.msg
 - replace "handmade grenade" sprite
 - add info about bonus move points to stat description
-- script for adding items to maps (universal with ini config or custom for Ecco?)
-- add some craft components to Klamath Trapper Town North
 
 
 IDEAS:
@@ -27,7 +28,7 @@ IDEAS:
 - guaranteed damage bonus for head/eye shots? (will need to be countered by changing hit chance formula to require higher skill for 95%)
 - barter: the more you sell to the same trader, the less is selling price
 - trap system redesign:
-   - More straightforward trap install (just drop & go)
-   - Use traps skill for trap effectiveness instead of chance to install, which doesn't achieve anything
+   - Allow to arm traps in combat? (new perk?)
+   - More straightforward trap install? (just drop & go)
    - All traps should have minimum 1 tile radius
    - Add simple ready-to-go traps (maybe to vendors), without having to install explosive

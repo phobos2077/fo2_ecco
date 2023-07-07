@@ -66,6 +66,8 @@ procedure trap_setoff_effect(variable pid, variable critter);
 #define i_am_armed            (my_trap_state == TRAP_STATE_ACTIVE)
 #define i_am_customizable     (my_trap_cfg.armaments != 0)
 
+#define obj_in_party_or_temp_follower(obj)     (obj_in_party(obj) or is_in_array(get_script(obj), pbs_trap_config.temp_followers_sids))
+
 /*
 procedure try_initialize begin
    if (initialized) then return;
@@ -150,7 +152,7 @@ procedure spatial_p_proc begin
    variable critter := source_obj;
    if (not is_critter_dead(critter))
       and (critter != dude_obj or (pbs_trap_config.friendfoe bwand TRAP_FRIENDFOE_DUDE) == 0)
-      and (critter == dude_obj or not obj_in_party(critter) or (pbs_trap_config.friendfoe bwand TRAP_FRIENDFOE_PARTY) == 0) then
+      and (critter == dude_obj or not obj_in_party_or_temp_follower(critter) or (pbs_trap_config.friendfoe bwand TRAP_FRIENDFOE_PARTY) == 0) then
    begin
       debug_log("Triggering trap! "+obj_name_safe(source_obj));
       // This is run on a separate spatial script, so we can't call setoff directly, use events.

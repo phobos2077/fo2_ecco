@@ -104,7 +104,7 @@ end
 
 pure procedure is_suitable_armament(variable pid, variable type) begin
    variable arms := pbs_trap_config.types[type].armaments;
-   debug_log("arms="+debug_array_str(arms));
+   //debug_log("arms="+debug_array_str(arms));
    return is_in_array(pid, arms) if arms else false;
 end
 
@@ -229,10 +229,10 @@ procedure trap_damage_critter(variable critter, variable dmgMin, variable dmgMax
          critter_injure(critter, effects);
       end
       // Stop critter for several turns/seconds
-      if (stop > 1) then begin
+      if (stop > 1 and critter != dude_obj) then begin
          //debug_log_fmt("Stopping critter %d for %d turns.", critter, stop);
          pbs_trap_hold_critters[critter] := array_fixed([stop, tile_num(critter)]);
-         debug_log("Stopping critter: "+debug_array_str(pbs_trap_hold_critters));
+         debug_log_fmt("Holding critter for %d.", stop);
       end
       if (pbs_trap_config.reveal_dude) then begin
          debug_log("Making angry!");
