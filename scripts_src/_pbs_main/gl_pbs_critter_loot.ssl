@@ -9,6 +9,8 @@
 
 procedure start;
 
+#define SCRIPT_REALNAME     "gl_pbs_critter_loot"
+
 #include "../headers/scenepid.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/command_lite.h"
@@ -90,15 +92,19 @@ end
 procedure destroy_weapon(variable critter) begin
    variable
       weapon := 0,
-      i;
+      i, rnd;
 
    for (i := 1; i <= 2; i++) begin
       weapon := critter_inven_obj(critter, i);
-      if (weapon and obj_item_subtype(weapon) == item_type_weapon and is_in_array(obj_pid(weapon), ini_destroy_weapon_list) and random(0,99) < ini_destroy_weapon_chance) then begin
-         rm_obj_from_inven(critter, weapon);
-         destroy_object(weapon);
-         display_msg(obj_name(critter) + " " + mstr_combat(313 + is_female(critter)*100) + ".");
-         break;
+      if (weapon and obj_item_subtype(weapon) == item_type_weapon and is_in_array(obj_pid(weapon), ini_destroy_weapon_list)) then begin
+         rnd := random(0,99);
+         debug_log_fmt("Destroy weapon %s roll %d vs %d", obj_name(weapon), rnd, ini_destroy_weapon_chance);
+         if (rnd < ini_destroy_weapon_chance) then begin
+            rm_obj_from_inven(critter, weapon);
+            destroy_object(weapon);
+            display_msg(obj_name(critter) + " " + mstr_combat(313 + is_female(critter)*100) + ".");
+            break;
+         end
       end
    end
 end
@@ -180,7 +186,7 @@ procedure reduce_loot(variable critter) begin
       end
    end
    if (removeStats != "") then
-      debug_msg("gl_pbs_critter_loot: removed loot for "+obj_name(critter)+": "+removeStats);
+      debug_log("removed loot for "+obj_name(critter)+": "+removeStats);
 end
 
 
