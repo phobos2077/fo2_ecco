@@ -121,7 +121,7 @@
 {491}{}{1}  # allow party members to help with crafting (1 enable, 0 disable)
 {492}{}{2}  # split items into categories (0 disable, 1 enable, 2 automatically enable when enough items available)
 {493}{}{1}  # use sfall gloval vars to check if item is available
-{494}{}{29+33}  # Crafting shortcut: Ctrl+F
+{494}{}{29+46}  # Crafting shortcut: Ctrl+C
 
 # CRAFTING SCHEMATICS:
 
@@ -522,7 +522,7 @@
 {3106}{}{NO}
 {3107}{}{6}                                # Traps
 {3108}{}{[TOOLS]}
-{3109}{}{308}                              # PID_SUPER_TOOL_KIT
+{3109}{}{75|308}                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 {3110}{}{[SKILLS]}
 {3111}{}{REPAIR+TRAPS:80}
 {3112}{}{[COMPONENTS]}

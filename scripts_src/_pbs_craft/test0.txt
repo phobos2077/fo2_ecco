@@ -397,7 +397,7 @@ CRFT_EXP                         # explosive schematics 644
 NO
 6                                # Traps
 [TOOLS]
-308                              # PID_SUPER_TOOL_KIT
+75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 [SKILLS]
 REPAIR+TRAPS:80
 [COMPONENTS]

@@ -27,11 +27,6 @@ variable
 #define debug_log_cmd(msg, tile)		debug_log(format_cmd_log(msg, tile))
 #define debug_err_cmd(msg, tile)		debug_err(format_cmd_log(msg, tile))
 
-procedure start begin
-   config := get_ini_config_db("config\\pbs_map_tweaks.ini");
-   debug_log("Loaded "+len_array(config)+" sections.");
-end
-
 procedure find_main_object_at(variable tileNum, variable elev) begin
    variable obj, objs := tile_get_objs(tileNum, elev);
    foreach (obj in objs) begin
@@ -205,11 +200,7 @@ procedure execute_command(variable cmdStr, variable tileNum, variable elev) begi
    call handler(tileNum, elev, tileObj, args);
 end
 
-// Main logic goes here
-procedure map_enter_p_proc begin
-   //debug_log("cur_town = "+cur_town+", is_loading = "+is_loading_game+", map_first_run = "+map_first_run);
-   if (cur_town == -1 or is_loading_game or not map_first_run) then return;
-
+procedure apply_tweaks_for_current_map begin
    variable elev;
    for (elev := 0; elev <= 2; elev++) begin
       variable mapElevConfig := config[cur_map_index + "_" + elev];
@@ -225,4 +216,21 @@ procedure map_enter_p_proc begin
          end
       end
    end
+end
+
+
+procedure start begin
+   config := get_ini_config_db("config\\pbs_map_tweaks.ini");
+   debug_log("Loaded "+len_array(config)+" sections.");
+
+   // FOR TESTING ONLY!, DON'T FORGET TO DISABLE!
+   //call apply_tweaks_for_current_map;
+end
+
+// Main logic goes here
+procedure map_enter_p_proc begin
+   //debug_log("cur_town = "+cur_town+", is_loading = "+is_loading_game+", map_first_run = "+map_first_run);
+   if (cur_town == -1 or is_loading_game or not map_first_run) then return;
+
+   call apply_tweaks_for_current_map;
 end
