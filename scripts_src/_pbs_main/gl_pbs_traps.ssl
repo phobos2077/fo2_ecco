@@ -201,10 +201,12 @@ procedure start begin
       
       assemble_hotkey := pbs_trap_config.assemble_hotkey;
 
-      debug_log(debug_array_str(pbs_trap_config));
-      debug_log("types: "+debug_array_str_deep(pbs_trap_config.types, 2));
-      debug_log("armaments: "+debug_array_str_deep(pbs_trap_config.armaments, 2));
-      debug_log("ground: "+debug_array_str(pbs_trap_config.ground_skill));
+      debug_log_fmt("Loaded config with %d trap types, %d armaments, %d ground types.",
+         len_array(pbs_trap_config.types), len_array(pbs_trap_config.armaments), len_array(pbs_trap_config.ground_skill));
+      //debug_log(debug_array_str(pbs_trap_config));
+      //debug_log("types: "+debug_array_str_deep(pbs_trap_config.types, 2));
+      //debug_log("armaments: "+debug_array_str_deep(pbs_trap_config.armaments, 2));
+      //debug_log("ground: "+debug_array_str(pbs_trap_config.ground_skill));
 
       // initialize global and exported arrays
       angry_set := load_create_array(ARR_ANGRY_TEAMS, 0);

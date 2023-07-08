@@ -18,7 +18,6 @@
 #define debug_err(msg)		debug_msg("! ERROR ! "SCRIPT_REALNAME": "+msg)
 
 #define dude_skill(x)               (has_skill(dude_obj, x))
-#define dude_perk(x)                (has_trait(TRAIT_PERK,dude_obj,x))
 
 #define last_deathanim_critter      (get_sfall_global_int(SGVAR_LAST_DEATHANIM_CRITTER))
 #define last_deathanim              (get_sfall_global_int(SGVAR_LAST_DEATHANIM))
