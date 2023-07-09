@@ -1,0 +1,414 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Vegeir
+        Location: Modoc
+        Description: Leader of the slags
+
+        Log: the following defines need to be changed:
+
+
+          Created: February 15, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#define SCRIPT_REALNAME "mcvegeir"
+#include "../headers/define.h"
+
+#define NAME                        SCRIPT_MCVEGEIR
+#define TOWN_REP_VAR                GVAR_TOWN_REP_GHOST_FARM
+
+#include "../headers/command.h"
+#include "../headers/modoc.h"
+#include "../headers/modreact.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+
+// dialog nodes
+procedure Node000;
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+
+procedure Node999;                                      // This is the do nothing node
+procedure Node998;                                      // This Node is Always Combat
+
+#define LVAR_Said_Thanks                  (4)
+#define LVAR_Hostile                      (5)
+#define LVAR_Here_Before                  (6)
+#define LVAR_Refused                      (7)
+
+variable only_once := 0;
+#define do_force_talk_vegeir(the_node)    set_spoke_to_vegeir;                      \
+                                             Face_Critter(self_obj, dude_obj);      \
+                                             Face_Critter(dude_obj, self_obj);      \
+                                             gfade_in(5);                           \
+                                             force_dialog_start(the_node)
+
+
+procedure start begin
+end
+
+procedure combat_p_proc begin
+   if (fixed_param == COMBAT_SUBTYPE_TURN) then begin
+   end
+end
+
+procedure timed_event_p_proc begin
+   //add_timer_event(self_obj,game_ticks(random(1,7)),1);
+end
+
+procedure map_enter_p_proc begin
+   if ((vegeir_dead) or ((slags_killed_by_townspeople) and (started_slag_attack == false))) then begin
+      dec_slag_cnt;
+      destroy_object(self_obj);
+   end
+   if (only_once == 0) then begin
+      only_once := 1;
+      set_self_team(TEAM_SLAG);
+      set_self_ai(AI_TOUGH_GUARD);
+   end
+end
+
+procedure critter_p_proc begin
+   if (surrendered_to_slag) then begin
+      set_surrendered_to_slag_off;
+      ndebug("going to force 1");
+      if (global_var(GVAR_MODOC_MESSAGE) == message_state_delivered) then begin
+         if (local_var(LVAR_Said_Thanks)) then begin
+            do_force_talk_vegeir(@Node003);
+         end else begin
+            do_force_talk_vegeir(@Node001);
+         end
+      end else begin
+         do_force_talk_vegeir(@Node010);
+      end
+   end else if (surrender_to_guards) then begin
+      set_surrender_to_guards_off;
+      ndebug("going to force 2");
+      do_force_talk_vegeir(@Node000);
+   end else if (self_can_see_dude) then begin
+      if ((local_var(LVAR_Hostile) != 0) or (enemy_slags)) then begin
+         self_attack_dude;
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_enemy_slags;
+      call Node998;
+   end
+
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   script_overrides;
+   if ((local_var(LVAR_Hostile) != 0) or (enemy_slags)) then begin
+      self_attack_dude;
+   end else
+      check_forced_dialog
+   else if (cur_map_index == MAP_GHOST_FARM) then begin
+      call Node998;
+   end else if ((message_flag_given) and (message_flag_delivered == false)) then begin
+      if (dude_is_stupid) then begin
+         floater(random(151,154));
+      end else begin
+         floater_rand(150,151);
+      end
+   end else begin
+      set_spoke_to_vegeir;
+      start_gdialog(NAME,self_obj,4,-1,-1);
+      gSay_Start;
+         if (message_flag_delivered) then begin
+            if (local_var(LVAR_Said_Thanks)) then begin
+               call Node003;
+            end else begin
+               call Node001;
+            end
+         end else if (local_var(LVAR_Refused)) then begin
+            call Node002;
+         end else begin
+            call Node010;
+         end
+      gSay_End;
+      end_dialogue;
+   end
+   inc_local_var(LVAR_Here_Before);
+end
+
+procedure destroy_p_proc begin
+   set_vegeir_dead;
+   dec_slag_cnt;
+   inc_good_critter
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Here_Before) > 0) then begin
+      display_msg(mstr(101));
+   end else begin
+      display_msg(mstr(100));
+   end
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+// dialog action functions
+procedure Node999 begin
+  // do absolutely everything that pertains to nothing
+end
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,true);
+end
+procedure Node990 begin
+   set_jonny_pip(state_jonny_complete);
+   set_jonny_at_home;
+   set_jonny_arriving_at_home;
+   game_time_advance(ONE_GAME_DAY * 2);
+   if (laddie_dead) then begin
+      set_jonny_sad_laddie_died;
+   end
+   load_map(MAP_MODOC_MAINSTREET, 555);
+end
+
+// dialog nodes
+procedure Node000 begin
+   Reply(155);
+   NOption(300,Node011,004);
+   NOption(301,Node012,004);
+   NOption(302,Node011,004);
+   NOption(303,Node035,-003);
+end
+procedure Node001 begin
+   Reply(156);
+   ndebug("get_ending_state/happy == " + get_ending_state+"/"+ending_state_happy);
+   if ((get_ending_state == ending_state_happy) and (jonny_at_home == false)) then begin
+      NOption(400,Node003,004);
+   end
+   NOption(157,Node026,004);
+   NOption(158,Node028,004);
+   if (jonny_request_home) then begin
+      NOption(159,Node033,004);
+   end
+   NOption(g_bye,Node999,004);
+end
+procedure Node002 begin
+   Reply(160);
+   NOption(161,Node013,004);
+   NOption(162,Node027,004);
+   NOption(163,Node024,004);
+   if (jonny_request_home) then begin
+      NOption(159,Node033,004);
+   end
+   NOption(g_bye,Node999,004);
+end
+procedure Node003 begin
+   ndebug("Node003");
+   if (local_var(LVAR_Said_Thanks)) then begin
+      Reply(166);
+   end else begin
+      give_pid_qty(dude_obj, PID_HUNTING_RIFLE, 1) // pbs: changed from Assault Rifle
+      give_pid_qty(dude_obj, PID_223_FMJ, 1) // pbs: changed from 5mm JHP
+      Reply(165);
+      set_local_var(LVAR_Said_Thanks,true);
+   end
+   ndebug("jonny_request_home == "+jonny_request_home+" / jonny_known == "+jonny_known+" / jonny_seed_active == "+jonny_seed_active);
+   if (((jonny_request_home) or (jonny_known)) and (jonny_seed_active)) then begin
+      NOption(167,Node034,004);
+   end
+   NOption(g_bye,Node999,004);
+   NOption(g_grunt,Node999,-003);
+end
+procedure Node010 begin
+   Reply(168);
+   NOption(169,Node011,004);
+   NOption(170,Node012,004);
+   NOption(g_bye,Node011,004);
+   NOption(171,Node035,-003);
+end
+procedure Node011 begin
+   Reply(172);
+   NOption(g_mstr(353),Node012,001);
+end
+procedure Node012 begin
+   Reply(173);
+   NOption(174,Node025,004);
+   NOption(175,Node013,004);
+   NOption(g_mstr(207),Node024,004);
+   NOption(g_mstr(208),Node021,004);
+end
+procedure Node013 begin
+   Reply(176);
+   NOption(177,Node016,004);
+   NOption(178,Node017,004);
+   NOption(179,Node020,004);
+   NOption(180,Node023,004);
+end
+procedure Node014 begin
+   Reply(181);
+   NOption(177,Node016,004);
+   NOption(178,Node017,004);
+   NOption(179,Node020,004);
+   NOption(180,Node023,004);
+end
+procedure Node015 begin
+   Reply(181);
+   NOption(177,Node016,004);
+   NOption(178,Node017,004);
+   NOption(179,Node020,004);
+   NOption(190,Node018,004);
+   NOption(191,Node019,004);
+   NOption(192,Node022,004);
+   NOption(180,Node023,004);
+end
+procedure Node016 begin
+   set_brightlight;
+   Reply(194);
+   NOption(195,Node015,004);
+   NOption(180,Node023,004);
+end
+procedure Node017 begin
+   Reply(197);
+   NOption(195,Node015,004);
+   NOption(180,Node023,004);
+end
+procedure Node018 begin
+   Reply(200);
+   NOption(195,Node015,004);
+   NOption(180,Node023,004);
+end
+procedure Node019 begin
+   set_karl_left;
+   Reply(203);
+   NOption(195,Node015,004);
+   NOption(180,Node023,004);
+end
+procedure Node020 begin
+   Reply(206);
+   NOption(207,Node021,004);
+   NOption(208,Node024,004);
+end
+procedure Node021 begin
+   set_local_var(LVAR_Refused,true);
+   Reply(209);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node022 begin
+   Reply(210);
+   NOption(195,Node015,004);
+   NOption(180,Node023,004);
+end
+procedure Node023 begin
+   Reply(213);
+   NOption(207,Node021,004);
+   NOption(208,Node024,004);
+end
+procedure Node024 begin
+   set_message_state_given
+   Reply(216);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node025 begin
+   set_local_var(LVAR_Refused,true);
+   Reply(217);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node026 begin
+   Reply(218);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node027 begin
+   Reply(219);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node028 begin
+   Reply(220);
+   NOption(221,Node029,004);
+   NOption(222,Node031,004);
+   NOption(g_bye,Node999,004);
+end
+procedure Node029 begin
+   set_fake_bodies;
+   Reply(223);
+   NOption(224,Node030,004);
+end
+procedure Node030 begin
+   Reply(225);
+   NOption(226,Node999,004);
+end
+procedure Node031 begin
+   Reply(227);
+   NOption(221,Node032,004);
+end
+procedure Node032 begin
+   set_fake_bodies;
+   Reply(223);
+   NOption(226,Node999,004);
+end
+procedure Node033 begin
+   Reply(231);
+   NOption(g_mstr(350),Node999,004);
+end
+procedure Node034 begin
+   Reply(232);
+   NOption(g_mstr(350),Node990,004);
+end
+procedure Node035 begin
+   set_message_state_given
+   Reply(233);
+   NOption(g_mstr(350),Node999,001);
+end
