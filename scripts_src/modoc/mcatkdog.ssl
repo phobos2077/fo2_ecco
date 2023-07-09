@@ -1,0 +1,344 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Modoc Dog
+        Location: Modoc
+        Description: Modoc dog. If these dogs are on the brahmin seed map, they increment the
+                     dog count for the seed. When dogs die and they decrement the counter and
+                     set it to -1 if all have been killed. Also if the map is left, all dogs are
+                     killed.
+
+        Log:
+
+           Created: December 02, 1997
+
+           Updated:
+*/
+
+/* Include Files */
+
+#define SCRIPT_REALNAME "mcatkdog"
+#include "../headers/define.h"
+
+#define NAME                    SCRIPT_MCATKDOG
+#define TOWN_REP_VAR            GVAR_TOWN_REP_MODOC
+
+#include "../headers/command.h"
+#include "../headers/modoc.h"
+#include "../headers/modbrah.h"
+#include "../headers/modinn.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure map_exit_p_proc;
+procedure timed_event_p_proc;
+procedure combat_p_proc;
+
+#define LVAR_Home_Tile                    (0)
+#define LVAR_Setup_Attack                 (1)
+#define LVAR_Old_Home                     (2)
+#define LVAR_Flags                        (3)
+
+#define dude_is_in_cage                   tile_in_cage_area(dude_tile)
+
+#define set_dog_obj                       if (hostile == false) then begin                      \
+                                             if (dog_object == 0) then begin                    \
+                                                dog_object := self_obj;                         \
+                                             end else if (brahmin_object == 0) then begin       \
+                                             end else if (brahmin_seed_dog_attacked) then begin \
+                                                if (tile_distance_objs(self_obj, brahmin_object) < tile_distance_objs(dog_object, brahmin_object)) then begin \
+                                                   brahmin_object := self_obj;                  \
+                                                end                                             \
+                                             end else if (tile_distance_objs(self_obj, brahmin_object) > tile_distance_objs(dog_object, brahmin_object)) then begin \
+                                                dog_object := self_obj;                         \
+                                             end                                                \
+                                          end else if (self_obj == dog_object) then dog_object := 0
+
+#define attack_brahmin_bit                bit_10
+
+#define attack_brahmin                    lvar_bit(LVAR_Flags, attack_brahmin_bit)
+#define set_attack_brahmin                set_lvar_bit_on(LVAR_Flags, attack_brahmin_bit)
+
+// by phobos2077: wait before attack
+#define ATTACK_WAIT_SECONDS               50
+#define ATTACK_WAIT_BASE_TILE             8091
+#define ATTACK_WAIT_OVERRIDE_DIST         25
+#define ATTACK_WAIT_EVENT                 2077
+#define attack_wait_bit                   bit_16
+#define attack_wait                       lvar_bit(LVAR_Flags, attack_wait_bit)
+#define set_attack_wait                   set_lvar_bit_on(LVAR_Flags, attack_wait_bit)
+
+import variable dog_object;
+import variable brahmin_object;
+import variable cage_door_obj;
+import variable coup_door_obj;
+import variable dog_that_can_see_dude;
+variable last_update;
+variable temp_dog;
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+variable temp_tile;
+   if (fixed_param == 1) then begin
+      if (combat_is_initialized == false) then begin
+         if (self_can_see_dude) then begin
+            if (dude_is_in_cage) then begin
+               if (anim_busy(self_obj) == false) then begin
+                  if (tile_distance_objs(self_obj, dude_obj) <= 3) then begin
+                     Face_Critter(dude_obj, self_obj);
+                  end
+               end
+               floater_bad(random(200,202));
+            end
+         end
+      end
+      add_timer_event(self_obj,game_ticks(random(2,3)),1);
+   end else if (fixed_param == 2) then begin
+      if (combat_is_initialized == false) then begin
+         ndebug("telling dog to switch tile");
+         if ((anim_busy(self_obj) == false) and (dude_is_in_cage == false)) then begin
+            if (self_tile == local_var(LVAR_Home_Tile)) then begin
+               temp_tile := tile_num_in_direction(local_var(LVAR_Home_Tile), random(0,5), random(3,10));
+               if (tile_in_cage_area(temp_tile)) then begin
+                  self_walk_to_tile(temp_tile);
+               end
+            end else begin
+               self_walk_to_tile(local_var(LVAR_Home_Tile));
+            end
+         end
+      end
+      add_timer_event(self_obj,game_ticks(random(5,15)),2);
+   end else if (fixed_param == ATTACK_WAIT_EVENT) then begin
+      if (not attack_wait) then ndebug("waited long enough, go for brahmin!");
+      set_attack_wait;
+   end
+end
+
+procedure combat_p_proc begin
+   set_dog_obj;
+   if (hostile == false) then begin
+      if (cur_map_index == MAP_MODOC_BRAHMINPASTURES) then begin
+         if (brahmin_object != 0) then begin
+            set_attack_brahmin;
+            attack(brahmin_object);
+         end
+      end
+   end
+   /*
+   if (fixed_param != COMBAT_SUBTYPE_TURN) then begin
+      if (attack_brahmin == false) then begin
+      end
+   end else begin
+   end
+   */
+end
+/*
+      if (self_pid != PID_DOG) then begin
+         if (local_var(LVAR_Setup_Attack) == false) then begin
+            if (is_dog_attack_time) then begin
+               set_local_var(LVAR_Setup_Attack, true);
+            end
+         end else if (all_brahmin_dead == false) then begin
+            set_dog_obj;
+            if (brahmin_object != 0) then begin
+               if (obj_can_see_obj(self_obj, brahmin_object)) then begin
+                  attack(brahmin_object);
+               end else begin
+                  anim_run_to_point(tile_num(brahmin_object))
+                  if (tile_distance_objs(self_obj, brahmin_object) < tile_distance_objs(dog_object, brahmin_object)) then begin
+                     dog_object := self_obj;
+                  end
+               end
+            end
+         end else if (((self_can_see_dude) or (tile_distance_objs(self_obj,dude_obj) < 10))) then begin
+            self_attack_dude;
+         end else begin
+            anim_run_to_point(local_var(LVAR_Home_Tile))
+         end
+      end
+*/
+procedure critter_p_proc begin
+variable temp_tile;
+   if (cur_map_index == MAP_MODOC_BRAHMINPASTURES) then begin
+      // dogs in pasture
+      // phobos2077:
+      if (not attack_wait and tile_distance(dude_tile, ATTACK_WAIT_BASE_TILE) < ATTACK_WAIT_OVERRIDE_DIST) then begin
+         ndebug("Dude too close, stop waiting!");
+         set_attack_wait;
+      end
+      // ;
+      if (all_brahmin_dead == false and attack_wait) then begin // pbs: added wait
+         set_dog_obj;
+         if (brahmin_object != 0) then begin
+            if (obj_can_see_obj(self_obj, brahmin_object)) then begin
+               attack(brahmin_object);
+            end else begin
+               anim_move_to_point(tile_num(brahmin_object)) // pbs: move instead of run
+            end
+         end
+      end else if (self_can_see_dude) then begin
+         self_attack_dude;
+      end else begin
+         anim_move_to_point(local_var(LVAR_Home_Tile)) // pbs: move instead of run
+      end
+   end else begin
+      // dogs in cage
+      if ((self_can_see_dude) or (self_can_hear_dude)) then begin
+         if (dog_that_can_see_dude == 0) then begin
+            dog_that_can_see_dude := self_obj;
+         end
+      end else if (dog_that_can_see_dude == self_obj) then begin
+         dog_that_can_see_dude := 0;
+      end
+
+      if (dude_is_in_cage) then begin
+         if ((self_elevation != dude_elevation) or (self_visible == false)) then begin
+            destroy_object(self_obj);
+         end else if (local_var(LVAR_Setup_Attack) != 0) then begin
+            if ((game_time > local_var(LVAR_Setup_Attack)) or (obj_is_open(coup_door_obj))) then begin
+               self_attack_dude;
+            end
+         end else begin
+            if (tile_distance_objs(self_obj, dude_obj) > 1) then begin
+               temp_tile := tile_num_in_direction(dude_tile, rotation_to_tile(dude_tile, coup_door_tile), random(1,2));
+               if (tile_in_cage_area(temp_tile)) then begin
+                  self_run_to_tile_force(temp_tile);
+               end
+            end
+            if (did_dog_message == false) then begin
+               set_dog_message;
+               display_mstr(210);
+               if (random(0,2) != 1) then begin
+                  play_sfx("maddogaq");
+               end
+            end
+            set_local_var(LVAR_Setup_Attack, game_time + (15*ONE_GAME_SECOND));
+         end
+      end else if (local_var(LVAR_Setup_Attack) != 0) then begin
+         set_local_var(LVAR_Setup_Attack, 0);
+      end
+   end
+end
+
+procedure pickup_p_proc begin
+end
+
+procedure talk_p_proc begin
+end
+
+procedure destroy_p_proc begin
+   if (cur_map_index == MAP_MODOC_BRAHMINPASTURES) then begin
+      // dogs in pasture
+      inc_evil_critter
+      if (dog_object == self_obj) then begin
+         dog_object := 0;
+      end
+      do_kill_dog;
+      //added by killap
+      if (all_dogs_dead) then begin
+         display_msg(mstr(300));
+         modoc_dude_floater(500 + (dude_is_stupid));
+      end
+      //end added
+   end else begin
+      // dogs in cage
+      if (dog_that_can_see_dude == self_obj) then begin
+         dog_that_can_see_dude := 0;
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_hostile;
+   end
+end
+
+procedure look_at_p_proc begin
+   display_mstr(100 + (cur_map_index == MAP_MODOC_BRAHMINPASTURES));
+end
+
+procedure description_p_proc begin
+   display_mstr(120 + (cur_map_index == MAP_MODOC_BRAHMINPASTURES));
+end
+
+procedure use_obj_on_p_proc begin
+end
+
+procedure use_skill_on_p_proc begin
+   if (action_being_used == SKILL_STEAL) then
+      script_overrides;
+end
+
+procedure map_enter_p_proc begin
+
+   match_dude_elevation;
+   set_self_ai(AI_DOG_TOUGH);
+   if (cur_map_index == MAP_MODOC_BRAHMINPASTURES) then begin
+      // dogs in pasture
+      set_attack_dog_team
+      last_update := game_time;
+      if (self_pid != PID_DOG) then begin
+         if (local_var(LVAR_Home_Tile) == 0) then begin
+            set_local_var(LVAR_Home_Tile, self_tile);
+            inc_global_var(GVAR_MODOC_DOGS_ALIVE);
+         end
+      end else begin
+         self_rotate(random(0,5));
+      end
+      add_timer_event(self_obj, game_ticks(ATTACK_WAIT_SECONDS), ATTACK_WAIT_EVENT);
+   end else begin
+      // dogs in cage
+      set_self_team(TEAM_MODOC);
+      if (local_var(LVAR_Home_Tile) == 0) then begin
+         set_local_var(LVAR_Home_Tile, self_tile);
+         set_local_var(LVAR_Old_Home, self_tile);
+         add_timer_event(self_obj,game_ticks(random(2,3)),1);
+         add_timer_event(self_obj,game_ticks(random(15,30)),2);
+      end else if (is_loading_game == false) then begin
+         if (self_tile != local_var(LVAR_Old_Home)) then begin
+            critter_attempt_placement(self_obj, local_var(LVAR_Old_Home), 0);
+         end
+      end
+   end
+end
+
+procedure map_update_p_proc begin
+   if (cur_map_index == MAP_MODOC_BRAHMINPASTURES) then begin
+      // dogs in pasture
+      if (((game_time - last_update) > (15 * ONE_GAME_MINUTE)) and (last_update != 0)) then begin
+         critter_attempt_placement(self_obj, local_var(LVAR_Home_Tile), dude_elevation);
+         if ((local_var(LVAR_Setup_Attack)) and (all_brahmin_dead == false)) then begin
+            do_kill_all_brahmin
+         end
+      end
+      last_update := game_time;
+   end else begin
+      // dogs in cage
+   end
+end
+
+procedure map_exit_p_proc begin
+   if (cur_map_index == MAP_MODOC_BRAHMINPASTURES) then begin
+      // dogs in pasture
+      critter_attempt_placement(self_obj, local_var(LVAR_Home_Tile), dude_elevation);
+   end else if (cage_door_obj != 0) then begin
+      if (obj_is_open(cage_door_obj)) then begin
+         destroy_object(self_obj);
+      end
+   end
+end

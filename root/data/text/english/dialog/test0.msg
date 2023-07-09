@@ -609,12 +609,12 @@
 {3606}{}{NO}
 {3607}{}{7}                                 # Armor
 {3608}{}{[TOOLS]}
-{3609}{}{75|308}                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+{3609}{}{308}                               # PID_SUPER_TOOL_KIT
 {3610}{}{[SKILLS]}
-{3611}{}{REPAIR:60}
+{3611}{}{REPAIR:75}
 {3612}{}{[COMPONENTS]}
 {3613}{}{74:1}                              # PID_LEATHER_JACKET
-{3614}{}{98:2|269:1}                        # Junk or Robot Parts
+{3614}{}{98:3|269:1}                        # Junk or Robot Parts
 
 
 {3700}{}{[ITEM]}
@@ -626,9 +626,9 @@
 {3706}{}{NO}
 {3707}{}{7}                                 # Armor
 {3708}{}{[TOOLS]}
-{3709}{}{75|308}                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+{3709}{}{308}                               # PID_SUPER_TOOL_KIT
 {3710}{}{[SKILLS]}
-{3711}{}{REPAIR:90}
+{3711}{}{REPAIR:100}
 {3712}{}{[COMPONENTS]}
 {3713}{}{2:1}                               # PID_METAL_ARMOR
 {3714}{}{32:2|382:2}                        # Flamethrower fuel

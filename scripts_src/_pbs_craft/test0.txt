@@ -485,12 +485,12 @@ CRFT_LTH                          # Leather (yeah, I know...)
 NO
 7                                 # Armor
 [TOOLS]
-75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+308                               # PID_SUPER_TOOL_KIT
 [SKILLS]
-REPAIR:60
+REPAIR:75
 [COMPONENTS]
 74:1                              # PID_LEATHER_JACKET
-98:2|269:1                        # Junk or Robot Parts
+98:3|269:1                        # Junk or Robot Parts
 
 
 [ITEM]
@@ -502,9 +502,9 @@ CRFT_LTH                          # Leather (yeah, I know...)
 NO
 7                                 # Armor
 [TOOLS]
-75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
+308                               # PID_SUPER_TOOL_KIT
 [SKILLS]
-REPAIR:90
+REPAIR:100
 [COMPONENTS]
 2:1                               # PID_METAL_ARMOR
 32:2|382:2                        # Flamethrower fuel
