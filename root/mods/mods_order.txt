@@ -19,10 +19,11 @@ cassidy_voice_joey_bracken_hq.dat
 npc_armor.dat
 talking_heads.dat
 talking_heads_audio.dat
+x_rpu_companion_expansion.dat
+x_rpu_companion_expansion_ecco_patch.dat
 
 ; Gameplay overhauls
 rpu_y_ecco.dat
-;ecco.dat
 
 ; QoL/tweaks
 fo2tweaks.dat

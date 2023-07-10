@@ -1,6 +1,6 @@
 -====================-
 -===   EcCo mod   ===-
--=== v0.9.1 BETA  ===-
+-=== v0.9.2 BETA  ===-
 -====================-
 						by phobos2077
 
@@ -11,21 +11,21 @@
 - All "schematics" are divided into several categories, you need to find teacher for each category.
 - Knowing schematics is not enough: to start crafting you may also need skills, components and tools.
 - Some craftable food.
-- Crafting menu is accessible by clicking a new button on main panel or with a hotkey: Ctrl+F.
+- Crafting menu is accessible by clicking a new button on main panel or with a hotkey: Ctrl+C.
 
 
 > TRAPS:
 - To use traps you need to craft a Trap Kit first (need explosive schematics for mines and electronics for sensor mine).
-- To place the trap on the ground, put it in your active hand slot and use it ON your character (or just press Ctrl+1 hotkey).
+- To place the trap on the ground, put it in your active hand slot and use it ON your character (or just press Ctrl+4 hotkey).
 - To actually arm the trap, use Traps skill on it.
 - For mines: you can use any explosive from inventory on the floor trap tile; if you just use "Traps" skill on them, the game will first try to arm it with last used explosive type, and then with any explosive found in your inventory.
-- You need to pass traps skill check to successfully arm the trap, if you are bad enough, you may end up blowing yourself.
+- You need to pass traps skill check to successfully arm the trap, if you are bad enough, you may end up blowing yourself. But if you're good, you'll have a chance of critical hit with your trap.
 - You can dismantle any trap (both armament and trap kit will return to your inventory) just Using them or using Traps Skill on them.
-- Spike traps can be used a couple of times (it loses one "charge" when someone steps on it).
+- Some traps can be used several times (see number of remaining uses in trap description).
 - Player and party members can't be hurt by your traps.
-- When using spike traps, damage formula is: 7-14 (when traps skill is 0~40), max damage is increased up to 40, by 1 for each 3 skill points (7-40 at 120% skill).
+- Bear Trap can immobilize the enemy for several turns. He can still shoot you though!
 - When using explosives, explosion damage is approximately equal to damage when using those items normally; damage type is also derived from item (EMP for Pulse grenade, Fire for Molotov, etc.).
-- Sensor mines detect movement on 1 tile radius. If critter passes just near the trap and don't step on it, there is a very small chance trap won't go off.
+- Some traps require the enemy to step on the exact tile of the trap, while others can trigger in a small radius.
 - New book for Traps skill added.
 
 
@@ -39,7 +39,7 @@
 > LOOT REDUCTION:
 - There is a chance a weapon will get destroyed when critter dies (except unique and rare weapons).
 - Corpses are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
-- Loot slightly reduced in S.A.D, Hubologist Stash, Toxic Caves.
+- Loot slightly reduced in various containers across the game.
 - EPA: loot rearranged/reduced somewhat; room with most powerful stuff at security level will be harder to get in.
 - It is harder to steal from Redding doctor now.
 - Closed rooms in Bishop club are harder to get in.
@@ -183,6 +183,9 @@ FO2Tweaks:
 - Disable the following (EcCo already includes similar changes):
 molotov_fire=0
 damage_mod=0
+
+Companion Expansion:
+- Has conflicts, mainly with the RPU/maps update that EcCo requires, needs a patch!
 
 
 

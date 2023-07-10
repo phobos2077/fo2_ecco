@@ -55,7 +55,7 @@ Design goals:
 - unlock new items by finding crafting teachers across the game
 
 **Traps System**:
-- installable traps: "melee" type spike trap, explosive mine and sensor mine
+- installable traps: "melee" type Spike Trap, Bear Trap that immobilizes enemies, explosive mine and sensor bomb
 - explosive traps are customized by arming them with any type of explosives or grenades
 - become a trapper by luring geckos and rats into your traps using food as bait!
 
@@ -74,6 +74,9 @@ Start of a new game is **required**, if you're updating from EcCo 0.6.2 or basic
 ### [Talking Heads Addon](https://www.nexusmods.com/fallout2/mods/45) & [Talking Heads Actually Talk (THAT)](https://www.nexusmods.com/fallout2/mods/67):
 - Full built-in support, no patches needed (if you previously used compatibility patches, DELETE them)
 
+### [Companion Expansion](https://www.nexusmods.com/fallout2/mods/70):
+- Has conflicts, requires patch! (see releases page for more info)
+
 ### [Inventory Filter](https://github.com/rotators/InventoryFilter/raw/master/archive/F2-InventoryFilter_v2.0.2_en.rar) (2.0.2 from github):
 - SmartBarter option seems to cause issues with barter, avoid!
 
@@ -84,6 +87,7 @@ Start of a new game is **required**, if you're updating from EcCo 0.6.2 or basic
 molotov_fire=0
 damage_mod=0
 ```
+
 
 [sfall](https://github.com/sfall-team/sfall) **v4.4.0** or higher is required! (included in the mod package)
 
