@@ -114,8 +114,7 @@
 
 #define is_melee_attack(type)   (type == ATTACK_MODE_PUNCH or type == ATTACK_MODE_KICK or type == ATTACK_MODE_SWING or type == ATTACK_MODE_THRUST)
 
-#define tile_behind_obj_rng(who, rng)                                                         \
-      (tile_num_in_direction(tile_num(who),((has_trait(1,who,10) + 3) % 6), rng))
+#define tile_behind_obj_rng(who, rng)       (tile_num_in_direction(tile_num(who),((has_trait(TRAIT_OBJECT,who,OBJECT_CUR_ROT) + 3) % 6), rng))
 
 #define attacker_behind_target(oA, oT)                                                         \
       ((tile_distance(tile_num(oA),tile_behind_obj_rng(oT, 2))<=2) and (tile_distance_objs(oA,oT)<=2))

@@ -266,7 +266,7 @@ procedure barterprice_handler begin
 		set_sfall_return(0);
 	end
 
-	if stats != "" then debug_log(stats+", dude barter: "+dudeBarter+", merchant barter: "+merchantBarter);
+	if stats != "" then debug_log(stats+", dude barter: "+dudeBarter+", merchant barter: "+merchantBarter+", barter_mod: "+dialogBarterMod);
 end
 
 procedure calc_items_demand_mod(variable containerObj) begin

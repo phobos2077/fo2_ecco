@@ -3,15 +3,12 @@
 set int2ssl=%CD%\bin\int2ssl.exe
 
 cd ..\root\data\scripts
-mkdir _ssl
+mkdir _dump
 
 for /f "tokens=* delims=" %%I in ('dir *.int /b') do (
-	if not %%~nI==bhrnddst (
-		%int2ssl% -s3 -c "%%I"
-		move /Y %%~nI.ssl _ssl\
-	)
+	%int2ssl% -d "%%I"
+	move /Y %%~nI.dump _dump\
 )
 
 echo Done!
 pause
-cls

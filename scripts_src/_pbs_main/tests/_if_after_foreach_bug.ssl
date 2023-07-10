@@ -1,7 +1,14 @@
+procedure test(variable x) begin
+  return x*x;
+end
+
 
 procedure start begin
   variable k, a, arr2;
   arr2 := 111;
-  foreach k in (arr2)
-    if (k) then arr2[k] := 1;
+  for k := 0; k < 2; k++;
+    display_msg(1);
+    
+  foreach (k in arr2) if (k) then arr2[k] := 1;
+  
 end

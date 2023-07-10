@@ -556,7 +556,7 @@ procedure batch_item(variable num) begin
     while (field(line) != ITEM_COMPONENTS and line < SECTION_STEP) do line += 1;
     line += 1;
     while (line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
-        orList := string_split_safe(field(line), "|");
+        orList := string_split(field(line), "|");
         i := 0;
         // remove first item from "OR" orList that player has
         while (i < len_array(orList)) do begin
@@ -598,7 +598,7 @@ procedure undo_batch(variable num) begin
     while (field(line) != ITEM_COMPONENTS and line < SECTION_STEP) do line += 1;
     line += 1;
     while (line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
-        orList := string_split_safe(field(line), "|");
+        orList := string_split(field(line), "|");
         // give first item from optional orList
         if (len_array(orList) > 0) then begin
             componentData := string_split_ints(orList[0], ":");
@@ -675,7 +675,7 @@ procedure draw_item_properties begin
     saved_line := line;
     while (field(line) != ITEM_SKILLS and line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
         has_any := 0;
-        list := string_split_safe(field(line), "|");
+        list := string_split(field(line), "|");
         i := 0;
         foreach tool_word in list begin
           tool := atoi(tool_word);
@@ -710,7 +710,7 @@ procedure draw_item_properties begin
     // Display list of skills
     saved_line := line;
     while (field(line) != ITEM_COMPONENTS and line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
-        list := string_split_safe(field(line), ":");
+        list := string_split(field(line), ":");
         if (len_array(list) != 2) then debug_msg("! ERROR ! [craft] Invalid skill definition: " + field(line));
         skill_lv := atoi(list[1]);
         // list of skills
@@ -753,7 +753,7 @@ procedure draw_item_properties begin
     max_batch := 32767;
     while (line < SECTION_STEP and field(line) != "Error" and bstr(cur_section_start) == ITEM_ITEM) do begin
         has_any := 0;
-        list := string_split_safe(field(line), "|");
+        list := string_split(field(line), "|");
         i := 0;
         max2 := 0;
         foreach tool_word in list begin
@@ -830,7 +830,7 @@ end
 
 procedure parse_skill_name(variable s_name) begin
    variable i, j, skill, lst, lst2, s;
-   lst := string_split_safe(s_name, "+");
+   lst := string_split(s_name, "+");
    lst2 := temp_array(len_array(lst), 4);
    j := 0;
    foreach s in lst begin

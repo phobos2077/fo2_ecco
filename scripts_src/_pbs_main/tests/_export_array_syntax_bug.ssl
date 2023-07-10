@@ -1,0 +1,9 @@
+export variable wtf;
+
+procedure start begin
+   variable k := "a";
+   wtf := temp_array(-1, 0);
+   wtf[k] := 1;
+    display_msg(wtf[k]);
+end
+

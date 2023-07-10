@@ -79,7 +79,7 @@ end
 
 
 procedure critter_p_proc begin
-   if (self_can_see_dude and (tile_distance_objs(self_obj,dude_obj) <= 7)) then begin
+   if (self_can_see_dude and (tile_distance_objs(self_obj,dude_obj) <= 7)) then begin // phobos2077: add distance check
       attack(dude_obj);
    end
 

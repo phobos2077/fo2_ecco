@@ -1,0 +1,23 @@
+procedure procedure1;
+procedure procedure2;
+
+variable procName;
+
+procedure procedure1 begin
+   display_msg("yeees!"+procedure2+procedure1);
+end
+
+procedure procedure2 begin
+   display_msg("double yes 121233!"+procedure2+procedure1);
+end
+
+procedure start begin
+   variable localempty := "";// @procedure1;
+   variable localNotEmpty := "noooot";
+   //localNotEmpty := "noooot";
+   //call procedure1;
+   //call @procedure1;
+   //call "procedure1";
+   //call procName;
+   display_msg("No?" + localempty + localNotEmpty);
+end

@@ -11,6 +11,8 @@
  * - Allows to override attack damage type based on loaded ammo. This affects damage calculations as well as death animations.
  */
 
+#define SCRIPT_REALNAME  "pbs_damage_mod"
+
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.math.h"
 #include "../sfall/define_lite.h"
@@ -44,8 +46,7 @@ procedure round_chance(variable dmg);
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 #define INI_ATTACK_MODES_SECTION  "ATTACK_MODES"
 
-#define debug_log(msg)        debug_msg("pbs_damage_mod: "+msg)
-#define debug_verbose(msg)    if ini_debug then debug_msg("pbs_damage_mod: "+msg)
+#define debug_verbose(msg)    if ini_debug then debug_log(msg)
 
 #define DT_MODE_ADD   (1)
 #define DT_MODE_MULT  (2)

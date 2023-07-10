@@ -6,11 +6,11 @@
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.math.h"
 
+#define SCRIPT_REALNAME    "gl_expforkill_mod"
+
 #include "../_pbs_headers/ecco.h"
 
 #define INI_SECTION        "EXP_FOR_KILL"
-
-#define debug_log(msg)       debug_msg("gl_expforkill_mod: "+msg)
 
 variable
    origExpMap, // associative array  pid => original exp value

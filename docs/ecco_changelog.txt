@@ -1,5 +1,33 @@
 -=== CHANGELOG ===-
 
+v0.9.2
+> Traps:
+- new Bear Trap with mechanic for holding critter down for several turns
+- remade internal mechanics for simpler scripts and more robust triggering (esp. out of combat)
+- replaced linear skill-based damage curve for Spike Traps with critical hit chance (with cripple effects), based on modified vanilla critical roll formula - for ALL traps
+- externalized all config to ini file (data/config folder) to allow traps to be easily ported to any game/mod
+- slightly buffed explosives damage
+- tweaked Modoc Brahmin quest to add delay before dogs attack (allows to prepare traps)
+
+> Balance:
+- replaced most of the EcCo maps changes with a new "map tweaker" script
+- add varius crafting components and remove excessive loot in and around Den & Modoc
+- slightly tweaked Tubby & friends to pose more of a threat
+- increased frequency for some AI types to use bursts
+- slight reduction to town demand multipliers
+- removed all changes to Trapper script (Random Encounter) to allow buying and selling pelts with a profit
+- various balance tweaks to crafting recipes
+- add crafting components and a few new items to random encounter containers
+- Vegeir: replaced Assault Rifle reward with Hunting Rifle
+
+> Other:
+- fixed empty Jo's shop inventory
+- changed crafting hotkey back to Ctrl+C (to avoid conflict with party_orders mod)
+- better Fix Boy button art
+- fixed Geckos and Rats being attracted to food from across the map
+- inventory AP cost is also applied when using certain items (such as explosives)
+
+
 v0.9.1
 - fixed several broken global scripts
 - fixed several bugs with crafting UI

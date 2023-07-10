@@ -16,5 +16,5 @@ import variable bishop_stair_guard_obj;
 
 // TODO: try to use the new doors.h while keeping the watcher logic
 
-#include "../generic/_custom_door.ssl"
+#include "../generic/_custom_door.h"
 #include "../headers/newreno.h"

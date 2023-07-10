@@ -2,11 +2,8 @@
 	Customizable door. Use from another script by setting defines
 */
 
-
 /* Include Files */
 #include "../headers/define.h"
-
-#define SCRIPT_REALNAME "zimtldor"
 
 #define NAME                    SCRIPT_DOOR
 

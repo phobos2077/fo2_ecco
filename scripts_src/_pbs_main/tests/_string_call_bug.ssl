@@ -1,12 +1,27 @@
-procedure my_proc begin
-   display_msg("my_proc called");
+
+
+variable cond;
+
+procedure my_proc1(variable arg) when cond begin
+   display_msg("my_proc1 called: "+arg+", cond: "+cond+"; ");
+end
+
+procedure descProc begin
+   variable arg := get_sfall_arg;
+   if (arg == dude_obj) then cond := not cond;
+   call my_proc1(arg);
 end
 
 procedure start begin
    variable n;
    variable procName;
-   call my_proc;
-   n := dude_obj;
+   //call my_proc1(1);
+   //call "my_proc1"(2);
+   //procName := @my_proc1;
+   //call procName(3);
+   n := dude_obj != 0;
    procName := "my_"+"proc"+n;
-   call procName;
+   call procName(4);
+
+   register_hook_proc(34, descProc);
 end

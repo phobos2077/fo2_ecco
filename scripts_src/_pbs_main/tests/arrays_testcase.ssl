@@ -1,3 +1,5 @@
+#include "../../sfall/sfall.h"
+#include "../../sfall/lib.arrays.h"
 
 variable test_suite_errors := 0;
 variable test_suite_verbose := true;
@@ -152,6 +154,10 @@ procedure array_test_suite begin
    display_msg("Testing save/load...");
    arr := [2,1];
    arr2 := {1:2};
+   s := "";
+   k := 1;
+   if (arr and not arr2[k]) then s := "ok";
+   call assertEquals("bracket syntax", "ok", s);
    save_array("myarray", arr);
    call assertEquals("load 1", load_array("myarray"), arr);
    save_array("myarray", arr2);
