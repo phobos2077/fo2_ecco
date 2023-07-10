@@ -2332,9 +2332,9 @@
 00002333.pro
 00002334.pro
 00002335.pro
-_trap_s0.pro
-_trap_s1.pro
-_trap_m0.pro
-_trap_m1.pro
-_trap_p0.pro
-_trap_p1.pro
+_trap_sp.pro
+_trap_br.pro
+_trap_mi.pro
+_trap_mi.pro
+_trap_sn.pro
+_trap_sn.pro
