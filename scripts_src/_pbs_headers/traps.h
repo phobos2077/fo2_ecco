@@ -87,13 +87,17 @@ procedure trap_setoff_melee(variable critter, variable dmgMin, variable dmgMax, 
 
 variable trap_object_pid_set;
 
+pure procedure TrapType_trap_pid(variable typeCfg) begin
+   return 0x02000000 + typeCfg.trap_pid;
+end
+
 pure procedure tile_contains_any_trap(variable tile, variable elev) begin
    if not trap_object_pid_set then begin
-      trap_object_pid_set := array_fixed(array_to_set(array_keys(pbs_trap_config.pid_to_type)));
+      trap_object_pid_set := array_fixed(array_to_set(array_transform(pbs_trap_config.types, @TrapType_trap_pid)));
       call array_append(trap_object_pid_set, array_to_set([
          PID_METAL_FLOOR_TRAP_VISIBLE, PID_METAL_FLOOR_TRAP_DISARMED, PID_METAL_FLOOR_TRAP_DEPRESSED,
          PID_CAVE_FLOOR_TRAP_VISIBLE, PID_CAVE_FLOOR_TRAP_DISARMED, PID_CAVE_FLOOR_TRAP_DEPRESSED]));
-      debug_log("trap_object_pid_set: "+debug_array_str(trap_object_pid_set));
+      //debug_log("trap_object_pid_set: "+debug_array_str(trap_object_pid_set));
    end
    variable obj, objs := tile_get_objs(tile, elev);
    foreach (obj in objs) begin
@@ -115,7 +119,7 @@ end
 */
 procedure create_trap_object(variable type, variable tile, variable elev, variable charges) begin
    variable newPid := 0, newObj;
-   newPid := 0x02000000 + pbs_trap_config.types[type].trap_pid;
+   newPid := TrapType_trap_pid(pbs_trap_config.types[type]);
    if (newPid == 0) then begin
       debug_err("Invalid trap type: "+type);
       return 0;
@@ -218,10 +222,10 @@ procedure trap_damage_critter(variable critter, variable dmgMin, variable dmgMax
 
    // Because critter_dmg doesn't apply damage immediately, but only after death animation, we need to hook into hs_deathanim2 to detect if death took place.
    debug_log_fmt("critter is dead: %d", pbs_trap_last_target_dead);
-   if (combat_is_initialized) then begin
+   if (stop and combat_is_initialized) then begin
       debug_log("set AP to 0!");
       set_combat_free_move(0); // REQUIRED if another mod sets combat_free_move to a critter
-      set_critter_current_ap(critter, 0); // REQUIRED to prevent crash (if triggered during combat from hs_movecost)
+      set_critter_current_ap(critter, 0);
    end
    if (not pbs_trap_last_target_dead) then begin
       if (effects) then begin

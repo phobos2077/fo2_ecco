@@ -434,7 +434,10 @@ procedure trap_setoff_effect(variable armPid, variable critter) begin\
       call trap_setoff_explosion(self_obj, critter, dmgMin, dmgMax, radius, dmgType, is_critical_hit, effectPid, audioSfx);
    end else begin // "melee" trap
       variable stop := typeCfg.stop;
-      if (my_trap_charges <= 1 and stop > 1) then stop := 1; // trap can't hold critter if it's destroyed
+      if (stop > 0 and typeCfg.stop_max_st and get_critter_stat(critter, STAT_st) > typeCfg.stop_max_st) then begin
+         stop := 0; // critter is too strong to be stopped
+         debug_log_fmt("Critter too strong to be stopped (%d > %d).", get_critter_stat(critter, STAT_st), typeCfg.stop_max_st);
+      end else if (my_trap_charges <= 1 and stop > 1) then stop := 1; // trap can't hold critter if it's destroyed
       dmgMin := typeCfg.dmg_min;
       dmgMax := typeCfg.dmg_max;
 

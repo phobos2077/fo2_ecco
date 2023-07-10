@@ -81,13 +81,13 @@ procedure load_traps_config begin
          cfg_parse_int(typeCfg, section, trap_pid);
          cfg_parse_int(typeCfg, section, radius);
          cfg_parse_int(typeCfg, section, stop);
+         cfg_parse_int(typeCfg, section, stop_max_st);
          cfg_parse_int(typeCfg, section, dmg_min);
          cfg_parse_int(typeCfg, section, dmg_max);
          cfg_parse_int(typeCfg, section, skill_mod);
          cfg_parse_intlist(typeCfg, section, armaments);
          cfg.types[type] := typeCfg;
          if (typeCfg.item_pid) then cfg.item_to_type[typeCfg.item_pid] := type;
-         if (typeCfg.trap_pid) then cfg.pid_to_type[typeCfg.trap_pid] := type;
       end else if (string_starts_with(sectName, armamentPrefix)) then begin
          variable armPid := atoi(substr(sectName, strlen(armamentPrefix), 0));
          if (armPid > 0) then begin
@@ -174,10 +174,12 @@ procedure hold_critters_realtime begin
    if (game_time > last_hold_reset_time + 5 * 10) then begin
       last_hold_reset_time = game_time;
       if (len_array(pbs_trap_hold_critters) > 0) then begin
+         variable maxV;
          foreach (k: v in pbs_trap_hold_critters) begin
+            if (v[0] > maxV) then maxV := v[0];
             call dec_trap_hold_critter(k);
          end
-         debug_log("Decremented critter hold: "+debug_array_str_deep(pbs_trap_hold_critters, 2));
+         debug_log("Decremented critter hold: "+(maxV - 1));
       end
    end
 end
@@ -389,7 +391,7 @@ procedure combatturn_hook begin
       critter := get_sfall_arg;
    if eventType == 1 and pbs_trap_hold_critters[critter] then begin
       call dec_trap_hold_critter(critter);
-      debug_log("Decremented critter hold: "+debug_array_str_deep(pbs_trap_hold_critters, 2));
+      debug_log("Decremented critter hold: "+pbs_trap_hold_critters[critter][0]);
    end
 end
 
