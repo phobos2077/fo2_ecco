@@ -1,0 +1,27 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/newreno.h"
+
+#define WATCHER_OBJ                 new_reno_wright_teen_obj
+#define DO_CHECK_TAMPER_CONDITION   (dude_family != family_wright)
+
+procedure def_use_p_proc;
+procedure def_timed_event_p_proc;
+
+procedure timed_event_p_proc begin
+   if( fixed_param == 0 ) then
+      obj_close( self_obj );
+   call def_timed_event_p_proc;
+end
+
+procedure use_p_proc begin
+   add_timer_event( self_obj, game_ticks(3), 0 );
+   call def_use_p_proc;
+end
+
+#define use_p_proc                        def_use_p_proc
+#define timed_event_p_proc                def_timed_event_p_proc
+
+#include "../generic/zilocker.ssl"

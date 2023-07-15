@@ -1,0 +1,11 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/newreno.h"
+
+#define WATCHER_OBJ                 new_reno_generic_boxer_obj
+#define ENTER_LOCK_CONDITION        (map_first_run)
+#define DO_CHECK_TAMPER_CONDITION   (dude_is_prizefighter == false)
+
+#include "../generic/zilocker.ssl"

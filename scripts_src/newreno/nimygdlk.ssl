@@ -1,0 +1,11 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/newreno.h"
+
+#define WATCHER_OBJ                 myron_guard_obj
+#define ENTER_LOCK_CONDITION        (map_first_run)
+#define LOCKPICK_SKILL_PENALTY      MEDIUM_LOCK_PENALTY
+
+#include "../generic/zilocker.ssl"

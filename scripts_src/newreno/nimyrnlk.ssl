@@ -1,0 +1,10 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/newreno.h"
+
+#define WATCHER_OBJ                 new_reno_myron_obj
+#define DO_CHECK_TAMPER_CONDITION   (Myron_In_Party == false) // Seraph's Fix: changed '!Myron_In_Party' to 'Myron_In_Party == false'
+
+#include "../generic/zilocker.ssl"

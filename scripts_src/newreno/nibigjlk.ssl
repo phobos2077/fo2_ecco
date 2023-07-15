@@ -1,0 +1,12 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/newreno.h"
+
+#define SKIP_WARNING                (true)
+#define WATCHER_OBJ                 new_reno_big_jesus_obj
+#define ENTER_LOCK_CONDITION        (map_first_run)
+#define LOCKPICK_SKILL_PENALTY      MEDIUM_LOCK_PENALTY
+
+#include "../generic/zilocker.ssl"

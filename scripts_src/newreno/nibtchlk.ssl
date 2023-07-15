@@ -1,0 +1,11 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/newreno.h"
+
+#define SKIP_WARNING                (true)
+#define WATCHER_OBJ                 new_reno_bitch_obj
+#define DO_CHECK_TAMPER_CONDITION   (dude_has_porn_star_rep == false)
+
+#include "../generic/zilocker.ssl"

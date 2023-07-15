@@ -75,12 +75,20 @@ import variable EXPORT_VAR;
 #endif
 
 #define EXPLOSION_SUCCESS_CHECK              (true)
-#define PRY_CROWBAR_MOD                      (0)
 #ifndef SKIP_WARNING
    #define SKIP_WARNING                      (false)
 #endif
 #ifndef LOCKPICK_SKILL_PENALTY
    #define LOCKPICK_SKILL_PENALTY            EASY_LOCK_PENALTY
+#endif
+#ifndef PRY_CROWBAR_MOD
+   #if LOCKPICK_SKILL_PENALTY == HARD_LOCK_PENALTY
+      #define PRY_CROWBAR_MOD                   (-6)
+   #elif LOCKPICK_SKILL_PENALTY == EASY_LOCK_PENALTY
+      #define PRY_CROWBAR_MOD                   (-2)
+   #else
+      #define PRY_CROWBAR_MOD                   (-4)
+   #endif
 #endif
 #define LOCKPICK_ITEM_PENALTY                (LOCKPICK_SKILL_PENALTY + 20)
 #define EXD_LOCKPICK_PENALTY                 (LOCKPICK_SKILL_PENALTY + 40)
@@ -112,8 +120,10 @@ import variable EXPORT_VAR;
                                              end
 #endif
 
+#define can_hear_and_see(critter, target)    (obj_can_hear_obj(critter, target) and obj_blocking_line(critter, tile_num(target), BLOCKING_TYPE_SHOOT))
+
 #ifndef watch_box_conditions
-   #define watch_box_conditions              (obj_can_see_obj(WATCHER_OBJ, user_obj))
+   #define watch_box_conditions              can_hear_and_see(WATCHER_OBJ, user_obj)
 #endif
 // what to do when source is caught using locker
 #define caught_use_action                    genereral_caught_action
@@ -138,8 +148,8 @@ import variable EXPORT_VAR;
    #define map_enter_action
 #endif
 
-#define EASY_LOCK_PENALTY                    (-20)
-#define MEDIUM_LOCK_PENALTY                  (-40)
+#define EASY_LOCK_PENALTY                    (-25)
+#define MEDIUM_LOCK_PENALTY                  (-50)
 #define HARD_LOCK_PENALTY                    (-75)
 
 #define lock_success_msg                     if (user_obj == dude_obj) then begin               \

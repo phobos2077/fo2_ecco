@@ -1,0 +1,21 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/newreno.h"
+
+#define WATCHER_OBJ                 new_reno_t_ray_obj
+#define ENTER_LOCK_CONDITION        (map_first_run)
+#define LOCKPICK_SKILL_PENALTY      MEDIUM_LOCK_PENALTY
+//#define DO_CHECK_TAMPER_CONDITION   (dude_is_made_man == false)
+
+#define genereral_caught_action            if (caught_tamper) then begin                                                \
+                                              if (Fallout2_enclave_destroyed) then begin                                \
+                                                 flush_add_timer_event(new_reno_t_ray_obj, 0, tamper_good_CSObj_param); \
+                                              end else if (dude_is_made_man == false) then begin                        \
+                                                 script_overrides;                                                      \
+                                                 flush_add_timer_event(new_reno_t_ray_obj, 0, tamper_CSObj_param);      \
+                                              end                                                                       \
+                                           end
+
+#include "../generic/zilocker.ssl"

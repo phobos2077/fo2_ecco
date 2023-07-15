@@ -1,0 +1,10 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/newreno.h"
+
+#define WATCHER_OBJ                 new_reno_mordino_men_obj
+#define DO_CHECK_TAMPER_CONDITION   (dude_family != family_mordino)
+
+#include "../generic/zilocker.ssl"

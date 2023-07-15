@@ -1,0 +1,27 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#define EXTRA_HEADER                "../headers/navarro.h"
+
+#define EXPORT_VAR                  Commander_Locker_Ptr
+#define WATCHER_OBJ                 commander_ptr
+#define ENTER_LOCK_CONDITION        (map_first_run)
+#define LOCKPICK_SKILL_PENALTY      HARD_LOCK_PENALTY
+#define DO_CHECK_TAMPER_CONDITION   ( map_var( MVAR_Open_Sesame ) == 0 )
+// edit by killap - added check that the player is actually seen
+#define watch_box_conditions                   (can_hear_and_see(WATCHER_OBJ, user_obj) and                                   \
+                                               (( not( dude_is_sneaking ) ) or                                                \
+                                               ( ( has_skill( dude_obj, SKILL_SNEAK ) < 130 ) and                             \
+                                                 ( has_skill( dude_obj, SKILL_SNEAK ) >= 60 ) and                             \
+                                                 ( not( is_success( roll_vs_skill( dude_obj, SKILL_SNEAK, -20 ) ) ) ) ) or    \
+                                               ( has_skill( dude_obj, SKILL_SNEAK ) < 60 )))                                  \
+
+#define do_warning_action                    add_timer_event( commander_ptr, 1, 0 );
+
+#define do_attack_action                     add_timer_event( commander_ptr, 1, 1 );                                          \
+                                             set_global_var( GVAR_NAVARRO_BASE_ALERT, 1 );                                    \
+                                             if (not(combat_is_initialized)) then                                             \
+                                             attack_setup(WATCHER_OBJ, user_obj);                                             \
+
+#include "../generic/zilocker.ssl"
