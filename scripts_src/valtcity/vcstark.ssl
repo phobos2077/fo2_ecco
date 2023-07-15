@@ -1128,11 +1128,11 @@ end
 procedure Node055 begin
    From_54_or_55 := 1;
    if( global_var( GVAR_VAULT_GECKO_PLANT ) < PLANT_DESTROYED ) then
-      Reply( mstr(319) + " " + mstr(322) );
+      Reply(7700);
    else if( global_var( GVAR_VAULT_GECKO_PLANT ) == PLANT_DESTROYED ) then
-      Reply( mstr(320) + " " + mstr(322) );
+      Reply(7701);
    else
-      Reply( mstr(321) + " " + mstr(322) );
+      Reply(7702);
 
    if( gecko_reconned ) then
       NOption(323, Node056, 004);
@@ -1261,7 +1261,7 @@ end
 procedure Node060 begin
    if( From_58_or_59 == 1 ) then begin
       From_58_or_59 := 0;
-      Reply( mstr(345) + " " + mstr(346) );
+      Reply(7704);
    end
    else
       Reply(346);

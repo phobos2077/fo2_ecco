@@ -409,9 +409,9 @@ end
 procedure Node008 begin
    From_8 := 1;
    if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) then
-      Reply( mstr(123) + " " + mstr(125) );
+      Reply(7700);
    else if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) then
-      Reply( mstr(124) + " " + mstr(125) );
+      Reply(7701);
    else
       Reply(125);
 
@@ -654,12 +654,12 @@ procedure Node029 begin
    if ( not( raiders_dead ) and not( raiders_scout_left ) ) then begin //edit by killap - expansion
    //if( not( raiders_dead ) ) then begin
       if( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_DESTROYED ) then
-         Reply( mstr(220) + " " + mstr(221) + " " + mstr(222) );
+         Reply(7702);
       else
-         Reply( mstr(220) + " " + mstr(221));
+         Reply(7703);
    end
    else if( global_var(GVAR_VAULT_GECKO_PLANT) < PLANT_DESTROYED ) then
-      Reply( mstr(220) + " " + mstr(222));
+      Reply(7704);
    else
       Reply(220);
 
@@ -847,14 +847,14 @@ procedure Node046 begin
    set_local_var( LVAR_Told_About_Fixing, 1 );
 
    if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) then
-      Reply( mstr(281) + " " + mstr(282) );
+      Reply(7705);
    else if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) then
-      Reply( mstr(281) + " " + mstr(283) );
+      Reply(7706);
    else begin
       set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_MCCLURE_CITIZENSHIP ) );
       set_global_var( GVAR_VAULT_CITIZENSHIP, CITIZEN_TRUE );
       set_global_var( GVAR_VAULT_CITIZEN, CITIZEN_REAL_CITIZEN );
-      Reply( mstr(281) + " " + mstr(284) );
+      Reply(7707);
    end
 
    NOption(285, Node999, 004);
@@ -866,11 +866,11 @@ end
 
 procedure Node047 begin
    if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) then
-      Reply( mstr(287) + " " + mstr(289) );
+      Reply(7708);
    else if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) then
-      Reply( mstr(287) + " " + mstr(288) );
+      Reply(7709);
    else
-      Reply( mstr(287) + " " + mstr(290) );
+      Reply(7710);
 
    NOption(291, Node008, 004);
    if( ( global_var(GVAR_MCCLURE_KNOWN) >= MCCLURE_CONVINCED ) and
@@ -984,9 +984,9 @@ end
 
 procedure Node056 begin
    if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_CAPTAIN_GUARD ) then
-      Reply( mstr(318) + " " + mstr(320) );
+      Reply(7711);
    else if( global_var(GVAR_VAULT_CITIZEN) == CITIZEN_REAL_CITIZEN ) then
-      Reply( mstr(319) + " " + mstr(320) );
+      Reply(7712);
    else
       Reply(320);
 
@@ -1013,11 +1013,11 @@ procedure Node057 begin
 
       if( From_59 == 1 ) then begin
          From_59 := 0;
-         Reply( mstr(322) + " " + mstr(323) );
+         Reply(7713);
       end
       // killap
       else if ( Already_Optimized == 1) then
-         Reply( mstr(360) + " " + mstr(323) ); //was 345, changed to 360 - killap - expansion pack (Village)
+         Reply(7714); //was 345, changed to 360 - killap - expansion pack (Village)
       // end killap
       else
          Reply(323);
@@ -1046,11 +1046,11 @@ procedure Node059 begin
    From_59 := 1;
    if( From_8 == 1 ) then begin
       From_8 := 0;
-      Reply( mstr(328) + " " + mstr(330) );
+      Reply(7715);
    end
    else if( From_58 == 1 ) then begin
       From_58 := 0;
-      Reply( mstr(329) + " " + mstr(330) );
+      Reply(7716);
    end
 
    NOption(331, Node059a, 004);

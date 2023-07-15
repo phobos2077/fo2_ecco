@@ -26,6 +26,8 @@
 #include "../headers/modoc.h"
 #include "../headers/modreact.h"
 
+#include "../_pbs_headers/talking_heads_compat.h"
+
 /* Standard Script Procedures */
 procedure start;
 procedure critter_p_proc;
@@ -154,7 +156,7 @@ procedure talk_p_proc begin
    if ((local_var(LVAR_Hostile) != 0) or (enemy_slags)) then begin
       self_attack_dude;
    end else
-      check_forced_dialog
+      check_forced_dialog_check_talking_head(28, 14)
    else if (cur_map_index == MAP_GHOST_FARM) then begin
       call Node998;
    end else if ((message_flag_given) and (message_flag_delivered == false)) then begin
@@ -165,7 +167,7 @@ procedure talk_p_proc begin
       end
    end else begin
       set_spoke_to_vegeir;
-      start_gdialog(NAME,self_obj,4,-1,-1);
+      start_gdialog(NAME, self_obj, 4, 28, 14);
       gSay_Start;
          if (message_flag_delivered) then begin
             if (local_var(LVAR_Said_Thanks)) then begin

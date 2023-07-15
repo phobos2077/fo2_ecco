@@ -1,10 +1,10 @@
-for 0.9.2:
+for 0.9.3:
 - playtest
-- finish Den & Modoc
+- finish Vault City, Gecko, Redding
 
 
 for "future":
-- Traps: a list of critter exceptions (for temporary followers, like Smiley)
+- Rebalance zilocker.ssl and all scripts that use it
 - Crafting: use items from party members inventory
 - Crafting: read config from INI file and texts from game/craft.msg
 - port "grenades anywhere" script from FO2Tweaks?
