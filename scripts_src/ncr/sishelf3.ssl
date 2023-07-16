@@ -26,7 +26,7 @@
 
 #include "../headers/command.h"
 
-#include "../_pbs_headers/ecco.h" // by phobos2077
+#include "../_pbs_headers/ecco_ids.h"
 
 /* Sets whether the door is locked or trapped */
 #define LOCKED_STATUS                   STATE_ACTIVE
@@ -193,14 +193,10 @@ end
 ***************************************************************************************/
 
 procedure map_enter_p_proc begin
-   //added by killap
-   variable tmp;
-   variable special_item;
-   //end added
-
    if (buster_obj and buster_obj != -1) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
+         variable tmp_box := move_critical_items();
          check_restock_item(PID_LEATHER_JACKET, 1, 3, 100)
          check_restock_item(PID_LEATHER_ARMOR, 1, 3, 100)
          check_restock_item(PID_METAL_ARMOR, 1, 1, 100)
@@ -222,11 +218,11 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_FRAG_GRENADE, 2, 3, 50) // pbs
          check_restock_item(PID_PBS_40MM_HE, 2, 3, 50) // pbs
 
+         call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (random(1,4) * ONE_GAME_DAY) + game_time);
       end
    end
 end
-
 
 /**************************************************************************************
    This procedure gets called roughly every 30 seconds of real time. It is used to make

@@ -27,7 +27,7 @@
 #include "../headers/command.h"
 #include "../headers/sanfran.h"
 
-#include "../_pbs_headers/ecco.h" // phobos2077
+#include "../_pbs_headers/ecco_ids.h"
 
 /* Standard Script Procedures */
 procedure start;

@@ -23,7 +23,7 @@
 
 #include "../headers/command.h"
 
-#include "../_pbs_headers/ecco.h"
+#include "../_pbs_headers/ecco_ids.h"
 
 #define LVAR_Restock_Time                       (0)
 #define LVAR_Restock_Time_Fix                   (1) //added by killap
@@ -38,16 +38,12 @@ procedure start begin
 end
 
 procedure map_enter_p_proc begin
-   //added by killap
-   variable tmp;
-   variable special_item;
-   //end added
-
-/* Set up the door state when the player first enters the map */
+   /* Set up the door state when the player first enters the map */
    den_tubby_box_obj := self_obj;
    if (is_loading_game == false) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
+         variable tmp_box := move_critical_items();
          self_caps_adjust(random(151, 161) - self_caps);
          check_restock_item(PID_JET, 5, 10, 100)
          check_restock_item(PID_PSYCHO, 0, 2, 100)
@@ -65,6 +61,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_DESERT_EAGLE, 1, 2, 100)
          check_restock_item(PID_SLEDGEHAMMER, 0, 1, 100)
          check_restock_item(PID_RADAWAY, 0, 3, 100)
+         call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (random(1, 2) * ONE_GAME_DAY) + game_time);
       end
    end

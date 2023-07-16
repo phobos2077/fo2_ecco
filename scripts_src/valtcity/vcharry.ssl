@@ -168,7 +168,7 @@ procedure critter_p_proc begin
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
 
-   if ( ( ( local_var(LVAR_Hostile) == 2 ) or ( ( global_var( GVAR_ENEMY_VAULT_COURTYARD ) == 1 ) ) ) and (obj_can_see_obj(self_obj,dude_obj))) then begin
+   if ( ( ( local_var(LVAR_Hostile) == 2 ) or ( ( global_var( GVAR_ENEMY_VAULT_COURTYARD ) == 1 ) ) ) and (self_can_see_dude)) then begin
        set_local_var(LVAR_Hostile,1);
        attack(dude_obj);
    end

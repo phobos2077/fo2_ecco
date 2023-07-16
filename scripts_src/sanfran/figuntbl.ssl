@@ -27,7 +27,7 @@
 #include "../headers/command.h"
 #include "../headers/sanfran.h"
 
-#include "../_pbs_headers/ecco.h"   // by phobos2077
+#include "../_pbs_headers/ecco_ids.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -145,8 +145,7 @@ end
 ***************************************************************************************/
 
 procedure map_enter_p_proc begin
-   variable tmp;
-   variable special_item;
+   variable tmp_box;
 
    if (validHandle(i_gun_merchant)) then begin
       ndebug("self_tile: " + self_tile);
@@ -154,6 +153,7 @@ procedure map_enter_p_proc begin
       if (local_var(LVAR_Restock_Time) < game_time) then begin
          if (self_tile == TABLE_1) then begin //Armor table
             ndebug("table 1 set");
+            tmp_box := move_critical_items();
             //Used to be on Table 3
             check_restock_item(PID_BOTTLE_CAPS, 1000, 8000, 100)   // by phobos2077 - max increased from 2000 to 8000 
             check_restock_item(PID_FLAMER, 1, 2, 60)
@@ -186,9 +186,10 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_LEATHER_ARMOR_MK_II, 1, 2, 40)
             check_restock_item(PID_METAL_ARMOR_MK_II, 1, 3, 35)
             check_restock_item(PID_COMBAT_ARMOR_MK_II, 1, 1, 30)
+            call restore_critical_items(tmp_box);
          end else if (self_tile == TABLE_2) then begin //Ammo table
             ndebug("table 2 set");
-
+            tmp_box := move_critical_items();
             //Used to be on table 3
             check_restock_item(PID_HK_CAWS, 1, 5, 40)
             check_restock_item(PID_HK_P90C, 1, 2, 55)
@@ -233,9 +234,10 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_PBS_SHOTGUN_SLUGS, 3, 5, 100) // pbs
             check_restock_item(PID_4_7MM_CASELESS, 1, 4, 33)
             check_restock_item(PID_2MM_EC_AMMO, 1, 4, 33)
-            check_restock_item(PID_PBS_50_AMMO, 1, 4, 33) // by phobos2077
+            check_restock_item(PID_PBS_50_AMMO, 1, 4, 33) // pbs
             check_restock_item(PID_PBS_40MM_HE, 2, 6, 100) // pbs
             check_restock_item(PID_PBS_40MM_IC, 1, 3, 100) // pbs
+            call restore_critical_items(tmp_box);
          end
          set_local_Var(LVAR_Restock_Time, game_time + (ONE_GAME_DAY * Random(2, 4)));
       end

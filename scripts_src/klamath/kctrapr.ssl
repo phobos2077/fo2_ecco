@@ -193,28 +193,29 @@ procedure talk_p_proc begin
          call NodeTeach1;
       gSay_End;
       end_dialogue;
+      return;
    end else if (local_var(LVAR_Teacher) == teacher_taught) then begin
       floater(random(520, 523));
-   end else begin
-      // original floaters
-      if ((REP_ENEMY_KLAMATH) or (local_var(LVAR_Personal_Enemy) == 1)) then begin
-          call Node998;
-      end
-   
-      else if (global_var(GVAR_QUEST_RAT_GOD) == RAT_GOD_SUCCESS) then begin
-         call Node004;
-      end
-   
-      else if town_rep_worse_than(5) then begin
-         call Node001;
-      end
-   
-      else begin
-         if (has_skill(dude_obj, SKILL_OUTDOORSMAN) > 30) then
-            call Node003;
-         else
-            call Node002;
-      end
+      return;
+   end
+
+   if ((REP_ENEMY_KLAMATH) or (local_var(LVAR_Personal_Enemy) == 1)) then begin
+       call Node998;
+   end
+
+   else if (global_var(GVAR_QUEST_RAT_GOD) == RAT_GOD_SUCCESS) then begin
+      call Node004;
+   end
+
+   else if town_rep_worse_than(5) then begin
+      call Node001;
+   end
+
+   else begin
+      if (has_skill(dude_obj, SKILL_OUTDOORSMAN) > 30) then
+         call Node003;
+      else
+         call Node002;
    end
 
 end

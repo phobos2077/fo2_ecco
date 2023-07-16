@@ -31,7 +31,7 @@
 #define LVAR_Restock_Time                 (0)
 #define LVAR_Restock_Time_Fix             (1) //added by killap
 
-#include "../_pbs_headers/ecco.h"  // by phobos2077
+#include "../_pbs_headers/ecco_ids.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -46,17 +46,14 @@ procedure start begin
 end
 
 procedure map_enter_p_proc begin
-      //added by killap
-   variable tmp;
-   variable special_item;
-   //end added
+   //added check by killap - expansion pack (Village)
+   if (global_var(GVAR_QUEST_VAULT_SERVANT) == SERVANT_TURNED_IN_HARRY) then return;
 
-  //added check by killap - expansion pack (Village)
-  if (global_var(GVAR_VAULT_SERVANT) != SERVANT_TURNED_IN_HARRY) then begin
    vault_city_harry_box := self_obj;
    if (is_loading_game == false) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
+         variable tmp_box := move_critical_items();
          check_restock_item(PID_BOTTLE_CAPS, 150, 390, 100)
          check_restock_item(PID_KNIFE, 1, 3, 100)
          check_restock_item(PID_CROWBAR, 1, 2, 100)
@@ -83,7 +80,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_10MM_SMG, 1, 1, 50)
          check_restock_item(PID_FRAG_GRENADE, 1, 2, 50)
          // by phobos2077:
-         check_restock_item(PID_PBS_COWBOY_REPEATER, 1, 1, 50) // pbs: added
+         check_restock_item(PID_PBS_COWBOY_REPEATER, 1, 1, 50)
          check_restock_item(PID_PBS_50_AMMO, 1, 2, 25)
          check_restock_item(PID_PBS_THROWING_AXE, 1, 2, 25)
          check_restock_item(PID_PBS_BOOMERANG, 1, 3, 50)
@@ -93,10 +90,10 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_7_62MM_AMMO, 1, 3, 100)
          check_restock_item(PID_5MM_JHP, 1, 3, 100)
          // ;
+         call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (3 * ONE_GAME_DAY) + game_time);
       end
    end
-  end
 end
 
 procedure map_update_p_proc begin

@@ -9,7 +9,7 @@
 //#define LOCKPICK_SKILL_PENALTY      EASY_LOCK_PENALTY
 #define DO_CHECK_TAMPER_CONDITION   ( ( map_var( MVAR_Fight ) == 0 ) and ( map_var( MVAR_Quincy_Allows_Plans ) == 0 ) )
 // edit by killap - added check that the player is actually seen
-#define watch_box_conditions                   (can_hear_and_see(WATCHER_OBJ, user_obj) and                                   \
+#define watch_box_conditions                   (obj_can_hear_and_shoot_obj(WATCHER_OBJ, user_obj) and                                   \
                                                (( not( dude_is_sneaking ) ) or                                                \
                                                ( ( has_skill( dude_obj, SKILL_SNEAK ) < 90 ) and                              \
                                                  ( has_skill( dude_obj, SKILL_SNEAK ) >= 40 ) and                             \

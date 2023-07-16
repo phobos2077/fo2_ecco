@@ -1552,7 +1552,7 @@ begin
   set_global_var(GVAR_QUEST_VAULT_SERVANT, SERVANT_QUEST_FINISHED);
   gsay_reply(SCRIPT_VCSTARK, 427);
   set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + -15);
-  debug_msg("Player gains " + -15 + " Karma Points.");
+  ndebug("Player gains " + -15 + " Karma Points.");
   CheckKarma;
   set_global_var(GVAR_TOWN_REP_VAULT_CITY, global_var(GVAR_TOWN_REP_VAULT_CITY) + 1);
   giq_option(4, SCRIPT_VCSTARK, 414, Node999, NEUTRAL_REACTION);

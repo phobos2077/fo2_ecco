@@ -80,28 +80,32 @@ begin
   if ((LVar1 == PID_SECURITY_ROOMS_KEY_CARD) and (local_var(LVAR_Herebefore) != 1)) then
   begin
     script_overrides;
-    if (is_jammed_tile(self_tile)) then begin
+    if (is_jammed_tile(self_tile)) then
+    begin
        set_local_var(LVAR_Jammed, 1);
-    end else begin
+    end else
+    begin
        obj_unlock(self_obj);
     end
     display_msg(mstr(101));
     set_local_var(LVAR_Herebefore, 1);
-    
-  end else
-  if (local_var(LVAR_Jammed) > 0) then
+  end else if (local_var(LVAR_Jammed) > 0) then
   begin
-    if (LVar1 == PID_ELEC_LOCKPICK_MKII) then begin
+    if (LVar1 == PID_ELEC_LOCKPICK_MKII) then
+    begin
        script_overrides;
-       if (local_var(LVAR_Jammed) == 2) then begin
+       if (local_var(LVAR_Jammed) == 2) then
+       begin
           obj_unlock(self_obj);
           set_local_var(LVAR_Jammed, 0);
           display_msg(mstr(112));
           give_xp(EXP_LOCKPICK_NORMAL);
-       end else begin
+       end else
+       begin
           display_mstr(116);
        end
-    end else if (LVar1 == PID_ELECTRONIC_LOCKPICKS) then begin
+    end else if (LVar1 == PID_ELECTRONIC_LOCKPICKS) then
+    begin
        script_overrides;
        display_mstr(115);
     end
@@ -116,7 +120,8 @@ begin
     begin
       script_overrides;
       display_msg(mstr(100));
-    end else if (local_var(LVAR_Jammed) > 0) then begin
+    end else if (local_var(LVAR_Jammed) > 0) then
+    begin
       script_overrides;
       display_msg(mstr(110));
     end

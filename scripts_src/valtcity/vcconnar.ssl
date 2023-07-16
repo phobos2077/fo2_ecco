@@ -108,7 +108,7 @@ procedure Node019;
 procedure Node020;
 procedure Node021;
 procedure Node022;
-procedure Node023;
+//procedure Node023;
 procedure Node024;
 procedure Node025;
 procedure Node026;
@@ -321,7 +321,6 @@ procedure talk_p_proc begin
       gsay_end;
       end_dialogue;
    end else
-   
    //if (local_var(LVAR_Initiated_Talk) == 1) then begin
    //    set_local_var(LVAR_Initiated_Talk,2);
    //    call Node001;
@@ -433,45 +432,8 @@ procedure talk_p_proc begin
        gSay_End;
        end_dialogue;
    end  
-   
-   //all of these operations moved by Lujo
-   /*
-   else if ( (global_var(GVAR_QUEST_VAULT_VILLAGE) != VILLAGE_QUEST_FINISHED_DIPLOMATIC) and (global_var(GVAR_VAULT_SERVANT) == SERVANT_FINISHED_DIPLOMATIC)) then begin
-      start_dialog_check_head_connar;
-       gSay_Start;
-           call Node027;
-       gSay_End;
-       end_dialogue;
-      end
-   
-   
-   else if ( (global_var(GVAR_QUEST_VAULT_VILLAGE) == VILLAGE_QUEST_FINISHED_DIPLOMATIC) and (global_var(GVAR_VAULT_VILLAGE) < VILLAGE_STAGE_ONE) ) then begin
-      call Node017;
-      end
-   
-   // whole operation moved by Lujo
-   else if ((global_var(GVAR_QUEST_VAULT_SERVANT) == SERVANT_QUEST_FINISHED) and (global_var(GVAR_VAULT_VILLAGE) != VILLAGE_SCREWED)) then begin
-       //if (game_time - (local_var(LVAR_Time_Delivered))  >= ONE_GAME_MONTH) then begin
-       //    call Node017;
-       //end
-       //else begin
-           call Node016;
-       //end
-   end
-   
-   //whole operation moved by Lujo
-   else if (global_var(GVAR_VAULT_VILLAGE) == VILLAGE_STAGE_ONE) then begin
-      //if (game_time - (local_var(LVAR_Time_Delivered))  >= ONE_GAME_MONTH) then begin
-      //   call Node019;
-      //end
-      //else begin
-         call Node018;
-      //end
-   end
-   else begin
-      call Node020;
-   end*/
 
+   // Lujo: moved conditions
 end
 
 /* This procedure gets called only on the death of this NPC. Special things like
@@ -618,21 +580,10 @@ procedure Node010 begin
    NOption(817,Node999,004); //added as a way of not accepting the quest - Lujo
 end
 
-/*procedure Node011 begin
-   Reply(128); //dialogue - explosives
-
-   GOption(129,Node011a,004);
-end
-
-procedure Node011a begin
-   set_global_var(GVAR_VAULT_VILLAGE,VILLAGE_GET_GUNS);
-end*/
-
-procedure Node011
-begin
-  //item_caps_adjust(dude_obj, 10000);
+procedure Node011 begin
+   //item_caps_adjust(dude_obj, 10000);
    set_global_var(GVAR_QUEST_VAULT_VILLAGE, VILLAGE_QUEST_GET_GUNS);
-   gsay_reply(SCRIPT_VCCONNAR, 128);
+   Reply(128);
    // from guns to explosives by Lujo
    // removed this whole line to make editing easier - if yuo have them you'll be able to give them over by re initiation dialogue
    /*if ( ((obj_is_carrying_obj_pid(dude_obj,PID_FRAG_GRENADE)) >= 10) and ((obj_is_carrying_obj_pid(dude_obj,PID_DYNAMITE)) >= 2) ) then begin
@@ -650,11 +601,10 @@ begin
    //set_local_var(LVAR_From_Node_11,1);
 end
 
-procedure Node011a
-begin
+procedure Node011a begin
   set_local_var(LVAR_Has_Weapons_But_Didnt_Give, 1);
   item_caps_adjust(dude_obj, 2500); // changed from 5000 to 2500 by Lujo
-  gsay_reply(SCRIPT_VCCONNAR, 152);
+  Reply(152);
   giq_option(4, SCRIPT_VCCONNAR, 171, Node013, 50);
   giq_option(4, SCRIPT_VCCONNAR, 153, Node999, 50);
 end
@@ -675,9 +625,8 @@ procedure Node013 begin
 end*/
 
 //Using this as main node now - guns, questions, diplomacy, everything - Lujo
-procedure Node013
-begin
-  gsay_reply(SCRIPT_VCCONNAR, 134);
+procedure Node013 begin
+  Reply(134);
   
   if ( (global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_JOE_SPOKE) ) then
      giq_option(4, SCRIPT_VCCONNAR, 600, Node038, 50);
@@ -750,8 +699,8 @@ procedure Node015 begin //edited by Lujo to include grenades
    variable LVar1 := 0;
    variable LVar2 := 0;
    variable LVar3 := 0;
-   LVar2 := obj_carrying_pid_obj(dude_obj, PID_DYNAMITE);
-   LVar3 := obj_carrying_pid_obj(dude_obj, PID_FRAG_GRENADE);
+   LVar2 := dude_item(PID_DYNAMITE);
+   LVar3 := dude_item(PID_FRAG_GRENADE);
    LVar1 := rm_mult_objs_from_inven(dude_obj, LVar2, 2);
    //destroy_object(LVar2);
    LVar1 := rm_mult_objs_from_inven(dude_obj, LVar3, 10);
@@ -767,9 +716,9 @@ procedure Node015 begin //edited by Lujo to include grenades
    give_xp(800);
    //display_msg(message_str(SCRIPT_GENERIC, 100) + 800 + message_str(SCRIPT_GENERIC, 101));
    set_local_var(LVAR_Has_Weapons_But_Didnt_Give, 0);
-   gsay_reply(SCRIPT_VCCONNAR, 139);
+   Reply(139);
    NOption(800,Node013, 004);
-   giq_option(4, SCRIPT_VCCONNAR, 140, Node999, NEUTRAL_REACTION);
+   NOption(140, Node999, 4);
 end
 
 //if the resolve tensions quest is finished
@@ -810,16 +759,16 @@ procedure Node017 begin
    //   set_global_var(GVAR_VAULT_VILLAGE, VILLAGE_STAGE_ONE);
    //end
    //if (elevation(self_obj) == 0) then
-      float_msg(self_obj, message_str(SCRIPT_VCCONNAR, 141), FLOAT_MSG_YELLOW);
+      float_msg(self_obj, mstr(141), FLOAT_MSG_YELLOW);
    //else
-   //   float_msg(self_obj, message_str(SCRIPT_VCCONNAR, 142), FLOAT_MSG_YELLOW);
+   //   float_msg(self_obj, mstr(142), FLOAT_MSG_YELLOW);
 end
 
 procedure Node018 begin
    //if (global_var(GVAR_VAULT_SERVANT) >= SERVANT_FINISHED) then
-   //   float_msg(self_obj, message_str(SCRIPT_VCCONNAR, 144), FLOAT_MSG_YELLOW);
+   //   float_msg(self_obj, mstr(144), FLOAT_MSG_YELLOW);
    //else
-      float_msg(self_obj, message_str(SCRIPT_VCCONNAR, 143), FLOAT_MSG_YELLOW);
+      float_msg(self_obj, mstr(143), FLOAT_MSG_YELLOW);
 end
 
 procedure Node019 begin
@@ -829,12 +778,12 @@ procedure Node019 begin
    end
    if (self_elevation == 1) then begin
       if (global_var(GVAR_VAULT_SERVANT) > SERVANT_BRAIN_AGREEMENT) then
-         float_msg(self_obj, message_str(SCRIPT_VCCONNAR, 144), FLOAT_MSG_YELLOW);
+         float_msg(self_obj, mstr(144), FLOAT_MSG_YELLOW);
       else
-         float_msg(self_obj, message_str(SCRIPT_VCCONNAR, 143), FLOAT_MSG_YELLOW);
+         float_msg(self_obj, mstr(143), FLOAT_MSG_YELLOW);
    end
    else
-      float_msg(self_obj, message_str(SCRIPT_VCCONNAR, 144), FLOAT_MSG_YELLOW);
+      float_msg(self_obj, mstr(144), FLOAT_MSG_YELLOW);
 end
 
 procedure Node020 begin
@@ -846,30 +795,30 @@ procedure Node021 begin
 end
 
 procedure Node022 begin
-   gsay_reply(SCRIPT_VCCONNAR, 147);
-   giq_option(4, SCRIPT_VCCONNAR, 148, Node999, NEUTRAL_REACTION);
+   Reply(147);
+   NOption(148, Node999, 4);
 end
 
 procedure timed_event_p_proc begin
-   float_msg(self_obj, message_str(SCRIPT_VCCONNAR, random(149, 151)), FLOAT_MSG_YELLOW);
+   float_msg(self_obj, mstr(random(149, 151)), FLOAT_MSG_YELLOW);
 end
 
 //Function moved elsewhere - Lujo
 /*procedure Node023 begin
-   gsay_reply(SCRIPT_VCCONNAR, 155);
+   Reply(155);
 
    if ( (global_var(GVAR_QUEST_VAULT_VILLAGE) < VILLAGE_QUEST_JOE_SPOKE) and (local_var(LVAR_From_Node_11) != 1) ) then
-      giq_option(4, SCRIPT_VCCONNAR, 600, Node038, NEUTRAL_REACTION);
+      NOption(600, Node038, 4);
    if (local_var(LVAR_Gave_Amulet) != 1) then
-      giq_option(4, SCRIPT_VCCONNAR, 156, Node024, NEUTRAL_REACTION);
+      NOption(156, Node024, 4);
    if (local_var(LVAR_From_Node_11) != 1) then
-      giq_option(4, SCRIPT_VCCONNAR, 157, Node999, NEUTRAL_REACTION);
+      NOption(157, Node999, 4);
 end*/
 
 //Talisman explanation
 procedure Node024 begin
-   gsay_reply(SCRIPT_VCCONNAR, 158);
-   giq_option(4, SCRIPT_VCCONNAR, 159, Node025, NEUTRAL_REACTION);
+   Reply(158);
+   NOption(159, Node025, 4);
 end
 
 //Giving you the talisman
@@ -878,13 +827,13 @@ procedure Node025 begin
    set_mole_rat_origin_amulet;
    LVar1 := create_object(PID_TALISMAN, 0, 0);
    add_obj_to_inven(dude_obj, LVar1);
-   gsay_reply(SCRIPT_VCCONNAR, 160);
+   Reply(160);
    //if (local_var(LVAR_From_Node_11) == 1) then begin
-      //giq_option(4, SCRIPT_VCCONNAR, 161, Node011a, NEUTRAL_REACTION);
+      //NOption(161, Node011a, 4);
       //set_local_var(LVAR_From_Node_11,0);
-  //end else begin
+   //end else begin
    NOption(800,Node013, 004); // added by Lujo
-   giq_option(4, SCRIPT_VCCONNAR, 161, Node999, NEUTRAL_REACTION);
+   NOption(161, Node999, 4);
 
    set_local_var(LVAR_Gave_Amulet,1);
    //set_global_var(GVAR_VAULT_VILLAGE_MOLERAT_ORIGIN_KNOWN,GAVE_AMULET);
@@ -896,18 +845,18 @@ procedure Node026 begin
       set_local_var(LVAR_Diplomatic_Approach, 1);
    end
 
-   gsay_reply(SCRIPT_VCCONNAR, 163);
-	  if (has_skill(dude_obj,SKILL_SPEECH) > 80) then begin
-		  if (global_var(GVAR_QUEST_VAULT_VILLAGE) <= VILLAGE_QUEST_DELIVERED_GUNS) then
-		     NOption(805, Node034, 4);
-		  else
-		     NOption(806, Node034, 4);
-	  end else begin
-		  if (global_var(GVAR_QUEST_VAULT_VILLAGE) <= VILLAGE_QUEST_DELIVERED_GUNS) then
-		     NOption(805, Node026b, 4);
-		  else
-		     NOption(806, Node026b, 4);  
-	  end
+   Reply(163);
+   if (has_skill(dude_obj,SKILL_SPEECH) > 80) then begin
+      if (global_var(GVAR_QUEST_VAULT_VILLAGE) <= VILLAGE_QUEST_DELIVERED_GUNS) then
+         NOption(805, Node034, 4);
+      else
+         NOption(806, Node034, 4);
+   end else begin
+      if (global_var(GVAR_QUEST_VAULT_VILLAGE) <= VILLAGE_QUEST_DELIVERED_GUNS) then
+         NOption(805, Node026b, 4);
+      else
+         NOption(806, Node026b, 4);  
+   end
 end
 
 //Diplomacy via sucessful speech
@@ -919,19 +868,19 @@ end
 //Diplomacy via finding brain
 procedure Node026b begin
    if (local_var(LVAR_Gave_Amulet) != 1) then begin
-     Reply(809);
-     NOption(810, Node024, 4);
+      Reply(809);
+      NOption(810, Node024, 4);
    end
    if (local_var(LVAR_Gave_Amulet) == 1) then begin
-     Reply(811);
-     NOption(812, Node999, 4);
+      Reply(811);
+      NOption(812, Node999, 4);
    end
 end
 
 //Diplomacy win intro both from talk_p_proc and Node013
 procedure Node027 begin
-   gsay_reply(SCRIPT_VCCONNAR, 165);
-   giq_option(4, SCRIPT_VCCONNAR, dude_name + ".", Node028, NEUTRAL_REACTION);
+   Reply(165);
+   NOption(dude_name + ".", Node028, 4);
 end
 
 //Diplomacy WIN
@@ -944,14 +893,14 @@ procedure Node028 begin
    give_xp(800); //reduced from 1200 Lujo
    //set_global_var(GVAR_VAULT_VILLAGE, VILLAGE_DELIVERED_GUNS);
    if (local_var(LVAR_Has_Weapons_But_Didnt_Give) > 0) then begin
-      gsay_reply(SCRIPT_VCCONNAR, mstr(167) +dude_name + mstr(168));
+      Reply(mstr(167) + dude_name + mstr(168));
       if (dude_caps >= 2500) then
-         giq_option(4, SCRIPT_VCCONNAR, 700, Node028a, NEUTRAL_REACTION);
-         giq_option(4, SCRIPT_VCCONNAR, 701, Node028b, NEUTRAL_REACTION);
-      giq_option(4, SCRIPT_VCCONNAR, 702, Node028c, NEUTRAL_REACTION);
+         NOption(700, Node028a, 4);
+      NOption(701, Node028b, 4);
+      NOption(702, Node028c, 4);
    end else begin
       Reply(169);
-      giq_option(4, SCRIPT_VCCONNAR, 174, Node999, NEUTRAL_REACTION);
+      NOption(174, Node999, 4);
    end
    if (local_var(LVAR_Diplomatic_Approach) < 2) then begin
       set_map_var(MVAR_Building_Time, game_time);
@@ -963,31 +912,31 @@ procedure Node028a begin
    dude_caps_adjust(-1250); // changed by Lujo from -2500 to -1250
    set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + 5);
    Reply(710);
-   giq_option(4, SCRIPT_VCCONNAR, 174, Node999, NEUTRAL_REACTION);
+   NOption(174, Node999, 4);
 end
 
 procedure Node028b begin
    Reply(720);
-   giq_option(4, SCRIPT_VCCONNAR, 215, Node999, NEUTRAL_REACTION);
+   NOption(215, Node999, 4);
 end
 
 procedure Node028c begin
    Reply(730);
    if (dude_caps >= 1250) then // changed by Lujo from -2500 to -1250
-      giq_option(4, SCRIPT_VCCONNAR, 731, Node028d, NEUTRAL_REACTION);
-   giq_option(4, SCRIPT_VCCONNAR, 732, Node028e, NEUTRAL_REACTION);
+      NOption(731, Node028d, 4);
+   NOption(732, Node028e, 4);
 end
 
 procedure Node028d begin
    dude_caps_adjust(-2500);
    set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + 2);
-   gsay_reply(SCRIPT_VCCONNAR, message_str(SCRIPT_VCCONNAR, 740) + dude_name + message_str(SCRIPT_VCCONNAR, 741));
-   giq_option(4, SCRIPT_VCCONNAR, 174, Node999, NEUTRAL_REACTION);
+   Reply(mstr(740) + dude_name + mstr(741));
+   NOption(174, Node999, 4);
 end
 
 procedure Node028e begin
    Reply(750);
-   giq_option(4, SCRIPT_VCCONNAR, 174, Node999, NEUTRAL_REACTION);
+   NOption(174, Node999, 4);
 end
 
 //-- Lujo: I removed most of these because quests aren't mutually exclusive anymore, and it make editing (and testing!) this thing much easier.
@@ -1067,7 +1016,7 @@ procedure Node035 begin
    Reply(300);
    
    //if (global_var(GVAR_MCCLURE_KNOWN) >= MCCLURE_KNOWN) then
-   giq_option(4, SCRIPT_VCCONNAR, 154, Node023, NEUTRAL_REACTION);
+   NOption(154, Node023, 4);
    //if (global_var(GVAR_VAULT_SERVANT) == SERVANT_BRAIN_AGREEMENT) then
    if (global_var(GVAR_VAULT_SERVANT) >= SERVANT_FINISHED_DIPLOMATIC) then
       NOption(302, Node026, 004);

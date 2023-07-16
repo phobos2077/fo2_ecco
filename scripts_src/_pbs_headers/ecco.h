@@ -10,6 +10,7 @@
 #include "../sfall/define_extra.h"
 
 #include "ecco_ids.h"
+#include "ecco_log.h"
 
 #define msg(x)                      display_msg(x)
 

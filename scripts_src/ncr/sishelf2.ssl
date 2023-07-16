@@ -26,7 +26,7 @@
 
 #include "../headers/command.h"
 
-#include "../_pbs_headers/ecco.h" // by phobos2077
+#include "../_pbs_headers/ecco_ids.h"
 
 /* Sets whether the door is locked or trapped */
 #define LOCKED_STATUS                   STATE_ACTIVE
@@ -195,14 +195,10 @@ end
 ***************************************************************************************/
 
 procedure map_enter_p_proc begin
-   //added by killap
-   variable tmp;
-   variable special_item;
-   //end added
-
    if (buster_obj != -1 and buster_obj) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
+         variable tmp_box := move_critical_items();
          //Common
          check_restock_item(PID_KNIFE, 1, 5, 100)
          check_restock_item(PID_CLUB, 1, 5, 100)
@@ -234,6 +230,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_PBS_SHOTGUN_SLUGS, 3, 5, 60)  // pbs
          check_restock_item(PID_PBS_DRAGON_BREATH, 1, 2, 30)  // pbs
 
+         call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (random(2,4) * ONE_GAME_DAY) + game_time);
       end
    end

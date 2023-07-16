@@ -29,7 +29,7 @@
 #include "../headers/command.h"
 /* Defines and Macros */
 
-#include "../_pbs_headers/ecco.h"   // by phobos2077
+#include "../_pbs_headers/ecco_ids.h"   // by phobos2077
 
 #define LVAR_Restock_Time                 (0)
 #define LVAR_Restock_Time_Fix             (1)  //added by killap
@@ -46,15 +46,11 @@ procedure start begin
 end
 
 procedure map_enter_p_proc begin
-   //added by killap
-   variable tmp;
-   variable special_item;
-   //end added
-
    broken_hills_outfitter_box := self_obj;
    if (is_loading_game == false) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
+         variable tmp_box := move_critical_items();
          check_restock_item(PID_BOTTLE_CAPS, 100, 500, 100)
          check_restock_item(PID_223_FMJ, 0, 3, 25)
          check_restock_item(PID_45_CALIBER_AMMO, 0, 2, 25)
@@ -83,6 +79,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_PUMP_PARTS, 2, 4, 100)
          check_restock_item(PID_FLARE, 1, 3, 100)
          // ;
+         call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (3 * ONE_GAME_DAY) + game_time);
       end
    end

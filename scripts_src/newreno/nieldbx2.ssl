@@ -43,15 +43,11 @@ procedure start begin
 end
 
 procedure map_enter_p_proc begin
-     //added by killap
-   variable tmp;
-   variable special_item;
-   //end added
-
    new_reno_eldridge_box_2 := self_obj;
    if (is_loading_game == false) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
+         variable tmp_box := move_critical_items();
          if (map_first_run) then begin
             give_pid_qty(self_obj, PID_223_PISTOL, 1)
          end
@@ -67,6 +63,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_BOZAR, 1, 1, 25)
          check_restock_item(PID_LIGHT_SUPPORT_WEAPON, 1, 1, 25) // new
          check_restock_item(PID_INDEPENDENT, 1, 1, 20) // new
+         call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (random(2,4) * ONE_GAME_DAY) + game_time);
       end
    end

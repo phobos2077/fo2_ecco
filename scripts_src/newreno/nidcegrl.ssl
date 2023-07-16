@@ -111,23 +111,23 @@ procedure Node017;
                            dice_option(325, Node014, -003);                                                                                                  \
                            dice_option(326, Node999, -003);                                                                                                  \
                            if (local_var(LVAR_Money) > 0) then begin                                                                                         \
-                              if (dude_caps >= level_1_bet) then begin                                                                                       \
-                                 dice_option(dice_mstr(328) + level_1_bet + dice_mstr(2328), Node991, 004);                                                  \
-                                 if (dude_caps >= level_2_bet) then begin                                                                                    \
-                                    dice_option(dice_mstr(328) + level_2_bet + dice_mstr(2328), Node992, 004);                                               \
-                                    if (dude_caps >= level_3_bet) then begin                                                                                 \
-                                       dice_option(dice_mstr(328) + level_3_bet + dice_mstr(2328), Node993, 004);                                            \
-                                       if (dude_caps >= level_4_bet) then begin                                                                              \
-                                          dice_option(dice_mstr(328) + level_4_bet + dice_mstr(2328), Node994, 004);                                         \
-                                          if (dude_caps >= level_5_bet) then begin                                                                           \
-                                             dice_option(dice_mstr(328) + level_5_bet + dice_mstr(2328), Node995, 004);                                      \
-                                          end                                                                                                                \
+                           if (dude_caps >= level_1_bet) then begin                                                                                          \
+                              dice_option(dice_mstr(328) + level_1_bet + dice_mstr(2328), Node991, 004);                                                     \
+                              if (dude_caps >= level_2_bet) then begin                                                                                       \
+                                 dice_option(dice_mstr(328) + level_2_bet + dice_mstr(2328), Node992, 004);                                                  \
+                                 if (dude_caps >= level_3_bet) then begin                                                                                    \
+                                    dice_option(dice_mstr(328) + level_3_bet + dice_mstr(2328), Node993, 004);                                               \
+                                    if (dude_caps >= level_4_bet) then begin                                                                                 \
+                                       dice_option(dice_mstr(328) + level_4_bet + dice_mstr(2328), Node994, 004);                                            \
+                                       if (dude_caps >= level_5_bet) then begin                                                                              \
+                                          dice_option(dice_mstr(328) + level_5_bet + dice_mstr(2328), Node995, 004);                                         \
                                        end                                                                                                                   \
                                     end                                                                                                                      \
                                  end                                                                                                                         \
-                              end else begin                                                                                                                 \
-                                 dice_option(329, Node015, 004);                                                                                             \
                               end                                                                                                                            \
+                           end else begin                                                                                                                    \
+                              dice_option(329, Node015, 004);                                                                                                \
+                           end                                                                                                                               \
                            end                                                                                                                               \
                            if (bet_amt == 0) then                                                                                                            \
                              dice_option(330, Node999, 004);
@@ -176,7 +176,7 @@ procedure map_enter_p_proc begin
       critter_attempt_placement(self_obj, local_var(LVAR_Home_Tile), self_elevation);
    end
    /*// added by killap - expansion
-   if ( (self_family == family_salvatore and salvatore_dead and warned_attack) or 
+   if ( (self_family == family_salvatore and salvatore_dead and warned_attack) or
        (self_family == family_bishop and bishop_dead and warned_attack) or
        (self_family == family_mordino and big_jesus_dead and lil_jesus_dead and warned_attack) ) then begin
          destroy_object(self_obj);
@@ -223,7 +223,7 @@ end
 
 procedure talk_p_proc begin
    /*// added by killap - expansion
-   if ( (self_family == family_salvatore and salvatore_dead and warned_attack) or 
+   if ( (self_family == family_salvatore and salvatore_dead and warned_attack) or
        (self_family == family_bishop and bishop_dead and warned_attack) or
        (self_family == family_mordino and big_jesus_dead and lil_jesus_dead and warned_attack) ) then begin
          float_msg(self_obj, message_str(SCRIPT_DCGAMBLE,200), FLOAT_COLOR_NORMAL);

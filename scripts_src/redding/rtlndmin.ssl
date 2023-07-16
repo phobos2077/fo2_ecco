@@ -198,12 +198,10 @@ procedure Check_Active(variable Mine_Var) begin
        if ((source_obj == dude_obj) and (dude_perk(PERK_light_step_perk)) and (random(0,1) == 1)) then //added by killap
            ndebug("Used Light Step.");
        else begin
-          if (combat_is_initialized) then begin
-             critter_dmg(source_obj, random(1, MAX_DMG), DAMAGE_TYPE);
+          if (combat_is_initialized) then
              play_sfx("WHN1XXX1");
-          end else begin
-             explosion(self_tile,self_elevation,random(MIN_DMG,MAX_DMG));
-          end
+          critter_dmg(source_obj,random(MIN_DMG,MAX_DMG),(DMG_normal_dam BWOR DMG_BYPASS_ARMOR BWOR DMG_NOANIMATE));
+          explosion(self_tile,self_elevation,1);
        end
 
        set_map_var(Mine_Var,MINE_EXPLODED);

@@ -229,22 +229,22 @@ procedure critter_p_proc begin
    the player should the game be saved and loaded repeatedly. Additionally, if any special
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
-   if (self_can_see_dude) then begin
-      if (global_var(GVAR_ENEMY_REDDING) == 1) then begin
-          attack(dude_obj);
+   if (not self_can_see_dude) then return;
+
+   if (global_var(GVAR_ENEMY_REDDING) == 1) then begin
+       attack(dude_obj);
+   end
+   else if (local_var(LVAR_Hostile) == 2) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+   else if (violating_property) then begin
+      if (caught_sneaking == 0) then begin
+         obj_floater_type(self_obj, g_mstr(random(3925, 3929)), FLOAT_COLOR_BAD);
+         caught_sneaking := game_time;
       end
-      else if (local_var(LVAR_Hostile) == 2) then begin
-          set_local_var(LVAR_Hostile,1);
-          attack(dude_obj);
-      end
-      else if (violating_property) then begin
-         if (caught_sneaking == 0) then begin
-            obj_floater_type(self_obj, g_mstr(random(3925, 3929)), FLOAT_COLOR_BAD);
-            caught_sneaking := game_time;
-         end
-         else if ((caught_sneaking+50) < game_time) then begin
-            set_local_var(LVAR_Hostile,2);
-         end
+      else if ((caught_sneaking + 50) < game_time) then begin
+         set_local_var(LVAR_Hostile, 2);
       end
    end
 
