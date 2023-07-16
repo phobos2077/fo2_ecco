@@ -36,7 +36,8 @@
 #include "../headers/newreno.h"
 
 #include "../_pbs_headers/talking_heads_compat.h"
-#define start_dialog_check_head_troy      start_gdialog_check_talking_head(4, 64, 10)
+#define HEAD_DRTROY     (64)
+#define start_dialog_check_head_troy      start_gdialog_check_talking_head(4, HEAD_DRTROY, BACKGROUND_VAULT)
 
 
 /* Standard Script Procedures */
@@ -550,7 +551,7 @@ procedure Node010a begin
 end
 
 procedure Node011 begin
-   Reply(mstr(145)+dude_name+mstr(146));
+   Reply_THAT(7700, mstr(145)+dude_name+mstr(146));
 
    NOption(147,Node999,004);
 end
@@ -834,9 +835,9 @@ procedure Node029 begin
    From_29:=1;
 
    if (global_var(GVAR_VAULT_JET_QUEST) > 0) then
-       Reply(mstr(217)+" "+mstr(219));
+      Reply_THAT(7701, mstr(217)+" "+mstr(219));
    else
-       Reply(mstr(218)+" "+mstr(219));
+      Reply_THAT(7702, mstr(218)+" "+mstr(219));
 
    NOption(220,Node055,004);
 end
@@ -1014,7 +1015,7 @@ procedure Node043 begin
    set_global_var(GVAR_VAULT_JET_QUEST,JET_GIVEN_JET);
 
    if (not(From_44)) then
-       Reply(mstr(277)+" "+mstr(278));
+       Reply_THAT(7703, mstr(277)+" "+mstr(278));
    else
        Reply(278);
 
@@ -1210,10 +1211,10 @@ procedure Node055 begin
 
    if (From_WTG) then begin
        From_WTG := 0;
-       Reply(mstr(329)+" "+mstr(331));
+       Reply_THAT(7704, mstr(329)+" "+mstr(331));
    end
    else
-       Reply(mstr(330)+" "+mstr(331));
+       Reply_THAT(7705, mstr(330)+" "+mstr(331));
 
    NOption(332,Node056,004);
    if (global_var(GVAR_VAULT_REDDING_PROBLEM) == REDDING_PROBLEM_KNOW_JET) then

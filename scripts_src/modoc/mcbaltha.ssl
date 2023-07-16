@@ -342,7 +342,7 @@ procedure Node010 begin
    NOption(186,Node999,001);
 end
 procedure Node011 begin
-   Reply(mstr(187) + dude_name + mstr(188));
+   Reply_THAT(7700, mstr(187) + dude_name + mstr(188));
    NOption(189,Node012,004);
    NOption(190,Node001,001);
 end

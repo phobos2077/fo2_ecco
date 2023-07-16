@@ -30,102 +30,102 @@
 {129}{}{Watch it. I'm not in the mood for any bullshit today.}
 {130}{}{I was looking for the Vault. Can you tell me where it is?}
 {131}{}{Actually, I was just leaving.}
-{132}{}{It's that big hole in the mountain to the east, past those two heavily-armed guards. Anything else you want to ask or can I get back to work?}
+{132}{VCVAL3}{It's that big hole in the mountain to the east, past those two heavily-armed guards. Anything else you want to ask or can I get back to work?}
 {133}{}{What is this place?}
 {134}{}{Watch it. I'm not in the mood for any bullshit today.}
 {135}{}{Thanks for the directions. Goodbye.}
-{136}{}{As if Vault City didn't have enough human brahmin... look, you CANT BE IN HERE, OKAY? You could HURT yourself! NOW GET OUT! GO!}
+{136}{VCVAL4}{As if Vault City didn't have enough human brahmin... look, you CANT BE IN HERE, OKAY? You could HURT yourself! NOW GET OUT! GO!}
 {137}{}{*Snfff* You big meenie... *snff*... me go sumplace n' have partee wiff clowns... *snfff*... and ice creem... and kake... and me no invit smart meen peuple like YOU!}
 {138}{}{Shamble off}
-{139}{}{Get out of here. Or I'm going to summon the guards to MAKE you get out.}
+{139}{VCVAL5}{Get out of here. Or I'm going to summon the guards to MAKE you get out.}
 {140}{}{Try it. I'll like it.}
 {141}{}{All right, I'm leaving.}
-{142}{}{It's the maintenance shed for Vault City. Or did you just HAPPEN to miss the huge sign on
+{142}{VCVAL6}{It's the maintenance shed for Vault City. Or did you just HAPPEN to miss the huge sign on
  the side of the building?}
 {143}{}{No, sorry. I thought this might be a shop of some sort.}
 {144}{}{Forget it. Sorry to disturb you.}
-{145}{}{You've got the "of some sort" right, anyway. Look, did you need something repaired or did you just want to ask me a bunch of dumb questions?}
+{145}{VCVAL7}{You've got the "of some sort" right, anyway. Look, did you need something repaired or did you just want to ask me a bunch of dumb questions?}
 {146}{}{What do you repair here?}
 {147}{}{Watch it. I'm not in the mood for any bullshit today.}
 {148}{}{Just dumb questions today, actually. Talk to you later.}
-{149}{}{Synthetic alcohol dispensers, radios, firearms, laser turret parts, computer monitors, you name it... when I can get the tools to do my job.}
+{149}{VCVAL8}{Synthetic alcohol dispensers, radios, firearms, laser turret parts, computer monitors, you name it... when I can get the tools to do my job.}
 {150}{}{Tools?}
 {151}{}{Sounds like a tough job. I'll leave you to it.}
-{152}{}{Right now, I've got the metal lathe barely working, and my wrench has gone missing... AGAIN... and my pliers' teeth are stripped.}
+{152}{VCVAL9}{Right now, I've got the metal lathe barely working, and my wrench has gone missing... AGAIN... and my pliers' teeth are stripped.}
 {153}{}{Anything I could help with?}
 {154}{}{What's the problem with getting more tools?}
 {155}{}{All right then. Good day.}
-{156}{}{You? I doubt it.}
+{156}{VCVAL10}{You? I doubt it.}
 {157}{}{Well, I have a wrench and a pair of pliers right here.}
 {158}{}{Would getting you a new wrench and a set of pliers help you out?}
 {159}{}{What's the problem with getting more tools?}
 {160}{}{Just thought I would offer to help. Nevermind then.}
-{161}{}{The PROBLEM is, I can't just go out and buy some new ones, I have to requisition them from Vault City. That means filling out five billion lists, submitting them in triplicate, then WAITING.}
+{161}{VCVAL11}{The PROBLEM is, I can't just go out and buy some new ones, I have to requisition them from Vault City. That means filling out five billion lists, submitting them in triplicate, then WAITING.}
 {162}{}{So why d --?}
 {163}{}{Sorry to h --}
-{164}{}{Hell, I ordered a Super Snap-Off Tool Kit MONTHS ago, but just like always, it won't show until I don't need it anymore. It's a wonder things ever get done around here...}
+{164}{VCVAL12}{Hell, I ordered a Super Snap-Off Tool Kit MONTHS ago, but just like always, it won't show until I don't need it anymore. It's a wonder things ever get done around here...}
 {165}{}{Maybe I could help you.}
 {166}{}{Oh. Well, sorry to hear it. I may be back.}
-{167}{}{Yes. Why?}
+{167}{VCVAL13}{Yes. Why?}
 {168}{}{Well, I have a wrench and a pair of pliers right here.}
 {169}{}{Maybe I could go find some and bring them back to you.}
 {170}{}{What's the problem with getting more tools?}
 {171}{}{Oh. Well, thanks for the advice.}
-{172}{}{I won't hold my breath, but if you want to, go ahead. It's your time, not mine. I might be able to scrape together a little to pay you for your trouble.}
+{172}{VCVAL14}{I won't hold my breath, but if you want to, go ahead. It's your time, not mine. I might be able to scrape together a little to pay you for your trouble.}
 {173}{}{If I find a wrench and a pair of pliers, I'll bring them by.}
-{174}{}{You do?}
+{174}{VCVAL15}{You do?}
 {175}{}{Yeah. Here you go.}
-{176}{}{Uh... thanks. I mean, they're not great, but they'll do. Where did you... oh, never mind. It's not important. Here's a few bucks for your trouble.}
+{176}{VCVAL16}{Uh... thanks. I mean, they're not great, but they'll do. Where did you... oh, never mind. It's not important. Here's a few bucks for your trouble.}
 {177}{}{Thanks. Say, I had some questions...}
 {178}{}{Maybe you can use those tools to help fix that attitude of yours.}
 {179}{}{No problem. Glad to help.}
-{180}{}{Yeah, yeah... look, I have some work to do. Come back in a day or two, all right? I'll have
+{180}{VCVAL17}{Yeah, yeah... look, I have some work to do. Come back in a day or two, all right? I'll have
  time to chat then.}
 {181}{}{See you tomorrow, then.}
 {182}{}{Uh, all right. I'll be back in a day or two. Goodbye.}
-{183}{}{You won't believe this. Not less than a DAY after you gave me those tools, that Super Tool Kit I ordered arrives. But not just one. They send me FIVE. What the hell is wrong with the ordering office?!}
+{183}{VCVAL18}{You won't believe this. Not less than a DAY after you gave me those tools, that Super Tool Kit I ordered arrives. But not just one. They send me FIVE. What the hell is wrong with the ordering office?!}
 {184}{}{Could you part with one of those tool kits?}
-{185}{}{Why not?! What am I going to do with FIVE?! Take it! I swear that I'm going to beat the living tar out of the List Office for this.}
+{185}{VCVAL19}{Why not?! What am I going to do with FIVE?! Take it! I swear that I'm going to beat the living tar out of the List Office for this.}
 {186}{}{Thanks. Say, I had some questions...}
 {187}{}{Appreciate it. I'll put this kit to good use.}
-{188}{}{Oh, I see how it is. Well, what is it you want?}
-{189}{}{What? I haven't got time to chat all day.}
-{190}{}{Yeah? What?}
+{188}{VCVAL20}{Oh, I see how it is. Well, what is it you want?}
+{189}{VCVAL21}{What? I haven't got time to chat all day.}
+{190}{VCVAL22}{Yeah? What?}
 {191}{}{Can you repair anything of mine?}
 {192}{}{What have you got in stock?}
 {193}{}{What's the deal with you and your father?}
 {194}{}{Never mind. I'll leave you to your work.}
-{195}{}{Nothing worth mentioning. He came here twenty years ago on one of his caravan trips, knocked up Mom and left. Until he stopped by, I hadn't seen him in about five years. No loss.}
+{195}{VCVAL23}{Nothing worth mentioning. He came here twenty years ago on one of his caravan trips, knocked up Mom and left. Until he stopped by, I hadn't seen him in about five years. No loss.}
 {196}{}{Sounds like you and him have some things to work out.}
 {197}{}{Oh. Well, uh, I had some other questions...}
 {198}{}{Never mind. I'll leave you to your work.}
-{199}{}{No, we don't. We've said all we need to say a long time ago. }
+{199}{VCVAL24}{No, we don't. We've said all we need to say a long time ago. }
 {200}{}{Are you sure?}
 {201}{}{All right then. I had some other questions...}
 {202}{}{I'll leave you to your work then.}
-{203}{}{Yes, I'm SURE. Well... except for the fact that I think he should lose some weight. He's got quite a spare tire going. And he should stop wandering all around the wastes selling junk to tribals. That's pretty much it.}
+{203}{VCVAL25}{Yes, I'm SURE. Well... except for the fact that I think he should lose some weight. He's got quite a spare tire going. And he should stop wandering all around the wastes selling junk to tribals. That's pretty much it.}
 {204}{}{Look, he was in a mess of trouble with slavers, and he's trying to make up for lost time now. But you're right, he could stand to lose some weight.}
 {205}{}{Oh, uh, okay. I had some other questions...}
 {206}{}{Never mind. I'll leave you to your work.}
-{207}{}{Heh-heh. You've got a sarcastic edge. I like that. As for ol' "Dad"... well... hmmm. I'll try and be a little more civil. For a while, anyway.}
+{207}{VCVAL27}{Heh-heh. You've got a sarcastic edge. I like that. As for ol' "Dad"... well... hmmm. I'll try and be a little more civil. For a while, anyway.}
 {208}{}{Um... make sure he stays out of trouble, all right?}
 {209}{}{Great. Look, I had something else I wanted to ask you...}
 {210}{}{I'll do my best. I had something else I wanted to ask you...}
 {211}{}{That's all I ask. I'll leave you to your work.}
 {212}{}{I'll try. He seems to find it wherever we go. See you, Valerie.}
-{213}{}{Look, I don't have anything in "stock." This isn't a store. Most of the stuff I fix here ends up in the Amenities Office... it's out the door and to your left.}
-{214}{}{Like I said BEFORE, this isn't a store. Go to the Amenities Office if you want a gun. Come here if you want something repaired.}
+{213}{VCVAL28}{Look, I don't have anything in "stock." This isn't a store. Most of the stuff I fix here ends up in the Amenities Office... it's out the door and to your left.}
+{214}{VCVAL29}{Like I said BEFORE, this isn't a store. Go to the Amenities Office if you want a gun. Come here if you want something repaired.}
 {215}{}{Oh. Well, can you repair anything of mine instead?}
 {216}{}{Can you repair anything of mine?}
 {217}{}{All right, all right. Goodbye.}
-{218}{}{Well... maybe. Let's see what you got.}
+{218}{VCVAL30}{Well... maybe. Let's see what you got.}
 {219}{}{Show her your pistols.}
 {220}{}{Show her your rifles.}
 {221}{}{Show her your general inventory.}
 {222}{}{Never mind. I wanted to know something else...}
 {223}{}{Maybe some other time.}
-{224}{}{I could put a speed loader on that magnum of yours for $800.}
-{225}{}{Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $1000.}
+{224}{VCVAL33}{I could put a speed loader on that magnum of yours for $800.}
+{225}{VCVAL34}{Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $1000.}
 {226}{}{Upgrade the magnum.}
 {227}{}{How about $650 for the magnum upgrade instead?}
 {228}{}{Upgrade the Desert Eagle.}
@@ -134,8 +134,8 @@
 {231}{}{I wanted to know something else...}
 {232}{}{I'll be back when I have some more cash.}
 {233}{}{Hmmm. Maybe some other time.}
-{234}{}{That assault rifle you got there... I can give it an expanded magazine for $1500.}
-{235}{}{Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $3500.}
+{234}{VCVAL36}{That assault rifle you got there... I can give it an expanded magazine for $1500.}
+{235}{VCVAL37}{Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $3500.}
 {236}{}{Expand the magazine of the AK-112 assault rifle.}
 {237}{}{How about $1350 for upgrading the assault rifle?}
 {238}{}{Attach that low-light scope on the FN FAL.}
@@ -144,22 +144,22 @@
 {241}{}{Never mind. I wanted something else...}
 {242}{}{Actually, none of them. I have to go.}
 {243}{}{I'll be back when I have more cash to spare.}
-{244}{}{I suppose I could juice up that cattleprod for you. It'll cost you $750.}
+{244}{VCVAL38}{I suppose I could juice up that cattleprod for you. It'll cost you $750.}
 {245}{}{All right. }
 {246}{}{How about $650 instead?}
 {247}{}{Actually, could you upgrade one of my other weapons instead?}
 {248}{}{Nevermind. I wanted something else...}
 {249}{}{Actually, none of them. I have to go.}
 {250}{}{Too rich for my blood. I'll be back when I have more cash.}
-{251}{}{I see you've picked up some tricks from my cheapskate father. Give me about an hour, and it'll be good to go...}
-{252}{}{All right, all right. You sound just like my cheapskate Dad. Give me about an hour, and it'll be good to go...}
-{253}{}{All right, give me about an hour, and it'll be good to go...}
+{251}{VCVAL39}{I see you've picked up some tricks from my cheapskate father. Give me about an hour, and it'll be good to go...}
+{252}{VCVAL40}{All right, all right. You sound just like my cheapskate Dad. Give me about an hour, and it'll be good to go...}
+{253}{VCVAL41}{All right, give me about an hour, and it'll be good to go...}
 {254}{}{All right.}
-{255}{}{There you go. Anything else?}
+{255}{VCVAL42}{There you go. Anything else?}
 {256}{}{I had some other questions...}
 {257}{}{Can you upgrade anything else I have?}
 {258}{}{Nothing more, today. Thanks.}
-{259}{}{What do you... uh... Dad?}
+{259}{VCVAL43}{What do you... uh... Dad?}
 {260}{}{I'm sorry?}
 {261}{}{Uh, no, I'm not. I mean, I don't think so.}
 {262}{}{Dad?!}
@@ -251,7 +251,7 @@
 {348}{}{Shamble off}
 {349}{}{Thought I'd come back and touch base with Vault City for a while. The peace and quiet doesn't hurt, either. I needed something first, though...}
 {350}{}{Nothing today, thanks. Take care.}
-{351}{}{Well, you be careful around here, you hear? Don't be blowing up Vault City if you can help it. And... hey, thanks for saving us all.}
+{351}{VCVAL46}{Well, you be careful around here, you hear? Don't be blowing up Vault City if you can help it. And... hey, thanks for saving us all.}
 {352}{}{Swure! Bye-bye!}
 {353}{}{Shamble off}
 {354}{}{Nevermind. I'll talk to you later.}
@@ -260,7 +260,7 @@
 {357}{}{ ***DO NOT DELETE THE NEXT LINE (#358)! IT'S NEEDED FOR THE SCRIPT. DON'T BOTHER TRANSLATING THIS, EITHER***}
 {358}{}{}
 {359}{}{Hey, I have those tools you wanted.}
-{360}{}{It doesn't look like you have much of anything that I could tinker with. I mostly do pistols, rifles, that sort of thing.}
+{360}{VCVAL31}{It doesn't look like you have much of anything that I could tinker with. I mostly do pistols, rifles, that sort of thing.}
 
 # phobos2077: crafting
 {501}{}{Hey, you look like you're handy with tools. Could you teach me anything?}
@@ -276,3 +276,15 @@
 {520}{}{I'll teach you how to make mines with sensors, those things go off if you just look at them funny...}
 {521}{}{...and that's how you do it. You'd think I made you the terror of the wasteland right now, right? Well, it's not so simple - these things require fusion cells, and good luck finding any.
  Only people who can get a hold of any are the ones crazy enough to try to trade with the ghouls.}
+
+
+##############################################
+#BONUS LINES NEEDED FOR THE TALKING HEADS MOD#
+##############################################
+{7700}{VCVAL1}{Well, if it isn't my Dad's "boss." Did you WANT something, or are you just going to stand there gawking like a moron?}
+{7701}{VCVAL2}{Yes?! Did you WANT something, or are you just going to stand there gawking like a moron?}
+{7702}{VCVAL26}{Heh-heh. You've got a sarcastic edge. I like that. As for ol' "Dad"... well... hmmm. I'll try and be a little more civil. For a while, anyway. Um... make sure he stays out of trouble, all right?}
+{7703}{VCVAL32}{I could put a speed loader on that magnum of yours for $800. Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $1000.}
+{7704}{VCVAL35}{That assault rifle you got there... I can give it an expanded magazine for $1500. Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $3500.}
+{7705}{VCVAL44}{Hey! Glad you made it back. Last I heard, you were traveling down south, gunning up old tankers and blowing up oil derricks. You come back here for a little peace and quiet, Mr. Big Hero?}
+{7706}{VCVAL45}{Hey! Glad you made it back. Last I heard, you were traveling down south, gunning up old tankers and blowing up oil derricks. You come back here for a little peace and quiet, Ms. Big Heroine?}

@@ -37,7 +37,8 @@
 #include "../headers/upgweap.h"
 
 #include "../_pbs_headers/talking_heads_compat.h"
-#define start_dialog_check_head_valerie      start_gdialog_check_talking_head(4, 30, 20)
+#define HEAD_VALERIE       (30)
+#define start_dialog_check_head_valerie      start_gdialog_check_talking_head(4, HEAD_VALERIE, BACKGROUND_ADOBE)
 
 /* Standard Script Procedures */
 procedure start;
@@ -453,9 +454,9 @@ end
 
 procedure Node009 begin
    if( Vic_Ptr != 0 ) then
-      Reply( mstr(123) + " " + mstr(125) );
+      Reply_THAT(7700, mstr(123) + " " + mstr(125) );
    else
-      Reply( mstr(124) + " " + mstr(125) );
+      Reply_THAT(7701, mstr(124) + " " + mstr(125) );
 
    BLowOption(126, Node011);
    NLowOption(127, Node999);
@@ -687,7 +688,7 @@ procedure Node031 begin
    inc_general_rep( REP_BONUS_RECONCILED_VIC_AND_VAL );
 
    if( Vic_Ptr != 0 ) then
-      Reply( mstr(207) + " " + mstr(208) );
+      Reply_THAT(7702, mstr(207) + " " + mstr(208) );
    else
       Reply(207);
 
@@ -736,7 +737,7 @@ end
 
 procedure Node034 begin
    if( ( dude_item_count( PID_44_MAGNUM_REVOLVER) > 0) and ( dude_item_count( PID_DESERT_EAGLE) > 0) ) then
-      Reply( mstr(224) + " " + mstr(225) );
+      Reply_THAT(7703, mstr(224) + " " + mstr(225) );
    else if( dude_item_count( PID_44_MAGNUM_REVOLVER) > 0) then
       Reply(224);
    else if( dude_item_count( PID_DESERT_EAGLE) ) then
@@ -806,7 +807,7 @@ end
 
 procedure Node035 begin
    if( ( dude_item_count( PID_ASSAULT_RIFLE) > 0) and ( dude_item_count( PID_FN_FAL) > 0) ) then
-      Reply( mstr(234) + " " + mstr(235) );
+      Reply_THAT(7704, mstr(234) + " " + mstr(235) );
    else if( dude_item_count( PID_ASSAULT_RIFLE) > 0) then
       Reply(234);
    else if( dude_item_count( PID_FN_FAL) ) then
@@ -1206,9 +1207,9 @@ procedure Node041 begin
    From_41 := 1;
 
    if( dude_is_male ) then
-      Reply( mstr(344) + " " + mstr(345) );
+      Reply_THAT(7705, mstr(344) + " " + mstr(345) );
    else
-      Reply( mstr(344) + " " + mstr(346) );
+      Reply_THAT(7706, mstr(344) + " " + mstr(346) );
 
    NLowOption(347, Node042);
    NLowOption(348, Node999);

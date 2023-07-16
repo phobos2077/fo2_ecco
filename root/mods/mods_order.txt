@@ -21,12 +21,14 @@ talking_heads.dat
 talking_heads_audio.dat
 x_rpu_companion_expansion.dat
 
+; Patches for Maps Updated
+talking_heads_map_update_patch.dat
+talking_heads_map_update_patch_THAT.dat
+
 ; Gameplay overhauls
 rpu_y_ecco.dat
 
-; Compatibility patches
-talking_heads_map_update_patch.dat
-talking_heads_map_update_patch_THAT.dat
+; Patches for EcCo
 x_rpu_companion_expansion_ecco_patch.dat
 
 ; QoL/tweaks

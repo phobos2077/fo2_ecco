@@ -39,7 +39,8 @@
 #define RECON_BROKEN_HILLS_DONE          (4) // added by phobos2077
 
 #include "../_pbs_headers/talking_heads_compat.h"
-#define start_dialog_check_head_stark      start_gdialog_check_talking_head(4, 86, 20)
+#define HEAD_STARK      (86)
+#define start_dialog_check_head_stark      start_gdialog_check_talking_head(4, HEAD_STARK, BACKGROUND_ADOBE)
 
 /* Standard Script Procedures */
 procedure start;
@@ -1128,11 +1129,11 @@ end
 procedure Node055 begin
    From_54_or_55 := 1;
    if( global_var( GVAR_VAULT_GECKO_PLANT ) < PLANT_DESTROYED ) then
-      Reply(7700);
+      Reply_THAT(7700, mstr(319) + " " + mstr(322));
    else if( global_var( GVAR_VAULT_GECKO_PLANT ) == PLANT_DESTROYED ) then
-      Reply(7701);
+      Reply_THAT(7701, mstr(320) + " " + mstr(322));
    else
-      Reply(7702);
+      Reply_THAT(7702, mstr(321) + " " + mstr(322));
 
    if( gecko_reconned ) then
       NOption(323, Node056, 004);
@@ -1154,7 +1155,7 @@ end
 procedure Node056 begin
    if( From_54_or_55 == 1 ) then begin
       From_54_or_55 := 0;
-      Reply( mstr(327) + " " + mstr(328) );
+      Reply_THAT(7703, mstr(327) + " " + mstr(328) );
    end
    else
       Reply(328);
@@ -1261,7 +1262,7 @@ end
 procedure Node060 begin
    if( From_58_or_59 == 1 ) then begin
       From_58_or_59 := 0;
-      Reply(7704);
+      Reply_THAT(7704, mstr(345) + " " + mstr(346));
    end
    else
       Reply(346);

@@ -100,6 +100,7 @@ import variable den_mom_box_obj;
 import variable generic_temp_box;
 
 #include "../_pbs_craft/learn_craft_mom.h"
+#define HEAD_MOM     55
 
 procedure start begin
 end
@@ -147,7 +148,7 @@ procedure talk_p_proc begin
    end else begin
       move_obj_inven_to_obj(self_obj,generic_temp_box);
       move_obj_inven_to_obj(den_mom_box_obj,self_obj);
-         start_gdialog_check_talking_head(4, 55, 3);
+         start_gdialog_check_talking_head(4, HEAD_MOM, BACKGROUND_HUB);
          gSay_Start;
             if (dude_is_stupid) then begin
                call Node001;
@@ -239,7 +240,7 @@ procedure Node002 begin
       Reply(220);
       GOption(223, Node999, 001);
    end else begin
-      Reply(mstr(221) + dude_name + "," + mstr(222)); //added ,  -killap
+      Reply_THAT(7700, mstr(221) + dude_name + "," + mstr(222)); //added ,  -killap
       NOption(224, Node003, 001);
    end
    NOption(225, Node999, 001);
