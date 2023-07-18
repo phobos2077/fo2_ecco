@@ -1,14 +1,12 @@
-/**
-
+/*
    At first map enter iterates over all items and inventories and fixes:
+   - non-container items with mismatch FID
    - weapons loaded with ammo of invalid caliber
-   - weapons loaded with too much rounds
-   - ammo packs with too much rounds
+   - weapons loaded with too many rounds
+   - ammo packs with too many rounds
 
    All actions are logged to debug.log
-
 */
-
 
 procedure start;
 procedure check_item(variable obj);
@@ -22,29 +20,42 @@ procedure map_enter_p_proc;
 #define caliber_name(x)    (mstr_proto(300 + x))
 
 procedure start begin
-  // nothing here, all logic is in map_enter_p_proc...
+   // nothing here, all logic is in map_enter_p_proc...
 end
 
 /*
-   Check item for possible inconsistency with PROTO and fix, if needed
+   Check item for possible inconsistency with PROTO and fix if needed
 
    returns 1 if object was changed, 2 if destroyed
 */
 procedure check_item(variable item) begin
    variable
       current,
-   	ammoPid,
-   	ammoCal,
-   	ammoMax,
-   	affected := false;
-
+      objType,
+      itemFid,
+      ammoPid,
+      ammoCal,
+      ammoMax,
+      affected := false;
+ 
    if (item == 0) then
       return false;
 
-   if (obj_item_subtype(item) == item_type_container) then begin
+   objType := obj_item_subtype(item);
+   if (objType == item_type_container) then begin
       call check_inven(item);
+      return false;
    end
-   else if (obj_item_subtype(item) == item_type_weapon and get_weapon_ammo_pid(item) > 0) then begin
+
+   // fix incorrect FID for non-container items
+   itemFid := get_proto_data(obj_pid(item), PROTO_FID);
+   current := get_object_data(item, OBJ_DATA_FID);
+   if (current != itemFid) then begin
+      set_object_data(item, OBJ_DATA_FID, itemFid);
+      debug_msg(obj_name(item) + " had incorrect FID (" + current + "), changed to " + itemFid);
+      affected := true;
+   end
+   if (objType == item_type_weapon and get_weapon_ammo_pid(item) > 0) then begin
       // fix wrong ammo type and amount loaded in guns
       ammoCal := get_proto_data(obj_pid(item), PROTO_WP_CALIBER); // proper caliber
       ammoPid := get_proto_data(obj_pid(item), PROTO_WP_AMMO_PID); // proper default ammo
@@ -52,23 +63,23 @@ procedure check_item(variable item) begin
       current := get_proto_data(get_weapon_ammo_pid(item), PROTO_AM_CALIBER);
       if (current != ammoCal) then begin
          set_weapon_ammo_pid(item, ammoPid);
-         debug_msg(obj_name(item)+" had incorrect caliber ("+caliber_name(current)+"), reset to "+caliber_name(ammoCal));
+         debug_msg(obj_name(item) + " had incorrect caliber (" + caliber_name(current) + "), reset to " + caliber_name(ammoCal));
          affected := true;
       end
       current := get_weapon_ammo_count(item);
       if (current > ammoMax) then begin
          set_weapon_ammo_count(item, ammoMax);
-         debug_msg(obj_name(item)+" had too much ammo ("+current+"), changed to "+ammoMax);
+         debug_msg(obj_name(item) + " had too much ammo (" + current + "), changed to " + ammoMax);
          affected := true;
       end
    end
-   else if (obj_item_subtype(item) == item_type_ammo) then begin
-      // fix incorrect pack sizes for ammo
+   else if (objType == item_type_ammo) then begin
+      // fix incorrect pack size for ammo
       ammoMax := get_proto_data(obj_pid(item), PROTO_AM_PACK_SIZE);
       current := get_weapon_ammo_count(item);
       if (current > ammoMax) then begin
          set_weapon_ammo_count(item, ammoMax);
-         debug_msg(obj_name(item)+" had too much ammo ("+current+"), changed to "+ammoMax);
+         debug_msg(obj_name(item) + " had too much ammo (" + current + "), changed to " + ammoMax);
          affected := true;
       end
    end
@@ -78,23 +89,23 @@ procedure check_item(variable item) begin
 end
 
 /*
-   apply checks to object inventory
+   Apply checks to object inventory
    returns number of affected objects
 */
-procedure check_inven(variable invenobj) begin
+procedure check_inven(variable invenObj) begin
    variable obj, i := 0, res, numAffected := 0;
 
-   obj := inven_ptr(invenobj, 0);
+   obj := inven_ptr(invenObj, 0);
    while (obj) do begin
       res := check_item(obj);
       if (res != 2) then
          i++;
       if (res) then
          numAffected++;
-      obj := inven_ptr(invenobj, i);
+      obj := inven_ptr(invenObj, i);
    end
    if (numAffected > 0) then
-      debug_msg(obj_name(invenobj)+" fixed objects "+numAffected+"/"+i);
+      debug_msg(obj_name(invenObj) + " fixed objects " + numAffected + "/" + i);
    return numAffected;
 end
 
