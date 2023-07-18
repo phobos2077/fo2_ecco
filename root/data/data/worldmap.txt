@@ -1072,19 +1072,19 @@ type_00=pid:16777705, Item:7(wielded), Script:831	; Kaga1 (Male Primitive)
 position=Surrounding
 
 [Encounter: KAGA2]
-type_00=pid:16777706, Item:10(wielded), Script:832
+type_00=pid:16777706, Script:832
 position=Surrounding
 
 [Encounter: KAGA3]
-type_00=pid:16777707, Item:242(wielded), Script:833    ; Combat Shotgun
+type_00=pid:16777707, Script:833
 position=Surrounding
 
 [Encounter: KAGA4]
-type_00=pid:16777708, Item:355(wielded), Script:834    ; Light Support Weapon
+type_00=pid:16777708, Script:834
 position=Surrounding
 
 [Encounter: KAGA5]
-type_00=pid:16777709, Item:389(wielded), Script:835   ; Avenger Minigun
+type_00=pid:16777709, Item:28(wielded), Script:835
 position=Surrounding
 
 [Encounter: Gecko_Enclave_Patrol]
