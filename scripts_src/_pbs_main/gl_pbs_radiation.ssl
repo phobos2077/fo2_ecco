@@ -1,0 +1,86 @@
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../headers/maps.h"
+#include "../headers/global.h"
+
+#define SCRIPT_REALNAME    "gl_pbs_radiation"
+#include "../_pbs_headers/ecco_log.h"
+
+#define SGVAR_RADIATION_LAST_UPDATE     "PBSRADTM"
+
+#define RADIATE_GECKO                   (2)
+#define RADIATE_TIMEOUT                 (game_ticks(30 * 60))
+
+#define last_radiated                   get_sfall_global_int(SGVAR_RADIATION_LAST_UPDATE)
+#define set_last_radiated(v)            set_sfall_global(SGVAR_RADIATION_LAST_UPDATE, v)
+
+#define gecko_plant_status              global_var(GVAR_VAULT_GECKO_PLANT)
+
+
+
+// TODO: engine doesn't allow to irradiate party members (yet..)
+/*procedure radiate_party(variable amt) begin
+   variable obj;
+   display_msg("radiate "+amt);
+   foreach (obj in party_member_list_critters) begin
+      radiation_inc(obj, amt);
+   end
+end*/
+
+procedure get_area_radiation begin
+   if (get_game_mode BWAND WORLDMAP) then begin
+      // TODO: radiation on world map?
+   end else
+   if (cur_town == AREA_GECKO) then begin
+      if (gecko_plant_status != PLANT_REPAIRED and gecko_plant_status != PLANT_OPTIMIZED) then
+         return RADIATE_GECKO;
+   end
+   return 0;
+end
+
+procedure update_radiation(variable force := false) begin
+   variable rads, elapsed;
+
+   if (not last_radiated) then set_last_radiated(game_time);
+   else if (not force and game_time < last_radiated + RADIATE_TIMEOUT) then return;
+
+   rads := get_area_radiation;
+   if (rads) then begin
+      rads := floor(1.0 * rads * (game_time - last_radiated) / RADIATE_TIMEOUT);
+      if (rads > 0) then begin
+         debug_log("Radiate by " + rads);
+         radiation_inc(dude_obj, rads);
+      end
+   end
+   set_last_radiated(game_time);
+end
+
+procedure gamemodechange_hook begin
+   variable lastMode := get_sfall_arg_at(1);
+   if (not (get_game_mode BWAND WORLDMAP) and lastMode BWAND WORLDMAP) then begin
+      debug_log("Entered from worldmap, resetting rads");
+      set_last_radiated(game_time);
+      //call update_radiation(true);
+   end
+end
+
+procedure start begin
+   call update_radiation;
+
+   register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_hook);
+end
+
+procedure map_enter_p_proc begin
+   //display_msg("radia map_enter: "+cur_map_index);
+   call update_radiation;
+end
+
+procedure map_exit_p_proc begin
+   //display_msg("radia map_exit: "+cur_map_index);
+   call update_radiation(true);
+end
+
+procedure map_update_p_proc begin
+   //display_msg("radia map_update: "+cur_map_index);
+   call update_radiation;
+end

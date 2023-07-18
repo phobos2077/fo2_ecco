@@ -4,7 +4,7 @@ for 0.9.3:
 
 
 for "future":
-- Rebalance zilocker.ssl and all scripts that use it
+- Stimpak & Healing powder heal amt to depend upon First Aid skill
 - Crafting: use items from party members inventory
 - Crafting: read config from INI file and texts from game/craft.msg
 - port "grenades anywhere" script from FO2Tweaks?
