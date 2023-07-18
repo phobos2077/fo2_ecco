@@ -49,7 +49,7 @@ procedure create_loot_object(variable pid, variable tileNum, variable elev, vari
    return obj;
 end
 
-#define arg_or_default(i, def)     atoi(args[i]) if args[i] else def
+#define arg_or_default(i, def)     (atoi(args[i]) if (len_array(args) > i) else def)
 #define is_inven_object(obj)       (obj_type(obj) == OBJ_TYPE_CRITTER or (obj_type(obj) == OBJ_TYPE_ITEM and obj_item_subtype(obj) == item_type_container))
 #define loot_target_name(useInven, tileObj)  (obj_name(tileObj) if useInven else "ground")
 
@@ -154,22 +154,37 @@ end
 
 procedure command_script(variable tileNum, variable elev, variable tileObj, variable args) begin
    variable
-      sid := arg_or_default(0, 0);
+      sid := arg_or_default(0, 0),
+      radius := arg_or_default(1, -1);
 
    if (sid < 0) then begin
       debug_err_cmd("s: invalid sid", tileNum);
       return;
    end
-   if (not tileObj) then begin
-      debug_err_cmd("s: target not found!", tileNum);
-      return;
-   end
-   if (sid > 0) then
-      set_script(tileObj, sid);
-   else
-      remove_script(tileObj);
+   if (tileObj) then begin
+      // Set/remove script on object.
+      if (radius >= 0) then begin
+         debug_err_cmd("s: radius set but tile has object", tileNum);
+         return;
+      end
+      if (sid > 0) then
+         set_script(tileObj, sid);
+      else
+         remove_script(tileObj);
 
-   debug_log_cmd("set " + obj_name(tileObj) + " script to " + sid, tileNum);
+      debug_log_cmd("set " + obj_name(tileObj) + " script to " + sid, tileNum);
+   end else begin
+      if (radius < 0) then begin
+         debug_err_cmd("s: no object to change script", tileNum);
+         return;
+      end
+      if (sid > 0) then begin
+         create_spatial(sid, tileNum, elev, radius);
+         debug_log_cmd("created spatial script " + sid, tileNum);
+      end else begin
+         debug_err_cmd("s: removing spatials not supported", tileNum);
+      end
+   end
 end
 
 procedure get_command_handler(variable cmd) begin
