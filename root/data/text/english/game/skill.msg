@@ -96,6 +96,9 @@
 {571}{}{You steal the %s.}
 {572}{}{You're caught planting the %s.}
 {573}{}{You plant the %s.}
+# EcCo: failed stealing
+{574}{}{You fail to steal the %s.}
+{575}{}{You fail to plant the %s.}
 {590}{}{You've taxed your ability with that skill. Wait a while.}
 {591}{}{You're too tired.}
 {592}{}{The strain might kill you.}
@@ -103,7 +106,6 @@
 # Fallout 2!
 {600}{}{You aren't skilled enough to heal crippling injuries.}
 {601}{}{Robotic unit is beyond repair.}
-
 
 
 #

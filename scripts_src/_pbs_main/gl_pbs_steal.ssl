@@ -1,13 +1,41 @@
+/*
+   Steal mechanic tweaks.
+
+   - If catch roll failed but steal roll also failed, then "silently" fail steal instead of succeeding (printing new message).
+   - Reduce town reputation on steal attempts (successful or when cought).
+   - Moved various constants into ini.
+   - Take quantity into account for item size penalty.
+   - Optional penalty for sizeless items based on cost (such as money).
+*/
+
 #include "../sfall/sfall.h"
 #include "../sfall/sfall_extra.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/command_lite.h"
 
+#include "../sfall/lib.math.h"
+
 #define SCRIPT_REALNAME    "gl_pbs_steal"
 #include "../_pbs_headers/ecco_log.h"
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/rep.h"
 
-variable steal_count;
-variable steal_size;
+#define INI_FILE        INI_MISC
+#define INI_SECTION     "STEAL"
+
+variable
+   ini_town_rep_cought,
+   ini_town_rep_steal,
+   ini_chance_steal_count_mod_mult,
+   ini_chance_facing_mod,
+   ini_chance_size_mod_mult,
+   ini_sizeless_chance_cost_mod_mult,
+   ini_exp_mult;
+
+variable
+   steal_count,
+   steal_size,
+   pickup_proc_skip_target;
 
 procedure is_in_front(variable thief, variable target) begin
    variable diff = get_cur_rot(thief) - get_cur_rot(target);
@@ -46,26 +74,23 @@ procedure steal_hook begin
       target := get_sfall_arg,
       item := get_sfall_arg,
       isPlanting := get_sfall_arg,
-      count := get_sfall_arg;
+      quantity := get_sfall_arg;
 
-   debug_log_fmt("HOOK_STEAL  thief: %s, target: %s, item: %s, planting: %d, count: %d", obj_name_safe(thief), obj_name_safe(target), obj_name_safe(item), isPlanting, count);
+   debug_log_fmt("HOOK_STEAL  thief: %s, target: %s, item: %s, planting: %d, quantity: %d", obj_name_safe(thief), obj_name_safe(target), obj_name_safe(item), isPlanting, quantity);
 
-   variable itemSize := get_proto_data(obj_pid(item), PROTO_IT_SIZE);
-
-   // Update steal count
-   steal_count += 1;
-   steal_size += itemSize;
-
-   variable stealModifier = -steal_count + 1;
+   variable itemSize := get_proto_data(obj_pid(item), PROTO_IT_SIZE) * quantity;
+   variable stealModifier = steal_count * ini_chance_steal_count_mod_mult;
 
    if (thief != dude_obj or get_perk(thief, PERK_pickpocket) == 0) then begin
-      // -4% per item size
-      stealModifier -= 4 * itemSize;
+      if (itemSize > 0) then
+         stealModifier += floor(ini_chance_size_mod_mult * itemSize);
+      else
+         stealModifier += floor(proto_data(obj_pid(item), it_cost) * quantity * ini_sizeless_chance_cost_mod_mult);
 
       if (obj_type(target) == OBJ_TYPE_CRITTER) then begin
-         // check facing: -25% if face to face
+         // check facing: lower chance if face to face
          if (is_in_front(thief, target)) then begin
-            stealModifier -= 25;
+            stealModifier += ini_chance_facing_mod;
          end
       end
    end
@@ -85,12 +110,12 @@ procedure steal_hook begin
    end
 
    variable catchRoll;
+   variable catchChance;
    if (stealRoll == ROLL_CRITICAL_SUCCESS) then begin
       catchRoll = ROLL_CRITICAL_FAILURE;
    end else if (stealRoll == ROLL_CRITICAL_FAILURE) then begin
       catchRoll = ROLL_SUCCESS;
    end else begin
-      variable catchChance;
       if (obj_type(target) == OBJ_TYPE_CRITTER) then begin
          catchChance = has_skill(target, SKILL_STEAL) - stealModifier;
       end else begin
@@ -99,34 +124,42 @@ procedure steal_hook begin
       catchRoll = random_roll(catchChance, 0);
    end
 
-   variable isSuccess := catchRoll >= ROLL_SUCCESS;
-   set_sfall_return(isSuccess);
-   if (isSuccess) then set_sfall_return(10 * steal_count);
-   display_msg(sprintf(mstr_skill(570 + (isSuccess != false) + isPlanting * 2), obj_name(item)));
+   variable result := 0; // cought
+   if (catchRoll < ROLL_SUCCESS) then begin // we didn't get cought
+      result := 1 if stealRoll >= ROLL_SUCCESS else 2;  // success or fail without getting cought
+   end
+   debug_log_fmt("Result: %d, stealRoll: %d, catchRoll: %d, stealChance: %d = min(%d + %d, 95), catchChance: %d",
+      result, stealRoll, catchRoll, stealChance, stealModifier, has_skill(thief, SKILL_STEAL), catchChance);
+
+   if (result == 1) then begin
+      // Update steal count on successful steal
+      steal_count += 1;
+      steal_size += itemSize;
+      inc_cur_town_rep(ini_town_rep_steal);
+   end else if (result == 0) then begin
+      // Cought stealing
+      inc_cur_town_rep(ini_town_rep_cought);
+   end
+   //pickup_proc_skip_target := target;
+   set_sfall_return(result);
+   set_sfall_return(ini_exp_mult * steal_count);
+   variable msgId := (574 + isPlanting) if (result == 2) else (570 + (result != 0) + isPlanting * 2);
+   display_msg(sprintf(mstr_skill(msgId), obj_name(item)));
 end
 
-/*
-HOOK_ROLLCHECK
-Runs when a game event performs a random roll to check the chance of success or failure.
+procedure stdprocedure_hook begin
+   variable
+      handle := get_sfall_arg,
+      self := get_sfall_arg,
+      source := get_sfall_arg;
+   
+   if (handle == pickup_proc and self == pickup_proc_skip_target) then begin
+      debug_msg("Cancelling pickup_p_proc for "+obj_name(self));
+      set_sfall_return(-1);
+   end
+end
 
-int     arg0 - event type:
-               1 - checks the chance of an attack hitting the target
-               2 - checks the chance of a bullet from a burst hitting the target (for burst attacks)
-               3 - checks the chance when using skills (not listed below)
-               4 - check the chance of using Repair skill
-               5 - check the chance of using Doctor skill
-               6 - check the chance of using Steal skill for the thief (usually the player)
-               7 - the second Steal skill chance check for the target to catch the thief, in which the target's failure is the thief's success result
-int     arg1 - the value of roll result (see ROLL_* constants), which is calculated as:
-               for ROLL_CRITICAL_SUCCESS: random(1, 100) <= (random_chance / 10) + bonus
-               for ROLL_CRITICAL_FAILURE: random(1, 100) <= -random_chance / 10
-int     arg2 - the chance value
-int     arg3 - the bonus value, used when checking critical success
-int     arg4 - random chance (calculated as: chance - random(1, 100)), where a negative value is a failure check (ROLL_FAILURE)
-
-int     ret0 - overrides the roll result
-*/
-procedure rollcheck_hook begin
+/*procedure rollcheck_hook begin
    variable
       type := get_sfall_arg,
       roll := get_sfall_arg,
@@ -137,18 +170,27 @@ procedure rollcheck_hook begin
    if (type == 6 or type == 7) then begin
       debug_log_fmt("HOOK_ROLLCHECK  roll: %d, chance: %d, bonus: %d, rnd: %d", roll, chance, bonus, rndChance);
    end
-end
+end*/
 
 procedure gamemodechange_hook begin
-   display_msg("gamemode "+get_game_mode);
    if (get_game_mode bwand INTFACELOOT) then begin
+      debug_log("Resetting steal counters");
       steal_count := 0;
       steal_size := 0;
    end
 end
 
 procedure start begin
+   int_from_ini_file(chance_steal_count_mod_mult, INI_FILE, INI_SECTION);
+   int_from_ini_file(chance_facing_mod, INI_FILE, INI_SECTION);
+   float_from_ini_file(chance_size_mod_mult, INI_FILE, INI_SECTION);
+   float_from_ini_file(sizeless_chance_cost_mod_mult, INI_FILE, INI_SECTION);
+   int_from_ini_file_clamped(town_rep_cought, INI_FILE, INI_SECTION, -30, 30);
+   int_from_ini_file_clamped(town_rep_steal, INI_FILE, INI_SECTION, -30, 30);
+   int_from_ini_file_clamped(exp_mult, INI_FILE, INI_SECTION, 0, 1000);
+
    register_hook_proc(HOOK_STEAL, steal_hook);
-   register_hook_proc(HOOK_ROLLCHECK, rollcheck_hook);
+   //register_hook_proc(HOOK_ROLLCHECK, rollcheck_hook);
    register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_hook);
+   register_hook_proc(HOOK_STDPROCEDURE, stdprocedure_hook);
 end
