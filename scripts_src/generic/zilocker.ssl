@@ -79,9 +79,15 @@ import variable EXPORT_VAR;
 #ifndef SKIP_WARNING
    #define SKIP_WARNING                      (false)
 #endif
+
+#define EASY_LOCK_PENALTY                    (-25)
+#define MEDIUM_LOCK_PENALTY                  (-50)
+#define HARD_LOCK_PENALTY                    (-75)
+
 #ifndef LOCKPICK_SKILL_PENALTY
    #define LOCKPICK_SKILL_PENALTY            EASY_LOCK_PENALTY
 #endif
+
 #ifndef PRY_CROWBAR_MOD
    #if LOCKPICK_SKILL_PENALTY == HARD_LOCK_PENALTY
       #define PRY_CROWBAR_MOD                   (-6)
@@ -147,9 +153,6 @@ import variable EXPORT_VAR;
    #define map_enter_action
 #endif
 
-#define EASY_LOCK_PENALTY                    (-25)
-#define MEDIUM_LOCK_PENALTY                  (-50)
-#define HARD_LOCK_PENALTY                    (-75)
 
 #define lock_success_msg                     if (user_obj == dude_obj) then begin               \
                                                 display_mstr(102);                              \
