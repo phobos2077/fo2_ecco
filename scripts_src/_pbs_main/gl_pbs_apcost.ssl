@@ -21,7 +21,6 @@
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 #include "../sfall/command_lite.h"
-#include "../sfall/command_extra.h"
 
 #include "../_pbs_headers/ecco.h"
 
@@ -188,6 +187,8 @@ procedure combatturn_handler begin
 
    if (type == 0) then begin
       critter_ap_map[critter] := curAP;
+   end else if (type == -2) then begin
+      clear_array(critter_ap_map); // cleanup to prevent unspent AP carry to next combat
    end else begin
       if (type == 1) then begin
          carryAP := critter_ap_map[critter];
