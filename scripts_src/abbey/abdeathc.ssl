@@ -34,7 +34,6 @@ procedure use_skill_on_p_proc;
 procedure damage_p_proc;
 procedure map_enter_p_proc;
 
-variable starttile;
 /*****************************************************************
    Local Variables which are saved. All Local Variables need to be
    prepended by LVAR_
@@ -43,6 +42,10 @@ variable starttile;
 #define LVAR_Herebefore                 (4)
 #define LVAR_Hostile                    (5)
 #define LVAR_Personal_Enemy             (6)
+#define LVAR_Home_Tile                  (7)
+
+#define starttile                       local_var(LVAR_Home_Tile)
+#define set_starttile(x)                set_local_var(LVAR_Home_Tile, x)
 
 /*******************************************************************
    Imported variables from the Map scripts. These should only be
@@ -67,14 +70,18 @@ variable starttile;
 *******************************************************************/
 
 procedure start begin
+   if (starttile == 0 and not is_loading_game) then call map_enter_p_proc; // pbs: initialize replaced obj
 end
 
 
 procedure destroy_p_proc begin
    inc_evil_critter
-   give_exp_points(500);
-   display_msg(mstr(102));
-   set_global_var(GVAR_ABBEY_BEAST,2);
+   // phobos2077: only give exp for killing the mother
+   if (self_pid == PID_LARGE_DEATHCLAW or self_pid == PID_TOUGH_DEATHCLAW) then begin
+      give_exp_points(500);
+      display_msg(mstr(102));
+      set_global_var(GVAR_ABBEY_BEAST, 2);
+   end
 end
 
 
@@ -145,7 +152,15 @@ procedure use_skill_on_p_proc begin
 end
 
 procedure map_enter_p_proc begin
+   // phobos2077: replace tough with normal deathclaw
+   ndebug("map_enter, my pid: "+self_pid+", loading: "+is_loading_game);
+   if (not is_loading_game and (self_pid == PID_TOUGH_DEATHCLAW or self_pid == PID_SM_TOUGH_DEATHCLAW)) then begin
+      create_object_sid(PID_LARGE_DEATHCLAW if self_pid == PID_TOUGH_DEATHCLAW else PID_SMALL_DEATHCLAW, self_tile, self_elevation, NAME);
+      destroy_self;
+      return;
+   end
    set_self_team(TEAM_DEATHCLAW);
    set_self_ai(AI_GENERIC_DEATH_CLAW);
-   starttile := self_tile;
+   // phobos2077: fix home tile
+   if (starttile == 0) then set_starttile(self_tile);
 end
