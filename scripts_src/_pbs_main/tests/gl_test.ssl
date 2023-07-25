@@ -1,8 +1,8 @@
 #include "..\..\sfall\lib.math.h"
 #include "..\..\sfall\lib.strings.h"
 #include "..\..\sfall\lib.arrays.h"
+#include "..\..\sfall\lib.obj.h"
 #include "..\..\sfall\sfall.h"
-#include "..\..\sfall\sfall_extra.h"
 #include "..\..\sfall\dik.h"
 
 //#define get_my_config   sfall_func2("config_load", "data\\worldmap.txt", true)
@@ -100,7 +100,7 @@ procedure keypress_hook begin
    if (key == DIK_F2) then begin
       if (get_cursor_mode == 1 and obj_under_cursor(false, true)) then begin
          variable obj := obj_under_cursor(false, true);
-         display_msg(string_format("obj %s tile %d elev %d map %d scr %d", obj_name(obj), tile_num(obj), elevation(obj), cur_map_index, get_script(obj)));
+         display_msg(string_format("obj %s [%d] tile %d elev %d map %d scr %d", obj_name(obj), obj_pid(obj), tile_num(obj), elevation(obj), cur_map_index, get_script(obj)));
       end else begin
          display_msg(string_format("tile %d elev %d map %d", tile_under_cursor, elevation(dude_obj), cur_map_index));
       end

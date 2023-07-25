@@ -1,0 +1,517 @@
+/*
+	Script for critter tmplete
+*/
+
+
+
+
+/* Include Files */
+#define SCRIPT_REALNAME "abjason"
+#include "../headers/define.h"
+
+#define NAME                    SCRIPT_ABJASON
+
+#include "../headers/command.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure use_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure use_obj_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure talk_p_proc;
+
+procedure Node999a;
+procedure Node999;
+procedure Node998;
+procedure Node900;
+procedure Node901;
+procedure Node902;
+procedure Node903;
+procedure Node904;
+procedure Node905;
+procedure Node906;
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+
+/*****************************************************************
+   Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_
+*****************************************************************/
+
+#define LVAR_Flags                      (4)
+#define LVAR_Herebefore                 (5)
+#define LVAR_Hostile                    (6)
+#define LVAR_Personal_Enemy             (7)
+#define LVAR_Angry                      (8)
+#define LVAR_Waiting                    (9)
+#define LVAR_Find_Place_To_Live         (10)
+#define LVAR_Consider_Format            (11)
+#define LVAR_Returned                   (12)
+
+/*******************************************************************
+   Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_)
+*******************************************************************/
+
+/*******************************************************************
+   Local variables which do not need to be saved between map changes.
+*******************************************************************/
+
+
+/*******************************************************************
+*******                         PROCEDURES                   *******
+*******************************************************************/
+
+
+/*******************************************************************
+   The start procedure is the first procedure called when the map is
+   first entered. Any initial information that needs to be set up
+   should be placed in here.
+*******************************************************************/
+
+procedure start begin
+end
+
+procedure critter_p_proc begin
+   if (cur_town == AREA_ABBEY) then begin
+      if ( (global_var(GVAR_TOWN_REP_ABBEY) <= -30) and (self_can_see_dude)) then begin
+         attack(dude_obj);
+      end
+   end
+end
+
+procedure timed_event_p_proc begin
+end
+
+/********************************************************************
+********************************************************************/
+
+procedure use_p_proc begin
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+/***************************************************************************
+   This is cursory glance description that the player will receive should
+   he just pass the Action Cursor over. Examines which give more information
+   need to be in the description_p_proc procedure.
+***************************************************************************/
+
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Herebefore) == 0) then
+      display_msg(mstr(100));
+   else
+      display_msg(mstr(101));
+end
+
+
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+
+
+procedure use_skill_on_p_proc begin
+end
+
+
+procedure use_obj_on_p_proc begin
+end
+
+
+/******************************************************************************************
+   IF it gets damaged
+******************************************************************************************/
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+      if (cur_town == AREA_ABBEY) then begin
+         if (global_var(GVAR_TOWN_REP_ABBEY) != -30) then
+            set_global_var(GVAR_TOWN_REP_ABBEY, -30);
+      end
+   end
+end
+
+/***************************************************************************************
+   Whenever the map is first entered, this procedure will be called.
+***************************************************************************************/
+
+procedure map_enter_p_proc begin
+
+
+   if (cur_town == AREA_ABBEY) then begin
+      if (global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON) == 2) then begin
+         set_self_invisible; //invisible
+      end else if (global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON) == 3) then begin
+         set_self_visible; //visible
+      end
+   end else if (cur_town == AREA_GECKO) then begin
+      if (global_var(GVAR_GECKO_MELTDOWN) == 2) then begin
+         if ( (GAME_TIME_IN_HOURS - global_var(GVAR_GECKO_TIMER_MELTDOWN))  > 24) then begin
+            set_global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON,3);
+            destroy_object(self_obj);
+         end
+      end
+   end
+
+end
+
+
+/**************************************************************************************
+   This procedure gets called roughly every 30 seconds of real time.
+**************************************************************************************/
+
+procedure map_update_p_proc begin
+end
+
+/**************************************************************************************
+   This is used for any dialogue that may need to occur with the player.
+**************************************************************************************/
+
+procedure talk_p_proc begin
+   if (cur_town == AREA_GECKO) then begin
+      if (global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON) < 2) then begin
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            call Node022;
+         gSay_End;
+         end_dialogue;
+      end else begin
+         call Node026;
+      end
+   end else begin
+      if (global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON) == 3) then begin
+         if (local_var(LVAR_Returned) == 0) then begin
+            start_gdialog(NAME,self_obj,4,-1,-1);
+            gSay_Start;
+               call Node028;
+               set_local_var(LVAR_Returned,1);
+            gSay_End;
+            end_dialogue;
+         end else begin
+            floater(610);
+         end
+      end else if (local_var(LVAR_Herebefore) == 0) then begin
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            call Node001;
+         gSay_End;
+         end_dialogue;
+      end else if (local_var(LVAR_Angry) == 1) then begin
+         call Node027;
+      end else if (local_var(LVAR_Waiting) == 1) then begin
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            call Node021;
+         gSay_End;
+         end_dialogue;
+      end else if (local_var(LVAR_Consider_Format) == 1) then begin
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            call Node025;
+         gSay_End;
+         end_dialogue;
+      end else begin
+         start_gdialog(NAME,self_obj,4,-1,-1);
+         gSay_Start;
+            call Node020;
+         gSay_End;
+         end_dialogue;
+      end
+   end
+   set_local_var(LVAR_Herebefore,1);
+end
+
+procedure Node999a begin
+   set_local_var(LVAR_Angry,1);
+end
+
+procedure Node999 begin
+
+end
+
+procedure Node998 begin
+   set_global_var(GVAR_TOWN_REP_ABBEY, -30);
+   set_hostile;
+end
+
+procedure Node900 begin
+   set_global_var(GVAR_ABBEY_FORMAT_DATABASES,1);
+end
+
+procedure Node901 begin
+   set_local_var(LVAR_Find_Place_To_Live,1);
+end
+
+procedure Node902 begin
+   //we're going to gecko
+   set_global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON,1);
+   game_time_advance(4*ONE_GAME_DAY);
+   load_map(MAP_GECKO_SETTLEMENT, 555);
+end
+
+procedure Node903 begin
+   set_global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON,1);
+   set_local_var(LVAR_Waiting,1);
+end
+
+procedure Node904 begin
+   variable item;
+   //at gecko, give stealth boy
+   item:=create_object(PID_STEALTH_BOY,0,0); //stealth boy
+   set_global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON,2);
+   add_obj_to_inven(dude_obj,item);
+   inc_general_rep(3);
+   give_xp(500);
+   display_msg(mstr(1000));
+end
+
+procedure Node905 begin
+   //at gecko, stealth boy stolen
+   set_global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON,2);
+   give_xp(500);
+   display_msg(mstr(1000));
+end
+
+procedure Node906 begin
+   set_local_var(LVAR_Consider_Format,1);
+end
+
+procedure Node001 begin
+   Reply(200);
+   BOption(201,Node999a,4);
+   NOption(202,Node002,4);
+end
+
+procedure Node002 begin
+   Reply(210);
+   NOption(211,Node003,4);
+   BOption(212,Node999a,4);
+end
+
+procedure Node003 begin
+   Reply(220);
+   if (global_var(GVAR_ADDICT_TRAGIC) == 1) then begin
+      NOption(221,Node006,4);
+   end else begin
+      NOption(222,Node004,4);
+      NOption(223,Node007,4);
+      NOption(224,Node005,4);
+      NOption(225,Node007,4);
+      BOption(226,Node008,4);
+   end
+end
+
+procedure Node004 begin
+   Reply(240);
+   NOption(244,Node010,4);
+   NOption(245,Node009,4);
+end
+
+procedure Node005 begin
+   Reply(241);
+   NOption(244,Node010,4);
+   NOption(245,Node009,4);
+end
+
+procedure Node006 begin
+   Reply(242);
+   NOption(244,Node010,4);
+   NOption(245,Node009,4);
+end
+
+procedure Node007 begin
+   Reply(243);
+   NOption(244,Node010,4);
+   NOption(245,Node009,4);
+end
+
+procedure Node008 begin
+   Reply(230+dude_is_female);
+   BOption(232,Node998,4);
+   BOption(233,Node999a,4);
+   NOption(234,Node007,4);
+end
+
+procedure Node009 begin
+   Reply(250);
+   NOption(251,Node010,4);
+   BOption(252,Node999a,4);
+   NOption(253,Node011,4);
+end
+
+procedure Node010 begin
+   Reply(260);
+   BOption(261,Node999a,4);
+   NOption(262,Node013,4);
+   NOption(263,Node012,4);
+   NOption(264,Node015,4);
+end
+
+procedure Node011 begin
+   Reply(270);
+   BOption(271,Node999a,4);
+   NOption(272,Node013,4);
+   NOption(273,Node012,4);
+   NOption(274,Node015,4);
+end
+
+procedure Node012 begin
+   Reply(280);
+   NOption(281,Node013,4);
+   NOption(282,Node013,4);
+   BOption(283,Node998,4);
+   NOption(284,Node906,4);
+   NOption(285,Node015,4);
+end
+
+procedure Node013 begin
+   Reply(290);
+   NOption(291,Node014,4);
+   NOption(292,Node014,4);
+end
+
+procedure Node014 begin
+   Reply(300);
+   NOption(301,Node900,4);
+end
+
+procedure Node015 begin
+   Reply(310);
+   if (gecko_visible_on_map) then
+      NOption(311,Node017,4);
+   BOption(312,Node999a,4);
+   NOption(313,Node016,4);
+end
+
+procedure Node016 begin
+   Reply(315);
+   NOption(316,Node901,4);
+end
+
+procedure Node017 begin
+   Reply(320);
+   if (gecko_visit) then begin
+      if (gvar_bit(GVAR_WOOZ_STATUS, WOOZ_TALKED) and not(gvar_bit(GVAR_WOOZ_STATUS, WOOZ_DEAD))) then
+         NOption(321,Node018,4);
+      else
+         NOption(322,Node019,4);
+   end else begin
+      NOption(323,Node019,4);
+   end
+   NOption(324,Node999,4);
+end
+
+procedure Node018 begin
+   if (local_var(LVAR_Consider_Format) == 1) then
+      set_local_var(LVAR_Consider_Format,0);
+
+   Reply(330);
+   NOption(331,Node902,4);
+   NOption(332,Node903,4);
+end
+
+procedure Node019 begin
+   Reply(340);
+   NOption(341,Node999,4);
+end
+
+procedure Node020 begin
+   Reply(350);
+   NOption(351,Node999,4);
+   if (local_var(LVAR_Consider_Format) == 1) then
+     NOption(352,Node013,4);
+   if (gvar_bit(GVAR_WOOZ_STATUS, WOOZ_TALKED) and not(gvar_bit(GVAR_WOOZ_STATUS, WOOZ_DEAD))) then begin
+      if (local_var(LVAR_Find_Place_To_Live) == 1) then
+         NOption(354,Node018,4);
+      else
+         NOption(353,Node018,4);
+   end
+end
+
+procedure Node021 begin
+   Reply(360);
+   NOption(361,Node902,4);
+   NOption(362,Node999,4);
+end
+
+procedure Node022 begin
+   Reply(370);
+
+   //if (obj_carrying_pid_obj(self_obj, 54)) then //jason has stealth boy
+      NOption(371,Node023,4);
+   //else
+      //NOption(371,Node024,4);
+end
+
+procedure Node023 begin
+   Reply(372);
+   NOption(373,Node904,4);
+   BOption(374,Node904,4);
+end
+
+procedure Node024 begin
+   Reply(380);
+   NOption(381,Node905,4);
+   BOption(382,Node905,4);
+end
+
+procedure Node025 begin
+   Reply(286);
+   NOption(287,Node013,4);
+   BOption(288,Node018,4);
+end
+
+procedure Node026 begin
+   floater(400);
+end
+
+procedure Node027 begin
+   floater(random(500,502));
+end
+
+procedure Node028 begin
+   Reply(600);
+   NOption(601,Node999,4);
+   BOption(602,Node999,4);
+end

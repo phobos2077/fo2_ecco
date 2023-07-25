@@ -20,7 +20,6 @@ procedure start;
 
 
 procedure barterprice_handler;
-procedure get_town_rep;
 procedure calc_items_demand_mod(variable obj);
 procedure load_town_demand;
 procedure get_highest_barter_in_party_except_dude;
@@ -41,7 +40,6 @@ variable begin
 	Sell_DudeSkillCoef;
 	Sell_MerchantSkillCoef;
 	Sell_DudeCharismaCoef;
-	Sell_TownRepCoef;
 	Sell_PerkCoef;
 	Sell_BarterModCoef;
 	Sell_MaxPriceCoef;
@@ -51,7 +49,6 @@ variable begin
 	Buy_DudeSkillCoef;
 	Buy_MerchantSkillCoef;
 	Buy_DudeCharismaCoef;
-	Buy_TownRepCoef;
 	Buy_PerkCoef;
 	Buy_BarterModCoef;
 	Buy_PartySkillThreshold;
@@ -99,7 +96,6 @@ procedure start begin
 	Sell_DudeSkillCoef := load_setting_float("SELL", "DudeSkillCoef");
 	Sell_MerchantSkillCoef := load_setting_float("SELL", "MerchantSkillCoef");
 	Sell_DudeCharismaCoef := load_setting_float("SELL", "DudeCharismaCoef");
-	Sell_TownRepCoef := load_setting_float("SELL", "TownRepCoef");
 	Sell_PerkCoef := load_setting_float("SELL", "PerkCoef");
 	Sell_BarterModCoef := load_setting_float("SELL", "BarterModCoef");
 	Sell_MaxPriceCoef := abs(load_setting_float("SELL", "MaxPriceCoef"));
@@ -109,7 +105,6 @@ procedure start begin
 	Buy_DudeSkillCoef := load_setting_float("BUY", "DudeSkillCoef");
 	Buy_MerchantSkillCoef := load_setting_float("BUY", "MerchantSkillCoef");
 	Buy_DudeCharismaCoef := load_setting_float("BUY", "DudeCharismaCoef");
-	Buy_TownRepCoef := load_setting_float("BUY", "TownRepCoef");
 	Buy_PerkCoef := load_setting_float("BUY", "PerkCoef");
 	Buy_BarterModCoef := load_setting_float("BUY", "BarterModCoef");
 	Buy_PartySkillThreshold := load_setting_float("BUY", "PartySkillThreshold");
@@ -166,18 +161,12 @@ procedure barterprice_handler begin
 		masterTrader := has_trait(TRAIT_PERK, dude_obj, PERK_master_trader),
 		merchantBarter := math_clamp(barter_skill(merchant), 0, 300),
 		dialogBarterMod := gdialog_get_barter_mod,
-		townRep := 0,
 		partyBarter,
 		sellPriceMult,
 		buyPriceMult,
 		dudeBarterMult,
 		finalPriceGoods,
 		stats;
-	
-	if (Sell_TownRepCoef != 0 or Buy_TownRepCoef != 0) then begin
-		townRep := math_clamp(get_town_rep, -30, 30);
-		//debug_log("townRep " + townRep);
-	end
 	
 	/*debug_log("dudeBarter: " + dudeBarter + "; merchantBarter: " + merchantBarter + "; perk: " + masterTrader
 		+ "; basePriceGoods: " + basePriceGoods + "; offeredPriceGoods: " + offeredPriceGoods);*/
@@ -217,7 +206,6 @@ procedure barterprice_handler begin
 			buyPriceMult := Buy_Bias * dudeBarterMult
 				* (1 + merchantBarter * Buy_MerchantSkillCoef)
 				* (1 + dudeCharisma * Buy_DudeCharismaCoef)
-				* (1 + townRep * Buy_TownRepCoef)
 				* (1 + masterTrader * Buy_PerkCoef)
 				* (1 + dialogBarterMod * Buy_BarterModCoef)
 				* (1 + math_max(partyBarter - Buy_PartySkillThreshold, 0) * Buy_PartySkillCoef);
@@ -243,7 +231,6 @@ procedure barterprice_handler begin
 			or Sell_DudeSkillCoef != 0
 			or Sell_MerchantSkillCoef != 0
 			or Sell_DudeCharismaCoef != 0
-			or Sell_TownRepCoef != 0
 			or Sell_PerkCoef != 0
 			or Sell_BarterModCoef != 0)) then begin
 
@@ -251,7 +238,6 @@ procedure barterprice_handler begin
 			* (1 + dudeBarter * Sell_DudeSkillCoef)
 			* (1 + merchantBarter * Sell_MerchantSkillCoef)
 			* (1 + dudeCharisma * Sell_DudeCharismaCoef)
-			* (1 + townRep * Sell_TownRepCoef)
 			* (1 + masterTrader * Sell_PerkCoef)
 			* (1 + dialogBarterMod * Sell_BarterModCoef);
 
@@ -305,44 +291,6 @@ procedure load_town_demand begin
 		end
 	end
 	//debug_log("Town Demands: "+debug_array_str_deep(town_demand_map, 2));
-end
-
-// TODO: Move this to INI (or delete feature interely..)
-procedure get_town_rep begin
-   if (cur_town == AREA_ARROYO) then
-     return global_var(GVAR_TOWN_REP_ARROYO);
-   else if (cur_town == AREA_KLAMATH) then
-     return global_var(GVAR_TOWN_REP_KLAMATH);
-   else if (cur_town == AREA_DEN) then
-     return global_var(GVAR_TOWN_REP_THE_DEN);
-   else if (cur_town == AREA_VAULT_CITY) then
-     return global_var(GVAR_TOWN_REP_VAULT_CITY);
-   else if (cur_town == AREA_GECKO) then
-     return global_var(GVAR_TOWN_REP_GECKO);
-   else if (cur_town == AREA_MODOC) then
-     return global_var(GVAR_TOWN_REP_MODOC);
-   else if (cur_town == AREA_BROKEN_HILLS) then
-     return global_var(GVAR_TOWN_REP_BROKEN_HILLS);
-   else if (cur_town == AREA_NEW_RENO) then
-     return global_var(GVAR_TOWN_REP_NEW_RENO);
-   else if (cur_town == AREA_REDDING) then
-     return global_var(GVAR_TOWN_REP_REDDING);
-   else if (cur_town == AREA_NCR) then
-     return global_var(GVAR_TOWN_REP_NCR);
-   else if (cur_town == AREA_VAULT_13) then
-     return global_var(GVAR_TOWN_REP_VAULT_13);
-   else if (cur_town == AREA_SAN_FRANCISCO) then
-     return global_var(GVAR_TOWN_REP_SAN_FRANCISCO);
-   else if (cur_town == AREA_ABBEY) then
-     return global_var(GVAR_TOWN_REP_ABBEY);
-   else if (cur_town == AREA_EPA) then
-     return global_var(GVAR_TOWN_REP_EPA);
-   else if (cur_town == AREA_PRIMITIVE_TRIBE) then
-     return global_var(GVAR_TOWN_REP_PRIMITIVE_TRIBE);
-   else if (cur_town == AREA_VAULT_15) then
-     return global_var(GVAR_TOWN_REP_VAULT_15);
-   else
-     return 0;
 end
 
 procedure get_highest_barter_in_party_except_dude begin

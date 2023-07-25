@@ -9,13 +9,16 @@
 #define SGVAR_RADIATION_LAST_UPDATE     "PBSRADTM"
 
 #define RADIATE_GECKO                   (2)
+#define RADIATE_GECKO_FIXED             (1)
+#define RADIATE_GECKO_MELTDOWN          (10)
+#define RADIATE_GECKO_PLANT_MULT        (3)
 #define RADIATE_TIMEOUT                 (game_ticks(30 * 60))
 
 #define last_radiated                   get_sfall_global_int(SGVAR_RADIATION_LAST_UPDATE)
 #define set_last_radiated(v)            set_sfall_global(SGVAR_RADIATION_LAST_UPDATE, v)
 
-#define gecko_plant_status              global_var(GVAR_VAULT_GECKO_PLANT)
-
+#define gecko_plant_status              global_var(GVAR_VAULT_PLANT_STATUS)
+#define gecko_plant_is_meltdown         (global_var(GVAR_GECKO_MELTDOWN) > 0)
 
 
 // TODO: engine doesn't allow to irradiate party members (yet..)
@@ -32,8 +35,18 @@ procedure get_area_radiation begin
       // TODO: radiation on world map?
    end else
    if (cur_town == AREA_GECKO) then begin
-      if (gecko_plant_status != PLANT_REPAIRED and gecko_plant_status != PLANT_OPTIMIZED) then
-         return RADIATE_GECKO;
+      variable rads;
+      if (gecko_plant_is_meltdown) then begin
+         if (cur_map_index == MAP_GECKO_POWER_PLANT) then return 0; // map script already radiates in this case
+         rads := RADIATE_GECKO_MELTDOWN;
+      end else if (gecko_plant_status == PLANT_REPAIRED) then
+         rads := RADIATE_GECKO_FIXED;
+      else if (gecko_plant_status == PLANT_OPTIMIZED) then
+         rads := 0;
+      else
+         rads := RADIATE_GECKO;
+      if (cur_map_index == MAP_GECKO_POWER_PLANT) then rads *= RADIATE_GECKO_PLANT_MULT;
+      return rads;
    end
    return 0;
 end
