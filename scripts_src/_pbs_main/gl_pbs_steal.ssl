@@ -12,6 +12,7 @@
 #include "../sfall/define_lite.h"
 #include "../sfall/command_lite.h"
 
+#include "../sfall/lib.strings.h"
 #include "../sfall/lib.math.h"
 #include "../sfall/lib.obj.h"
 
@@ -102,7 +103,7 @@ procedure steal_hook begin
       stealModifier += 20;
    end
 
-   variable stealChance = stealModifier + has_skill(thief, SKILL_STEAL);
+   variable stealChance = stealModifier + has_skill(thief, SKILL_STEAL) - has_skill(target, SKILL_STEAL); // pbs: added target skill subtraction
    if (stealChance > 95) then stealChance = 95;
 
    variable stealRoll;
@@ -113,26 +114,31 @@ procedure steal_hook begin
    end
 
    variable catchRoll;
-   variable catchChance;
+   variable catchChance := 0;
    if (stealRoll == ROLL_CRITICAL_SUCCESS) then begin
       catchRoll = ROLL_CRITICAL_FAILURE;
    end else if (stealRoll == ROLL_CRITICAL_FAILURE) then begin
       catchRoll = ROLL_SUCCESS;
    end else begin
-      if (obj_type(target) == OBJ_TYPE_CRITTER) then begin
-         catchChance = has_skill(target, SKILL_STEAL) - stealModifier;
-      end else begin
-         catchChance = 30 - stealModifier;
+      // pbs: changed logic, apply base catch modifier only on failed steal roll.
+      if (stealRoll == ROLL_FAILURE) then begin
+         if (obj_type(target) == OBJ_TYPE_CRITTER) then begin
+            catchChance = get_perception(target) * 4;
+         end else begin
+            catchChance = 30;
+         end
       end
+      catchChance -= stealModifier;
       catchRoll = random_roll(catchChance, 0);
    end
 
+   // pbs: added new outcome when steal roll is FAILURE but catch roll is unsuccessful, prevent steal without getting caught.
    variable result := 0, townRepMod := 0;
    if (catchRoll < ROLL_SUCCESS) then begin // we didn't get caught
       result := 1 if stealRoll >= ROLL_SUCCESS else 2;  // success or fail without getting caught
    end
-   debug_log_fmt("Result: %d, stealRoll: %d, catchRoll: %d, stealChance: %d = min(%d + %d, 95), catchChance: %d",
-      result, stealRoll, catchRoll, stealChance, stealModifier, has_skill(thief, SKILL_STEAL), catchChance);
+   debug_log_fmt_arr("Result: %d, stealRoll: %d, catchRoll: %d, stealChance: %d = min(%d + %d - %d, 95), catchChance: %d",
+      ([result, stealRoll, catchRoll, stealChance, stealModifier, has_skill(thief, SKILL_STEAL), has_skill(target, SKILL_STEAL), catchChance]));
 
    if (result == 1) then begin
       // Update steal count on successful steal/plant

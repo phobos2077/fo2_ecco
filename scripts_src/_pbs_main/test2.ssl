@@ -14,7 +14,7 @@
 
 #include "../sfall/define_lite.h"
 #include "../sfall/command_lite.h"
-#include "../sfall/command_extra.h"
+#include "../sfall/lib.obj.h"
 #include "../sfall/lib.strings.h"
 #include "../_pbs_headers/traps.h"
 
@@ -100,7 +100,7 @@ procedure destroy_self_trap_object begin
 end
 
 procedure start begin
-   debug_log("start");
+   //debug_log("start");
    /*call try_initialize;
    if (my_trap_index == INDEX_EXPLOSION) then begin
       display_msg("I am explosion!");

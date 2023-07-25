@@ -15,15 +15,16 @@
 
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.math.h"
+#include "../sfall/lib.obj.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
-#include "../sfall/command_extra.h"
 #include "../sfall/sfall.h"
 
 #include "../headers/animcomd.h"
 
-#include "../_pbs_headers/ecco.h"
-
+#include "../_pbs_headers/ecco_log.h"
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/math_ext.h"
 
 procedure start;
 procedure load_damage_types_from_ini;
@@ -40,7 +41,6 @@ procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable amm
 procedure item_w_subtype(variable weapon, variable attackType);
 procedure get_ammo_value(variable weapon, variable param);
 procedure map_enter_p_proc;
-procedure round_chance(variable dmg);
 
 #define INI_SECTION   "DAMAGE"
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
@@ -364,7 +364,7 @@ begin
    debug_verbose("ammoDR="+ammoDR+", dmgType="+dmgType+" DT="+calcDTDR[0]+"/"+targetDT+", DR="+calcDTDR[1]+"/"+targetDR+", staticMult="+staticMult+", criticalMult="+criticalMult);
 
    if (ini_burst_critical_fraction != 1.0 and (bypassArmor or criticalMult > 1)) then
-      criticalRounds := math_max(round_chance(ini_burst_critical_fraction * rounds), 1);
+      criticalRounds := math_max(math_round_chance(ini_burst_critical_fraction * rounds), 1);
    else
       criticalRounds := rounds;
 
@@ -386,7 +386,7 @@ begin
       if (bulletDamage <= 0) then
          continue;
 
-      bulletDamage := round_chance(bulletDamage * staticMult * (1 - calcDTDR[1] / 100.0) * criticalMult);
+      bulletDamage := math_round_chance(bulletDamage * staticMult * (1 - calcDTDR[1] / 100.0) * criticalMult);
 
       debug_verbose("Bullet "+i+" dmg="+bulletDamage+"/"+baseDamage);
       if (bulletDamage > 0) then begin
