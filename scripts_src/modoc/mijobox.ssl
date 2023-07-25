@@ -27,6 +27,7 @@
                                                       check_restock_item(PID_ROPE, 1, 2, 100)                  \
                                                       check_restock_item(PID_10MM_JHP, 1, 2, 100)              \
                                                       check_restock_item(PID_9MM_BALL, 1, 2, 100) /* pbs */    \
+                                                      check_restock_item(PID_SHARPENED_POLE, 2, 8, 100) /* pbs */ \
                                                       if (get_ending_state > ending_state_default) then begin  \
                                                          check_restock_item(PID_SHOTGUN, 1, 1, 100)            \
                                                          check_restock_item(PID_HUNTING_RIFLE, 1, 1, 100)      \

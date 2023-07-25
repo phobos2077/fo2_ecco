@@ -4,8 +4,8 @@
 #include "learn_craft.h"
 
 #define NAME                    SCRIPT_VCMAINWK
-#define PRICE_HIGH      (700)
-#define PRICE_LOW       (400)
+#define PRICE_HIGH      (500)
+#define PRICE_LOW       (250)
 
 #define BackOption(n, int)  \
    if (local_var(LVAR_Super_Tool_Kit) == TOOLKIT_GIVEN) then begin \
@@ -24,7 +24,7 @@ procedure NodeCraft3;
 procedure NodeCraft4;
 procedure NodeCraft5;
 
-variable price;
+variable craft_learn_price;
 
 procedure NodeCraft1 begin
   Reply(505);
@@ -35,7 +35,7 @@ end
 procedure NodeCraft2 begin
 variable s;
    Reply(parse_str_2(mstr(510), PRICE_HIGH, ""));
-   price := PRICE_HIGH;
+   craft_learn_price := PRICE_HIGH;
    if (dude_caps >= PRICE_HIGH) then
       NOption(516, NodeCraft4, 004);
    s := parse_str_2(mstr(512), PRICE_LOW, "");
@@ -46,13 +46,13 @@ end
 
 procedure NodeCraft3 begin
   Reply(parse_str_2(mstr(515), PRICE_LOW, ""));
-  price := PRICE_LOW;
+  craft_learn_price := PRICE_LOW;
   NOption(516,NodeCraft4,004);
 end
 
 procedure NodeCraft4 begin
   Reply(520);
-  item_caps_adjust(dude_obj, -price);
+  item_caps_adjust(dude_obj, -craft_learn_price);
   NOption(g_mstr(353),NodeCraft5,004);
 end
 

@@ -68,7 +68,7 @@ FIRST_AID+OUTDOORSMAN:50
 SCIENCE:25
 [COMPONENTS]
 92:1|591:2                        # PID_SCORPION_TAIL or two Small Scorpion Tails
-125:1                             # PID_BOOZE
+125:1|469:1                       # PID_BOOZE or PID_ROT_GUT
 
 
 [ITEM]
@@ -116,19 +116,19 @@ SCIENCE:100
 pcx/items/lastdrug.pcx
 77060
 CRFT_DRG                          # drugs schematics
-360000                            # 10 h
+144000                            # 4 h
 NO
 3                                 # adv drug
 [TOOLS]
 91                                # PID_DOCTORS_BAG
 [SKILLS]
 DOCTOR:80
-SCIENCE:100
+SCIENCE:90
 [COMPONENTS]
 87:1                              # PID_BUFFOUT
-71:2                              # PID_MUTATED_FRUIT
-125:1                             # PID_BOOZE
-144:1                             # PID_SUPER_STIMPAK
+71:3                              # PID_MUTATED_FRUIT
+311:1                             # PID_ROENTGEN_RUM
+40:1                              # PID_STIMPAK
 
 
 [ITEM]
@@ -155,7 +155,7 @@ SCIENCE:50
 pcx/items/drugskin.pcx
 90070
 CRFT_DRG                          # drugs schematics
-126000                            # 3 h 30 m
+108000                            # 3 h
 NO
 3                                 # adv drug
 [TOOLS]
@@ -168,12 +168,12 @@ SCIENCE:80
 334:1                             # PID_POISON
 
 
-[ITEM]                            # 
+[ITEM]
 620                               # new carry weight drug
 pcx/items/drugcrry.pcx
 47074
-CRFT_DRG
-30000                             # 
+CRFT_DRG                          # drugs schematics
+108000                            # 3 h
 NO
 3                                 # adv drug
 [TOOLS]
@@ -184,7 +184,7 @@ SCIENCE:60
 [COMPONENTS]
 49:1                              # PID_ANTIDOTE
 71:2                              # PID_MUTATED_FRUIT
-106:1                             # PID_NUKA_COLA
+124:2|310:2                       # PID_BEER or PID_GAMMA_GULP_BEER
 
 
 # EXPLOSIVES
@@ -203,7 +203,7 @@ NO
 THROWING:40
 [COMPONENTS]
 79:1                              # PID_FLARE
-125:1                             # PID_BOOZE
+125:1|469:1                       # PID_BOOZE or PID_ROT_GUT
 
 
 [ITEM]
@@ -382,7 +382,7 @@ NO
 [TOOLS]
 308                              # PID_SUPER_TOOL_KIT
 [SKILLS]
-REPAIR+TRAPS:100
+REPAIR+TRAPS:110
 [COMPONENTS]
 98:1                             # Junk
 7:2|280:2|45:2                   # Spears OR Sharp Spears OR throwing knives
@@ -406,7 +406,7 @@ REPAIR+TRAPS:80
 
 
 [ITEM]
-619:2                            # Trap kit Proximity
+619:3                            # Trap kit Proximity
 pcx/items/sensmine.pcx
 55054
 CRFT_ELE                         # Electronics
@@ -416,7 +416,7 @@ NO
 [TOOLS]
 308                              # PID_SUPER_TOOL_KIT
 [SKILLS]
-REPAIR+TRAPS:110
+REPAIR+TRAPS:120
 SCIENCE:60
 [COMPONENTS]
 38:1                             # SEC
@@ -456,7 +456,7 @@ NO
 REPAIR:50
 [COMPONENTS]
 127:1                             # PID_ROPE
-276:4|623:4                       # PID_GECKO_PELT or Molerat Hide
+276:6|623:4                       # PID_GECKO_PELT or Molerat Hide
 
 
 [ITEM]

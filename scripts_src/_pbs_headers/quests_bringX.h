@@ -133,11 +133,11 @@ procedure NodeBringReward2;
 procedure NodeBringAsk begin
     if (local_var(LVAR_BRING_X) < 0 and game_time < (-local_var(LVAR_BRING_X))) then begin
         Reply(1130);
-        NOption(1131,Node999,004);
+        NOption(1131, Node999, 004);
     end else begin
         Reply(parse_str_2(mstr(1110), _BRING_COUNT, _BRING_REWARD));
-        NOption(1111,NodeBringAccept,004);
-        NOption(1112,Node999,004);
+        NOption(1111, NodeBringAccept, 004);
+        NOption(1112, Node999, 004);
     end
 end
 
@@ -165,12 +165,12 @@ procedure NodeBringReward1 begin
 end
 
 procedure NodeBringReward2 begin
-    call add_item_pid(dude_obj, PID_LEATHER_ARMOR);
+    call add_item_pid(dude_obj, PID_LEATHER_ARMOR_MK_II);
     call NodeBringReward;
 end
 
 procedure NodeBringReward begin
-    set_local_var(LVAR_BRING_X, -(game_time + ONE_GAME_DAY*random(20, 30)));
+    set_local_var(LVAR_BRING_X, -(game_time + ONE_GAME_DAY * random(20, 30)));
     set_global_var(GVAR_BRINGX_HIDES, BRINGX_QUEST_DONE);
     call remove_items_pid(dude_obj, PID_PBS_MOLERAT_HIDE, _BRING_COUNT);
     give_exp_points(100);

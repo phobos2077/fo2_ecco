@@ -5,8 +5,6 @@
 
 #define NAME                    SCRIPT_MCBALTHA
 
-#define node_3_bit    512
-
 //GVAR_MODOC_JONNY_PIP
 
 // use this as entry points in dialog

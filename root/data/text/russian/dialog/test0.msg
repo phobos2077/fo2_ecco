@@ -193,7 +193,7 @@
 {1311}{}{SCIENCE:25}
 {1312}{}{[COMPONENTS]}
 {1313}{}{92:1|591:2}                        # PID_SCORPION_TAIL or two Small Scorpion Tails
-{1314}{}{125:1}                             # PID_BOOZE
+{1314}{}{125:1|469:1}                       # PID_BOOZE or PID_ROT_GUT
 
 
 {1400}{}{[ITEM]}
@@ -241,19 +241,19 @@
 {1602}{}{pcx/items/lastdrug.pcx}
 {1603}{}{77060}
 {1604}{}{CRFT_DRG}                          # drugs schematics
-{1605}{}{360000}                            # 10 h
+{1605}{}{144000}                            # 4 h
 {1606}{}{NO}
 {1607}{}{3}                                 # adv drug
 {1608}{}{[TOOLS]}
 {1609}{}{91}                                # PID_DOCTORS_BAG
 {1610}{}{[SKILLS]}
 {1611}{}{DOCTOR:80}
-{1612}{}{SCIENCE:100}
+{1612}{}{SCIENCE:90}
 {1613}{}{[COMPONENTS]}
 {1614}{}{87:1}                              # PID_BUFFOUT
-{1615}{}{71:2}                              # PID_MUTATED_FRUIT
-{1616}{}{125:1}                             # PID_BOOZE
-{1617}{}{144:1}                             # PID_SUPER_STIMPAK
+{1615}{}{71:3}                              # PID_MUTATED_FRUIT
+{1616}{}{311:1}                             # PID_ROENTGEN_RUM
+{1617}{}{40:1}                              # PID_STIMPAK
 
 
 {1700}{}{[ITEM]}
@@ -280,7 +280,7 @@
 {1802}{}{pcx/items/drugskin.pcx}
 {1803}{}{90070}
 {1804}{}{CRFT_DRG}                          # drugs schematics
-{1805}{}{126000}                            # 3 h 30 m
+{1805}{}{108000}                            # 3 h
 {1806}{}{NO}
 {1807}{}{3}                                 # adv drug
 {1808}{}{[TOOLS]}
@@ -293,12 +293,12 @@
 {1815}{}{334:1}                             # PID_POISON
 
 
-{1900}{}{[ITEM]}                            # 
+{1900}{}{[ITEM]}
 {1901}{}{620}                               # new carry weight drug
 {1902}{}{pcx/items/drugcrry.pcx}
 {1903}{}{47074}
-{1904}{}{CRFT_DRG}
-{1905}{}{30000}                             # 
+{1904}{}{CRFT_DRG}                          # drugs schematics
+{1905}{}{108000}                            # 3 h
 {1906}{}{NO}
 {1907}{}{3}                                 # adv drug
 {1908}{}{[TOOLS]}
@@ -309,7 +309,7 @@
 {1913}{}{[COMPONENTS]}
 {1914}{}{49:1}                              # PID_ANTIDOTE
 {1915}{}{71:2}                              # PID_MUTATED_FRUIT
-{1916}{}{106:1}                             # PID_NUKA_COLA
+{1916}{}{124:2|310:2}                       # PID_BEER or PID_GAMMA_GULP_BEER
 
 
 # EXPLOSIVES
@@ -328,7 +328,7 @@
 {2011}{}{THROWING:40}
 {2012}{}{[COMPONENTS]}
 {2013}{}{79:1}                              # PID_FLARE
-{2014}{}{125:1}                             # PID_BOOZE
+{2014}{}{125:1|469:1}                       # PID_BOOZE or PID_ROT_GUT
 
 
 {2100}{}{[ITEM]}
@@ -507,7 +507,7 @@
 {3008}{}{[TOOLS]}
 {3009}{}{308}                              # PID_SUPER_TOOL_KIT
 {3010}{}{[SKILLS]}
-{3011}{}{REPAIR+TRAPS:100}
+{3011}{}{REPAIR+TRAPS:110}
 {3012}{}{[COMPONENTS]}
 {3013}{}{98:1}                             # Junk
 {3014}{}{7:2|280:2|45:2}                   # Spears OR Sharp Spears OR throwing knives
@@ -531,7 +531,7 @@
 
 
 {3200}{}{[ITEM]}
-{3201}{}{619:2}                            # Trap kit Proximity
+{3201}{}{619:3}                            # Trap kit Proximity
 {3202}{}{pcx/items/sensmine.pcx}
 {3203}{}{55054}
 {3204}{}{CRFT_ELE}                         # Electronics
@@ -541,7 +541,7 @@
 {3208}{}{[TOOLS]}
 {3209}{}{308}                              # PID_SUPER_TOOL_KIT
 {3210}{}{[SKILLS]}
-{3211}{}{REPAIR+TRAPS:110}
+{3211}{}{REPAIR+TRAPS:120}
 {3212}{}{SCIENCE:60}
 {3213}{}{[COMPONENTS]}
 {3214}{}{38:1}                             # SEC
@@ -581,7 +581,7 @@
 {3411}{}{REPAIR:50}
 {3412}{}{[COMPONENTS]}
 {3413}{}{127:1}                             # PID_ROPE
-{3414}{}{276:4|623:4}                       # PID_GECKO_PELT or Molerat Hide
+{3414}{}{276:6|623:4}                       # PID_GECKO_PELT or Molerat Hide
 
 
 {3500}{}{[ITEM]}

@@ -365,10 +365,10 @@
 {1010}{}{I really don't have time for teaching, you know. We have a large community here and a lot of patients to treat...}
 {1011}{}{Maybe we can work something out? I'd consider this information extremely valuable.}
 {1012}{}{Forget it, then.}
-{1020}{}{In this case... I would need proper compensation for my trouble. I suppose $2000 would be enough...
+{1020}{}{In this case... I would need proper compensation for my trouble. I suppose $1000 would be enough...
  OR, maybe you can really help my clinic with some supplies. We can usually produce all we need, but a specific poison requires scorpion tails, and we have trouble obtaining those.
  If you could bring me at least 8 large tails, it would help us a lot.}
-{1021}{}{Let's cut this to $1000.}
+{1021}{}{Let's cut this to $500.}
 {1022}{}{Here is the money.}
 {1023}{}{Here are your tails.}
 {1024}{}{I changed my mind.}

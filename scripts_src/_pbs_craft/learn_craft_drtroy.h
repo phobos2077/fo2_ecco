@@ -3,6 +3,9 @@
 
 #include "learn_craft.h"
 
+#define TEACH_PRICE_NORMAL      (1000)
+#define TEACH_PRICE_DISCOUNT     (500)
+
 #define NAME                    SCRIPT_VCDRTROY
 
 // home nodes: Node044
@@ -34,10 +37,10 @@ end
 
 procedure NodeCraft2 begin
   Reply(1020);
-  if (dude_caps >= 1000 and has_skill(dude_obj,SKILL_BARTER) >= 70) then begin
-    NOption(1021, NodeCraft2a, 004);
+  if (dude_caps >= TEACH_PRICE_DISCOUNT and has_skill(dude_obj, SKILL_BARTER) >= 50) then begin
+    NOption(1021, NodeCraft2a, 004); // ask for discount, but he will never budge
   end
-  if (dude_caps >= 2000) then begin
+  if (dude_caps >= TEACH_PRICE_NORMAL) then begin
     NOption(1022, NodeCraft3a, 004);
   end
   if (obj_is_carrying_obj_pid(dude_obj, PID_SCORPION_TAIL) >= 8) then begin
@@ -48,14 +51,14 @@ end
 
 procedure NodeCraft2a begin
   Reply(1030);
-  if (dude_caps >= 2000) then begin
+  if (dude_caps >= TEACH_PRICE_NORMAL) then begin
     NOption(1031, NodeCraft3a, 004);
   end
   NOption(1012, Node999, 004);
 end
 
 procedure NodeCraft3a begin
-  item_caps_adjust(dude_obj, -2000);
+  item_caps_adjust(dude_obj, -TEACH_PRICE_NORMAL);
   call NodeCraft4;
 end
 
@@ -74,7 +77,7 @@ end
 
 procedure NodeCraft5 begin
   gfade_out(400);
-  game_time_advance(18000);
+  game_time_advance(30 * ONE_GAME_MINUTE);
   set_sfall_global(SGVAR_CRAFT_DRUGS, 1);
   display_msg(fixit_mstr(84));
   gfade_in(400);
