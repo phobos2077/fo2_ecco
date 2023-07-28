@@ -154,13 +154,15 @@ procedure Node053a;
 #define LVAR_Restock_Time_Fix           (16) //added by killap
 
 // by phobos2077:
+#define LVAR_Caught_Sneaking            (3)
 #define _LEARN_CRAFT_DRJOHNSON
 #include "../_pbs_craft/learn_craft_drjohn.h"
 #define CONTAINER_TILE           (20171) // inaccessible container outside of map bounds
-#define violating_property       (tile_in_tile_rect(20530, 20523, 21723, 22530, dude_tile))  // back room of Doctors' house
+#define violating_property       (tile_in_tile_rect(20530, 20523, 22930, 23123, dude_tile))  // back room of Doctors' house
 #define move_inven_to_container    move_obj_inven_to_obj(self_obj, get_container())
 #define move_inven_from_container  move_obj_inven_to_obj(get_container(), self_obj)
-variable caught_sneaking := 0;
+#define caught_sneaking_at       local_var(LVAR_Caught_Sneaking)
+#define set_caught_sneaking_at(x)   set_local_var(LVAR_Caught_Sneaking, x)
 // ;
 
 /* Imported variables from the Map scripts. These should only be
@@ -224,30 +226,33 @@ end
 /* Every heartbeat that the critter gets, this procedure will be called. Anything from
    Movement to attacking the player on sight can be placed in here.*/
 procedure critter_p_proc begin
-
 /* If the critter is mad at the player for any reason, it will attack and remember to attack
    the player should the game be saved and loaded repeatedly. Additionally, if any special
    actions need to be taken by the critter based on previous combat, the critter will remember
    this as well. */
-   if (not self_can_see_dude) then return;
-
+   // pbs: moved can see condition
    if (global_var(GVAR_ENEMY_REDDING) == 1) then begin
-       attack(dude_obj);
+      if self_can_see_dude then attack(dude_obj);
    end
    else if (local_var(LVAR_Hostile) == 2) then begin
-       set_local_var(LVAR_Hostile,1);
-       attack(dude_obj);
-   end
-   else if (violating_property) then begin
-      if (caught_sneaking == 0) then begin
-         obj_floater_type(self_obj, g_mstr(random(3925, 3929)), FLOAT_COLOR_BAD);
-         caught_sneaking := game_time;
+      if self_can_see_dude then begin
+         set_local_var(LVAR_Hostile, 1);
+         attack(dude_obj);
       end
-      else if ((caught_sneaking + 50) < game_time) then begin
+   end
+   // pbs: catch sneaking
+   else if (violating_property and self_can_hear_dude) then begin
+      if (caught_sneaking_at == 0) then begin
+         obj_floater_type(self_obj, g_mstr(random(3925, 3929)), FLOAT_COLOR_BAD);
+         set_caught_sneaking_at(game_time);
+      end
+      else if ((caught_sneaking_at + ONE_GAME_SECOND * 2) < game_time) then begin
          set_local_var(LVAR_Hostile, 2);
       end
    end
-
+   else if (caught_sneaking_at) then begin
+      set_caught_sneaking_at(0);
+   end
 end
 
 /* Whenever the critter takes damage of any type, this procedure will be called. Things
