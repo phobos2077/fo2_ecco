@@ -1,0 +1,6 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+#include "../headers/den.h"
+#include "../generic/ziwoddor.ssl"
