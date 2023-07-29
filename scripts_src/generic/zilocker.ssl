@@ -9,7 +9,7 @@
 /* Include Files */
 #define SCRIPT_REALNAME "zilocker"
 #include "../headers/define.h"
-#include "../sfall/sfall_extra.h"
+#include "../sfall/lib.obj.h"
 
 #define NAME                    SCRIPT_ZILOCKER
 
@@ -31,9 +31,11 @@ procedure use_obj_on_p_proc;
 procedure look_at_p_proc;
 procedure description_p_proc;
 
-#ifdef WATCHER_OBJ
-   import variable WATCHER_OBJ;
+#ifndef WATCHER_OBJ
+   #define WATCHER_OBJ                       pbs_watcher     // pbs: universal watcher (see gl_pbs_watcher)
 #endif
+
+import variable WATCHER_OBJ;
 
 #define LVAR_Flags                           (0)
 
@@ -104,7 +106,7 @@ import variable EXPORT_VAR;
 #ifndef LOCKER_LOCKABLE
    #define LOCKER_LOCKABLE                   (true)
 #endif
-#define ENTER_CLOSE_AND_LOCK_CONDITION       (false)   // defaults to the first time run
+#define ENTER_CLOSE_AND_LOCK_CONDITION       (default_needs_lock)
 #ifndef ENTER_LOCK_CONDITION
    #define ENTER_LOCK_CONDITION              ENTER_CLOSE_AND_LOCK_CONDITION
 #endif
@@ -113,9 +115,6 @@ import variable EXPORT_VAR;
 #define UPDATE_CLOSE_AND_LOCK_CONDITION      (false)
 #define UPDATE_LOCK_CONDITION                UPDATE_CLOSE_AND_LOCK_CONDITION
 #define UPDATE_CLOSE_CONDITION               (false)
-#ifndef WATCHER_OBJ
-   #define WATCHER_OBJ                       (0)               // object of script watching locker
-#endif
 #ifndef DO_CHECK_TAMPER_CONDITION
    #define DO_CHECK_TAMPER_CONDITION         (true)            // setting this to true will always check no matter what
 #endif
@@ -235,6 +234,22 @@ import variable EXPORT_VAR;
                                              end else begin                                                    \
                                                 pry_fail_msg;                                                  \
                                              end
+
+// pbs: decide to lock based on cost of contained items
+procedure default_needs_lock begin
+   variable i, obj, totalCost := 0;
+   //ndebug("default_needs_lock() "+ string_format("first_run: %d, type: %d, %d", map_first_run, obj_type(self_obj), obj_item_subtype(self_obj)));
+   if (not map_first_run) then return false;
+   if (obj_type(self_obj) != OBJ_TYPE_ITEM or obj_item_subtype(self_obj) != item_type_container) then return false;
+
+   for (i := 0; i < critter_inven_obj2(self_obj, INVEN_TYPE_INV_COUNT); i++) begin
+      obj := inven_ptr(self_obj, i);
+      if (obj) then
+         totalCost += pid_cost(obj_pid(obj)) * obj_is_carrying_obj(self_obj, obj);
+   end
+   ndebug("default_needs_lock cost = " + totalCost);
+   return totalCost >= 500;
+end
 
 variable caught_tamper;
 variable user_obj;

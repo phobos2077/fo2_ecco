@@ -1,0 +1,10 @@
+// Just exports watcher var to be used
+export variable pbs_watcher;
+
+procedure start begin
+end
+
+procedure map_exit_p_proc begin
+   debug_msg("gl_pbs_watcher: map_exit, reset to 0");
+   pbs_watcher := 0;
+end

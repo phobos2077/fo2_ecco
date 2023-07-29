@@ -1,6 +1,8 @@
 #ifndef H_TALKING_HEADS_COMPAT
 #define H_TALKING_HEADS_COMPAT
 
+#define HEAD_MARION       (39)
+
 variable talking_head_available;
 
 #define talking_head_art_fid(headId)   (0x80A0000 bwor (headId bwand 0xFFF))

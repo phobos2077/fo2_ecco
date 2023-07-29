@@ -103,7 +103,8 @@ procedure steal_hook begin
       stealModifier += 20;
    end
 
-   variable stealChance = stealModifier + has_skill(thief, SKILL_STEAL) - has_skill(target, SKILL_STEAL); // pbs: added target skill subtraction
+   variable stealChance = stealModifier + has_skill(thief, SKILL_STEAL);
+   if (obj_type(target) == OBJ_TYPE_CRITTER) then stealChance -= has_skill(target, SKILL_STEAL); // pbs: added target skill subtraction
    if (stealChance > 95) then stealChance = 95;
 
    variable stealRoll;
