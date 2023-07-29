@@ -2,6 +2,7 @@
 #define H_TALKING_HEADS_COMPAT
 
 #define HEAD_MARION       (39)
+#define HEAD_MARGE        (76)
 
 variable talking_head_available;
 

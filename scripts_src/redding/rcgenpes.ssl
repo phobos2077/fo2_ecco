@@ -1,0 +1,273 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location:
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "rcgenpes"
+#include "../headers/define.h"
+#include "../headers/reddown.h"
+
+#define NAME                    SCRIPT_RCGENPES
+
+#include "../headers/command.h"
+
+
+//  Are you in this area                tile_in_tile_rect(ul,ur,ll,lr,x)
+#define In_Bar                          (tile_in_tile_rect(14923,14900,17923,17900,self_tile) and (cur_map_index == MAP_REDDING_DOWNTOWN))
+#define In_Fights                       (tile_in_tile_rect(19140,19127,20140,20127,self_tile) and (cur_map_index == MAP_REDDING_MINE_ENT))
+#define In_Mines                        ((cur_map_index == MAP_REDDING_MINE_ENT) and ((tile_in_tile_rect(15462,15452,19862,19852,self_tile)) or (tile_in_tile_rect(10720,10700,13720,13700,self_tile))))
+#define In_Home                         ((cur_map_index == MAP_REDDING_MINE_ENT) and ((tile_in_tile_rect(19478,19466,22478,22478,self_tile)) or (tile_in_tile_rect(14728,14712,17728,17712,self_tile))))
+#define Is_Child                        ((self_pid == PID_CHILD_MALE) or (self_pid == PID_CHILD_FEMALE) or (self_pid == PID_ORPHAN_MALE) or (self_pid == PID_ORPHAN_FEMALE))
+//added by killap - RP
+#define Watching_Mole_Rats_Fight        (tile_in_tile_rect(19138, 19128, 19938, 19928, self_tile) and (cur_map_index == MAP_REDDING_MINE_ENT))
+//end added
+
+#define obj_in_bar(who)                 tile_in_tile_rect(14923,14900,17923,17900,tile_num(who))
+#define obj_in_fights(who)              tile_in_tile_rect(19140,19127,20140,20127,tile_num(who))
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+//procedure Node001;
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (0)
+#define LVAR_Hostile                    (1)
+#define LVAR_Personal_Enemy             (2)
+#define LVAR_Look_At                    (3)
+#define LVAR_Personality                (4)
+
+#define Personality_Child               (1)
+#define Personality_Town                (2)
+#define Personality_Bar                 (3)
+#define Personality_Home                (4)
+#define Personality_Mine                (5)
+#define Personality_Fights              (6)
+
+#include "../_pbs_headers/watchers.h"
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+
+procedure start begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   set_self_team(TEAM_REDDING);
+   set_self_ai(AI_PEASANT);
+
+   //added by killap - expansion
+   if (((game_time_hour < 1200) or (game_time_hour > 1700)) and (Watching_Mole_Rats_Fight)) then begin
+      set_obj_visibility( self_obj, true ); //invis
+   end else begin
+      set_obj_visibility( self_obj, false ); //vis
+   end
+
+   if (map_first_run) then begin
+      inc_global_var(GVAR_REDDING_GENPES_COUNT);
+   end
+   //end added
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ((global_var(GVAR_ENEMY_REDDING) == 1)) then begin
+      if (self_can_see_dude) then attack(dude_obj);
+   end
+   else if ((local_var(LVAR_Hostile) == 2)) then begin
+      if (self_can_see_dude) then begin
+         set_local_var(LVAR_Hostile,1);
+         attack(dude_obj);
+      end
+   end else if (not(Is_Child) andAlso In_Home) then call check_watcher;
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   //added by killap
+   assign_personality
+   //end added
+
+   if (local_var(LVAR_Personality) == Personality_Child) then begin
+       if (dude_is_male) then
+           floater(random(215,227));
+       else
+           floater(random(217,229));
+   end
+
+   else if (local_var(LVAR_Personality) == Personality_Town) then begin
+       floater(random(110,122));
+   end
+
+   else if (local_var(LVAR_Personality) == Personality_Bar) then begin
+       floater(random(133,137));
+//       floater(random(138,142));
+//       floater(random(143,147));
+//       floater(random(148,154));
+   end
+
+   else if (local_var(LVAR_Personality) == Personality_Home) then begin
+       floater(random(165,170));
+   end
+
+   else if (local_var(LVAR_Personality) == Personality_Mine) then begin
+       floater(random(177,182));
+   end
+
+   else if (local_var(LVAR_Personality) == Personality_Fights) then begin
+       floater(random(189,204));
+   end
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+   set_global_var(GVAR_ENEMY_REDDING,1);
+
+   //added by killap - expansion
+   dec_global_var(GVAR_REDDING_GENPES_COUNT);
+   //end added
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   //added by killap - all previous code moved to a macro in reddown.h
+   assign_personality
+   //end added
+   display_msg(mstr(local_var(LVAR_Look_At)));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   //added by killap
+   assign_personality
+   //end added
+   display_msg(mstr(local_var(LVAR_Look_At)));
+
+   //script_overrides;
+   //display_msg(mstr(local_var(LVAR_Look_At)));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+
+//xxxxxxxxxxxxxxxxxxxx

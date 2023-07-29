@@ -144,8 +144,11 @@ prepended by LVAR_
 #define LVAR_Door_Damage                (3) // pbs
 #define LVAR_Gave_Locks_XP              (4)
 #define LVAR_Gave_Traps_XP              (5)
+#define LVAR_Flags                      (9) // pbs
 
 #include "../_pbs_headers/door_damage.h"
+#define gave_warning_bit                bit_9
+#include "../_pbs_headers/check_tamper.h"
 
 /*******************************************************************
 Imported variables from the Map scripts. These should only be
@@ -225,7 +228,8 @@ procedure. it will check to see if the door is trapped and locked.
 procedure use_p_proc begin
   /* Trap_Roll is a global variable to this script, defined at the beginning
   of the script. */
-  
+  if (check_tamper) then return;
+
   Traps_Roll:=roll_vs_skill(source_obj,SKILL_TRAPS,Trap_Bonus);
   
   if (local_var(LVAR_Trapped) == STATE_ACTIVE) then begin
@@ -325,6 +329,8 @@ and Repair can be added to this list to give more information about the door.
 procedure use_skill_on_p_proc begin
   variable Skill_Used;
   ndebug("use_skill_on_p_proc");
+  if (check_tamper) then return;
+
   Skill_Used:=action_being_used;
   
   if (Skill_Used == SKILL_LOCKPICK) then begin
@@ -364,6 +370,7 @@ be checked against a prototype.
 procedure use_obj_on_p_proc begin
   variable Tool;
   
+  if (check_tamper) then return;
   Tool:=obj_pid(obj_being_used_with);
   if (Tool == PID_CROWBAR) then begin
     script_overrides;

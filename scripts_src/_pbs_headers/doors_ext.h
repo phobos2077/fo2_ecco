@@ -14,14 +14,13 @@
 #define custom_Damage_Critter
 #include "../headers/doors.h"
 
-#include "../sfall/lib.obj.h"
-
 // Track total damage to door instead of number of explosions
 #define LVAR_Door_Damage                      LVAR_Explosion_Attempts
 
 procedure rpu_Damage_Critter;
 
 #include "door_damage.h"
+#include "check_tamper.h"
 
 // override default crowbar bonus, to make it harder
 #ifndef Crowbar_Bonus
@@ -38,44 +37,6 @@ procedure rpu_Damage_Critter;
 #endif
 #ifndef MAX_DAMAGE
    #define MAX_DAMAGE                      (40)
-#endif
-
-#ifdef WATCHER_OBJ
-   import variable WATCHER_OBJ;
-   #ifndef WATCH_ATTACK_PROBABILITY
-      #define WATCH_ATTACK_PROBABILITY       (50)
-   #endif
-#endif
-#ifndef DO_CHECK_TAMPER_CONDITION
-   #define DO_CHECK_TAMPER_CONDITION         (true)            // setting this to true will always check no matter what
-#endif
-
-// TODO: door scripts have no LVAR_Flags! no place for additional flag >:(
-/*
-#define gave_warning_bit                     bit_11
-#define gave_warning                         ((lvar_bit(LVAR_Flags, gave_warning_bit)) or (SKIP_WARNING))
-*/
-#ifndef do_warning_action
-   #define do_warning_action                 float_msg(WATCHER_OBJ, g_mstr(5400), FLOAT_COLOR_NORMAL);
-#endif
-#ifndef do_attack_action
-   #define do_attack_action                  attack_setup(WATCHER_OBJ, user_obj);
-#endif
-/*#define set_gave_warning                     if (gave_warning) then begin        \
-                                                do_attack_action                 \
-                                             end else begin                      \
-                                                do_warning_action                \
-                                             end                                 \
-                                             set_lvar_bit_on(LVAR_Flags, gave_warning_bit)
-*/
-#define attack_or_warn                       if (random(1, 100) < WATCH_ATTACK_PROBABILITY) then begin  \
-                                                do_attack_action                 \
-                                             end else begin                      \
-                                                do_warning_action                \
-                                             end
-
-#ifndef watch_box_conditions
-   #define watch_box_conditions              obj_can_hear_and_shoot_obj(WATCHER_OBJ, user_obj)
 #endif
 
 procedure rpu_use_p_proc begin
@@ -199,22 +160,6 @@ end
 procedure Damage_Critter begin
    variable trapDmg := rpu_Damage_Critter;
    call damage_door(trapDmg); // damage door itself
-end
-
-procedure check_tamper(variable isLoud := false) begin
-#ifdef WATCHER_OBJ
-   variable user_obj := source_obj;
-   if (DO_CHECK_TAMPER_CONDITION and WATCHER_OBJ) then begin
-      ndebug("Checking tamper vs " + obj_name(WATCHER_OBJ));
-      if (is_visible(WATCHER_OBJ) and is_critter_dead(WATCHER_OBJ) == false and (isLoud or watch_box_conditions)) then begin
-         ndebug("Tampered! triggering watcher");
-         script_overrides;
-         attack_or_warn
-         return true;
-      end
-   end
-#endif
-   return false;
 end
 
 procedure use_p_proc begin

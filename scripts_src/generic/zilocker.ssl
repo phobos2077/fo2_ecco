@@ -127,7 +127,7 @@ import variable EXPORT_VAR;
 #endif
 
 #ifndef watch_box_conditions
-   #define watch_box_conditions              obj_can_hear_and_shoot_obj(WATCHER_OBJ, user_obj)
+   #define watch_box_conditions              obj_can_hear_obj(WATCHER_OBJ, user_obj)
 #endif
 // what to do when source is caught using locker
 #define caught_use_action                    genereral_caught_action

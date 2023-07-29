@@ -5,16 +5,6 @@
 
 import variable pbs_watcher;
 
-//#define violating_property       (tile_in_tile_rect(20530, 20523, 22930, 23123, dude_tile))  // back room of Doctors' house
-#ifdef LVAR_Home_Direction
-   #define home_direction           local_var(LVAR_Home_Direction)
-   #define save_home_direction      set_local_var(LVAR_Home_Direction, self_cur_rot)
-#else
-   variable home_direction;
-   #define save_home_direction      home_direction := self_cur_rot
-#endif
-#define caught_sneaking_at          local_var(LVAR_Caught_Sneaking)
-#define set_caught_sneaking_at(x)   set_local_var(LVAR_Caught_Sneaking, x)
 #define _dude_dist(obj)              (tile_distance_objs(obj, dude_obj))
 
 procedure check_watcher begin
@@ -26,6 +16,18 @@ procedure check_watcher begin
       ndebug("Watcher changed to: " + obj_name_safe(pbs_watcher));
    end
 end
+
+#ifdef violating_property
+
+#ifdef LVAR_Home_Direction
+   #define home_direction           local_var(LVAR_Home_Direction)
+   #define save_home_direction      set_local_var(LVAR_Home_Direction, self_cur_rot)
+#else
+   variable home_direction;
+   #define save_home_direction      home_direction := self_cur_rot
+#endif
+#define caught_sneaking_at          local_var(LVAR_Caught_Sneaking)
+#define set_caught_sneaking_at(x)   set_local_var(LVAR_Caught_Sneaking, x)
 
 procedure turn_facing_tile(variable tile) begin
    reg_anim_clear(self_obj);
@@ -58,6 +60,7 @@ procedure check_violating_property(variable start_action := 0, variable stop_act
       if (stop_action) then call stop_action;
    end
 end
+#endif
 
 #undef _dude_dist
 
