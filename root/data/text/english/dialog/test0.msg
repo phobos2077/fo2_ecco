@@ -137,10 +137,11 @@
 {1008}{}{[TOOLS]}
 {1009}{}{4|236}                            # PID_KNIFE|PID_COMBAT_KNIFE
 {1010}{}{[SKILLS]}
-{1011}{}{FIRST_AID+OUTDOORSMAN:60}
+{1011}{}{FIRST_AID+OUTDOORSMAN:90}
 {1012}{}{[COMPONENTS]}
 {1013}{}{535:1|536:1}                      # Fish or Scaly Fish
-{1014}{}{71:1}                             # Fruit
+{1014}{}{106:1}                            # PID_NUKA_COLA
+{1015}{}{71:1}                             # Fruit
 
 
 {1100}{}{[ITEM]}
@@ -154,10 +155,11 @@
 {1108}{}{[TOOLS]}
 {1109}{}{4|236}                            # PID_KNIFE|PID_COMBAT_KNIFE
 {1110}{}{[SKILLS]}
-{1111}{}{FIRST_AID+OUTDOORSMAN:60}
+{1111}{}{FIRST_AID+OUTDOORSMAN:80}
 {1112}{}{[COMPONENTS]}
 {1113}{}{284:2|103:2|81:2}                 # 2x Meat Jerky or 2x Meat-on-a-stick or 2x Iguana-on-a-stick
-{1114}{}{71:1}                             # Fruit
+{1114}{}{124:1|310:1}                      # PID_BEER or PID_GAMMA_GULP_BEER
+{1115}{}{71:1}                             # Fruit
 
 
 # FIRST AID ITEMS
@@ -172,7 +174,7 @@
 {1207}{}{3}                                 # Drugs
 {1208}{}{[TOOLS]}
 {1209}{}{[SKILLS]}
-{1210}{}{FIRST_AID+OUTDOORSMAN:50}
+{1210}{}{DOCTOR+OUTDOORSMAN:60}
 {1211}{}{[COMPONENTS]}
 {1212}{}{271:1}                             # PID_BROC_FLOWER
 {1213}{}{272:1}                             # PID_XANDER_ROOT
@@ -188,7 +190,7 @@
 {1307}{}{3}                                 # Drugs
 {1308}{}{[TOOLS]}
 {1309}{}{[SKILLS]}
-{1310}{}{FIRST_AID+OUTDOORSMAN:50}
+{1310}{}{DOCTOR+OUTDOORSMAN:50}
 {1311}{}{SCIENCE:25}
 {1312}{}{[COMPONENTS]}
 {1313}{}{92:1|591:2}                        # PID_SCORPION_TAIL or two Small Scorpion Tails

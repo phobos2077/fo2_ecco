@@ -13,9 +13,10 @@ NO
 [TOOLS]
 4|236                            # PID_KNIFE|PID_COMBAT_KNIFE
 [SKILLS]
-FIRST_AID+OUTDOORSMAN:60
+FIRST_AID+OUTDOORSMAN:90
 [COMPONENTS]
 535:1|536:1                      # Fish or Scaly Fish
+106:1                            # PID_NUKA_COLA
 71:1                             # Fruit
 
 
@@ -30,9 +31,10 @@ NO
 [TOOLS]
 4|236                            # PID_KNIFE|PID_COMBAT_KNIFE
 [SKILLS]
-FIRST_AID+OUTDOORSMAN:60
+FIRST_AID+OUTDOORSMAN:80
 [COMPONENTS]
 284:2|103:2|81:2                 # 2x Meat Jerky or 2x Meat-on-a-stick or 2x Iguana-on-a-stick
+124:1|310:1                      # PID_BEER or PID_GAMMA_GULP_BEER
 71:1                             # Fruit
 
 
@@ -48,7 +50,7 @@ NO
 3                                 # Drugs
 [TOOLS]
 [SKILLS]
-FIRST_AID+OUTDOORSMAN:50
+DOCTOR+OUTDOORSMAN:60
 [COMPONENTS]
 271:1                             # PID_BROC_FLOWER
 272:1                             # PID_XANDER_ROOT
@@ -64,7 +66,7 @@ NO
 3                                 # Drugs
 [TOOLS]
 [SKILLS]
-FIRST_AID+OUTDOORSMAN:50
+DOCTOR+OUTDOORSMAN:50
 SCIENCE:25
 [COMPONENTS]
 92:1|591:2                        # PID_SCORPION_TAIL or two Small Scorpion Tails

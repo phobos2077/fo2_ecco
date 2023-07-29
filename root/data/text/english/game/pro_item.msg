@@ -1191,9 +1191,9 @@
 {62600}{}{Bone Amulet}
 {62601}{}{A tribal amulet, carefully carved from bones. Unique image on the amulet indicates the tribe of origin and the name of the warrior who should wear it.}
 {62700}{}{Fish Soup}
-{62701}{}{Healthy soup made from local fish and some other strange ingredients. Really good aroma!}
+{62701}{}{Healthy soup made from local fish and some other strange ingredients. They say fish is good for the brain!}
 {62800}{}{Meat Stew}
-{62801}{}{Very healthy stew made with meat, fruits and some spices. Grandmother's recipe.}
+{62801}{}{This healthy stew made with meat, fruits and spices will restore your strength in no time! Grandmother's recipe.}
 {62900}{}{9mm SMG}
 {62901}{}{This old pre-war sub-machine gun was primarily used by police forces. It is inferior to other SMGs, but can still be found in the wastes. Caliber: 9x19mm. Min ST: 4.}
 {63000}{}{Grenade Launcher}
