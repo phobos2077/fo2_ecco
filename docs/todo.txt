@@ -4,6 +4,8 @@ for 0.9.3:
 
 
 for "future":
+- add early game Flamerthrower (Incinerator)
+- Repurpose one of Abbey books to be a Doctor Skill book
 - Stimpak & Healing powder heal amt to depend upon First Aid skill
 - Crafting: use items from party members inventory
 - Crafting: read config from INI file and texts from game/craft.msg
@@ -16,6 +18,7 @@ for "future":
 
 
 IDEAS:
+- Reduce ammo/drug loot in containers similar to critter loot and FNV Famine mod (less reduction for closed containers, etc.)
 - use Beer and Nuka Cola in crafting somehow
 - one more "unarmed" weapon above Spiked Knuckles (knuckles with knife?)
 - flashbang grenade (lose turn)
