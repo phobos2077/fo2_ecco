@@ -12,7 +12,7 @@ type: ITEM_TYPE_DRUG
 material: 7
 size: 0
 weight: 1
-cost: 20
+cost: 10
 inventoryFid: 117440574
 soundId: '0'
 drugData:
@@ -21,12 +21,12 @@ drugData:
   - NONE
   - NONE
   amount:
-  - 4
+  - 1
   - 0
   - 0
   duration1: 30
   amount1:
-  - 2
+  - 1
   - 0
   - 0
   duration2: 0
@@ -35,5 +35,5 @@ drugData:
   - 0
   - 0
   addictionChance: 0
-  withdrawalEffect: 0
+  withdrawalEffect: -1
   withdrawalOnset: 0

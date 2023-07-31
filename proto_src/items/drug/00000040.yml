@@ -20,20 +20,20 @@ drugData:
   stat:
   - DRUG_STAT_1_RANDOM_MIN
   - STAT_CURRENT_HIT_POINTS
-  - NONE
+  - STAT_CURRENT_RADIATION_LEVEL
   amount:
   - 10
   - 20
   - 0
-  duration1: 0
+  duration1: 1
   amount1:
   - 0
   - 0
-  - 0
-  duration2: 0
+  - 5
+  duration2: 5
   amount2:
-  - 0
-  - 0
+  - -4
+  - -1
   - 0
   addictionChance: 0
   withdrawalEffect: -1

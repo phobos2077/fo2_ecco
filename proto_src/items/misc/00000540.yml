@@ -1,0 +1,23 @@
+pid: 540
+messageId: 54000
+name: Operations Manual
+description: The operations manual to the KV-75; a portable, tactical cryptographic
+  device. Also used by non-tactical users for high-level communications in the local
+  wideband telephone networks and wideband satellite terminals.
+fid: 13
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 1
+cost: 100
+inventoryFid: 117440886
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

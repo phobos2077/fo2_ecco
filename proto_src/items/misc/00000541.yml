@@ -1,0 +1,22 @@
+pid: 541
+messageId: 54100
+name: 'Chinese Army: Special Ops Manual'
+description: You can't understand a thing from the text, but the illustrations are
+  quite informative.
+fid: 13
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 1
+cost: 300
+inventoryFid: 117440887
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

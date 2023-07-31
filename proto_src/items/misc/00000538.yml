@@ -1,0 +1,22 @@
+pid: 538
+messageId: 53800
+name: Text Book
+description: An old text book from before the Great War. It is quite technical and
+  doesn't appear to contain any useful information.
+fid: 13
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb800'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 1
+size: 1
+weight: 2
+cost: 100
+inventoryFid: 117440884
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 0

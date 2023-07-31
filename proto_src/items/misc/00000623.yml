@@ -10,9 +10,9 @@ extendedFlags: '0xa000'
 sid: -1
 type: ITEM_TYPE_MISC
 material: 7
-size: 1
-weight: 2
-cost: 150
+size: 2
+weight: 4
+cost: 120
 inventoryFid: 117440929
 soundId: '0'
 miscData:

@@ -1,8 +1,8 @@
 pid: 628
 messageId: 62800
 name: Meat Stew
-description: Very healthy stew made with meat, fruits and some spices. Grandmother's
-  recipe.
+description: This healthy stew made with meat, fruits and spices will restore your
+  strength in no time! Grandmother's recipe.
 fid: 14
 lightDistance: 0
 lightIntensity: 0
@@ -12,27 +12,27 @@ sid: -1
 type: ITEM_TYPE_DRUG
 material: 1
 size: 1
-weight: 1
-cost: 50
+weight: 2
+cost: 75
 inventoryFid: 117440934
 soundId: '0'
 drugData:
   stat:
-  - DRUG_STAT_1_RANDOM_MIN
+  - STAT_STRENGTH
   - STAT_CURRENT_HIT_POINTS
-  - NONE
+  - STAT_CURRENT_POISON_LEVEL
   amount:
-  - 5
-  - 10
+  - 1
+  - 4
   - 0
   duration1: 30
   amount1:
-  - 3
-  - 6
   - 0
-  duration2: 0
+  - 8
+  - -25
+  duration2: 180
   amount2:
-  - 0
+  - -1
   - 0
   - 0
   addictionChance: 0

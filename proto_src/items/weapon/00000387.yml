@@ -12,7 +12,7 @@ extendedFlags: '0xa376'
 sid: -1
 type: ITEM_TYPE_WEAPON
 material: 1
-size: 6
+size: 8
 weight: 23
 cost: 3600
 inventoryFid: 117440778

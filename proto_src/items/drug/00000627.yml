@@ -2,7 +2,7 @@ pid: 627
 messageId: 62700
 name: Fish Soup
 description: Healthy soup made from local fish and some other strange ingredients.
-  Really good aroma!
+  They say fish is good for the brain!
 fid: 14
 lightDistance: 0
 lightIntensity: 0
@@ -12,27 +12,27 @@ sid: -1
 type: ITEM_TYPE_DRUG
 material: 1
 size: 1
-weight: 1
-cost: 50
+weight: 2
+cost: 75
 inventoryFid: 117440933
 soundId: '0'
 drugData:
   stat:
-  - DRUG_STAT_1_RANDOM_MIN
+  - STAT_INTELLIGENCE
   - STAT_CURRENT_HIT_POINTS
-  - NONE
+  - STAT_CURRENT_RADIATION_LEVEL
   amount:
-  - 5
-  - 10
+  - 1
+  - 4
   - 0
   duration1: 30
   amount1:
-  - 3
-  - 6
   - 0
-  duration2: 0
+  - 8
+  - -25
+  duration2: 180
   amount2:
-  - 0
+  - -1
   - 0
   - 0
   addictionChance: 0
