@@ -46,37 +46,6 @@
 #define GECKO_ENT_HEX           (22901) //(22097)
 #define BROKEN_HILLS_ENT_HEX    (22097)
 
-#define check_area                      if (WM_In_EPA(worldmap_xpos,worldmap_ypos)) then                        \
-                                            call Redding_EPA_Encounter;                                         \
-                                        else if (WM_In_New_Reno(worldmap_xpos,worldmap_ypos)) then              \
-                                            call Redding_Reno_Encounter;                                        \
-                                        else if (WM_In_SRNRRN(worldmap_xpos,worldmap_ypos)) then                \
-                                            call Redding_SRNRRN_Encounter;                                      \
-                                        else if (WM_In_Brok(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Broken_Hills_Brok_Encounter;                                   \
-                                        else if (WM_In_NCR(worldmap_xpos,worldmap_ypos)) then                   \
-                                            call Broken_Hills_NCR_Encounter;                                    \
-                                        else if (WM_In_Band(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Redding_Band_Encounter;                                        \
-                                        else if (WM_In_Redding(worldmap_xpos,worldmap_ypos)) then               \
-                                            call Redding_Red_Encounter;                                         \
-                                        else if (WM_In_VPat(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Broken_Hills_VPAT_Encounter;                                   \
-                                        else if (WM_In_NRNR(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Redding_NRNR_Encounter;                                        \
-                                        else if (WM_In_DNRV(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Redding_DNRV_Encounter;                                        \
-                                        else if (WM_In_DVMV(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Redding_DVMV_Encounter;                                        \
-                                        else if (WM_In_VNNB(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Broken_Hills_VNNB_Encounter;                                   \
-                                        else if (WM_In_RDRC(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Broken_Hills_RDRC_Encounter;                                   \
-                                        else if (WM_In_DMRV(worldmap_xpos,worldmap_ypos)) then                  \
-                                            call Redding_DMRV_Encounter;                                        \
-                                        else ndebug("warning: can't find encounter: xpos=" + worldmap_xpos + ", ypos=" + worldmap_ypos)
-
-
 // Basic Scripts information
 procedure start;
 procedure map_enter_p_proc;
@@ -84,6 +53,7 @@ procedure map_update_p_proc;
 procedure map_exit_p_proc;
 
 // Caravans
+procedure check_area;
 procedure Broken_Hills_Caravan;
 procedure Broken_VC_Encounters;
 procedure Broken_Gecko_Encounters;
@@ -380,6 +350,38 @@ procedure map_exit_p_proc begin
        else if (caravan_end == CARAVAN_KLAMATH) then begin
        end
    end
+end
+
+procedure check_area begin
+    if (WM_In_EPA(worldmap_xpos,worldmap_ypos)) then
+        call Redding_EPA_Encounter;
+    else if (WM_In_New_Reno(worldmap_xpos,worldmap_ypos)) then
+        call Redding_Reno_Encounter;
+    else if (WM_In_SRNRRN(worldmap_xpos,worldmap_ypos)) then
+        call Redding_SRNRRN_Encounter;
+    else if (WM_In_Brok(worldmap_xpos,worldmap_ypos)) then
+        call Broken_Hills_Brok_Encounter;
+    else if (WM_In_NCR(worldmap_xpos,worldmap_ypos)) then
+        call Broken_Hills_NCR_Encounter;
+    else if (WM_In_Band(worldmap_xpos,worldmap_ypos)) then
+        call Redding_Band_Encounter;
+    else if (WM_In_Redding(worldmap_xpos,worldmap_ypos)) then
+        call Redding_Red_Encounter;
+    else if (WM_In_VPat(worldmap_xpos,worldmap_ypos)) then
+        call Broken_Hills_VPAT_Encounter;
+    else if (WM_In_NRNR(worldmap_xpos,worldmap_ypos)) then
+        call Redding_NRNR_Encounter;
+    else if (WM_In_DNRV(worldmap_xpos,worldmap_ypos)) then
+        call Redding_DNRV_Encounter;
+    else if (WM_In_DVMV(worldmap_xpos,worldmap_ypos)) then
+        call Redding_DVMV_Encounter;
+    else if (WM_In_VNNB(worldmap_xpos,worldmap_ypos)) then
+        call Broken_Hills_VNNB_Encounter;
+    else if (WM_In_RDRC(worldmap_xpos,worldmap_ypos)) then
+        call Broken_Hills_RDRC_Encounter;
+    else if (WM_In_DMRV(worldmap_xpos,worldmap_ypos)) then
+        call Redding_DMRV_Encounter;
+    else ndebug("warning: can't find encounter: xpos=" + worldmap_xpos + ", ypos=" + worldmap_ypos);
 end
 
 procedure Broken_Hills_Caravan begin
@@ -877,7 +879,7 @@ procedure Broken_VC_Encounters begin
        set_caravan_pos(Broken_VC_1_1_x,Broken_VC_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
        game_time_advance(7*ONE_GAME_DAY);
-       check_area;
+       call check_area;
    end
 
    else if (total_encounters == 2) then begin
@@ -885,14 +887,14 @@ procedure Broken_VC_Encounters begin
            set_caravan_pos(Broken_VC_2_1_x,Broken_VC_2_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_VC_2_2_x,Broken_VC_2_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -901,21 +903,21 @@ procedure Broken_VC_Encounters begin
            set_caravan_pos(Broken_VC_3_1_x,Broken_VC_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_VC_3_2_x,Broken_VC_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Broken_VC_3_3_x,Broken_VC_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -924,28 +926,28 @@ procedure Broken_VC_Encounters begin
            set_caravan_pos(Broken_VC_4_1_x,Broken_VC_4_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_VC_4_2_x,Broken_VC_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Broken_VC_4_3_x,Broken_VC_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Broken_VC_4_4_x,Broken_VC_4_4_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
@@ -960,7 +962,7 @@ procedure Broken_Gecko_Encounters begin
        set_caravan_pos(Broken_Gecko_1_1_x,Broken_Gecko_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
        game_time_advance(7*ONE_GAME_DAY);
-       check_area;
+       call check_area;
    end
 
    else if (total_encounters == 2) then begin
@@ -968,14 +970,14 @@ procedure Broken_Gecko_Encounters begin
            set_caravan_pos(Broken_Gecko_2_1_x,Broken_Gecko_2_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_Gecko_2_2_x,Broken_Gecko_2_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -984,21 +986,21 @@ procedure Broken_Gecko_Encounters begin
            set_caravan_pos(Broken_Gecko_3_1_x,Broken_Gecko_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_Gecko_3_2_x,Broken_Gecko_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Broken_Gecko_3_3_x,Broken_Gecko_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1007,28 +1009,28 @@ procedure Broken_Gecko_Encounters begin
            set_caravan_pos(Broken_Gecko_4_1_x,Broken_Gecko_4_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_Gecko_4_2_x,Broken_Gecko_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Broken_Gecko_4_3_x,Broken_Gecko_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Broken_Gecko_4_4_x,Broken_Gecko_4_4_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
@@ -1044,7 +1046,7 @@ procedure Broken_NCR_Encounters begin
        set_caravan_pos(Broken_NCR_1_1_x,Broken_NCR_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
        game_time_advance(7*ONE_GAME_DAY);
-       check_area;
+       call check_area;
    end
 
    else if (total_encounters == 2) then begin
@@ -1052,14 +1054,14 @@ procedure Broken_NCR_Encounters begin
            set_caravan_pos(Broken_NCR_2_1_x,Broken_NCR_2_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_NCR_2_2_x,Broken_NCR_2_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1068,21 +1070,21 @@ procedure Broken_NCR_Encounters begin
            set_caravan_pos(Broken_NCR_3_1_x,Broken_NCR_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_NCR_3_2_x,Broken_NCR_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Broken_NCR_3_3_x,Broken_NCR_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1091,28 +1093,28 @@ procedure Broken_NCR_Encounters begin
            set_caravan_pos(Broken_NCR_4_1_x,Broken_NCR_4_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Broken_NCR_4_2_x,Broken_NCR_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Broken_NCR_4_3_x,Broken_NCR_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Broken_NCR_4_4_x,Broken_NCR_4_4_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
@@ -1130,7 +1132,7 @@ procedure Red_VC_Encounters begin
        set_caravan_pos(Red_VC_1_1_x,Red_VC_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
        game_time_advance(16*ONE_GAME_DAY);
-       check_area;
+       call check_area;
    end
 
    else if (total_encounters == 2) then begin
@@ -1138,14 +1140,14 @@ procedure Red_VC_Encounters begin
            set_caravan_pos(Red_VC_2_1_x,Red_VC_2_1_y+25);       //added +25 -killap
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_VC_2_2_x,Red_VC_2_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(11*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1154,21 +1156,21 @@ procedure Red_VC_Encounters begin
            set_caravan_pos(Red_VC_3_1_x,Red_VC_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_VC_3_2_x,Red_VC_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(7*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_VC_3_3_x,Red_VC_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(9*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1177,28 +1179,28 @@ procedure Red_VC_Encounters begin
            set_caravan_pos(Red_VC_4_1_x,Red_VC_4_1_y-50);       //added -50 -killap
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_VC_4_2_x,Red_VC_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_VC_4_3_x,Red_VC_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Red_VC_4_4_x,Red_VC_4_4_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
@@ -1213,7 +1215,7 @@ procedure VC_Red_Encounters begin
        set_caravan_pos(Red_VC_1_1_x,Red_VC_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
        game_time_advance(14*ONE_GAME_DAY);
-       check_area;
+       call check_area;
    end
 
    else if (total_encounters == 2) then begin
@@ -1221,14 +1223,14 @@ procedure VC_Red_Encounters begin
            set_caravan_pos(Red_VC_2_2_x,Red_VC_2_2_y+50);       //added +50 -killap
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(11*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_VC_2_1_x,Red_VC_2_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1237,21 +1239,21 @@ procedure VC_Red_Encounters begin
            set_caravan_pos(Red_VC_3_3_x,Red_VC_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(9*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_VC_3_2_x,Red_VC_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(7*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_VC_3_1_x,Red_VC_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1260,28 +1262,28 @@ procedure VC_Red_Encounters begin
            set_caravan_pos(Red_VC_4_4_x,Red_VC_4_4_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_VC_4_3_x,Red_VC_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_VC_4_2_x,Red_VC_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Red_VC_4_1_x,Red_VC_4_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
@@ -1296,7 +1298,7 @@ procedure Red_Reno_Encounters begin
        set_caravan_pos(Red_Reno_1_1_x,Red_Reno_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
        game_time_advance(6*ONE_GAME_DAY);
-       check_area;
+       call check_area;
    end
 
    else if (total_encounters == 2) then begin
@@ -1304,14 +1306,14 @@ procedure Red_Reno_Encounters begin
            set_caravan_pos(Red_Reno_2_1_x,Red_Reno_2_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_Reno_2_2_x,Red_Reno_2_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1320,21 +1322,21 @@ procedure Red_Reno_Encounters begin
            set_caravan_pos(Red_Reno_3_1_x,Red_Reno_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_Reno_3_2_x,Red_Reno_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_Reno_3_3_x,Red_Reno_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1343,28 +1345,28 @@ procedure Red_Reno_Encounters begin
            set_caravan_pos(Red_Reno_4_1_x,Red_Reno_4_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_Reno_4_2_x,Red_Reno_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_Reno_4_3_x,Red_Reno_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(2*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Red_Reno_4_4_x,Red_Reno_4_4_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
@@ -1378,7 +1380,7 @@ procedure Reno_Red_Encounters begin
    if (total_encounters == 1) then begin
        set_caravan_pos(Red_Reno_1_1_x,Red_Reno_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
-       check_area;
+       call check_area;
        game_time_advance(6*ONE_GAME_DAY);
    end
 
@@ -1387,14 +1389,14 @@ procedure Reno_Red_Encounters begin
            set_caravan_pos(Red_Reno_2_2_x,Red_Reno_2_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_VC_2_1_x,Red_Reno_2_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(4*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1403,21 +1405,21 @@ procedure Reno_Red_Encounters begin
            set_caravan_pos(Red_Reno_3_3_x,Red_Reno_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_Reno_3_2_x,Red_Reno_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_Reno_3_1_x,Red_Reno_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(3*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1426,28 +1428,28 @@ procedure Reno_Red_Encounters begin
            set_caravan_pos(Red_Reno_4_4_x,Red_Reno_4_4_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_Reno_4_3_x,Red_Reno_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_Reno_4_2_x,Red_Reno_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Red_Reno_4_1_x,Red_Reno_4_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
@@ -1462,7 +1464,7 @@ procedure Red_NCR_Encounters begin
        set_caravan_pos(Red_NCR_1_1_x,Red_NCR_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
        game_time_advance(16*ONE_GAME_DAY);
-       check_area;
+       call check_area;
    end
 
    else if (total_encounters == 2) then begin
@@ -1470,14 +1472,14 @@ procedure Red_NCR_Encounters begin
            set_caravan_pos(Red_NCR_2_1_x,Red_NCR_2_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(10*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_NCR_2_2_x,Red_NCR_2_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(10*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1486,21 +1488,21 @@ procedure Red_NCR_Encounters begin
            set_caravan_pos(Red_NCR_3_1_x,Red_NCR_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_NCR_3_2_x,Red_NCR_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_NCR_3_3_x,Red_NCR_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1509,28 +1511,28 @@ procedure Red_NCR_Encounters begin
            set_caravan_pos(Red_NCR_4_1_x,Red_NCR_4_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_NCR_4_2_x,Red_NCR_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_NCR_4_3_x,Red_NCR_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Red_NCR_4_4_x,Red_NCR_4_4_y-25);     // -25 by killap
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
@@ -1545,7 +1547,7 @@ procedure NCR_Red_Encounters begin
        set_caravan_pos(Red_NCR_1_1_x,Red_NCR_1_1_y);
        set_exit_grids(0,-2,0,20100,0);                          // Exit grids on elevation 0 goto Worldmap
        game_time_advance(16*ONE_GAME_DAY);
-       check_area;
+       call check_area;
    end
 
    else if (total_encounters == 2) then begin
@@ -1553,14 +1555,14 @@ procedure NCR_Red_Encounters begin
            set_caravan_pos(Red_NCR_2_2_x-25,Red_NCR_2_2_y-875); //added -25, -875 -killap
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(10*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_NCR_2_1_x,Red_NCR_2_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(10*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1569,21 +1571,21 @@ procedure NCR_Red_Encounters begin
            set_caravan_pos(Red_NCR_3_3_x,Red_NCR_3_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_NCR_3_2_x,Red_NCR_3_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_NCR_3_1_x,Red_NCR_3_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(8*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 
@@ -1593,28 +1595,28 @@ procedure NCR_Red_Encounters begin
            set_caravan_pos(Red_NCR_4_4_x,Red_NCR_4_4_y-25);     // -25 by killap
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
        
        else if (Encounter_Number == 1) then begin               // this is the second encounter
            set_caravan_pos(Red_NCR_4_3_x,Red_NCR_4_3_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 2) then begin               // this is the third encounter
            set_caravan_pos(Red_NCR_4_2_x,Red_NCR_4_2_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(6*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
 
        else if (Encounter_Number == 3) then begin               // this is the forth encounter
            set_caravan_pos(Red_NCR_4_1_x,Red_NCR_4_1_y);
            set_exit_grids(0,-2,0,20100,0);                      // Exit grids on elevation 0 goto Worldmap
            game_time_advance(5*ONE_GAME_DAY);
-           check_area;
+           call check_area;
        end
    end
 end
