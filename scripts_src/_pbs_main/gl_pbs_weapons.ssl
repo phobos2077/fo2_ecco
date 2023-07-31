@@ -6,6 +6,7 @@
 
 #include "../sfall/command_lite.h"
 #include "../sfall/lib.arrays.h"
+#include "../sfall/lib.obj.h"
 #include "../sfall/lib.strings.h"
 #include "../headers/animcomd.h"
 #include "../headers/itempid.h"
@@ -32,6 +33,7 @@ procedure ammocost_handler;
 procedure combatdamage_handler;
 procedure deathanim2_handler;
 procedure itemdamage_handler;
+procedure bestweapon_handler;
 
 procedure load_settings begin
    variable pid, pidList, fid;
@@ -84,6 +86,7 @@ procedure start begin
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
+      register_hook_proc(HOOK_BESTWEAPON, bestweapon_handler);
    end
 end
 
@@ -292,4 +295,64 @@ procedure itemdamage_handler begin
          set_attack_explosion_radius(4);
       end
    end
+end
+
+
+
+
+#define attack_mode_is_ranged(mode)       (mode == ATTACK_MODE_SINGLE or mode == ATTACK_MODE_BURST or mode == ATTACK_MODE_FLAME)
+#define weapon_pid_is_ranged(pid)         (attack_mode_is_ranged(weapon_attack_mode1(pid)) or attack_mode_is_ranged(weapon_attack_mode2(pid)))
+
+procedure weapon_rank(variable weapon, variable target) begin
+   variable
+      pid := obj_pid(weapon),
+      avgDmg := (get_proto_data(pid, PROTO_WP_DMG_MIN) + get_proto_data(pid, PROTO_WP_DMG_MAX)) / 2,
+      burstSize := get_proto_data(pid, PROTO_WP_BURST) if (weapon_attack_mode1(pid) == ATTACK_MODE_BURST or weapon_attack_mode2(pid) == ATTACK_MODE_BURST) else 1,
+      avgBurstSize := (0.66 * burstSize) if burstSize > 1 else 1,
+      ammoPid := get_weapon_ammo_pid(weapon),
+      ammoDmgMult := (1.0 * get_proto_data(ammoPid, PROTO_AM_DMG_MULT) / get_proto_data(ammoPid, PROTO_AM_DMG_DIV) if (ammoPid > 0) else 1),
+      dmgType := get_proto_data(pid, PROTO_WP_DMG_TYPE),
+      targetDT := get_critter_stat(target, STAT_dmg_thresh + dmgType) if target != 0 else 0,
+      targetDR := get_critter_stat(target, STAT_dmg_resist + dmgType) if target != 0 else 0,
+      attackAP := get_proto_data(pid, PROTO_WP_APCOST_2) if (weapon_attack_mode2(pid) == ATTACK_MODE_BURST) else get_proto_data(pid, PROTO_WP_APCOST_1),
+      expectedDmgPerAttack := (ammoDmgMult * avgDmg * avgBurstSize - targetDT) * (100 - targetDR) / 100,
+      expectedDmgPerAP := expectedDmgPerAttack / attackAP,
+      range := get_proto_data(pid, PROTO_WP_RANGE_1);
+
+   // todo account for actual damage mod settings
+   return round(expectedDmgPerAP * 10 + range);
+end
+
+#define weapon_is_ranged(obj)      weapon_pid_is_ranged(obj_pid(obj))
+
+/*
+HOOK_BESTWEAPON
+Runs when the AI decides which weapon is the best while searching the inventory for a weapon to equip in combat. This also runs when the player presses the "Use Best Weapon" button on the party member control panel.
+
+Critter arg0 - the critter searching for a weapon
+Item    arg1 - the best weapon chosen from two items
+Item    arg2 - the first choice of weapon
+Item    arg3 - the second choice of weapon
+Critter arg4 - the target of the critter (can be 0)
+
+Item    ret0 - overrides the chosen best weapon
+*/
+procedure bestweapon_handler begin
+   variable
+      critter := get_sfall_arg,
+      weaponChosen := get_sfall_arg,
+      weapon1 := get_sfall_arg,
+      weapon2 := get_sfall_arg,
+      target := get_sfall_arg;
+   
+   //display_msg(string_format("bestweapon for %s: %s vs %s -> %s (against %s)", obj_name_safe(critter), obj_name_safe(weapon1), obj_name_safe(weapon2), obj_name_safe(weaponChosen), obj_name_safe(target)));
+
+   if (weapon1 == 0 or weapon2 == 0 or weapon_is_ranged(weapon1) != weapon_is_ranged(weapon2)) then return;
+
+   variable
+      weapon1rank := weapon_rank(weapon1, target),
+      weapon2rank := weapon_rank(weapon2, target);
+   
+   debug_log_fmt("%s's bestweapon: %s (%d) vs %s (%d)", obj_name_safe(critter), obj_name_safe(weapon1), weapon1rank, obj_name_safe(weapon2), weapon2rank);
+   set_sfall_return(weapon1 if weapon1rank > weapon2rank else weapon2);
 end
