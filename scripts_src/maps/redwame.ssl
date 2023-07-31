@@ -1,0 +1,166 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Arroyo Caves
+        Location: Arroyo
+        Description: This is the Map Script for the Caves in Arroyo
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: December 04, 1997
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "redwame"
+#include "../headers/define.h"
+#include "../headers/updatmap.h"
+#include "../headers/redwame.h"
+
+#define NAME                    SCRIPT_REDWAME
+
+#include "../headers/command.h"
+
+procedure start;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+
+
+procedure start begin
+end
+
+procedure map_enter_p_proc begin
+   variable Critter;
+   variable tile;
+   variable item;
+
+   Lighting;
+
+
+   if ((map_var(MVAR_Made_Froggy) == 0) and (global_var(GVAR_FROG_MORTON) == FROG_JOB_ACCEPTED)) then begin
+       inc_map_var(MVAR_Made_Froggy);
+
+       Critter:=create_object_sid(PID_MALE_MAURADER,0,0,SCRIPT_RCFROG);
+       //critter_attempt_placement(Critter,13294,0);
+       critter_attempt_placement(Critter,13697,0); //edit by killap (expansion)
+       item:=create_object(PID_GREASE_GUN,0,0); // pbs: changed from HK G11
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_45_CALIBER_AMMO,0,0); // pbs: changed from 4.7mm
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       //critter_attempt_placement(Critter,23097,0);
+       critter_attempt_placement(Critter,23096,0);  //edit by killap (expansion)
+       item:=create_object(PID_SAWED_OFF_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       critter_attempt_placement(Critter,22494,0);
+       item:=create_object(PID_SAWED_OFF_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       critter_attempt_placement(Critter,24707,0);
+       item:=create_object(PID_COMBAT_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       //critter_attempt_placement(Critter,14290,0);
+       critter_attempt_placement(Critter,14890,0); //edit by killap (expansion)
+       item:=create_object(PID_COMBAT_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       //tile:=tile_num_in_direction(14290,1,random(2,4));
+       tile:=tile_num_in_direction(14890,1,random(2,4)); //edit by killap (expansion)
+       critter_attempt_placement(Critter,tile,0);
+       item:=create_object(PID_COMBAT_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       //tile:=tile_num_in_direction(14290,3,random(2,4));
+       tile:=tile_num_in_direction(14890,3,random(2,4)); //edit by killap (expansion)
+       critter_attempt_placement(Critter,tile,0);
+       item:=create_object(PID_COMBAT_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       //tile:=tile_num_in_direction(14290,5,random(2,4));
+       tile:=tile_num_in_direction(14890,5,random(2,4)); //edit by killap (expansion)
+       critter_attempt_placement(Critter,tile,0);
+       item:=create_object(PID_COMBAT_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       critter_attempt_placement(Critter,17102,0);
+       item:=create_object(PID_SAWED_OFF_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+
+       Critter:=create_object_sid(PID_BOUNTY_MALE_7_12,0,0,SCRIPT_RCMOTGNG);
+       critter_attempt_placement(Critter,16700,0);
+       item:=create_object(PID_SAWED_OFF_SHOTGUN,0,0);
+       add_obj_to_inven(Critter,item);
+       wield_obj_critter(Critter,item);
+       item:=create_object(PID_SHOTGUN_SHELLS,0,0);
+       add_obj_to_inven(Critter,item);
+   end
+
+/*   override_map_start(x,y,elev,rot);
+
+     x == Tilenum mod 200
+
+     y == Tilenum div 200
+
+     elev == 0,1,2
+
+     rot == 5 /\ 0
+            4 || 1
+            3 \/ 2
+*/
+//   override_map_start(90,137,0,3);
+//   override_map_start_hex(28906, 0, 5);
+
+   set_global_var(GVAR_LOAD_MAP_INDEX,0);
+end
+
+procedure map_update_p_proc begin
+   Lighting;
+end

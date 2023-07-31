@@ -12,7 +12,7 @@ type: ITEM_TYPE_AMMO
 material: 1
 size: 3
 weight: 8
-cost: 400
+cost: 300
 inventoryFid: 117440772
 soundId: '0'
 ammoData:

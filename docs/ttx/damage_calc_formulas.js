@@ -197,9 +197,9 @@ var yaamFormula = {
 
 var eccoFormula = {
     ...vanillaFormula,
-    name: "EcCo (DT add-, mult+)",
+    name: "EcCo 0.9+ (DT add-)",
+    dtMultPositive: 0,
     dtMultNegative: 1.3,
-    dtMultPositive: 2,
     burstCriticalFraction: 0.5,
     dmg: function(ctx) {
         let dmgThresh, dmgResist;

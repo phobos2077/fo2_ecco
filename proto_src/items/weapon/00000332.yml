@@ -26,8 +26,8 @@ weaponData:
   maxRange2: 15
   projectilePid: -1
   minStrength: 4
-  actionPointCost1: 4
-  actionPointCost2: 5
+  actionPointCost1: 5
+  actionPointCost2: 6
   criticalFailureType: 2
   perk: NONE
   rounds: 6

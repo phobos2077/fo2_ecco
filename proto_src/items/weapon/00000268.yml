@@ -33,6 +33,6 @@ weaponData:
   perk: NONE
   rounds: 3
   caliber: 11
-  ammoTypePid: 95
+  ammoTypePid: 614
   ammoCapacity: 9
   soundCode: R

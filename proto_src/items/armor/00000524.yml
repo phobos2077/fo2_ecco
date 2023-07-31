@@ -16,26 +16,26 @@ material: 7
 size: 8
 weight: 10
 cost: 5
-inventoryFid: 117440610
+inventoryFid: 117440911
 soundId: '0'
 armorData:
   armorClass: 20
   damageResistance:
-    normal: 40
-    laser: 60
+    normal: 30
+    laser: 30
     fire: 30
     plasma: 50
-    electrical: 50
+    electrical: 40
     emp: 500
-    explosion: 40
+    explosion: 10
   damageThreshold:
-    normal: 5
-    laser: 8
+    normal: 2
+    laser: 4
     fire: 4
     plasma: 4
-    electrical: 2
+    electrical: 0
     emp: 0
-    explosion: 6
+    explosion: 0
   perk: NONE
   maleFid: 16777218
   femaleFid: 16777218

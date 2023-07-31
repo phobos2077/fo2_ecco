@@ -935,16 +935,16 @@ position=cone, spacing:2
 ;position=huddle, spacing:3
 
 [Encounter: BROK_Rogues]
-type_00=ratio:25%, pid:16777252, Item:94(wielded), Item:95, Item:(0-30)41, Script:772                      ; Gun Thug male w/ Needler Pistol
-type_01=ratio:40%, pid:16777253, Item:268(wielded), Item:(0-30)41, Script:772                              ; Gun Thug female w/ H&K CAWS
+type_00=ratio:25%, pid:16777252, Item:94(wielded), Item:95, Item:(0-30)41, Script:772                      ; Gun Thug male w/ Shotgun & Shells
+type_01=ratio:40%, pid:16777253, Item:242(wielded), Item:95, Item:(0-30)41, Script:772                     ; Gun Thug female w/ Combat shotgun & Shells
 type_02=ratio:10%, pid:16777255, Item:11(wielded), Item:(0-30)41, Script:772                               ; Big Gun Thug female w/ Flamer
-type_03=ratio:25%, pid:16777254, Item:387(wielded), Item:(0-30)41, Script:772                              ; Big Gun Thug male w/ M60
+type_03=ratio:25%, pid:16777254, Item:287(wielded), Item:34, Item:(0-30)41, Script:772                     ; Big Gun Thug male w/ Scoped Hunting Rifle
 position=wedge, spacing:2
 
 [Encounter: NEW_Mobsters]
 type_00=pid:16777475, Item:283(wielded), Item:(0-40)41, Script:482                                         ; Mobster w/ Tommy Gun
-type_01=ratio:50%, pid:16777253, Item:283(wielded), Item:(0-40)41, Script:482                              ; thug w/ tommy gun
-type_02=Ratio:50%, pid:16777252, Item:143(wielded), Item:(0-40)41, Script:482                              ; thug w/ Sniper Rifle
+type_01=ratio:50%, pid:16777253, Item:283(wielded), Item:(0-40)41, Script:482                              ; Gun Thug female w/ tommy gun
+type_02=Ratio:50%, pid:16777252, Item:143(wielded), Item:(0-40)41, Script:482                              ; Gun Thug male w/ Sniper Rifle
 position=cone, spacing:2
 
 [Encounter: NEW_Yakuza]

@@ -11,11 +11,11 @@ Tiers:
 Guns: Zip Gun, Pipe Rifle, 10mm Pistol.
 Melee: Knife, Sh. Spear, Club, Brass Knuckles.
 
-2. Den - Modoc - Redding
+2. Den - Modoc - Vault City - Gecko
 Guns: DE, Hunting Rifle, .44 Revolver, 9mm/10mm SMG, Shotgun.
 Big: Grenade Launcher
 
-3. Vault City - Broken Hills - New Reno
+3. Redding - Broken Hills - New Reno
 Guns: 14mm Pistol, Cowboy Repeater, Sniper Rifle, Assault Rifle, FN FAL, Combat Shotgun.
 Big: MGL
 Energy: Laser Pistol

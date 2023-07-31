@@ -32,6 +32,6 @@ weaponData:
   perk: PERK_WEAPON_KNOCKBACK
   rounds: 5
   caliber: 11
-  ammoTypePid: 95
+  ammoTypePid: 614
   ammoCapacity: 10
   soundCode: R
