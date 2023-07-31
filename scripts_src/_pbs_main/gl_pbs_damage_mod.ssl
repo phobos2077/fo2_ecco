@@ -268,7 +268,7 @@ procedure combatdamage_handler begin
          and (critter_kill_type(ctdTarget) != KILL_TYPE_alien_kills) then
          calcAmount += 5;
       if has_trait(TRAIT_PERK, ctdSource, PERK_pyromaniac_perk) and (dmgType == DMG_fire) then
-         calcAmount += 5;
+         calcAmount += 10; // increase from 5
    end
 
    if knockback and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)

@@ -413,6 +413,10 @@ procedure trap_setoff_effect(variable armPid, variable critter) begin\
             dmgMin := explDmg[0];
             dmgMax := explDmg[1];
          end
+         if (dude_perk(PERK_demolition_expert_perk)) then begin
+            dmgMin += 20;
+            dmgMax += 20;
+         end
          if (dmgType < 0) then dmgType := DMG_explosion;
          if (radius < 0) then radius := 3; // vanilla explosive radius
       end else begin // not explosive, must be weapon (grenade)
@@ -425,6 +429,10 @@ procedure trap_setoff_effect(variable armPid, variable critter) begin\
             dmgMax := get_proto_data(armPid, PROTO_WP_DMG_MAX);
          end
          if (dmgType < 0) then dmgType := get_proto_data(armPid, PROTO_WP_DMG_TYPE);
+         if (dude_perk(PERK_demolition_expert_perk) and dmgType == DMG_explosion) then begin
+            dmgMin += 10;
+            dmgMax += 10;
+         end
          if (radius < 0) then radius := 2; // vanilla grenade radius
          if (audioSfx == 0) then begin
             variable soundCode := get_proto_data(armPid, PROTO_WP_SOUND);

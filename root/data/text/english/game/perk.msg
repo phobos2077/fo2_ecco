@@ -145,7 +145,7 @@
 {1114}{}{AKA Mule. You can carry an additional 50 pounds of equipment for each level of this Perk.}
 {1115}{}{You have a talent for hitting things at longer distances. For each level of this Perk, you get a +2 bonus to Perception for the purposes of determining range modifiers. It's easier than ever to kill at long range!}
 {1116}{}{With this Perk, you now have the ability to move quickly and still remain quiet. You can Sneak and run at the same time. Without this Perk, you would automatically stop Sneaking if you ran.}
-{1117}{}{You are a master of the outdoors. This Perk confers the ability to survive in hostile environments. You get a +25% bonus to Outdoorsman.}
+{1117}{}{You are a master of the outdoors. This Perk confers the ability to survive in hostile environments. You get a +30% bonus to Outdoorsman.}
 {1118}{}{You have mastered one aspect of bartering - buying goods far more cheaply than normal. With this Perk, you get a 25% discount when purchasing items from a store or another trader.}
 {1119}{}{Each level of Educated adds +2 skill points when you gain a new experience level. This Perk works best when purchased early in your adventure.}
 {1120}{}{The healing of bodies comes easier to you with this Perk. Each level of this Perk heals 4-10 additional hit points when using the First Aid or Doctor skills.}
@@ -160,14 +160,14 @@
 {1129}{}{With each level of this Perk, you gain an additional 4 Hit Points every time you advance a level. This is in addition to the hit points you already gain per level based off of your endurance.}
 {1130}{}{You are less likely to be hit in combat if you have this Perk. You gain a +5 to your Armor Class, in addition to the AC bonus from any armor worn.}
 {1131}{}{Yum! Tastes like chicken. For each level of this Perk, you gain +25% to your Poison Resistance.}
-{1132}{}{This Perk will give you a one-time bonus of +10% to the Repair and Science skills. A little late night cramming never hurt anybody, especially you.}
-{1133}{}{The Medic Perk gives you a one-time bonus of +10% to the First Aid and Doctor skills. Healing skills are a good thing.}
+{1132}{}{This Perk will give you a one-time bonus of +15% to the Repair and Science skills. A little late night cramming never hurt anybody, especially you.}
+{1133}{}{The Medic Perk gives you a one-time bonus of +15% to the First Aid and Doctor skills. Healing skills are a good thing.}
 {1134}{}{A Master Thief is proficient at stealing and picking locks. You gain +15 to Stealing and Lockpicking. Steal from the rich, and give to you.}
 {1135}{}{Being a Speaker means you have a one-time bonus of +20% to Speech. From the mouth of babes and all that.}
 {1136}{}{Each level of the Heave Ho! Perk gives you an additional +2 to Strength (up to 10,) for purposes of determining range with thrown weapons only. This Perk will not exceed a weapon's maximum range.}
 {1137}{}{ERROR.UNIMPED!}
 {1138}{}{You are much more adept at stealing than the normal crook. You can steal with the best of them, because with this Perk, you ignore size and facing modifiers when stealing from a person.}
-{1139}{}{When the sun goes down or you are in a poorly lit area, you move like a ghost with this Perk. Your Sneak skill is enhanced +20% in dark conditions.}
+{1139}{}{When the sun goes down or you are in a poorly lit area, you move like a ghost with this Perk. Your Sneak skill is enhanced +40% in dark conditions.}
 {1140}{}{Your reputation is always positive to people. Without this Perk, a large negative reputation would have a bad effect on good natured people. This works in the reverse as well. Evil people will even treat Mr. Goodie Good as one of the gang.}
 {1141}{}{You can find more ammo than the normal post-holocaust survivor. This Perk doubles the amount of ammo found in random encounters.}
 {1142}{}{The mark of the Explorer is to search out new and interesting locations. With this Perk, you have a greater chance of finding special places and people.}
@@ -176,7 +176,7 @@
 {1145}{}{Animals will not attack one of their friends, unless the animal is threatened or attacked first. Exactly what an animal is in this world is open to debate.}
 {1146}{}{You have improved your ability to see distant locations, increasing the size of explorations on the World Map by one square in each direction. You also have a better chance of finding special encounters.}
 {1147}{}{With this Perk, you have gained the attention of a Mysterious Stranger, who will appear to help you from time to time. If your ally is lost in combat, do not expect him (or her) to be replaced.}
-{1148}{}{You gain a +15% toward your Outdoorsman skill. You are more likely to avoid random encounters if you choose, and tend to find those "special" encounters more than most.}
+{1148}{}{You gain a +20% toward your Outdoorsman skill. You are more likely to avoid random encounters if you choose, and tend to find those "special" encounters more than most.}
 {1149}{}{You have learned to pack your equipment better. Every action in your inventory only costs you 1 Action Point in Combat instead of 2.}
 {1150}{}{You have learned to increase your dialog options without understanding what you're talking about. Each level of this Perk will increase your Intelligence by one, up to 10, for purposes of dialog only.}
 {1151}{}{You are indeed a Swift Learner with this Perk, as each level gives you an additional +5% bonus whenever you earn experience points. This is best taken early.}
@@ -211,7 +211,7 @@
 {1180}{}{With this Perk, you gain +1 to your Strength when you drop below 1/2 of your max hit points.}  # Adrenaline Rush
 {1181}{}{You are more alert outdoors and enemies are less likely to sneak up on you. With this Perk you get a +3 to your perception in random encounters when determining placement.}  # Cautious Nature
 {1182}{}{You pay much closer attention to the smaller details when reading. You gain 50% more skill points when reading books.}  # Comprehension
-{1183}{}{You are an expert when it comes to the fine art of handling explosives. They always go off when they're supposed to, as well as causing extra damage.}  # Demolition Expert
+{1183}{}{You are an expert when it comes to the fine art of handling explosive traps. They always go off when they're supposed to, as well as causing extra damage.}  # Demolition Expert
 {1184}{}{You can roll with the best of them.  You gain +20% to your gambling skill.}  # Gambler
 {1185}{}{With this Perk you gain +1 to your Strength.}     # Gain Strength
 {1186}{}{With this Perk you gain +1 to your Perception.}   # Gain Perception
@@ -220,7 +220,7 @@
 {1189}{}{With this Perk you gain +1 to your Intelligence.} # Gain Intelligence
 {1190}{}{With this Perk you gain +1 to your Agility.}      # Gain Agility
 {1191}{}{With this Perk you gain +1 to your Luck.}         # Gain Luck
-{1192}{}{Your innocent demeanor makes stealing from people a little easier. You gain 20% to your Steal skill.}  # Harmless
+{1192}{}{Your innocent demeanor makes stealing from people a little easier. You gain 30% to your Steal skill.}  # Harmless
 {1193}{}{With this Perk you immediately gain one experience level.}  # Here and Now
 {1194}{}{If both item slots are empty, each unused action point gives you a +2 instead of +1 towards your armor class at the end of your turn, plus 1/12 of your unarmed skill.}  # HtH Evade
 {1195}{}{When it comes to pleasing sexually, you wrote the book.}  # Kama Sutra Master
@@ -232,7 +232,7 @@
 {1201}{}{You are efficient at arranging your inventory in general. This makes it much easier to carry that little extra you've always needed.}  # Pack Rat
 {1202}{}{You do extra damage with fire-based weapons, and enemies always seem to die in the most painful fiery fashion.}  # Pyromaniac
 {1203}{}{You are quick at recovering from being knocked down.}  # Quick Recovery
-{1204}{}{You are an adept salesperson. With this Perk you gain +20% towards your Barter skill.}  # Salesman
+{1204}{}{You are an adept salesperson. With this Perk you gain +30% towards your Barter skill.}  # Salesman
 {1205}{}{You are much less likely to be knocked down in combat.}  # Stonewall
 {1206}{}{The blood of a thief runs through your veins. With the Thief Perk, you get a one-time bonus of +10% to your Sneak, Lockpick, Steal, and Traps skills. A well rounded thief is a live thief.}  # Thief
 {1207}{}{You can wield weapons much larger than normally allowed. You gain a +3 to your strength for the purposes of Strength checks when trying to wield weaponry.}  # Weapon Handling
