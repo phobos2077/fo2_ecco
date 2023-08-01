@@ -5,6 +5,7 @@
 #include "..\..\sfall\sfall.h"
 #include "..\..\sfall\dik.h"
 #include "..\..\sfall\define_lite.h"
+#include "..\..\sfall\command_lite.h"
 #include "..\..\sfall\lib.arrays.h"
 #include "..\..\sfall\lib.inven.h"
 #include "..\..\headers\animcomd.h"
@@ -79,6 +80,7 @@ procedure spawn_enemy(variable type, variable tile) begin
          call add_items_pid(critter, ammoPid, random(1, 3));
       if stimpaks then
          call add_items_pid(critter, PID_STIMPAK, stimpaks);
+      wield_obj_critter(critter, weapon);
    end
    return critter;
 end
