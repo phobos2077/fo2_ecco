@@ -11,7 +11,7 @@ Import;ProFILE;NAME;PID;Caliber;AC Adjust;DR Adjust;Dam Mult;Dam Div
 ;00000037.pro;Rocket AP;37;Rocket [1];-20;-60;1;1
 ;00000038.pro;Small Energy Cell;38;C Energy Cell [3];0;-10;1;1
 ;00000039.pro;Micro Fusion Cell;39;D Energy Cell [4];0;-20;1;1
-;00000095.pro;12 ga. Buckshot;95;12-gauge [11];-30;20;9;5
+;00000095.pro;12 ga. Buckshot;95;12-gauge [11];-15;20;8;5
 ;00000111.pro;.44 magnum FMJ;111;.44 cal [9];-10;-20;1;1
 ;00000121.pro;9mm ball;121;9mm [12];0;0;1;1
 ;00000163.pro;BB's;163;None [0];0;0;1;1
@@ -25,10 +25,10 @@ Import;ProFILE;NAME;PID;Caliber;AC Adjust;DR Adjust;Dam Mult;Dam Div
 ;00000363.pro;7.62mm FMJ;363;7.62mm [18];0;-10;1;1
 ;00000382.pro;Flamethrower Fuel MKII;382;Flamethrower Fuel [2];-40;-10;1;1
 ;00000610.pro;.50 BMG;610;.50 cal [19];-10;-50;1;1
-;00000614.pro;12 ga. Slugs;614;12-gauge [11];0;-30;1;1
+;00000614.pro;12 ga. Slugs;614;12-gauge [11];0;-20;1;1
 ;00000615.pro;.223 AP;615;.223 [5];-10;-50;4;5
 ;00000631.pro;40mm HE Grenades;631;40mm grenade [20];0;-10;1;1
 ;00000632.pro;40mm IC Grenades;632;40mm grenade [20];0;0;4;3
 ;00000633.pro;14mm JHP;633;14mm [10];10;-10;3;2
-;00000641.pro;12 ga. Dragon Breath;641;12-gauge [11];-20;-10;5;4
+;00000641.pro;12 ga. Dragon Breath;641;12-gauge [11];-15;-10;5;4
 ;00000642.pro;7.62mm AP;642;7.62mm [18];-10;-50;4;5

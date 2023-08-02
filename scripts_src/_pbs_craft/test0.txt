@@ -276,7 +276,7 @@ NO
 [TOOLS]
 75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 [SKILLS]
-SMALL_GUNS:50
+SMALL_GUNS:70
 REPAIR:60
 [COMPONENTS]
 95:2                             # Shotgun shells
@@ -312,7 +312,7 @@ NO
 [TOOLS]
 308                              # PID_SUPER_TOOL_KIT
 [SKILLS]
-SMALL_GUNS:60
+SMALL_GUNS:80
 REPAIR:80
 [COMPONENTS]
 363:1                            # 7.62 FMJ
@@ -330,7 +330,7 @@ NO
 [TOOLS]
 75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 [SKILLS]
-SMALL_GUNS:60
+SMALL_GUNS:80
 REPAIR:80
 [COMPONENTS]
 33:1                             # 14mm AP
@@ -347,7 +347,7 @@ NO
 [TOOLS]
 308                              # Super tool kit
 [SKILLS]
-BIG_GUNS:60
+BIG_GUNS:80
 REPAIR:60
 [COMPONENTS]
 631:1                            # 40mm HE grenades
@@ -387,7 +387,7 @@ NO
 REPAIR+TRAPS:110
 [COMPONENTS]
 98:1                             # Junk
-7:2|280:2|45:2                   # Spears OR Sharp Spears OR throwing knives
+4:3|45:3|7:2|280:2               # Knives OR throwing knives OR Spears OR Sharp Spears
 
 
 [ITEM]

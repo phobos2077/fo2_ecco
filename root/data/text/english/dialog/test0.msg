@@ -400,7 +400,7 @@
 {2408}{}{[TOOLS]}
 {2409}{}{75|308}                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 {2410}{}{[SKILLS]}
-{2411}{}{SMALL_GUNS:50}
+{2411}{}{SMALL_GUNS:70}
 {2412}{}{REPAIR:60}
 {2413}{}{[COMPONENTS]}
 {2414}{}{95:2}                             # Shotgun shells
@@ -436,7 +436,7 @@
 {2608}{}{[TOOLS]}
 {2609}{}{308}                              # PID_SUPER_TOOL_KIT
 {2610}{}{[SKILLS]}
-{2611}{}{SMALL_GUNS:60}
+{2611}{}{SMALL_GUNS:80}
 {2612}{}{REPAIR:80}
 {2613}{}{[COMPONENTS]}
 {2614}{}{363:1}                            # 7.62 FMJ
@@ -454,7 +454,7 @@
 {2708}{}{[TOOLS]}
 {2709}{}{75|308}                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 {2710}{}{[SKILLS]}
-{2711}{}{SMALL_GUNS:60}
+{2711}{}{SMALL_GUNS:80}
 {2712}{}{REPAIR:80}
 {2713}{}{[COMPONENTS]}
 {2714}{}{33:1}                             # 14mm AP
@@ -471,7 +471,7 @@
 {2808}{}{[TOOLS]}
 {2809}{}{308}                              # Super tool kit
 {2810}{}{[SKILLS]}
-{2811}{}{BIG_GUNS:60}
+{2811}{}{BIG_GUNS:80}
 {2812}{}{REPAIR:60}
 {2813}{}{[COMPONENTS]}
 {2814}{}{631:1}                            # 40mm HE grenades
@@ -511,7 +511,7 @@
 {3011}{}{REPAIR+TRAPS:110}
 {3012}{}{[COMPONENTS]}
 {3013}{}{98:1}                             # Junk
-{3014}{}{7:2|280:2|45:2}                   # Spears OR Sharp Spears OR throwing knives
+{3014}{}{4:3|45:3|7:2|280:2}               # Knives OR throwing knives OR Spears OR Sharp Spears
 
 
 {3100}{}{[ITEM]}
