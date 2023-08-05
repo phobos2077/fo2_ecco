@@ -3,8 +3,8 @@
 */
 
 #define LOCKED_STATUS      STATE_ACTIVE
-#define Crowbar_Bonus      (-3)
-#define Lock_Bonus         (-80)
+#define Crowbar_Bonus      (-5)
+#define Lock_Bonus         (-70)
 #define MIN_DAMAGE         (30)
 #define MAX_DAMAGE         (50)
 

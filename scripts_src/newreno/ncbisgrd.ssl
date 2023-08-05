@@ -1,0 +1,535 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location: New Reno
+        Description:
+
+        Log:
+
+           Created: May 6, 1998
+
+           Updated:
+*/
+
+#define WARNING_FAMILY_ACTION                      call Node006;
+#define WARNING_WEAPON_ACTION                      if (dude_is_prizefighter) then begin                  \
+                                                      call Node008;                                      \
+                                                   end else if (dude_has_porn_star_rep) then begin       \
+                                                      call Node011;                                      \
+                                                   end else if (has_rep_slaver) then begin               \
+                                                      call Node016;                                      \
+                                                   end else begin                                        \
+                                                      call Node018;                                      \
+                                                   end
+#define WARNING_SNEAK_ACTION                       if (has_rep_slaver) then begin                        \
+                                                      call Node017;                                      \
+                                                   end else begin                                        \
+                                                      call Node019;                                      \
+                                                   end
+#define WARNING_ROBOBRAIN_ACTION                   call Node020;
+#define WARNING_MARCUS_ACTION                      call Node021;
+#define WARNING_LENNY_ACTION                       call Node022;
+
+/* Include Files */
+#define SCRIPT_REALNAME "ncbisgrd"
+#include "../headers/define.h"
+#define NAME                    SCRIPT_NCBISGRD
+#define TOWN_REP_VAR            GVAR_TOWN_REP_NEW_RENO
+#include "../headers/command.h"
+#include "../headers/newreno.h"
+#include "../headers/newr2.h"
+
+#include "../sfall/lib.obj.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node013;
+procedure Node014;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Flags                        (0)
+#define LVAR_Node025                      (1)
+#define LVAR_Node030                      (2)
+
+#define self_family                       (family_bishop)
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+
+variable warning_result;
+import variable bishop_stair_guard_obj;
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == warning_loop_param) then begin
+      check_all_warnings
+      call_warning_loop;
+   end else if (fixed_param == tamper_door_param) then begin
+      force_dialog_start(@Node026);
+   end else begin
+      if (self_can_see_dude) then begin
+         if ((combat_is_initialized == false) and (obj_on_family_property(dude_obj, self_family))) then begin
+            set_is_float;
+            check_all_warnings
+            if (warning_result == warning_result_none) then begin
+               if (Fallout2_enclave_destroyed) then begin
+                  call Node001;
+               end else if (dude_wearing_power_armor) then begin
+                  call Node002;
+               end else if (dude_family == self_family) then begin
+                  if (bishop_dead) then begin
+                     call Node024;
+                  end else if (dude_is_armed) then begin
+                     call Node003;
+                  end else if (dude_is_sneaking) then begin
+                     call Node004;
+                  end else begin
+                     call Node005;
+                  end
+               end else if (dude_is_prizefighter) then begin
+                  if (dude_is_sneaking) then begin
+                     call Node009;
+                  end else begin
+                     call Node010;
+                  end
+               end else if (dude_has_porn_star_rep) then begin
+                  if (dude_is_sneaking) then begin
+                     if (dude_is_male) then begin
+                        call Node009;
+                     end else begin
+                        call Node013;
+                     end
+                  end else begin
+                     call Node014;
+                  end
+               end else begin
+                  call Node023;
+               end
+            end
+         end
+      end
+      nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+   end
+end
+
+procedure map_enter_p_proc begin
+   if (is_loading_game == false) then begin
+      if (map_first_run) then begin
+         set_self_team(TEAM_NEW_RENO_BISHOP);
+         set_self_ai(AI_TOUGH_GUARD);
+      end
+      nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+   end
+end
+
+procedure map_update_p_proc begin
+end
+
+#define DEFUALT_WATCH_TILE    (17079)
+
+procedure critter_p_proc begin
+   // phobos2077: watcher logic tweaks
+   if (obj_can_hear_obj(self_obj, dude_obj)) then begin
+      if ((hostile) or (warned_attack)) then begin
+         self_attack_dude;
+      end else if (bishop_stair_guard_obj == 0) then begin
+         bishop_stair_guard_obj := self_obj;
+      end else if (tile_distance_objs(self_obj, dude_obj) < tile_distance_objs(bishop_stair_guard_obj, dude_obj)) then begin
+         // Take over watching dude from a partner
+         obj_rotate(bishop_stair_guard_obj, rotation_to_tile(tile_num(bishop_stair_guard_obj), DEFUALT_WATCH_TILE));
+         bishop_stair_guard_obj := self_obj;
+      end
+      if (self_obj == bishop_stair_guard_obj) then self_look_at_dude;
+   end else if (bishop_stair_guard_obj == self_obj) then begin
+      bishop_stair_guard_obj := 0;
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+      attack_family(self_family)
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   check_forced_dialog
+   else begin
+      set_is_click;
+      check_all_warnings
+      if (warning_result == warning_result_none) then begin
+         if (dude_family == self_family) then begin
+            if (bishop_dead) then begin
+               call Node024;
+            end else begin
+               start_dialog_at_node(Node035);
+            end
+         end else begin
+            start_dialog_at_node(Node025);
+         end
+      end
+      set_herebefore;
+   end
+   nr_add_timer_event_rand(self_obj, 25, 35, float_param);
+end
+
+procedure destroy_p_proc begin
+   inc_evil_critter
+   dec_family_counter(self_family);
+   if (bishop_stair_guard_obj == self_obj) then begin
+      bishop_stair_guard_obj := 0;
+   end
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100);
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(150 + (examined));
+   set_examined;
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node998 begin
+   if (hostile == false) then begin
+      set_hostile;
+   end
+   attack_family(self_family) //added by killap
+end
+procedure Node999 begin
+end
+procedure Node990 begin
+   if (bishop_dead == false) then begin
+      //added by killap
+      if ( (get_snuff_westin(snuff_westin_assigned)) or (get_snuff_carlson(snuff_carlson_assigned)) ) then
+         call Node034;
+      else
+      //end added
+         call Node031;
+   end else begin
+      call Node030;
+   end
+end
+procedure Node989 begin
+   if (bishop_dead == false) then begin
+      call Node034;
+   end else begin
+      call Node030;
+   end
+end
+
+#define is_insert_message(x)  ((x == 236) or (x == 279) or (x == 247) or         \
+                               (x == 265) or (x == 266) or                       \
+                               ((228 <= x) and (x <= 231)) or                    \
+                               ((276 <= x) and (x <= 277)) or                    \
+                               (x == 290))
+
+procedure floater_rand_with_check_cust(variable x, variable y, variable the_patch) begin
+variable the_msg;
+   the_msg := random(x, y);
+   if (is_insert_message(the_msg)) then begin
+      if ((x == 228) or (x == 229)) then begin
+         the_msg := "" + mstr(the_msg) + made_man_name + mstr(the_msg+1000);
+      end else begin
+         the_msg := "" + mstr(the_msg) + the_patch + mstr(the_msg+1000);
+      end
+      float_msg(self_obj, the_msg, FLOAT_COLOR_NORMAL);
+   end else
+      floater(the_msg);
+end
+
+procedure Node001 begin
+   float_msg(self_obj, mstr(200) + dude_name + mstr(201), FLOAT_COLOR_NORMAL);
+end
+procedure Node002 begin
+   floater(205);
+end
+procedure Node003 begin
+   float_msg(self_obj, mstr(210) + made_man_name + mstr(211), FLOAT_COLOR_NORMAL);
+end
+procedure Node004 begin
+   float_msg(self_obj, mstr(215) + made_man_name + mstr(216), FLOAT_COLOR_NORMAL);
+end
+procedure Node005 begin
+   float_msg(self_obj, mstr(210) + made_man_name + mstr(221), FLOAT_COLOR_NORMAL);
+end
+procedure Node006 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      call floater_rand_with_check_cust(228 - (3*dude_is_male), 231 + (5*dude_is_female), dude_family_name);
+   //else
+   //   float_msg(self_obj, mstr(228) + dude_family_name + mstr(1228), FLOAT_COLOR_NORMAL);
+end
+procedure Node008 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      call floater_rand_with_check_cust(245, 247, prizefighter_name);
+   //else
+   //   floater(245);
+end
+procedure Node009 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(255,257);
+   //else
+   //   floater(256);
+end
+procedure Node010 begin
+   call floater_rand_with_check_cust(265, 266, prizefighter_name);
+end
+procedure Node011 begin
+   call floater_rand_with_check_cust(277 - (2*dude_is_male), 277 + (2*dude_is_female), porn_star_name);
+end
+procedure Node013 begin
+   floater(285);
+end
+procedure Node014 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      call floater_rand_with_check_cust(290, 293 + dude_is_female, porn_star_name);
+   //else
+   //   float_msg(self_obj, mstr(290) + dude_family_name + mstr(1290), FLOAT_COLOR_NORMAL);
+end
+procedure Node016 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(300,302);
+   //else
+   //   floater(302);
+end
+procedure Node017 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(305,308);
+   //else
+   //   floater(306);
+end
+procedure Node018 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(315,317);
+   //else
+   //   floater(316);
+end
+procedure Node019 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(325,328);
+   //else
+   //   floater(326);
+end
+procedure Node020 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(335,337);
+   //else
+   //   floater(335);
+end
+procedure Node021 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(345,347);
+   //else
+   //   floater(347);
+end
+procedure Node022 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(355,357);
+   //else
+   //   floater(357);
+end
+procedure Node023 begin
+   //if (message_str(SCRIPT_NCPERSON, 100) == "You see one of the Reno townsfolk.") then
+      floater_rand(365,366);
+   //else
+   //   floater(365);
+end
+procedure Node024 begin
+   floater(370);
+end
+procedure Node025 begin
+   ndebug("Node025");
+   if (local_var(LVAR_Node025) > 0) then begin
+      Reply(377);
+   end else begin
+      Reply(375 + dude_is_female);
+      inc_local_var(LVAR_Node025);
+   end
+   NOption(378, Node027, -003);
+   NOption(379, Node027, -003);
+   NOption(380, Node027, -003);
+   NOption(381, Node999, -003);
+   NOption(382, Node029, 004);
+   NOption(383, Node990, 004);
+   if ((dude_has_happy_briefcase) or (dude_has_death_briefcase)) then begin
+      NOption(384, Node989, 004);
+   end
+   NOption(385, Node999, 004);
+end
+procedure Node026 begin
+   ndebug("Node026");
+   set_warning_on(warning_stairs);
+   Reply(390 + dude_is_female);
+   NOption(378, Node027, -003);
+   NOption(379, Node027, -003);
+   NOption(380, Node027, -003);
+   NOption(381, Node999, -003);
+   NOption(382, Node029, 004);
+   NOption(383, Node990, 004);
+   if ((dude_has_happy_briefcase) or (dude_has_death_briefcase)) then begin
+      NOption(384, Node989, 004);
+   end
+   NOption(385, Node999, 004);
+end
+procedure Node027 begin
+   ndebug("Node027");
+   Reply(mstr(405 + dude_is_female) + mstr(407));
+   NOption(408, Node028, -003);
+   NOption(409, Node028, -003);
+   NOption(410, Node028, -003);
+   NOption(411, Node999, -003);
+   NOption(412, Node028, 004);
+   if ((dude_has_happy_briefcase) or (dude_has_death_briefcase)) then begin
+      NOption(384, Node989, 004);
+   end
+   NOption(414, Node999, 004);
+end
+procedure Node028 begin
+   ndebug("Node028");
+   Reply(420 + dude_is_female);
+   BOption(422, Node998, -003); //edit by killap - was NOption
+   BOption(dude_name + mstr(423) + dude_name + mstr(424) + dude_name + mstr(425), Node998, -003); //edit by killap: was NOption
+   BOption(426, Node998, -003);  //edit by killap - was NOption
+   BOption(427, Node998, 004);   //edit by killap - was NOption
+   BOption(428, Node998, 004);   //edit by killap - was NOption
+end
+procedure Node029 begin
+   ndebug("Node029");
+   Reply(435);
+   NOption(383, Node990, 004);
+   if ((dude_has_happy_briefcase) or (dude_has_death_briefcase)) then begin
+      NOption(384, Node989, 004);
+   end
+   NOption(385, Node999, 004);
+end
+procedure Node030 begin
+   ndebug("Node030");
+   Reply(445 + (local_var(LVAR_Node030)>0));
+   NOption(447, Node027, 004);
+   NOption(448, Node999, 004);
+   inc_local_var(LVAR_Node030);
+end
+procedure Node031 begin
+   ndebug("Node031");
+   Reply(455);
+   NOption(456, Node032, 004);
+   if ((dude_has_happy_briefcase) or (dude_has_death_briefcase)) then begin
+      NOption(384, Node034, 004);
+   end
+   NOption(458, Node999, 001);
+end
+procedure Node032 begin
+   ndebug("Node032");
+   Reply(465 + dude_is_female);
+   NOption(mstr(467) + dude_name + mstr(468), Node033, 004);
+   NOption(469, Node027, 004);
+   if ((dude_has_happy_briefcase) or (dude_has_death_briefcase)) then begin
+      NOption(384, Node034, 004);
+   end
+   NOption(471, Node999, 001);
+end
+procedure Node033 begin
+   ndebug("Node033");
+   Reply(mstr(475) + mstr(476 + dude_is_female));
+   NOption(478, Node027, 004);
+   if ((dude_has_happy_briefcase) or (dude_has_death_briefcase)) then begin
+      NOption(479, Node034, 004);
+   end
+   NOption(480, Node999, 001);
+end
+procedure Node034 begin
+   ndebug("Node034");
+   set_bishop_permission
+   Reply(490);
+   NOption(491, Node999, 004);
+end
+procedure Node035 begin
+   ndebug("Node035");
+   if (dude_family == self_family) then begin
+      Reply(mstr(495) + made_man_name + mstr(496) + mstr(497));
+   end else begin
+      Reply(497);
+   end
+   NOption(498, Node036, 004);
+   NOption(499, Node999, 004);
+end
+procedure Node036 begin
+   ndebug("Node036");
+   if (dude_family == self_family) then begin
+      Reply(mstr(505) + made_man_name + mstr(506) + mstr(507));
+   end else begin
+      Reply(507);
+   end
+   NOption(508, Node999, 004);
+end
+
+procedure Node037 begin
+
+end

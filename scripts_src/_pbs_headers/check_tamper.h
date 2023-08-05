@@ -51,7 +51,11 @@ procedure check_tamper(variable isLoud := false) begin
       if (is_visible(WATCHER_OBJ) and is_critter_dead(WATCHER_OBJ) == false and (isLoud or watch_box_conditions)) then begin
          ndebug("Tampered! triggering watcher");
          script_overrides;
-         attack_or_warn
+         if (isLoud) then begin
+            do_attack_action
+         end else begin
+            attack_or_warn
+         end
          return true;
       end
    end

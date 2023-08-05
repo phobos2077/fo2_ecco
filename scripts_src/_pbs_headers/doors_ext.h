@@ -154,6 +154,7 @@ procedure rpu_Damage_Critter begin
    pcnpc_display_str(source_obj, my_mstr(166)+Trap_Damage+my_mstr(167), my_mstr(168)+Trap_Damage+my_mstr(169))
    critter_heal(source_obj, -Trap_Damage);
    set_local_var(LVAR_Trapped, STATE_INACTIVE);
+   call check_tamper(true);
    return Trap_Damage;
 end
 
