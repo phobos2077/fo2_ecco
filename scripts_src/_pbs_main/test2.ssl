@@ -301,6 +301,20 @@ procedure dude_try_to_arm_trap(variable armamentObj) begin
       groundFid;
    end
 
+   // check combat
+   if (combat_is_initialized) then begin
+      if (not pbs_trap_config.allow_in_combat) then begin
+         display_mstr(462);
+         return;
+      end
+      if (get_critter_current_ap(dude_obj) >= TRAP_SET_APCOST) then begin
+         set_critter_current_ap(dude_obj, get_critter_current_ap(dude_obj) - TRAP_SET_APCOST);
+      end else begin
+         display_msg(sprintf(mstr_combat(100), TRAP_SET_APCOST)); // You need %d action points.
+         return;
+      end
+   end
+
    // install trap
    groundFid := get_tile_ground_fid(self_tile, self_elevation);
    if tile_fid_is_dirt(groundFid) or tile_fid_is_cloth_on_dirt(groundFid) or tile_fid_is_grass(groundFid) then

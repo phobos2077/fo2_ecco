@@ -42,6 +42,8 @@
 #define TRAP_FRIENDFOE_DUDE		(1)
 #define TRAP_FRIENDFOE_PARTY		(2)
 
+#define TRAP_SET_APCOST          (4)
+
 #define traps_mstr(msg)      message_str(SCRIPT_PBS_TRAPS, msg)
 
 #define gain_exp_for_trapkill(exp)			give_exp_points(exp); \
@@ -329,30 +331,26 @@ end
    Returns true on success, false if trap could not be placed
 */
 procedure try_assemble_trap(variable critter, variable item) begin
-variable begin
-   charges; trapType; trapObj; trapKitPid;
-end
-   if (critter and item and (get_game_mode == 0 or get_game_mode == INVENTORY)) then
-   begin
-      trapKitPid := obj_pid(item);
-      if (tile_contains_any_trap(tile_num(critter), elevation(critter))) then begin
-         display_msg(traps_mstr(401));
-      end else begin
-         charges := get_weapon_ammo_count(item);
-         if (charges == 0 or charges == -1) then begin
-            charges := get_proto_data(trapKitPid, PROTO_MI_CHARGES);
-         end
-         //display_msg("charges: "+charges);
-         trapType := trap_type_by_trapkit_pid(trapKitPid);
-         trapObj := create_trap_object(trapType, tile_num(critter), elevation(critter), charges);
-         //call add_trap_info(trapObj, trapType, charges);
-         display_msg(traps_mstr(203));
-         return true;
-      end
-   end else if (combat_is_initialized) then begin
+   variable charges, trapType, trapObj, trapKitPid;
+   if (combat_is_initialized and not pbs_trap_config.allow_in_combat) then begin
       display_msg(traps_mstr(461));
-      //end else if (get_game_mode bwand INVENTORY) then begin
-      //   display_msg(traps_mstr(460));
+      return false;
+   end
+
+   trapKitPid := obj_pid(item);
+   if (tile_contains_any_trap(tile_num(critter), elevation(critter))) then begin
+      display_msg(traps_mstr(401));
+   end else begin
+      charges := get_weapon_ammo_count(item);
+      if (charges == 0 or charges == -1) then begin
+         charges := get_proto_data(trapKitPid, PROTO_MI_CHARGES);
+      end
+      //display_msg("charges: "+charges);
+      trapType := trap_type_by_trapkit_pid(trapKitPid);
+      trapObj := create_trap_object(trapType, tile_num(critter), elevation(critter), charges);
+      //call add_trap_info(trapObj, trapType, charges);
+      display_msg(traps_mstr(203));
+      return true;
    end
    return false;
 end

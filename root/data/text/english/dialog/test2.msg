@@ -33,6 +33,7 @@
 {441}{}{You cannot pickup the trap. Use Traps skill to arm it or Repair to disassemble.}
 {460}{}{You cannot assemble trap from the inventory. Use it from hands.}
 {461}{}{You cannot assemble trap during combat.}
+{462}{}{You cannot arm trap during combat.}
 # trap armament types
 {1000}{}{frag grenade trap}
 {1025}{}{frag grenade trap}
