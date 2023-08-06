@@ -27,7 +27,7 @@ procedure rpu_Damage_Critter;
    #if DOOR_STATUS == STATE_METAL
       #define Crowbar_Bonus                   (-5)
    #else
-      #define Crowbar_Bonus                   (-2)
+      #define Crowbar_Bonus                   (-3)
    #endif
 #endif
 

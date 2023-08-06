@@ -69,37 +69,41 @@
 #define ART_TRAP_EXPLODED               (PID_CAVE_FLOOR_TRAP_DEPRESSED) // edit by killap - swapped with the one below
 #define ART_TRAP_DISARMED               (PID_CAVE_FLOOR_TRAP_DISARMED)  // edit by killap - swapped with the one above
 
-
-#define Which_Tile_Var(x)       if (x == LANDMINE_TILE1) then          \
-                                   Landmine_Var:=MVAR_Landmine1;       \
-                                else if (x == LANDMINE_TILE2) then     \
-                                   Landmine_Var:=MVAR_Landmine2;       \
-                                else if (x == LANDMINE_TILE3) then     \
-                                   Landmine_Var:=MVAR_Landmine3;       \
-                                else if (x == LANDMINE_TILE4) then     \
-                                   Landmine_Var:=MVAR_Landmine4;       \
-                                else if (x == LANDMINE_TILE5) then     \
-                                   Landmine_Var:=MVAR_Landmine5;       \
-                                else if (x == LANDMINE_TILE6) then     \
-                                   Landmine_Var:=MVAR_Landmine6;       \
-                                else if (x == LANDMINE_TILE7) then     \
-                                   Landmine_Var:=MVAR_Landmine7;       \
-                                else if (x == LANDMINE_TILE8) then     \
-                                   Landmine_Var:=MVAR_Landmine8;       \
-                                else if (x == LANDMINE_TILE9) then     \
-                                   Landmine_Var:=MVAR_Landmine9;       \
-                                else if (x == LANDMINE_TILE10) then     \
-                                   Landmine_Var:=MVAR_Landmine10;       \
-                                else if (x == LANDMINE_TILE11) then     \
-                                   Landmine_Var:=MVAR_Landmine11;       \
-                                else if (x == LANDMINE_TILE12) then     \
-                                   Landmine_Var:=MVAR_Landmine12;       \
-                                else if (x == LANDMINE_TILE13) then     \
-                                   Landmine_Var:=MVAR_Landmine13;       \
-                                else if (x == LANDMINE_TILE14) then     \
-                                   Landmine_Var:=MVAR_Landmine14;       \
-                                else if (x == LANDMINE_TILE15) then     \
-                                   Landmine_Var:=MVAR_Landmine15
+procedure Which_Tile_Var(variable x) begin
+   if (cur_map_index == MAP_REDDING_WANAMINGO_ENT) then begin
+      if (x == LANDMINE_TILE1) then
+         return MVAR_Landmine1;
+      else if (x == LANDMINE_TILE2) then
+         return MVAR_Landmine2;
+      else if (x == LANDMINE_TILE3) then
+         return MVAR_Landmine3;
+      else if (x == LANDMINE_TILE4) then
+         return MVAR_Landmine4;
+      else if (x == LANDMINE_TILE5) then
+         return MVAR_Landmine5;
+      else if (x == LANDMINE_TILE6) then
+         return MVAR_Landmine6;
+      else if (x == LANDMINE_TILE7) then
+         return MVAR_Landmine7;
+      else if (x == LANDMINE_TILE8) then
+         return MVAR_Landmine8;
+      else if (x == LANDMINE_TILE9) then
+         return MVAR_Landmine9;
+      else if (x == LANDMINE_TILE10) then
+         return MVAR_Landmine10;
+      else if (x == LANDMINE_TILE11) then
+         return MVAR_Landmine11;
+      else if (x == LANDMINE_TILE12) then
+         return MVAR_Landmine12;
+      else if (x == LANDMINE_TILE13) then
+         return MVAR_Landmine13;
+      else if (x == LANDMINE_TILE14) then
+         return MVAR_Landmine14;
+      else if (x == LANDMINE_TILE15) then
+         return MVAR_Landmine15;
+   end
+   return 0;
+end
 
 procedure start;
 procedure spatial_p_proc;
@@ -114,23 +118,51 @@ procedure Trap_Detection;
 #define LVAR_Gave_Exp                   (2)
 #define LVAR_Got_Perception_Roll        (3)
 #define LVAR_Extended_Look              (4)
-
+#define LVAR_Mine_Status                (5) // pbs: allow to use mine in other places
 
 procedure start begin
 end
 
 procedure spatial_p_proc begin
-   variable Landmine_Var;
-
    if (global_var(GVAR_FROG_MORTON) != 0) then begin
        call Trap_Detection;
 
        if (tile_distance_objs(self_obj,source_obj) == 0) then begin
-           Which_Tile_Var(self_tile);
-           call Check_Active(Landmine_Var);
+           call Check_Active(Which_Tile_Var(self_tile));
        end
    end
 end
+
+procedure mine_status(variable mvar) begin
+   if (mvar > 0) then 
+      return map_var(mvar);
+
+   if (local_var(LVAR_Mine_Status) > 0) then
+      return local_var(LVAR_Mine_Status);
+
+   if (tile_contains_obj_pid(self_tile, self_elevation, ART_TRAP_DISARMED)) then
+      return MINE_DISARMED;
+
+   if (tile_contains_obj_pid(self_tile, self_elevation, ART_TRAP_EXPLODED)) then
+      return MINE_EXPLODED;
+
+   return 0;
+end
+
+procedure set_mine_status(variable mvar, variable val) begin
+   if (mvar > 0) then
+      set_map_var(mvar, val);
+   else
+      set_local_var(LVAR_Mine_Status, val);
+end
+
+/*
+procedure timed_event_p_proc begin
+   display_msg(string_format("%d timed event %x", self_obj, fixed_param));
+   if ((fixed_param / 0x1000000) == 1) then
+      set_local_var(LVAR_Mine_Status, fixed_param);
+end
+*/
 
 procedure use_skill_on_p_proc begin
    variable Traps_Roll;
@@ -138,15 +170,15 @@ procedure use_skill_on_p_proc begin
    variable Landmine_Var;
 
    if (action_being_used == SKILL_TRAPS) then begin
-       Which_Tile_Var(self_tile);
-       if (map_var(Landmine_Var) == MINE_ACTIVE) then begin
+       Landmine_Var := Which_Tile_Var(self_tile);
+       if (mine_status(Landmine_Var) == MINE_ACTIVE) then begin
            script_overrides;
            Traps_Roll:=roll_vs_skill(source_obj,SKILL_TRAPS,TRAPS_BONUS);
 
            if (is_success(Traps_Roll)) then begin
                //Trap:=create_object_sid(ART_TRAP_DISARMED,tile_num(self_obj),elevation(self_obj),CUR_SCRIPT);
                Trap:=create_object(ART_TRAP_DISARMED,self_tile,self_elevation); // edit by killap
-               set_map_var(Landmine_Var,MINE_DISARMED);
+               call set_mine_status(Landmine_Var, MINE_DISARMED);
                if (source_obj == dude_obj) then
                    display_msg(g_mstr(102));
                else
@@ -158,7 +190,7 @@ procedure use_skill_on_p_proc begin
            end
 
            else if (is_critical(Traps_Roll)) then begin
-               set_map_var(Landmine_Var,MINE_EXPLODED);
+               call set_mine_status(Landmine_Var, MINE_EXPLODED);
                if (source_obj == dude_obj) then
                   display_msg(g_mstr(104));
                else
@@ -187,7 +219,7 @@ end
 procedure Check_Active(variable Mine_Var) begin
    variable Trap;
 
-   if (map_var(Mine_Var) == MINE_ACTIVE) then begin
+   if (mine_status(Mine_Var) == MINE_ACTIVE) then begin
        if (tile_contains_obj_pid(self_tile,self_elevation,ART_TRAP_VISIBLE)) then begin
            ndebug("Destroying Visible Trap");
            destroy_object(tile_contains_pid_obj(self_tile,self_elevation,ART_TRAP_VISIBLE));
@@ -204,7 +236,7 @@ procedure Check_Active(variable Mine_Var) begin
           explosion(self_tile,self_elevation,1);
        end
 
-       set_map_var(Mine_Var,MINE_EXPLODED);
+       call set_mine_status(Mine_Var, MINE_EXPLODED);
    end
 end
 

@@ -109,7 +109,7 @@ procedure command_remove(variable tileNum, variable elev, variable tileObj, vari
          end
       end
    end
-   debug_log_cmd(string_format3("removed %s(%d) from %s", proto_data(pid, it_name), count, loot_target_name(useInven, tileObj)), tileNum);
+   debug_log_cmd(string_format3("removed %s(%d) from %s", proto_data(pid, it_name), numRemoved, loot_target_name(useInven, tileObj)), tileNum);
 end
 
 procedure command_wield(variable tileNum, variable elev, variable tileObj, variable args) begin

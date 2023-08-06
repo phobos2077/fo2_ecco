@@ -1,0 +1,39 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/******************************************************************************************
+        Item: Wood Door
+        Locked: NO
+        Trapped: NO
+        Closing: YES
+        Description: This is a generic locked and trapped wooden door.
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: September 26, 1997
+
+           Updated:
+******************************************************************************************/
+
+/* Include Files */
+#define SCRIPT_REALNAME "wibnkdor"
+
+/* Sets whether the door is locked or trapped or closing */
+#define LOCKED_STATUS                   STATE_ACTIVE
+#define TRAPPED_STATUS                  STATE_ACTIVE
+#define DOOR_STATUS                     STATE_METAL
+#define LOCK_STATUS                     STATE_ELECTRIC_LOCK
+#define CLOSE_STATUS                    STATE_DOOR_CLOSE
+
+/* Penalties for Lock difficulty based on whether or not you are using lockpicks. */
+#define Lock_Bonus                      (-50)
+
+/* Max and Min damage for the trap */
+#define MIN_DAMAGE                      (50)
+#define MAX_DAMAGE                      (90)
+
+#include "../_pbs_headers/doors_ext.h"
