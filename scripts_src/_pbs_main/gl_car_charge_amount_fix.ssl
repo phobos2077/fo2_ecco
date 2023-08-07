@@ -1,0 +1,33 @@
+#include "../sfall/sfall.h"
+#include "../sfall/lib.obj.h"
+#include "../sfall/define_lite.h"
+
+#define PID_DRIVABLE_CAR                    (33555441)
+#define PID_SMALL_ENERGY_CELL               (38)
+#define PID_MICRO_FUSION_CELL               (39)
+#define GAS_TANK_CAPACITY                   (80000)
+
+procedure useobjon_hook begin
+   variable
+      target := get_sfall_arg,
+      user := get_sfall_arg,
+      item := get_sfall_arg;
+
+   //display_msg(string_format("useobjon: %s uses %s on %s", obj_name_safe(user), obj_name_safe(item), obj_name_safe(target)));
+   if (target and item and
+      obj_pid(target) == PID_DRIVABLE_CAR and
+      user == dude_obj and (obj_pid(item) == PID_MICRO_FUSION_CELL or obj_pid(item) == PID_SMALL_ENERGY_CELL) and
+      car_gas_amount < GAS_TANK_CAPACITY) then
+   begin
+      variable refillPercent := get_weapon_ammo_count(item);
+      if (obj_pid(item) == PID_SMALL_ENERGY_CELL) then
+         refillPercent /= 2;
+      car_give_gas(80000 * refillPercent / 100);
+      display_msg(mstr_proto(595));
+      set_sfall_return(1);
+   end
+end
+
+procedure start begin
+   register_hook_proc(HOOK_USEOBJON, useobjon_hook);
+end
