@@ -56,8 +56,9 @@
 #define trap_type_by_trapkit_pid(pid)     (pbs_trap_config.item_to_type[pid])
 #define is_trap_kit_pid(pid)			      (trap_type_by_trapkit_pid(pid) != 0)
 
-
 #define send_trap_init_event(obj, type, charges)       add_timer_event(obj, 0, TRAP_EVENT_INIT + 0x100 * (type bwand 0xFF) + 0x10000 * (charges bwand 0xFF))
+
+#define obj_in_party_or_temp_follower(obj)     (get_team(obj) == get_team(dude_obj) or is_in_array(get_script(obj), pbs_trap_config.temp_followers_sids))
 
 
 // Normal variables
@@ -187,7 +188,7 @@ procedure react_hostile_action begin
    variable obj;
    foreach (obj in objects_in_radius(dude_tile, 15, dude_elevation, OBJ_TYPE_CRITTER)) begin
       if (obj != dude_obj
-         and not(obj_in_party(obj))
+         and (not obj_in_party_or_temp_follower(obj))
          and is_human(obj)
          and obj_can_see_obj(obj, dude_obj)) then
       begin
@@ -214,7 +215,9 @@ procedure trap_damage_critter(variable critter, variable dmgMin, variable dmgMax
    pbs_trap_last_target_dead := false;
 
    // If critter is killed outside of combat, setting WHO_HIT_ME ensures source_obj in destroy_p_proc returns dude_obj and e.g. grant karma bonus
-   set_object_data(critter, OBJ_DATA_WHO_HIT_ME, dude_obj);
+   if (critter != dude_obj and (not obj_in_party_or_temp_follower(critter) or (pbs_trap_config.friendfoe bwand TRAP_FRIENDFOE_PARTY) == 0)) then begin
+      set_object_data(critter, OBJ_DATA_WHO_HIT_ME, dude_obj);
+   end
    if (stop) then set_target_knockback(critter, 0, 0); // prevents knockback
 
    debug_log_fmt("critter_dmg(%s, %d, %X)", obj_name(critter) if critter else "null", dmg, dmgType bwor (DMG_BYPASS_ARMOR if (effects bwand DAM_BYPASS) else 0));
