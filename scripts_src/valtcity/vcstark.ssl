@@ -35,12 +35,17 @@
 #include "../headers/command.h"
 #include "../headers/modreact.h"
 
-#define RECON_BROKEN_HILLS_ASSIGNED      (3) // added by phobos2077
-#define RECON_BROKEN_HILLS_DONE          (4) // added by phobos2077
-
 #include "../_pbs_headers/talking_heads_compat.h"
 #define HEAD_STARK      (86)
 #define start_dialog_check_head_stark      start_gdialog_check_talking_head(4, HEAD_STARK, BACKGROUND_ADOBE)
+
+// phobos2077: gvar overrides
+#define RECON_BROKEN_HILLS_ASSIGNED      (3) // added by phobos2077
+#define RECON_BROKEN_HILLS_DONE          (4) // added by phobos2077
+#undef RECON_NCR_ASSIGNED
+#define RECON_NCR_ASSIGNED               (5) // changed 3 => 5
+#undef RECON_NCR_DONE
+#define RECON_NCR_DONE                   (6) // changed 4 => 6
 
 /* Standard Script Procedures */
 procedure start;
