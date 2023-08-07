@@ -51,6 +51,8 @@ procedure map_enter_p_proc;
 #define DT_MODE_ADD   (1)
 #define DT_MODE_MULT  (2)
 
+import variable pbs_trap_hold_critters;
+
 variable
    item_damage_min,
    item_damage_max,
@@ -199,11 +201,11 @@ procedure combatdamage_handler begin
    if (flagsSource bwand DAM_HIT) then begin
       target := ctdTarget;
       flags := flagsTarget;
-      knockback := 1;
+      knockback := true;
    end else begin
       target := ctdSource;
       flags := flagsSource;
-      knockback := 0;
+      knockback := false;
    end
 
    if not target or (obj_type(target) != OBJ_TYPE_CRITTER) then begin
@@ -271,13 +273,19 @@ procedure combatdamage_handler begin
          calcAmount += 10; // increase from 5
    end
 
-   if knockback and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)
+   // Clear trap hold on knockdown.
+   if ((flags bwand (DAM_KNOCKED_DOWN + DAM_KNOCKED_OUT)) and pbs_trap_hold_critters[target]) then begin
+      unset_array(pbs_trap_hold_critters, target);
+   end
+   if knockback
+      and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)
       and (dmgType == DMG_explosion or weapon == 0 or weaponSubType == WEAPON_TYPE_MELEE)
+      and (pbs_trap_hold_critters[target] == 0) // critters caught in traps should not move until released
       and ((get_proto_data(obj_pid(target), PROTO_CR_FLAGS) bwand CFLG_NOKNOCKDOWN) == 0) then begin // critter_flag_check_
 
       if (target == dude_obj) and has_trait(TRAIT_PERK, target, PERK_stonewall_perk) then begin
          stoneWall := 1;
-         if (random(0, 100) < 50) then knockback := 0;
+         if (random(0, 100) < 50) then knockback := false;
       end
       if knockback then begin
          if (weaponPerk == PERK_weapon_knockback) then
