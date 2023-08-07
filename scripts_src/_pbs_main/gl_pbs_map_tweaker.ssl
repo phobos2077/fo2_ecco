@@ -7,10 +7,13 @@
    - Change object script.
 */
 
+#define SCRIPT_REALNAME       "pbs_map_tweaker"
+
 #include "../sfall/sfall.h"
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.inven.h"
 #include "../sfall/define_lite.h"
+#include "../_pbs_headers/ecco_log.h"
 
 variable
    config,
@@ -19,9 +22,6 @@ variable
 #define CUR_MAP_CONFIG  config[""+cur_map_index]
 
 #define OBJ_IS_FLAT(obj)   (get_flags(obj) bwand FLAG_FLAT)
-
-#define debug_log(msg)		debug_msg("pbs_map_tweaker: "+msg)
-#define debug_err(msg)		debug_msg("! ERROR ! pbs_map_tweaker: "+msg)
 
 #define format_cmd_log(msg, tile)   (tile + ": " + msg)
 #define debug_log_cmd(msg, tile)		debug_log(format_cmd_log(msg, tile))
@@ -215,31 +215,44 @@ procedure execute_command(variable cmdStr, variable tileNum, variable elev) begi
    call handler(tileNum, elev, tileObj, args);
 end
 
-procedure apply_tweaks_for_current_map begin
-   variable elev;
-   for (elev := 0; elev <= 2; elev++) begin
-      variable mapElevConfig := config[cur_map_index + "_" + elev];
-      if (not mapElevConfig) then continue;
+procedure apply_tweaks_for_elev(variable elev) begin
+   variable sectKey := cur_map_index + "_" + elev;
+   variable mapElevConfig := config[sectKey];
+   if (not mapElevConfig) then return;
 
-      debug_log("Running commands for elev "+elev);
-      variable tileNum, cmds, cmd, tileObj;
-      foreach (tileNum: cmds in mapElevConfig) begin
-         tileNum := atoi(tileNum);
-         cmds := string_split(cmds, ",");
-         foreach (cmd in cmds) begin
-            call execute_command(cmd, tileNum, elev);
-         end
+   debug_log("Running commands for elev "+elev);
+   variable k, tileNum, cmds, cmd, tileObj;
+   foreach (k: cmds in mapElevConfig) begin
+      tileNum := atoi(k);
+      if (tileNum <= 0) then begin
+         debug_err_fmt("%s.%s : invalid tile num", sectKey, k);
+         continue;
+      end
+      cmds := string_split(cmds, ",");
+      foreach (cmd in cmds) begin
+         call execute_command(cmd, tileNum, elev);
       end
    end
 end
 
+procedure apply_tweaks_for_current_map begin
+   variable elev;
+   for (elev := 0; elev <= 2; elev++) begin
+      call apply_tweaks_for_elev(elev);
+   end
+end
+
+#define is_cfg_true(x)      (x andAlso atoi(x))
 
 procedure start begin
    config := get_ini_config_db("config\\pbs_map_tweaks.ini");
    debug_log("Loaded "+len_array(config)+" sections.");
 
-   // FOR TESTING ONLY!, DON'T FORGET TO DISABLE!
-   //call apply_tweaks_for_current_map;
+   // For development
+   if (is_cfg_true(config.debug.run_on_load) and cur_town != -1) then begin
+      display_msg("DEBUG: running map tweaks");
+      call apply_tweaks_for_elev(elevation(dude_obj));
+   end
 end
 
 // Main logic goes here
