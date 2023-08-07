@@ -1,0 +1,496 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name:
+        Location: Den
+        Description:
+
+        Log:
+
+           Created: August 22, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+#define SCRIPT_REALNAME "dcfred"
+#include "../headers/define.h"
+#define NAME                    SCRIPT_DCFRED
+#define TOWN_REPUTATION         GVAR_TOWN_REP_THE_DEN
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+#include "../headers/den.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure map_exit_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node007b;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node037;
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Flags                        (4)
+#define LVAR_Home_Tile                    (5)
+#define LVAR_FRED_WIN_TIMER               (6)
+#define LVAR_DEN_FRED                     (7)
+
+#define node_6_bit                        bit_10
+#define node_7_bit                        bit_11
+#define node_17_bit                       bit_12
+#define node_18_bit                       bit_13
+#define node_33_bit                       bit_14
+
+#define node_6                            lvar_bit(LVAR_Flags, node_6_bit)
+#define set_node_6                        set_lvar_bit_on(LVAR_Flags, node_6_bit)
+
+#define node_7                            lvar_bit(LVAR_Flags, node_7_bit)
+#define set_node_7                        set_lvar_bit_on(LVAR_Flags, node_7_bit)
+
+#define node_17                           lvar_bit(LVAR_Flags, node_17_bit)
+#define set_node_17                       set_lvar_bit_on(LVAR_Flags, node_17_bit)
+
+#define node_18                           lvar_bit(LVAR_Flags, node_18_bit)
+#define set_node_18                       set_lvar_bit_on(LVAR_Flags, node_18_bit)
+
+#define node_33                           lvar_bit(LVAR_Flags, node_33_bit)
+#define set_node_33                       set_lvar_bit_on(LVAR_Flags, node_33_bit)
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+/* Local variables which do not need to be saved between map changes. */
+
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == timed_event_wander) then begin
+      if (combat_is_initialized == false) then begin
+         if (game_time_hour <= 800) then begin
+            anim_move_to_point_rate(local_var(LVAR_Home_Tile), 8)
+         end else if (anim_busy(self_obj) == false) then begin
+            random_tile_in_beckys;
+            if (global_temp != 0) then begin
+               anim_move_to_point_rate(global_temp, 8)
+            end
+         end
+      end
+      flush_add_timer_event_sec(self_obj, random(15, 90), timed_event_wander);
+   end
+end
+
+procedure map_update_p_proc begin
+   if (local_var(LVAR_Home_Tile) == 0) then begin
+      set_local_var(LVAR_Home_Tile, self_tile);
+   end
+end
+
+procedure map_enter_p_proc begin
+variable temp_fred;
+   if (local_var(LVAR_Home_Tile) == 0) then begin
+      set_local_var(LVAR_Home_Tile, self_tile);
+   end
+   if (is_loading_game == false) then begin
+      if (self_pid != PID_UP_CLASS_MALE_CITIZEN) then begin
+         if (fred_won) then begin
+            set_gave_fred_winnings;
+            check_set_obj_visiblility(self_obj, true);
+            critter_attempt_placement(self_obj, map_exit_tile, self_elevation);
+            temp_fred := create_object_sid(PID_UP_CLASS_MALE_CITIZEN, 0, 0, NAME);
+            critter_attempt_placement(temp_fred, local_var(LVAR_Home_Tile), self_elevation);
+            destroy_object(self_obj);
+         end
+      end
+      flush_add_timer_event_sec(self_obj, random(15, 90), timed_event_wander);
+      self_rotate(3);
+   end
+   set_self_team(TEAM_THE_DEN);
+   set_self_ai(AI_COWARD);
+end
+
+procedure map_exit_p_proc begin
+end
+
+procedure critter_p_proc begin
+   if (self_can_see_dude) then begin
+      if (hostile) then begin
+         self_attack_dude;
+      end else if (self_pid == PID_UP_CLASS_MALE_CITIZEN) then begin
+         if (node_7 == false) then begin
+            dialogue_system_enter;
+         end
+      end
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      set_personal_enemy;
+   end
+end
+
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+      call Node998;
+   end
+end
+
+procedure talk_p_proc begin
+   if (self_pid == PID_UP_CLASS_MALE_CITIZEN) then begin
+      if (node_7) then begin
+         call Node007b;
+      end else begin
+         start_dialog_at_node(Node007);
+      end
+   end else if ((game_time_hour <= 800) and (tile_in_tubbys(self_tile))) then begin
+      call Node002;
+   end else if (global_var(GVAR_DEN_FRED_PAID) == 1) then begin	//killap's fix
+      call Node003;
+   end else if (global_var(GVAR_DEN_FRED_COVERED) == 1) then begin	//killap's fix
+      call Node004;
+   end else if (global_var(GVAR_DEN_FRED_LOAN) == 1) then begin	//killap's fix
+      call Node005;
+   end else if ((becky_job(state_becky_job_collect)) and (becky_work)) then begin
+      if (fred_remembers) then begin
+         start_dialog_at_node(Node037);
+      end else begin
+         start_dialog_at_node(Node006);
+      end
+   end else begin
+      call Node001;
+   end
+   set_herebefore;
+end
+
+procedure destroy_p_proc begin
+   set_fred_dead;
+   self_caps_adjust(fred_money);
+   inc_good_critter
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_mstr(100 + herebefore + (self_pid == PID_UP_CLASS_MALE_CITIZEN));
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   display_mstr(150 + (self_pid == PID_UP_CLASS_MALE_CITIZEN));
+   set_examined;
+end
+
+procedure use_skill_on_p_proc begin
+end
+
+procedure Node998 begin
+   set_hostile;
+end
+procedure Node999 begin
+end
+procedure Node990 begin
+   if (global_var(GVAR_DEN_FRED_COVERED) == 1) then begin //killap's fix
+      call Node012;
+   end else begin
+      call Node013;
+   end
+end
+procedure Node989 begin
+   dude_caps_adjust(1000);
+end
+procedure Node988 begin
+   dude_caps_adjust(2000);
+   give_pid_qty(dude_obj, PID_MICRO_FUSION_CELL, 3) // pbs
+   give_pid_qty(dude_obj, PID_SMALL_ENERGY_CELL, 3) // pbs
+   give_pid_qty(dude_obj, PID_PLASMA_GRENADE, 1)
+end
+procedure Node987 begin
+   if (is_success(roll_vs_skill(dude_obj, SKILL_SPEECH, 0))) then begin
+      call Node024;
+   end else begin
+      call Node025;
+   end
+end
+procedure Node986 begin
+   dude_caps_adjust(200);
+   set_fred_money(0);
+end
+procedure Node985 begin
+   if (is_success(roll_vs_skill(dude_obj, SKILL_SPEECH, 20))) then begin
+      call Node022;
+   end else begin
+      call Node036;
+   end
+end
+
+procedure Node001 begin
+   floater_rand(200, 207);
+end
+procedure Node002 begin
+   floater_rand(221 - dude_is_male, 227 + dude_is_female);
+end
+procedure Node003 begin
+   floater_rand(240, 247);
+end
+procedure Node004 begin
+   floater_rand(260, 264);
+end
+procedure Node005 begin
+   floater_rand(275, 281);
+end
+procedure Node006 begin
+   set_fred_talk;
+   Reply(295 + node_6);
+   set_node_6;
+   NOption(297, Node018, 004);
+   NOption(298, Node999, 004);
+   NOption(299, Node017, -003);
+   NOption(300, Node999, -003);
+end
+procedure Node007 begin
+   Reply(310);
+   set_node_7;
+   GOption(312, Node008, 004);
+   BOption(313, Node009, 004); //was NOption - killap
+   BOption(314, Node009, -003); //was NOption - killap
+   NOption(315, Node009, -003);
+end
+procedure Node007b begin
+   floater(311);
+end
+procedure Node008 begin
+   Reply(320);
+   NOption(321, Node990, 004);
+   NOption(322, Node010, 004);
+end
+procedure Node009 begin
+   Reply(330);
+   NOption(331, Node990, 004);
+   BOption(332, Node010, 004);
+   NOption(333, Node990, -003);
+end
+procedure Node010 begin
+   Reply(340);
+   GOption(341, Node990, 004);
+   if (global_var(GVAR_DEN_FRED_COVERED) == 1) then begin //killap's fix
+      BOption(342, Node011, 004);
+   end else if (global_var(GVAR_DEN_FRED_LOAN) == 1) then begin //killap's fix
+      BOption(343, Node011, 004);
+   end
+end
+procedure Node011 begin
+   dude_caps_adjust(500);
+   Reply(350);
+   GOption(351, Node999, 004); //was 990 - killap
+   BOption(352, Node999, 004); //was 990 - killap
+end
+procedure Node012 begin
+   Reply(360);
+   NOption(361, Node014, 004);
+   NOption(362, Node014, 004);
+   NOption(363, Node014, -003);
+end
+procedure Node013 begin
+   Reply(370);
+   NOption(371, Node015, 004);
+   NOption(372, Node015, 004);
+   NOption(373, Node015, -003);
+end
+procedure Node014 begin
+   Reply(380);
+   GOption(381, Node016, 004);
+   NOption(382, Node989, 004);
+   NOption(383, Node989, 004);
+   NOption(384, Node989, -003);
+end
+procedure Node015 begin
+   Reply(390);
+   GOption(391, Node016, 004);
+   NOption(392, Node988, 004);
+   NOption(393, Node988, 004);
+   NOption(394, Node988, -003);
+end
+procedure Node016 begin
+   inc_general_rep(REP_BONUS_FRED_REWARD_TURNED_DOWN);
+   Reply(400);
+   NOption(401, Node999, 004);
+end
+procedure Node017 begin
+   Reply(410 + node_17);
+   set_node_17;
+   NOption(412, Node999, -003);
+end
+procedure Node018 begin
+   Reply(420 + node_18);
+   set_node_18;
+   BOption(422, Node020, 004);
+   if (dude_iq < 7) then begin
+      NOption(423, Node033, 004);
+   end
+   NOption(424, Node019, 007);
+end
+procedure Node019 begin
+   Reply(430);
+   BOption(431, Node021, 004);
+   NOption(432, Node022, 004);
+end
+procedure Node020 begin
+   Reply(440);
+   NOption(441, Node999, 004);
+   NOption(442, Node999, 001);
+end
+procedure Node021 begin
+   Reply(450);
+   BOption(451, Node999, 004);
+   NOption(452, Node999, 004);
+end
+procedure Node022 begin
+   set_fred_remembers;
+   Reply(460);
+   NOption(461, Node023, 004);
+   NOption(462, Node023, 004);
+end
+procedure Node023 begin
+   Reply(470);
+   BOption(471, Node999, 004);
+   BOption(472, Node987, 004);
+   NOption(473, Node026, 004);
+end
+procedure Node024 begin
+   set_global_var(GVAR_DEN_FRED_PAID,1);	//killap's fix
+   Reply(480);
+   GOption(481, Node026, 004);
+   BOption(482, Node986, 004);
+   NOption(483, Node986, 004);
+end
+procedure Node025 begin
+   set_fred_money(100);
+   Reply(490);
+   GOption(491, Node026, 004);
+   BOption(492, Node029, 004);
+   NOption(493, Node999, 004);
+end
+procedure Node026 begin
+   set_global_var(GVAR_DEN_FRED_COVERED,1);	//killap's fix
+   set_fred_money(100);
+   dude_caps_adjust(100);
+   Reply(500 + dude_is_female);
+   NOption(502, Node028, 004);
+   NOption(503, Node027, 004);
+end
+procedure Node027 begin
+   Reply(510);
+   NOption(511, Node028, 004);
+end
+procedure Node028 begin
+   start_fred_timer;
+   Reply(520);
+   GOption(521, Node030, 004);
+   NOption(522, Node999, 004);
+end
+procedure Node029 begin
+   Reply(530);
+   GOption(531, Node026, 004);
+   BOption(532, Node999, 004);
+end
+procedure Node030 begin
+   Reply(540);
+   GOption(541, Node031, 004);
+   NOption(542, Node032, 005);
+   BOption(543, Node999, 004);
+end
+procedure Node031 begin
+   dude_caps_adjust(-50);
+   set_global_var(GVAR_DEN_FRED_LOAN,1);	//killap's fix
+   set_global_var(GVAR_DEN_FRED_COVERED,0);   //killap's fix
+   set_fred_money(150);
+   Reply(550);
+   NOption(551, Node999, 004);
+end
+procedure Node032 begin
+//   set_global_var(GVAR_DEN_FRED_LOAN,1);	//killap's fix
+   Reply(560);
+   GOption(561, Node031, 004);
+   BOption(562, Node999, 004);
+end
+procedure Node033 begin
+   Reply(570 + node_33);
+   set_node_33;
+   NOption(572, Node034, 004);
+   BOption(573, Node035, 004);
+   NOption(574, Node985, 004);
+end
+procedure Node034 begin
+   Reply(580);
+   NOption(581, Node022, 004);
+   BOption(582, Node022, 004);
+end
+procedure Node035 begin
+   Reply(590);
+   BOption(591, Node022, 004);
+   BOption(592, Node022, 004);
+end
+procedure Node036 begin
+   Reply(600);
+   NOption(601, Node999, 004);
+   NOption(602, Node999, 004);
+end
+procedure Node037 begin
+   Reply(610);
+   BOption(611, Node999, 004);
+   BOption(612, Node987, 004);
+   NOption(613, Node026, 004);
+end
