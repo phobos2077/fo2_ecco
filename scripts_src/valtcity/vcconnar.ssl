@@ -49,7 +49,7 @@
 #define NAME                    SCRIPT_VCCONNAR
 #define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
 
-#define has_explosives           ( ((obj_is_carrying_obj_pid(dude_obj,PID_FRAG_GRENADE)) >= 10) and ((obj_is_carrying_obj_pid(dude_obj,PID_DYNAMITE)) >= 2))
+#define has_explosives           ( ((obj_is_carrying_obj_pid(dude_obj,PID_FRAG_GRENADE)) >= 5) and ((obj_is_carrying_obj_pid(dude_obj,PID_DYNAMITE)) >= 2))
 
 #include "../headers/command.h"
 #include "../headers/modreact.h"
@@ -650,15 +650,6 @@ procedure Node013 begin
   giq_option(4, SCRIPT_VCCONNAR, 803, Node999, 50);
 end
 
-//edited out by Lujo, unnecessary
-/*procedure Node013a begin
-   // change to explosives by Lujo
-   if ( ((obj_is_carrying_obj_pid(dude_obj,PID_FRAG_GRENADE)) >= 10) and ((obj_is_carrying_obj_pid(dude_obj,PID_DYNAMITE)) >= 2)) then
-       call Node015;
-   else
-       call Node014;
-end*/
-
 //Repeats what he wants you to get
 procedure Node014 begin
    Reply(137);
@@ -667,32 +658,6 @@ procedure Node014 begin
    NOption(138,Node999,004);
 end
 
-/*
-procedure Node015 begin
-   variable item;
-   variable item1;
-   variable item2;
-
-   item1:=dude_item(PID_SHOTGUN);
-   item2:=dude_item(PID_ASSAULT_RIFLE);
-
-   item:=rm_mult_objs_from_inven(dude_obj,item1,1);
-   item:=rm_mult_objs_from_inven(dude_obj,item2,3);
-
-   add_mult_objs_to_inven(self_obj,item1,1);
-   add_mult_objs_to_inven(self_obj,item2,3);
-
-   inc_general_rep(REP_BONUS_HELPED_VAULT_VILLAGE);
-
-   set_global_var(GVAR_VAULT_VILLAGE,VILLAGE_DELIVERED_GUNS);
-
-   set_local_var(LVAR_Time_Delivered,game_time);
-
-   Reply(139);
-
-   NOption(140,Node999,004);
-end
-*/
 
 //gun delivery node - WIN
 procedure Node015 begin //edited by Lujo to include grenades
@@ -702,11 +667,9 @@ procedure Node015 begin //edited by Lujo to include grenades
    LVar2 := dude_item(PID_DYNAMITE);
    LVar3 := dude_item(PID_FRAG_GRENADE);
    LVar1 := rm_mult_objs_from_inven(dude_obj, LVar2, 2);
-   //destroy_object(LVar2);
-   LVar1 := rm_mult_objs_from_inven(dude_obj, LVar3, 10);
-   //destroy_object(LVar3);
-   //add_mult_objs_to_inven(self_obj, LVar3, 10); - removed grenades from inventory so people wouldn't steal them
-   //add_mult_objs_to_inven(self_obj, LVar3, 10);
+   destroy_object(LVar2);
+   LVar1 := rm_mult_objs_from_inven(dude_obj, LVar3, 5);
+   destroy_object(LVar3);
    set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + 20);
    ndebug("Player gains " + 20 + " Karma Points.");
    CheckKarma;
@@ -928,7 +891,7 @@ procedure Node028c begin
 end
 
 procedure Node028d begin
-   dude_caps_adjust(-2500);
+   dude_caps_adjust(-1250);
    set_global_var(GVAR_PLAYER_REPUTATION, global_var(GVAR_PLAYER_REPUTATION) + 2);
    Reply(mstr(740) + dude_name + mstr(741));
    NOption(174, Node999, 4);

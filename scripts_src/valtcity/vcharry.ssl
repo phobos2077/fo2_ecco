@@ -106,11 +106,6 @@ import variable plow1;
 import variable plow2;
 import variable Harry_Ptr;
 
-//added by killap - expansion pack
-variable gun1 := 0;
-variable gun2 := 0;
-//end
-
 #define move_inven_to_box              move_obj_inven_to_obj(self_obj, vault_city_harry_box);
 #define move_inven_from_box            move_obj_inven_to_obj(vault_city_harry_box, self_obj);
 #define move_inven_to_temp_box         move_obj_inven_to_obj(self_obj, vault_city_courtyard_temp_box);
@@ -135,13 +130,13 @@ procedure map_enter_p_proc begin
 
    //added by killap - expansion pack (Village)
    // changed by phobos2077 to reduce loot
-   if (global_var(GVAR_QUEST_VAULT_SERVANT) == SERVANT_TURNED_IN_HARRY and self_tile != JAIL_TILE) then begin
+   if (global_var(GVAR_VAULT_SERVANT) == SERVANT_TURNED_IN_HARRY and self_tile != JAIL_TILE) then begin
     critter_attempt_placement(self_obj, JAIL_TILE, 0);
     inven_unwield(self_obj);
     store_shelf_obj := tile_contains_pid_obj(12112,dude_elevation,152);
     move_obj_inven_to_obj(self_obj, store_shelf_obj);
     move_obj_inven_to_obj(vault_city_harry_box, store_shelf_obj);
-    // phobos2077: reduce loot: all armors and 30% of other items
+    // phobos2077: reduce loot: all armors and 50% of other items
     restock_amt := 0;
     while (inven_ptr(store_shelf_obj, restock_amt) != 0) do begin
       restock_obj := inven_ptr(store_shelf_obj, restock_amt);
@@ -221,7 +216,7 @@ procedure talk_p_proc begin
    GetReaction;
 
    //added by killap - expansion pack (Village)
-   if (global_var(GVAR_QUEST_VAULT_SERVANT) == SERVANT_TURNED_IN_HARRY) then
+   if (global_var(GVAR_VAULT_SERVANT) == SERVANT_TURNED_IN_HARRY) then
     float_msg(self_obj, message_str(SCRIPT_VCHARRY, random(145, 149)), FLOAT_MSG_YELLOW);
    //end
    else if town_rep_is_vilified then begin
@@ -457,15 +452,18 @@ begin
     giq_option(4, SCRIPT_VCHARRY, 134, Node013, BAD_REACTION); //killap
 end
 
+procedure GiveWeaponsForVillage
+begin
+  // changed from weapons to explosives by Lujo/phobos2077
+  add_mult_objs_to_inven(dude_obj, create_object_sid(PID_DYNAMITE, 0, 0, -1), 2);
+  add_mult_objs_to_inven(dude_obj, create_object_sid(PID_FRAG_GRENADE, 0, 0, -1), 5);
+end
+
 procedure Node011
 begin
   set_local_var(LVAR_Village_Guns,2);
   //set_local_var(7, 2);
-  // changed from weapons to explosives by Lujo
-  gun1 := create_object_sid(PID_DYNAMITE, 0, 0, -1);
-  gun2 := create_object_sid(PID_FRAG_GRENADE, 0, 0, -1);
-  add_mult_objs_to_inven(dude_obj, gun1, 2);
-  add_mult_objs_to_inven(dude_obj, gun2, 10);
+  call GiveWeaponsForVillage;
   item_caps_adjust(dude_obj, -4000);
   set_global_var(GVAR_QUEST_VAULT_VILLAGE, VILLAGE_QUEST_GOT_GUNS); //edit by killap
   //set_global_var(GVAR_ENEMY_VAULT_VILLAGE, 8);
@@ -479,11 +477,7 @@ begin
   begin
     gsay_reply(SCRIPT_VCHARRY, 136); //killap
     giq_option(4, SCRIPT_VCHARRY, 138, Node999, NEUTRAL_REACTION); //killap
-    // changed from weapons to explosives by Lujo
-    gun1 := create_object_sid(PID_DYNAMITE, 0, 0, -1);
-    gun2 := create_object_sid(PID_FRAG_GRENADE, 0, 0, -1);
-    add_mult_objs_to_inven(dude_obj, gun1, 2);
-    add_mult_objs_to_inven(dude_obj, gun2, 10);
+    call GiveWeaponsForVillage;
     dude_caps_adjust(-2500);
     //set_local_var(7, 2);
     set_local_var(LVAR_Village_Guns,2);
@@ -503,11 +497,7 @@ begin
   begin
     gsay_reply(SCRIPT_VCHARRY, 136); //killap
     giq_option(4, SCRIPT_VCHARRY, 138, Node999, NEUTRAL_REACTION); //killap
-    // changed from weapons to explosives by Lujo
-    gun1 := create_object_sid(PID_DYNAMITE, 0, 0, -1);
-    gun2 := create_object_sid(PID_FRAG_GRENADE, 0, 0, -1);
-    add_mult_objs_to_inven(dude_obj, gun1, 2);
-    add_mult_objs_to_inven(dude_obj, gun2, 10);
+    call GiveWeaponsForVillage;
     dude_caps_adjust(-1000);
     //set_local_var(7, 2);
     set_local_var(LVAR_Village_Guns,2);

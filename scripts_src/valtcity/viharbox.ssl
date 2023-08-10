@@ -47,7 +47,7 @@ end
 
 procedure map_enter_p_proc begin
    //added check by killap - expansion pack (Village)
-   if (global_var(GVAR_QUEST_VAULT_SERVANT) == SERVANT_TURNED_IN_HARRY) then return;
+   if (global_var(GVAR_VAULT_SERVANT) == SERVANT_TURNED_IN_HARRY) then return;
 
    vault_city_harry_box := self_obj;
    if (is_loading_game == false) then begin
