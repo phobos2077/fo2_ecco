@@ -70,7 +70,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_RADAWAY, 1, 3, 100)
          check_restock_item(PID_FRAG_GRENADE, 2, 2, 100)
          check_restock_item(PID_14MM_PISTOL, 1, 1, 100)
-         check_restock_item(PID_FN_FAL, 1, 1, 25)
+         check_restock_item(PID_ASSAULT_RIFLE, 1, 1, 25) // pbs: changed from FN FAL
          check_restock_item(PID_COMBAT_SHOTGUN, 1, 1, 25)
          check_restock_item(PID_14MM_AP, 1, 1, 100)
          call restore_critical_items(tmp_box);
