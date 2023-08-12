@@ -1,3 +1,7 @@
+/*
+   Adds ambient radiation to certain areas of Fallout 2 world.
+*/
+
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
 #include "../headers/maps.h"
@@ -5,17 +9,21 @@
 
 #define SCRIPT_REALNAME    "gl_pbs_radiation"
 #include "../_pbs_headers/ecco_log.h"
+#include "../_pbs_headers/math_ext.h"
 
 #define SGVAR_RADIATION_LAST_UPDATE     "PBSRADTM"
 
-#define RADIATE_GECKO                   (2)
-#define RADIATE_GECKO_FIXED             (1)
-#define RADIATE_GECKO_MELTDOWN          (10)
-#define RADIATE_GECKO_PLANT_MULT        (3)
-#define RADIATE_TIMEOUT                 (game_ticks(30 * 60))
+// Radiation in rads per day
+#define RADIATE_GECKO                   (96)
+#define RADIATE_GECKO_FIXED             (48)
+#define RADIATE_GECKO_OPTIMIZED         (24)
+#define RADIATE_GECKO_MELTDOWN         (480)
+#define RADIATE_GECKO_PLANT_MULT         (3)
+#define RADIATE_BH                      (48)
+#define RADIATE_BH_FIXED                (12)
 
 #define last_radiated                   get_sfall_global_int(SGVAR_RADIATION_LAST_UPDATE)
-#define set_last_radiated(v)            set_sfall_global(SGVAR_RADIATION_LAST_UPDATE, v)
+#define update_last_radiated            set_sfall_global(SGVAR_RADIATION_LAST_UPDATE, game_time)
 
 #define gecko_plant_status              global_var(GVAR_VAULT_PLANT_STATUS)
 #define gecko_plant_is_meltdown         (global_var(GVAR_GECKO_MELTDOWN) > 0)
@@ -30,7 +38,7 @@
    end
 end*/
 
-procedure get_area_radiation begin
+procedure get_area_radiation_per_day begin
    if (get_game_mode BWAND WORLDMAP) then begin
       // TODO: radiation on world map?
    end else
@@ -42,58 +50,56 @@ procedure get_area_radiation begin
       end else if (gecko_plant_status == PLANT_REPAIRED) then
          rads := RADIATE_GECKO_FIXED;
       else if (gecko_plant_status == PLANT_OPTIMIZED) then
-         rads := 0;
+         rads := RADIATE_GECKO_OPTIMIZED;
       else
          rads := RADIATE_GECKO;
       if (cur_map_index == MAP_GECKO_POWER_PLANT) then rads *= RADIATE_GECKO_PLANT_MULT;
       return rads;
+   end else if (cur_town == AREA_BROKEN_HILLS) then begin
+      return RADIATE_BH if (global_var(GVAR_BH_MINE) < MINE_FIXED_CASH) else RADIATE_BH_FIXED;
    end
    return 0;
 end
 
-procedure update_radiation(variable force := false) begin
+procedure check_irradiate begin
    variable rads, elapsed;
-
-   if (not last_radiated) then set_last_radiated(game_time);
-   else if (not force and game_time < last_radiated + RADIATE_TIMEOUT) then return;
-
-   rads := get_area_radiation;
-   if (rads) then begin
-      rads := floor(1.0 * rads * (game_time - last_radiated) / RADIATE_TIMEOUT);
-      if (rads > 0) then begin
+   rads := get_area_radiation_per_day;
+   if (rads and last_radiated > 0 and game_time > last_radiated + ONE_GAME_MINUTE) then begin
+      rads := 1.0 * rads * (game_time - last_radiated) / ONE_GAME_DAY;
+      if (rads >= 1) then begin
+         rads := math_round_chance(rads);
          debug_log("Radiate by " + rads);
          radiation_inc(dude_obj, rads);
+         update_last_radiated;
       end
    end
-   set_last_radiated(game_time);
 end
 
 procedure gamemodechange_hook begin
    variable lastMode := get_sfall_arg_at(1);
    if (not (get_game_mode BWAND WORLDMAP) and lastMode BWAND WORLDMAP) then begin
       debug_log("Entered from worldmap, resetting rads");
-      set_last_radiated(game_time);
-      //call update_radiation(true);
+      update_last_radiated;
    end
 end
 
 procedure start begin
-   call update_radiation;
+   update_last_radiated;
 
    register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_hook);
 end
 
 procedure map_enter_p_proc begin
    //display_msg("radia map_enter: "+cur_map_index);
-   call update_radiation;
+   update_last_radiated;
 end
 
 procedure map_exit_p_proc begin
    //display_msg("radia map_exit: "+cur_map_index);
-   call update_radiation(true);
+   call check_irradiate;
 end
 
 procedure map_update_p_proc begin
    //display_msg("radia map_update: "+cur_map_index);
-   call update_radiation;
+   call check_irradiate;
 end
