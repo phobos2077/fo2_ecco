@@ -608,7 +608,7 @@ procedure undo_batch(variable num) begin
         end
         line += 1;
     end
-    call add_items_pid(dude_obj, cur_pid, num * cur_pid_qty);
+    call remove_items_pid(dude_obj, cur_pid, num * cur_pid_qty);
     hours := ((cur_time * num) / ONE_GAME_MINUTE) / 60;
     mins  := ((cur_time * num) / ONE_GAME_MINUTE) % 60;
     display_msg(bstr(401) + proto_data(cur_pid, it_name) + bstr(402) + (num * cur_pid_qty) + bstr(403) + hours + bstr(404) + mins + bstr(405));

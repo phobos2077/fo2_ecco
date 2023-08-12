@@ -127,7 +127,7 @@
 # FOOD
 
 {1000}{}{[ITEM]}
-{1001}{}{627:2}                            # Fish Soup
+{1001}{}{627}                              # Fish Soup
 {1002}{}{pcx/items/stew1.pcx}
 {1003}{}{69060}
 {1004}{}{CRFT_FOD}                                 # 
@@ -145,7 +145,7 @@
 
 
 {1100}{}{[ITEM]}
-{1101}{}{628:2}                            # Meat Stew
+{1101}{}{628}                              # Meat Stew
 {1102}{}{pcx/items/stew2.pcx}
 {1103}{}{69060}
 {1104}{}{CRFT_FOD}                                 # 
@@ -327,9 +327,10 @@
 {2009}{}{75|308}                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 {2010}{}{[SKILLS]}
 {2011}{}{THROWING:40}
-{2012}{}{[COMPONENTS]}
-{2013}{}{79:1}                              # PID_FLARE
-{2014}{}{125:1|469:1}                       # PID_BOOZE or PID_ROT_GUT
+{2012}{}{REPAIR:30}
+{2013}{}{[COMPONENTS]}
+{2014}{}{79:1}                              # PID_FLARE
+{2015}{}{125:1|469:1}                       # PID_BOOZE or PID_ROT_GUT
 
 
 {2100}{}{[ITEM]}
@@ -376,14 +377,14 @@
 {2302}{}{pcx/items/ssslugs.pcx}
 {2303}{}{74060}
 {2304}{}{CRFT_AMM}                         # ammo craft schematics
-{2305}{}{54000}                            # 1 h 30 m
+{2305}{}{36000}                            # 1 h
 {2306}{}{NO}
 {2307}{}{5}                                # Ammo
 {2308}{}{[TOOLS]}
 {2309}{}{75|308}                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 {2310}{}{[SKILLS]}
-{2311}{}{SMALL_GUNS:50}
-{2312}{}{REPAIR:40}
+{2311}{}{SMALL_GUNS:60}
+{2312}{}{REPAIR:50}
 {2313}{}{[COMPONENTS]}
 {2314}{}{95:1}                             # Shotgun shells
 {2315}{}{19:1}                             # PID_ROCK
@@ -394,14 +395,14 @@
 {2402}{}{pcx/items/ssbcksht.pcx}
 {2403}{}{79060}
 {2404}{}{CRFT_AMM}                         # ammo craft schematics
-{2405}{}{54000}                            # 1 h 30 m
+{2405}{}{72000}                            # 2 h
 {2406}{}{NO}
 {2407}{}{5}                                # Ammo
 {2408}{}{[TOOLS]}
 {2409}{}{75|308}                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 {2410}{}{[SKILLS]}
-{2411}{}{SMALL_GUNS:70}
-{2412}{}{REPAIR:60}
+{2411}{}{SMALL_GUNS:100}
+{2412}{}{REPAIR:80}
 {2413}{}{[COMPONENTS]}
 {2414}{}{95:2}                             # Shotgun shells
 {2415}{}{32:1|382:1}                       # Flamethrower fuel
@@ -418,7 +419,7 @@
 {2508}{}{[TOOLS]}
 {2509}{}{308}                              # PID_SUPER_TOOL_KIT
 {2510}{}{[SKILLS]}
-{2511}{}{SMALL_GUNS:60}
+{2511}{}{SMALL_GUNS:80}
 {2512}{}{REPAIR:70}
 {2513}{}{[COMPONENTS]}
 {2514}{}{34:1}                             # 223 FMJ
@@ -436,7 +437,7 @@
 {2608}{}{[TOOLS]}
 {2609}{}{308}                              # PID_SUPER_TOOL_KIT
 {2610}{}{[SKILLS]}
-{2611}{}{SMALL_GUNS:80}
+{2611}{}{SMALL_GUNS:100}
 {2612}{}{REPAIR:80}
 {2613}{}{[COMPONENTS]}
 {2614}{}{363:1}                            # 7.62 FMJ
@@ -471,7 +472,7 @@
 {2808}{}{[TOOLS]}
 {2809}{}{308}                              # Super tool kit
 {2810}{}{[SKILLS]}
-{2811}{}{BIG_GUNS:80}
+{2811}{}{BIG_GUNS:70}
 {2812}{}{REPAIR:60}
 {2813}{}{[COMPONENTS]}
 {2814}{}{631:1}                            # 40mm HE grenades
@@ -502,13 +503,13 @@
 {3002}{}{pcx/items/spiketrap.pcx}
 {3003}{}{69055}
 {3004}{}{CRFT_BLD}                         # blades schematics
-{3005}{}{162000}                           # 4 h 30 m
+{3005}{}{108000}                           # 3 h 00 m
 {3006}{}{NO}
 {3007}{}{6}                                # Traps
 {3008}{}{[TOOLS]}
 {3009}{}{308}                              # PID_SUPER_TOOL_KIT
 {3010}{}{[SKILLS]}
-{3011}{}{REPAIR+TRAPS:110}
+{3011}{}{REPAIR+TRAPS:140}
 {3012}{}{[COMPONENTS]}
 {3013}{}{98:1}                             # Junk
 {3014}{}{4:3|45:3|7:2|280:2}               # Knives OR throwing knives OR Spears OR Sharp Spears
@@ -520,7 +521,7 @@
 {3103}{}{68061}
 {3104}{}{CRFT_EXP}                         # explosive schematics 644
 {3105}{}{108000}                           # 3 h 00 m
-{3106}{}{NO}
+{3106}{}{YES}
 {3107}{}{6}                                # Traps
 {3108}{}{[TOOLS]}
 {3109}{}{75|308}                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
@@ -754,7 +755,7 @@
 {4403}{}{57055}
 {4404}{}{CRFT_TOL}                          # tool schematics
 {4405}{}{72000}                             # 2 h 00 m
-{4406}{}{NO}
+{4406}{}{YES}
 {4407}{}{11}                                # Misc
 {4408}{}{[TOOLS]}
 {4409}{}{[SKILLS]}

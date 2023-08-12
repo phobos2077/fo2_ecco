@@ -3,7 +3,7 @@
 # FOOD
 
 [ITEM]
-627:2                            # Fish Soup
+627                              # Fish Soup
 pcx/items/stew1.pcx
 69060
 CRFT_FOD                                 # 
@@ -21,7 +21,7 @@ FIRST_AID+OUTDOORSMAN:90
 
 
 [ITEM]
-628:2                            # Meat Stew
+628                              # Meat Stew
 pcx/items/stew2.pcx
 69060
 CRFT_FOD                                 # 
@@ -203,6 +203,7 @@ NO
 75|308                            # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 [SKILLS]
 THROWING:40
+REPAIR:30
 [COMPONENTS]
 79:1                              # PID_FLARE
 125:1|469:1                       # PID_BOOZE or PID_ROT_GUT
@@ -252,14 +253,14 @@ REPAIR:60
 pcx/items/ssslugs.pcx
 74060
 CRFT_AMM                         # ammo craft schematics
-54000                            # 1 h 30 m
+36000                            # 1 h
 NO
 5                                # Ammo
 [TOOLS]
 75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 [SKILLS]
-SMALL_GUNS:50
-REPAIR:40
+SMALL_GUNS:60
+REPAIR:50
 [COMPONENTS]
 95:1                             # Shotgun shells
 19:1                             # PID_ROCK
@@ -270,14 +271,14 @@ REPAIR:40
 pcx/items/ssbcksht.pcx
 79060
 CRFT_AMM                         # ammo craft schematics
-54000                            # 1 h 30 m
+72000                            # 2 h
 NO
 5                                # Ammo
 [TOOLS]
 75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
 [SKILLS]
-SMALL_GUNS:70
-REPAIR:60
+SMALL_GUNS:100
+REPAIR:80
 [COMPONENTS]
 95:2                             # Shotgun shells
 32:1|382:1                       # Flamethrower fuel
@@ -294,7 +295,7 @@ NO
 [TOOLS]
 308                              # PID_SUPER_TOOL_KIT
 [SKILLS]
-SMALL_GUNS:60
+SMALL_GUNS:80
 REPAIR:70
 [COMPONENTS]
 34:1                             # 223 FMJ
@@ -312,7 +313,7 @@ NO
 [TOOLS]
 308                              # PID_SUPER_TOOL_KIT
 [SKILLS]
-SMALL_GUNS:80
+SMALL_GUNS:100
 REPAIR:80
 [COMPONENTS]
 363:1                            # 7.62 FMJ
@@ -347,7 +348,7 @@ NO
 [TOOLS]
 308                              # Super tool kit
 [SKILLS]
-BIG_GUNS:80
+BIG_GUNS:70
 REPAIR:60
 [COMPONENTS]
 631:1                            # 40mm HE grenades
@@ -378,13 +379,13 @@ REPAIR+TRAPS:50
 pcx/items/spiketrap.pcx
 69055
 CRFT_BLD                         # blades schematics
-162000                           # 4 h 30 m
+108000                           # 3 h 00 m
 NO
 6                                # Traps
 [TOOLS]
 308                              # PID_SUPER_TOOL_KIT
 [SKILLS]
-REPAIR+TRAPS:110
+REPAIR+TRAPS:140
 [COMPONENTS]
 98:1                             # Junk
 4:3|45:3|7:2|280:2               # Knives OR throwing knives OR Spears OR Sharp Spears
@@ -396,7 +397,7 @@ pcx/items/trapkit.pcx
 68061
 CRFT_EXP                         # explosive schematics 644
 108000                           # 3 h 00 m
-NO
+YES
 6                                # Traps
 [TOOLS]
 75|308                           # PID_MULTI_TOOL | PID_SUPER_TOOL_KIT
@@ -630,7 +631,7 @@ pcx/items/suprtool.pcx
 57055
 CRFT_TOL                          # tool schematics
 72000                             # 2 h 00 m
-NO
+YES
 11                                # Misc
 [TOOLS]
 [SKILLS]
