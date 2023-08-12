@@ -598,20 +598,3 @@ procedure check_damage_formula begin
   end
   return true;
 end
-
-
-// 1.2 damage has 20% chance to be rounded up to 2
-// by burn
-procedure round_chance(variable dmg) begin
-   variable base_dmg = floor2(dmg);
-   variable chance = (dmg - base_dmg)*100;
-   variable rnd = random(1, 100);
-   variable final_dmg;
-
-   if dmg < 0 then begin
-      debug_msg("dmg is " + dmg + ", rounded dmg is 0");
-      return 0;
-   end
-   return (base_dmg + 1) if chance > rnd else base_dmg;
-end
-

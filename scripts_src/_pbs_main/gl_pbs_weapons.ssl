@@ -298,10 +298,23 @@ procedure itemdamage_handler begin
 end
 
 
+procedure weapon_type(variable weapon) begin
+   variable attackMode, type := WEAPON_TYPE_UNARMED;
 
+   if weapon then begin
+      attackMode := weapon_attack_mode(obj_pid(weapon), ATKTYPE_RWEP1);
+      if (attackMode >= ATTACK_MODE_SINGLE) then
+         type := WEAPON_TYPE_RANGED;
+      else if (attackMode == ATTACK_MODE_THROW) then
+         type := WEAPON_TYPE_THROWN;
+      else if (attackMode >= ATTACK_MODE_SWING) then
+         type := WEAPON_TYPE_MELEE;
+      else if (attackMode == ATTACK_MODE_NONE) then
+         type := WEAPON_TYPE_NONE;
+   end
 
-#define attack_mode_is_ranged(mode)       (mode == ATTACK_MODE_SINGLE or mode == ATTACK_MODE_BURST or mode == ATTACK_MODE_FLAME)
-#define weapon_pid_is_ranged(pid)         (attack_mode_is_ranged(weapon_attack_mode1(pid)) or attack_mode_is_ranged(weapon_attack_mode2(pid)))
+   return type;
+end
 
 procedure weapon_rank(variable weapon, variable target) begin
    variable
@@ -323,7 +336,6 @@ procedure weapon_rank(variable weapon, variable target) begin
    return round(expectedDmgPerAP * 10 + range);
 end
 
-#define weapon_is_ranged(obj)      weapon_pid_is_ranged(obj_pid(obj))
 
 /*
 HOOK_BESTWEAPON
@@ -347,7 +359,7 @@ procedure bestweapon_handler begin
    
    //display_msg(string_format("bestweapon for %s: %s vs %s -> %s (against %s)", obj_name_safe(critter), obj_name_safe(weapon1), obj_name_safe(weapon2), obj_name_safe(weaponChosen), obj_name_safe(target)));
 
-   if (weapon1 == 0 or weapon2 == 0 or weapon_is_ranged(weapon1) != weapon_is_ranged(weapon2)) then return;
+   if (weapon1 == 0 or weapon2 == 0 or weapon_type(weapon1) != weapon_type(weapon2)) then return;
 
    variable
       weapon1rank := weapon_rank(weapon1, target),
