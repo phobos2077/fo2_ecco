@@ -4,6 +4,7 @@
 #include "..\..\sfall\lib.obj.h"
 #include "..\..\sfall\sfall.h"
 #include "..\..\sfall\dik.h"
+#include "..\..\sfall\command_lite.h"
 
 //#define get_my_config   sfall_func2("config_load", "data\\worldmap.txt", true)
 #define get_my_config     get_ini_config("data\\huge.ini")
@@ -81,10 +82,10 @@ end
 procedure string_find_test begin
    //display_array(get_ini_sections("ecco/combat.ini"));
    
-   display_msg(""+string_pos("a big fucking string", "string"));
-   display_msg(""+string_pos_from("a big fucking string fuck", "fuck", 5));
-   display_msg(""+string_pos("Not Here!", "hErE"));
-   display_msg(""+string_pos(string_tolower("BUT Here!"), "here"));
+   display_msg(""+string_find("a big fucking string", "string"));
+   display_msg(""+string_find_from("a big fucking string fuck", "fuck", 5));
+   display_msg(""+string_find("Not Here!", "hErE"));
+   display_msg(""+string_find(string_tolower("BUT Here!"), "here"));
    display_msg(""+string_starts_with("Traps_WTF", "Traps_"));
 end
 
@@ -104,6 +105,19 @@ procedure keypress_hook begin
       end else begin
          display_msg(string_format("tile %d elev %d map %d", tile_under_cursor, elevation(dude_obj), cur_map_index));
       end
+   end
+   if (key == DIK_F3) then begin
+      move_to(dude_obj, tile_under_cursor, dude_elevation);
+      if (get_cursor_mode == 1 and obj_under_cursor(true, false)) then begin
+         //obj := obj_under_cursor(true, false);
+         //variable tile := tile_num(obj);
+         //destroy_object(obj);
+         //obj := create_object_sid(16777224, tile, dude_elevation, 1313);
+         //set_script(obj, 1049); // NIBASDOR
+         //display_msg(string_format("Set script for %s to %d", obj_name(obj), 1049));
+      end
+      //variable block := obj_blocking_line(Greeting_Watcher, tile_under_cursor, BLOCKING_TYPE_SHOOT);
+      //display_msg(string_format("%s blocking: %s", obj_name_safe(Greeting_Watcher), obj_name_safe(block)));
    end
 end
 
@@ -129,7 +143,7 @@ procedure start begin
 
    //display_msg(sprintf("__ a=%010d, b=%.4f %s %Z yyaay....\.=-=", 12));
   // display_msg(string_format("a=%04d, b=%.2f, and S=%Z|%s| %c", 12, 0.1353, "woop", 2323, 6, 7, 8) );
-   //string_pos(1);
-   //string_pos(1,2,3,4);
+   //string_find(1);
+   //string_find(1,2,3,4);
    //create(1,2,3)
 end

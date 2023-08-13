@@ -1,0 +1,147 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+//This script can be put on inventory objects
+//to allow nearby critters to detect when
+//dude attempts to steal from the inventory
+//object. You will have a map_var(19) called
+//Stealing or make a specific version for
+//your area.  nbk
+
+
+#define SCRIPT_REALNAME "cstouch"
+#include "../headers/define.h"
+#include "../headers/navarro.h"
+
+#define NAME                    SCRIPT_CSTOUCH
+#define COMMANDER_LOCKER        16673
+#define QUINCY_LOCKER           13673
+#define RAUL_LOCKER              9725
+
+#include "../headers/command.h"
+
+#define custom_use_skill_on_p_proc
+#define custom_use_obj_on_p_proc
+#define custom_pickup_p_proc
+#define custom_use_p_proc
+#define LOCKED_STATUS                   STATE_ACTIVE
+#define TRAPPED_STATUS                  STATE_INACTIVE
+#define DOOR_STATUS                     STATE_METAL
+#define LOCK_STATUS                     STATE_STANDARD_LOCK
+#define Lock_Bonus                      (-70)
+#define Crowbar_Bonus                   (-5)
+#define custom_mstr                     NAME
+#include "../headers/containers.h"
+
+procedure timed_event_p_proc;
+procedure signal_critter;
+
+#define LVAR_got_plans                  (7)
+#define LVAR_got_part                   (8)
+
+procedure timed_event_p_proc begin
+   set_map_var(MVAR_Touched,0);
+end
+
+procedure use_skill_on_p_proc begin
+   call signal_critter;
+
+   variable Skill_Used;
+   Skill_Used:=action_being_used;
+   if (Skill_Used == SKILL_LOCKPICK) then begin
+     script_overrides;
+     if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+       call Unlock_Lock;
+     end
+     else begin
+       call Set_Lock;
+     end
+   end  // End of Skill_Lockpick
+   else if (Skill_Used == SKILL_TRAPS) then begin
+     script_overrides;
+     if (local_var(LVAR_Trapped) == STATE_ACTIVE) then begin
+       call Skill_Disarm_Traps;
+     end
+     else begin
+       if (source_obj == dude_obj) then begin
+         display_msg(my_mstr(195));
+       end
+
+       else begin
+         display_msg(obj_name(source_obj)+my_mstr(200));
+       end
+     end
+   end // End of Skill_Traps
+end
+
+procedure use_obj_on_p_proc begin
+   call signal_critter;
+    variable Tool;
+    Tool:=obj_pid(obj_being_used_with);
+    pry_trap_block
+    full_lockpick_block
+end
+
+procedure use_p_proc begin
+   call signal_critter;
+   if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+       script_overrides;
+       display_msg(mstr(203));
+   end
+end
+
+procedure pickup_p_proc begin
+   call signal_critter;
+   if (self_tile == COMMANDER_LOCKER) then begin
+      if (global_var(GVAR_NAVARRO_FOB) < NAVARRO_HAVE_FOB) then begin
+         display_msg(mstr(800));
+         give_xp(EXP_RETRIEVE_FOB);
+         set_global_var(GVAR_NAVARRO_FOB, NAVARRO_HAVE_FOB);
+      end
+   end
+   if (self_tile == QUINCY_LOCKER) then begin
+      if (local_var(LVAR_got_plans) == 0) then begin
+         set_local_var(LVAR_got_plans,1);
+         display_msg(mstr(810));
+         give_xp(EXP_RETRIEVE_PLANS);
+      end
+   end
+   if (self_tile == RAUL_LOCKER) then begin
+      if (local_var(LVAR_got_part) == 0) then begin
+         set_local_var(LVAR_got_part,1);
+         display_msg(mstr(820));
+         //give_xp(EXP_RETRIEVE_K9_PART);
+      end
+   end
+
+end
+
+procedure signal_critter begin
+   set_map_var(MVAR_Touched,1);
+
+   //if raul has said ok to take k9 part
+   if (map_var(MVAR_Take_It) == 1) then begin
+      //only want to open up one locker...not all lockers in Navarro
+      if (self_tile == RAUL_LOCKER) then begin
+         set_local_var(LVAR_Locked, STATE_INACTIVE);
+      end
+   end
+   //if commander has given fob then this locker is open
+   if (map_var(MVAR_Open_Sesame) == 1) then begin
+      //only want to open up one locker...not all lockers in Navarro
+      if (self_tile == COMMANDER_LOCKER) then begin
+         set_local_var(LVAR_Locked, STATE_INACTIVE);
+      end
+   end
+   //if quincy has given plans then this locker is open
+   if (map_var(MVAR_See_Me) == 1) then begin
+      //only want to open up one locker...not all lockers in Navarro
+      if (self_tile == QUINCY_LOCKER) then begin
+         set_local_var(LVAR_Locked, STATE_INACTIVE);
+      end
+   end
+   //tell the critter guarding me that someone is messing with me
+   //display_msg("don't touch me there!");
+   add_timer_event(self_obj,game_ticks(2),0);
+end

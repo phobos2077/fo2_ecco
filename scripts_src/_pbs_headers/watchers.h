@@ -7,9 +7,22 @@ import variable pbs_watcher;
 
 #define _dude_dist(obj)              (tile_distance_objs(obj, dude_obj))
 
+/*procedure obj_can_actually_see_obj(variable watchObj, variable targetObj) begin
+   if (obj_can_hear_obj(watchObj, targetObj)) then begin
+      variable obj := obj_blocking_line(watchObj, tile_num(targetObj), BLOCKING_TYPE_SHOOT);
+      // Skip critters in the line of sight.
+      while (obj and obj != targetObj and obj_type(obj) == OBJ_TYPE_CRITTER) do begin
+         obj := obj_blocking_line(obj, tile_num(targetObj), BLOCKING_TYPE_SHOOT);
+      end
+      return obj == targetObj;
+   end
+   return false;
+end
+*/
+
 procedure check_watcher begin
    if (self_obj != pbs_watcher andAlso
-      obj_can_hear_and_shoot_obj(self_obj, dude_obj) andAlso
+      obj_can_hear_obj(self_obj, dude_obj) andAlso
       (pbs_watcher == 0 orElse _dude_dist(self_obj) < _dude_dist(pbs_watcher))
    ) then begin
       pbs_watcher := self_obj;

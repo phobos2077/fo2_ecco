@@ -1,0 +1,33 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/******************************************************************************************
+        Item: Foot Locker
+        Locked: Yes
+        Trapped: NO
+        Description: This is a generic locked and trapped wooden door.
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: September 26, 1997
+
+           Updated:
+******************************************************************************************/
+
+/* Include Files */
+#define SCRIPT_REALNAME "oiftlkr"
+
+/* Sets whether the door is locked or trapped */
+#define LOCKED_STATUS                   STATE_ACTIVE
+#define TRAPPED_STATUS                  STATE_INACTIVE
+#define DOOR_STATUS                     STATE_METAL
+#define LOCK_STATUS                     STATE_STANDARD_LOCK
+
+#define Lock_Bonus                      (-40)
+#define Crowbar_Bonus                   (-6)
+
+#include "../headers/containers.h"
