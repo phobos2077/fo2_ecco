@@ -646,7 +646,7 @@ position=wedge, spacing:2
 [Encounter: VPAT_Strong_Slavers]
 type_00=ratio:25%, pid:16777440, Item:9(wielded), Item:(0-20)41, Item:159, Script:508                      ; Strong Male Slaver w/ 10mm SMG and Molotov Cocktail
 type_01=ratio:25%, pid:16777441, Item:280(wielded), Item:(0-20)41, Script:508                              ; Strong Female Slaver w/ Sharpened Spear
-type_02=ratio:10%, pid:16777254, Item:268(wielded), Item:(0-20)41, Item:(0-2)259, Script:508                    ; Strong Male Slaver w/ H&K CAWS and Jet
+type_02=ratio:10%, pid:16777254, Item:242(wielded), Item:(0-20)41, Item:(0-2)259, Script:508                    ; Strong Male Slaver w/ Combat Shotgun and Jet
 type_03=ratio:40%, pid:16777441, Item:236(wielded), Item:(0-20)41, Item:(0-1)259, Script:508                    ; Strong Female Slaver w/ Combat Knife and Jet
 ;position=Surrounding
 ;position=straight_line, spacing:1
@@ -728,7 +728,7 @@ position=huddle, spacing:2
 
 [Encounter: DNRV_Reno_Caravan]
 type_00=pid:16777275, Item:122(wielded), Item:(0-40)41, Item:40, Script:777                                ; Average Merchant Female w/ 9mm Mauser
-type_01=ratio:25%, pid:16777262, Item:268(wielded), Item:(0-20)41, Item:40, Script:259                               ; Gun guard male w/ HK CAWS
+type_01=ratio:25%, pid:16777262, Item:242(wielded), Item:(0-20)41, Item:40, Script:259                              ; Gun guard male w/ Combat Shotgun
 type_02=ratio:25%, pid:16777263, Item:23(wielded), Item:(0-20)41, Item:40, Script:259                               ; Gun Guard female w/ Assault Rifle
 type_03=ratio:25%, pid:16777258, Item:6(wielded), Item:(0-20)41, Item:40, Script:259                              ; Male Melee guard w/ Sledge
 type_04=ratio:25%, pid:16777261, Item:(3-6)25(wielded), Item:236, Item:(0-20)41, Item:40, Item:95, Script:259                     ; Female Agile guard w/ Sawed off shotgun and Shells
@@ -943,8 +943,10 @@ position=wedge, spacing:2
 
 [Encounter: NEW_Mobsters]
 type_00=pid:16777475, Item:283(wielded), Item:(0-40)41, Script:482                                         ; Mobster w/ Tommy Gun
-type_01=ratio:50%, pid:16777253, Item:283(wielded), Item:(0-40)41, Script:482                              ; Gun Thug female w/ tommy gun
-type_02=Ratio:50%, pid:16777252, Item:143(wielded), Item:(0-40)41, Script:482                              ; Gun Thug male w/ Sniper Rifle
+type_01=ratio:25%, pid:16777253, Item:283(wielded), Item:(0-40)41, Script:482                              ; Gun Thug female w/ Tommy Gun
+type_02=ratio:25%, pid:16777253, Item:332(wielded), Item:(0-40)41, Script:482                              ; Gun Thug female w/ Grease Gun
+type_03=Ratio:25%, pid:16777252, Item:143(wielded), Item:(0-40)41, Script:482                              ; Gun Thug male w/ Sniper Rifle
+type_04=Ratio:25%, pid:16777252, Item:242(wielded), Item:(0-40)41, Script:482                              ; Gun Thug male w/ Combat Shotgun
 position=cone, spacing:2
 
 [Encounter: NEW_Yakuza]
@@ -993,7 +995,7 @@ type_03=ratio:30%, pid:16777462, Script:792                                     
 position=huddle, spacing:5
 
 [Encounter: NCR_Caravan]
-type_00=pid:16777277, Item:332(wielded), Item:(0-60)41, Script:782                                         ; Master Trader female w/ Needler Pistol
+type_00=pid:16777277, Item:332(wielded), Item:(0-60)41, Script:782                                         ; Master Trader female w/ Grease Gun
 type_01=ratio:25%, pid:16777477, Item:242(wielded), Item:(0-30)41, Script:259                              ; NCR Ranger male w/ Combat Shotgun
 type_02=ratio:25%, pid:16777477, Item:11(wielded), Item:(0-40)41, Script:259                               ; NCR Ranger male w/ Flamer
 type_03=ratio:25%, pid:16777478, Item:268(wielded), Item:(0-30)41, Script:259                              ; NCR Ranger female w/ H&K CAWS
@@ -1050,13 +1052,13 @@ type_05=pid:16777406, Item:24, Item:(2-4)26(wielded), Item:(1-2)40, Item:(35-50)
 position=Surrounding, Spacing:2, distance:4
 
 [Encounter: Morton_Brother]
-type_00=pid:16777454, Item:268(wielded), Script:1026, If(Global(386) == 1)      ; Toad Morton (Raider) w/ H&K CAWS
+type_00=pid:16777454, Item:16(wielded), Script:1026, If(Global(386) == 1)       ; Toad Morton (Raider) w/ Laser Pistol
 type_01=pid:16777397, Item:355(wielded), Script:1026, If(Global(386) == 3)      ; Newt Morton (Bounty Hunter Leader 1-6) /w LSW - edit by killap
 type_02=pid:16777403, Item:25(wielded), Item:352, Script:1026, If(Global(386) == 5)          ; Newt Morton (Bounty Hunter 13-18) w/ Frag and H&K G11
 type_03=ratio:25%, pid:16777252, Item:242(wielded), Item:(0-30)41, Script:774                              ; Gun Thug male w/ Combat Shotgun
 type_04=ratio:25%, pid:16777253, Item:22(wielded), Item:(0-30)41, Script:774                               ; Gun Thug female w/ 14mm Pistol
 type_05=ratio:25%, pid:16777255, Item:11(wielded), Item:(0-30)41, Script:774                               ; Big Gun Thug female w/ Flamer
-type_06=ratio:25%, pid:16777246, Item:296(wielded), Item:(0-30)41, Script:774                              ; Tough Thug Male w/ H&K P90c
+type_06=ratio:25%, pid:16777246, Item:332(wielded), Item:(0-30)41, Script:774                              ; Tough Thug Male w/ Grease Gun
 position=Surrounding, Spacing:2, distance:4
 
 [Encounter: ARRO_Ants]
@@ -1128,7 +1130,7 @@ type_01=ratio:15%, pid:16777264, Item:355(wielded), Item:(1-3)34, Item:(0-2)40, 
 type_02=ratio:15%, pid:16777264, Item:630(wielded), Item:(1-2)631, Item:(0-2)40, Item:259, Script:772           ; Big gun guard w/ Grenade Launcher
 type_03=ratio:20%, pid:16777474, Item:23(wielded), Item:(1-2)36, Item:(0-2)40, Item:259, Script:772             ; Tough Ghoul w/ Assault Rifle
 type_04=ratio:20%, pid:16777475, Item:283(wielded), Item:357, Script:772                                        ; Mobster w/ Tommy Gun
-type_05=ratio:20%, pid:16777366, Item:296(wielded), Item:(1-2)30, Item:(0-2)125, Script:772                     ; Shop Owner (halfling) w/ HK P90c
+type_05=ratio:20%, pid:16777366, Item:332(wielded), Item:357, Item:(0-2)125, Script:772                         ; Shop Owner (halfling) w/ Grease Gun
 type_06=ratio:10%, pid:16777298, Script:772                                                                     ; Wild Dog
 position=cone, spacing:2
 

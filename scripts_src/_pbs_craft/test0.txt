@@ -371,7 +371,7 @@ NO
 REPAIR+TRAPS:50
 [COMPONENTS]
 127:1                            # Rope
-365:8|320:4|7:2|280:2            # Plant Spikes OR Sharp Poles OR Spears OR Sharp Spears
+365:8|583:8|320:4|7:2|280:2      # Plant Spikes OR Sharp Poles OR Spears OR Sharp Spears
 
 
 [ITEM]
