@@ -35,6 +35,9 @@
 #define GVAR_BRINGX_TENTACLES       (646)
 #define GVAR_BRINGX_HIDES           (647)
 
+// repurposed items
+#define PID_PBS_DOCTOR_BOOK         (539) // replaces PID_ABBEY_TECHMANUAL2
+
 // new items
 #define PID_PBS_50_AMMO             (610)
 #define PID_PBS_THROWING_AXE        (611)

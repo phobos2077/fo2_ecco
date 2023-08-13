@@ -37,6 +37,8 @@
 
 #include "../headers/ncr.h"
 
+#include "../_pbs_headers/ecco_ids.h"
+
 
 /* Standard Script Procedures */
 procedure start;
@@ -480,7 +482,7 @@ end
 procedure NodeMurderButOk begin
    move_obj_inven_to_obj(self_obj, dude_obj);
    add_obj_to_inven(dude_obj, create_object(PID_BIG_BOOK_OF_SCIENCE, self_tile, 0));
-   add_obj_to_inven(dude_obj, create_object(PID_FIRST_AID_BOOK, self_tile, 0));
+   add_obj_to_inven(dude_obj, create_object(PID_PBS_DOCTOR_BOOK, self_tile, 0));
 
    give_xp(1000); // pbs: lowered from 3000
    // inc_general_rep(REP_BONUS_FIX_NCR_GENERATOR); // no point in huge reputation bonus

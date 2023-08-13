@@ -260,6 +260,7 @@
 {806}{}{You learn a lot about wilderness survival.}
 {807}{}{You learn how to plant and disarm traps better.}
 {808}{}{You learn a lot about economics.}
+{809}{}{You learn a lot about medicine and biology.}
 #
 # Use on messages (and some extra stuff that Jesse needed)
 #

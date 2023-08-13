@@ -1039,8 +1039,8 @@
 {53701}{}{A novel set after a devastating nuclear war. The book excerpt describes how a violent backlash against the culture of advanced knowledge and technology that had led to the development of nuclear weapons took place shortly after this war. Anyone of learning, and eventually anyone who could even read, was likely to be killed.}
 {53800}{}{Text Book}
 {53801}{}{An old text book from before the Great War. It is quite technical and doesn't appear to contain any useful information.}
-{53900}{}{Army Technical Manual}
-{53901}{}{An old technical manual designed for the United States Army Corps of Engineers.}
+{53900}{}{Medical Book}
+{53901}{}{A study book on the field of medicine and biology.}
 {54000}{}{Operations Manual}
 {54001}{}{The operations manual to the KV-75; a portable, tactical cryptographic device. Also used by non-tactical users for high-level communications in the local wideband telephone networks and wideband satellite terminals.}
 {54100}{}{Chinese Army: Special Ops Manual}
