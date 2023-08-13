@@ -1,11 +1,9 @@
 for 0.9.3:
-- playtest
-- finish Vault City, Gecko, Redding
+- release
 
 
 for "future":
 - add early game Flamerthrower (Incinerator)
-- Repurpose one of Abbey books to be a Doctor Skill book
 - Stimpak & Healing powder heal amt to depend upon First Aid skill
 - Crafting: use items from party members inventory
 - Crafting: read config from INI file and texts from game/craft.msg
@@ -14,12 +12,13 @@ for "future":
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - sneak attack msg from combat.msg
 - replace "handmade grenade" sprite
+- replace Throwing Axe sprite
 - add info about bonus move points to stat description
 
 
 IDEAS:
+- remove early link to EPA (it has too OP enemies and loot)?
 - Reduce ammo/drug loot in containers similar to critter loot and FNV Famine mod (less reduction for closed containers, etc.)
-- use Beer and Nuka Cola in crafting somehow
 - one more "unarmed" weapon above Spiked Knuckles (knuckles with knife?)
 - flashbang grenade (lose turn)
 - molotov creates a circle of flame for 1-2 turns that damage when stepped on
@@ -30,8 +29,5 @@ IDEAS:
 - subsequent shots to the same target cost less AP (except bursts) - but can make guns even more powerful compared to melee/unarmed
 - guaranteed damage bonus for head/eye shots? (will need to be countered by changing hit chance formula to require higher skill for 95%)
 - barter: the more you sell to the same trader, the less is selling price
-- trap system redesign:
-   - Allow to arm traps in combat? (new perk?)
-   - More straightforward trap install? (just drop & go)
-   - All traps should have minimum 1 tile radius
-   - Add simple ready-to-go traps (maybe to vendors), without having to install explosive
+- some new trap-related perk (arm traps in combat?)
+- add simple ready-to-go traps (maybe to vendors), without having to install explosive

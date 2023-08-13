@@ -1,22 +1,23 @@
 -====================-
 -===   EcCo mod   ===-
--=== v0.9.2 BETA  ===-
+-=== v0.9.3 BETA  ===-
 -====================-
 						by phobos2077
 
 
 > CRAFTING:
-- New crafting system based on Mr.Fixit by Team-X and Fix-Boy by Lexx.
+- New crafting system based on Mr.Fixit by Team-X and Fix-Boy by Lexx with many improvements.
 - Custom crafting schematics designed to serve game's balance and add variety, including new game items.
 - All "schematics" are divided into several categories, you need to find teacher for each category.
 - Knowing schematics is not enough: to start crafting you may also need skills, components and tools.
-- Some craftable food.
+- Craftable food that heals a little, reduces negative effects and increases some stats.
 - Crafting menu is accessible by clicking a new button on main panel or with a hotkey: Ctrl+C.
+- New book for Doctor skill (required to craft drugs).
 
 
 > TRAPS:
 - To use traps you need to craft a Trap Kit first (need explosive schematics for mines and electronics for sensor mine).
-- To place the trap on the ground, put it in your active hand slot and use it ON your character (or just press Ctrl+4 hotkey).
+- To place the trap on the ground, Use it from the inventory screen or from your active hand slot. You can also use hotkey Ctrl+4 if you have a trap kit in active hand.
 - To actually arm the trap, use Traps skill on it.
 - For mines: you can use any explosive from inventory on the floor trap tile; if you just use "Traps" skill on them, the game will first try to arm it with last used explosive type, and then with any explosive found in your inventory.
 - You need to pass traps skill check to successfully arm the trap, if you are bad enough, you may end up blowing yourself. But if you're good, you'll have a chance of critical hit with your trap.
@@ -33,16 +34,25 @@
 - Selling prices are affected by skill. (at lower levels prices may drop as low as 25% from their normal margin). This way, if you want to get rich by selling weapons, upgrade your Barter, or you'll need to sell many times more than before.
 - Buying prices are comparable to base game, but have a steeper curve (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
 - Some misc items prices were adjusted, so you can still make profit selling them, especially in early game (gecko pelts and scorpion tails in Klamath, etc.).
+- Some items have their prices differ between towns to reflect demand.
 - New book for Barter skill added.
 
 
-> LOOT REDUCTION:
+> STEALING:
+- Steal rolls calculation changed to make stealing harder but encourage investing into the skill.
+- if Steal roll fails but Catch roll also fails - fails steal without getting caught instead of just succeeding, as in vanilla.
+- Stealing now correctly uses number of items stolen when calculating difficulty.
+- Stealing money and other weightless items now adds to difficulty based on cost.
+- Karma penalty based on total value of goods being stolen.
+
+
+> LOOTING:
 - There is a chance a weapon will get destroyed when critter dies (except unique and rare weapons).
 - Corpses are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
-- Loot slightly reduced in various containers across the game.
-- EPA: loot rearranged/reduced somewhat; room with most powerful stuff at security level will be harder to get in.
-- It is harder to steal from Redding doctor now.
-- Closed rooms in Bishop club are harder to get in.
+- Loot slightly reduced/rearranged in various containers across the game, especially in certain underground installations.
+- NPCs will be more likely to detect if you're stealing from their property.
+- EPA: room with most powerful stuff at security level will be harder to get in.
+- Measures to prevent trivial stealing from some places in Redding, New Reno and NCR.
 
 
 > NEW QUEST CONTENT:
@@ -55,9 +65,9 @@
 
 
 > COMBAT:
-- A couple of unspent AP points carry over to the next round.
+- A couple of unspent AP points carry over to the next round. This should make low-AG builds more viable and make difference between weapon AP cost less dramatic.
 - Opening inventory has no cost, but every action requires 2 AP (except reload, see below).
-- All characters now get a bonus move points (not AP!) for every AG point above 5. Double for NPCs. This should allow melee characters to close on their gun-wielding foes and make combat more dynamic.
+- All characters now get a bonus move points (not AP!) for every AG point above 5. This should allow melee characters to close on their gun-wielding foes and make combat more dynamic.
 
 
 > AMMO:
@@ -65,7 +75,7 @@
 - AP/FMJ generally do less damage then JHP against unarmored, but is effective against armored targets (thanks to new damage script).
 - Reduced pack sizes of certain ammo calibers to further balance the total amount of that ammo in game.
 - Weight and cost was rebalanced as well.
-- To further reduce "ammo swimming", all dying critters are stripped from some amount of ammo (optional), see MISC section.
+- To further reduce "ammo swimming", all dying critters are stripped from some amount of ammo.
 - Ammo now occupies space, so you cannot store unlimited ammo in car trunk (increased trunk capacity by 20% to balance that).
 - New "calibers" and ammo types: .50 BMG (for AMR) and 40mm Grenade.
 - New ammo types for existing calibers: 12ga Slugs, "special" 12ga ammo, .223AP, 7.62mm AP, 14mm JHP.
@@ -98,7 +108,7 @@
 - Two new 40mm Grenade weapons added to make Big Guns skill more useful in early-to-mid game.
 - Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
 - M60 is a true machine gun: more powerful with 100 rounds ammo capacity.
-- ST now adds to base skill
+- ST now adds to base skill.
 
 
 > ENERGY WEAPONS:
@@ -144,12 +154,11 @@
 - Lidya in VC rewards 500 for shipment of alcohol (was 300).
 - Better reward for VC plow quest.
 - Algernon need rest after work.
-- Trappers in random encounters now sell pelts through standard barter dialog only, but with high discount.
 - Small changes which better integrate some content restored by RP. A few hooks for some content, a new scouting quest in Vault City, and adjustments to the Vault Village quest. (by Lujo)
 
 
 > MERCHANTS:
-- More crafting components (mainly junk) sold at general stores.
+- More crafting components sold at general stores.
 - Cash tender in Redding now offers cash from 1000 to 7000 depending on player's current level.
 - Changed some merchants stock to offer some new items and more ammo for purchase.
 
@@ -162,10 +171,10 @@
 
 > MISC:
 - Small adjustments to base value formulas of some skills for better balance
+- Buffed some underused perks: Demolition Expert, Pyromaniac, Survivalist, MrFixit, Medic, Ghost, Ranger, Harmless, Salesman.
 - Some mine traps in the game became more dangerous.
 - Nerfed slot jinxer perk: slots break for month instead of 1 day, high rollers give 2/5 of initial money and there is a luck-based chance to fail. You can still become insanely rich by gambling.
 - Nerfed gambling dice: you can win maximum about 1000-5000 caps per table, per week (that's still a LOT of money).
-- People drop their weapon to the ground in front of them when they die.
 - Bonus Rate of Fire perk was removed (all pistols were completely OP if you take it, especially with the appropriate Trait).
 - Hakunin dreams delayed, so they happen at more appropriate pace (RP has more content...).
 

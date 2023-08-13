@@ -1,5 +1,67 @@
 -=== CHANGELOG ===-
 
+v0.9.3
+> Stealing & looting:
+- Steal rolls calculation changed to make stealing harder but encourage investing into the skill
+- if Steal roll fails but Catch roll also fails - fails steal without getting caught instead of just succeeding, as in vanilla
+- Stealing now correctly uses number of items stolen when calculating difficulty
+- Stealing money and other weightless items now adds to difficulty based on cost
+- added karma reduction based on total value of goods being stolen
+- buffed various doors and lockers throughout the game to have higher requirements for lockpicking, prying and disarming
+- changed some doors to be destroyed based on total damage dealt instead of number of explosions (allows to burst-open some doors with powerful guns)
+- certain "watcher" NPC's line of sight will now use the same logic as line-of-fire checks and will "see through" other NPC's to detect PC doing nefarious actions
+- Redding: rewritten DrJohn thief-watching behavior to be more robust and interrupt his dialog with RatRay properly
+- Redding: added thief catching logic to Sheriff Marion and some miners
+- Redding: locked some doors and containers
+- New Reno: more robust watching logic and buffed stats for certain doors at Bishop's casino
+- NCR: increased difficulty of stealing from lockers in Guard Captian building
+
+> Crafting & drugs:
+- all drug crafting (except basic First Aid) now requires Doctor Skill
+- added Doctor Skill book to the game (using one of Abbey's books)
+- added more crafting components to some stores and to maps
+- reduced prices for learning certain crafting recipes
+- tweaked many crafting recipes for better reward/investment ratio
+- non-craftable food effects reduced back to vanilla levels
+- craftable food now heals comparable amount to Healing Powder but most of it is only applied after 30 minutes to avoid competing with Stimpaks
+- craftable food now also increases EN/PE and reduces small amount of radiation/poison
+
+> Balance:
+- buffed some underused perks: Demolition Expert, Pyromaniac, Survivalist, MrFixit, Medic, Ghost, Ranger, Harmless, Salesman
+- added ambient radiation to certain maps to have more use for radiation mechanic and Rad-Away
+- tweaked some random encounter NPC's weapons for better tier balance and variety
+- lowered some town-based price multipliers
+- reduced NPC's AG-based free move points to match that of PC
+- Abbey: replaced certain OP critter with a more appropriate one
+- Abbey: reduced some XP rewards for trivial tasks
+- replaced some weapons that are too powerful from early game locations
+- made 40mm ammo more available in earlier areas
+- replaced random-based destruction of 50% of NPC weapons with deterministic formula
+- nerfed Grease Gun rate of fire to not overshadow other SMGs too much
+- nerfed Shotguns AC mod and damage of Buck/Slug ammo to not overshadow Incendiary ammo and other weapons
+- nerfed Sulik's melee damage to not completely trivialize certain combat encounters
+- nerfed Vic's Repair skill to give some incentive for player to invest into that skill at mid game
+- nerfed thrust attacks
+
+> Traps:
+- traps can now be assembled and armed during combat for 4 AP
+- Bear Traps: prevent knockback for caught critters and "free" them if knocked down
+- fixed "waiting" party members triggering traps
+- fixed party members getting angry at dude if caught in trap explosion triggered by other NPC
+- disabled "magical" revealing of player if NPC triggers the trap
+- buffed some pre-placed mines (Redding, Raiders)
+
+> Other:
+- tweaked NPC best weapon selection logic to have a better understanding of actual weapon effectiveness
+- disabled NPC's dropping weapons on the ground on death to avoid some frustrating situations
+- fixed unspent AP carrying over to the next combat
+- fixed car charging amount not taking reduced Cell capacities into account
+- fixed infinite reward for Stark's NCR recon quest (Lujo's)
+- fixed turning in Happy Harry to Stark (Lujo's)
+- improved compatibility with THAT mod and fixed "generic" replies when THAT is not installed
+- merged several fixes from RPU v27
+
+
 v0.9.2
 > Traps:
 - new Bear Trap with mechanic for holding critter down for several turns

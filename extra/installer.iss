@@ -4,7 +4,7 @@
 
 [Setup]
 #define MyAppName "Fallout 2: EcCo Gameplay Overhaul"
-#define MyAppVersion "0.9.2"
+#define MyAppVersion "0.9.3"
 #define MyAppPublisher "phobos2077"
 
 #define DocsDir "..\docs\"
@@ -17,7 +17,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-2
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-3
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no
@@ -131,8 +131,6 @@ Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer3"; String
 Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer4"; String: "470"; Components: main
 
 ;Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "CheckWeaponAmmoCost"; String: "1"; Components: combat
-
-;Filename: "{app}\combat.ini"; Section: "APCOST"; Key: "drugs_free_uses"; String: "2"; Components: combat\inven_ap_drugs
 
                                                                               
 ;[Run]
