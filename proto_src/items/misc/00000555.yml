@@ -1,8 +1,8 @@
-pid: 539
-messageId: 53900
-name: Medical Book
-description: A study book on the field of medicine and biology.
-fid: 13
+pid: 555
+messageId: 55500
+name: EPA Pamphlet
+description: A leaflet given out at the beginning of tours.
+fid: 41
 lightDistance: 0
 lightIntensity: 0
 flags: '0xa0000008'
@@ -11,9 +11,9 @@ sid: -1
 type: ITEM_TYPE_MISC
 material: 1
 size: 1
-weight: 2
-cost: 200
-inventoryFid: 117440885
+weight: 0
+cost: 0
+inventoryFid: 117440665
 soundId: '0'
 miscData:
   powerTypePid: -1

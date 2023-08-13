@@ -17,7 +17,7 @@ inventoryFid: 117440748
 soundId: '0'
 ammoData:
   caliber: 14
-  quantity: 50
+  quantity: 30
   armorClassMod: 0
   damageResistanceMod: 0
   damageMult: 1

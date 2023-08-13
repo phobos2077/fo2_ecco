@@ -2,7 +2,7 @@ pid: 627
 messageId: 62700
 name: Fish Soup
 description: Healthy soup made from local fish and some other strange ingredients.
-  They say fish is good for the brain!
+  They say fish is good for concentration.
 fid: 14
 lightDistance: 0
 lightIntensity: 0
@@ -18,7 +18,7 @@ inventoryFid: 117440933
 soundId: '0'
 drugData:
   stat:
-  - STAT_INTELLIGENCE
+  - STAT_PERCEPTION
   - STAT_CURRENT_HIT_POINTS
   - STAT_CURRENT_RADIATION_LEVEL
   amount:

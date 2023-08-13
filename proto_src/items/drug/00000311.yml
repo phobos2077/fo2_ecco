@@ -1,0 +1,39 @@
+pid: 311
+messageId: 31100
+name: Roentgen Rum
+description: A bottle of Roentgen rum. It glows in the dark!
+fid: 116
+lightDistance: 1
+lightIntensity: 65535
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 0
+size: 1
+weight: 1
+cost: 10
+inventoryFid: 117440712
+soundId: '0'
+drugData:
+  stat:
+  - STAT_PERCEPTION
+  - STAT_CURRENT_RADIATION_LEVEL
+  - NONE
+  amount:
+  - -2
+  - 10
+  - 0
+  duration1: 30
+  amount1:
+  - 2
+  - 0
+  - 0
+  duration2: 0
+  amount2:
+  - 0
+  - 0
+  - 0
+  addictionChance: 0
+  withdrawalEffect: -1
+  withdrawalOnset: 0

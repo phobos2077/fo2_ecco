@@ -1,0 +1,39 @@
+pid: 469
+messageId: 46900
+name: Rot Gut
+description: A very strong liquor or cleaning fluid, you decide.
+fid: 116
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 1
+size: 1
+weight: 1
+cost: 5
+inventoryFid: 117440833
+soundId: '0'
+drugData:
+  stat:
+  - STAT_PERCEPTION
+  - NONE
+  - NONE
+  amount:
+  - -2
+  - 0
+  - 0
+  duration1: 30
+  amount1:
+  - 2
+  - 0
+  - 0
+  duration2: 0
+  amount2:
+  - 0
+  - 0
+  - 0
+  addictionChance: 0
+  withdrawalEffect: -1
+  withdrawalOnset: 0

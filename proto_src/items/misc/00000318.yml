@@ -1,0 +1,21 @@
+pid: 318
+messageId: 31800
+name: Empty Hypodermic
+description: This is an empty hypodermic.
+fid: 41
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 0
+size: 1
+weight: 0
+cost: 2
+inventoryFid: 117440719
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 20
+  charges: -858993460

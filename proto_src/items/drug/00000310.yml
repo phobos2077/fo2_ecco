@@ -1,0 +1,39 @@
+pid: 310
+messageId: 31000
+name: Gamma Gulp Beer
+description: A bottle of Gamma Gulp beer. It glows in the dark!
+fid: 116
+lightDistance: 1
+lightIntensity: 65535
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_DRUG
+material: 0
+size: 1
+weight: 1
+cost: 5
+inventoryFid: 117440711
+soundId: '0'
+drugData:
+  stat:
+  - STAT_PERCEPTION
+  - STAT_CURRENT_RADIATION_LEVEL
+  - NONE
+  amount:
+  - -1
+  - 5
+  - 0
+  duration1: 30
+  amount1:
+  - 1
+  - 0
+  - 0
+  duration2: 0
+  amount2:
+  - 0
+  - 0
+  - 0
+  addictionChance: 0
+  withdrawalEffect: -1
+  withdrawalOnset: 0
