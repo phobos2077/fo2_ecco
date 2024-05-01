@@ -4,7 +4,7 @@
 
 [Setup]
 #define MyAppName "Fallout 2: EcCo Gameplay Overhaul"
-#define MyAppVersion "0.9.3"
+#define MyAppVersion "0.9.4"
 #define MyAppPublisher "phobos2077"
 
 #define DocsDir "..\docs\"
@@ -17,7 +17,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-3
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-4
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no
@@ -38,7 +38,7 @@ VersionInfoVersion={#MyAppVersion}
 ;Compression=lzma
 OutputDir=.
 
-AppCopyright=Copyright © 2023, (phobos2077)
+AppCopyright=Copyright © 2024, (phobos2077)
 InfoBeforeFile={#DocsDir}ecco_readme.txt
 SetupIconFile=fallout.ico
 WizardSmallImageFile=phobos.bmp
@@ -86,11 +86,13 @@ ru.WRPMapUpdateNotFound=RPU: Maps Updated не обнаружен в указанной папке! Данный
 
 [Types]
 Name: "full"; Description: "{cm:InstallFull}"
-;Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
+Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
 ;Name: "null"; Description: "{cm:InstallNull}"
 
 [Components]
-Name: "main"; Description: "EcCo mod"; Types: full; Flags: fixed
+Name: "main"; Description: "EcCo mod"; Types: full custom; Flags: fixed
+Name: "combat_free_move"; Description: "Bonus move points for high AG characters"; Types: full
+Name: "carry_unspent_ap"; Description: "Carry up to 2 unspent AP to next round"; Types: full
 
 [InstallDelete]
 Type: files; Name: "{app}\data\worldmap.dat"
@@ -103,7 +105,7 @@ Type: filesandordirs; Name: "{app}\mods\ecco"
 ; 
 #define FLAGS "Flags: recursesubdirs createallsubdirs overwritereadonly"
 ; 
-Source: "{#RootDir}ddraw.dll"; DestDir: "{app}\";
+;Source: "{#RootDir}ddraw.dll"; DestDir: "{app}\";
 Source: "{#RootDir}mods\*"; DestDir: "{app}\mods\"; {#FLAGS}
 Source: "{#RootDir}sfall\*"; DestDir: "{app}\sfall\"; {#FLAGS}
 Source: "{#DocsDir}ecco_readme.txt"; DestDir: "{app}\"
@@ -132,16 +134,15 @@ Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer4"; String
 
 ;Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "CheckWeaponAmmoCost"; String: "1"; Components: combat
 
-                                                                              
-;[Run]
-;FileName: "{app}\@pbs_rebalance_finalize.cmd"; WorkingDir: "{app}"; Flags: shellexec waituntilterminated
+Filename: "{app}\mods\ecco\combat.ini"; Section: "COMBAT_FREE_MOVE"; Key: "mult_dude"; String: "0"; Components: not combat_free_move
+Filename: "{app}\mods\ecco\combat.ini"; Section: "COMBAT_FREE_MOVE"; Key: "mult_npc"; String: "0"; Components: not combat_free_move
+Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "carry_unspent_ap"; String: "0"; Components: not carry_unspent_ap
 
-; Optional:
-;FileName: "{app}\weapon_chart.xls"; Description: "Открыть таблицу характеристик оружия"; WorkingDir: "{app}"; Flags: postinstall shellexec unchecked
-;FileName: "{app}\@pbs_rebalance_readme.rtf"; Description: "Открыть ReadMe"; WorkingDir: "{app}"; Flags: postinstall shellexec
+                                                                              
+[Run]
+FileName: "{app}\ecco_readme.txt"; Description: "Open ReadMe"; WorkingDir: "{app}"; Flags: postinstall shellexec
+FileName: "http://phobos2077.github.io/fo2_ecco/ttx/damage_calc.html"; Description: "Open Damage Calculator"; Flags: postinstall shellexec unchecked runasoriginaluser
   
 
 ; Code for additional effects
 #include "installer_code.iss"
-
-

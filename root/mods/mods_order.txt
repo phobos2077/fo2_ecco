@@ -1,35 +1,43 @@
-; HRP
-f2_res.dat
-sfall-mods
-
-; RPU/UPU
+; RPU main & localizations
 rpu.dat
-rpu_enhanced_worldmap.dat
-rpu_extended_flamer.dat
-rpu_improved_mysterious_stranger.dat
-rpu_rifle_animations.dat
-rpu_wakizashi_animations.dat
+npc_armor.dat
+rpu_czech.dat
+rpu_french.dat
+rpu_german.dat
+rpu_hungarian.dat
+rpu_italian.dat
+rpu_polish.dat
+rpu_portuguese.dat
 rpu_russian.dat
 upu_russian_sound.dat
+rpu_spanish.dat
+
+; RPU optional
+rpu_enhanced_worldmap.dat
+rpu_extended_flamer.dat
+rpu_rifle_animations.dat
+rpu_wakizashi_animations.dat
+cassidy_head.dat
+cassidy_voice_joey_bracken_hq.dat
+rpu_improved_mysterious_stranger.dat
+walk_speed_fix_low_fps.dat
+goris_fast_derobing_low_fps.dat
+
+; Pixote Updated maps
 rpu_map_update.dat
 
 ; Visual and audio
-cassidy_head.dat
-cassidy_voice_joey_bracken_hq.dat
-npc_armor.dat
 talking_heads.dat
 talking_heads_audio.dat
-x_rpu_companion_expansion.dat
 
 ; Patches for Maps Updated
-talking_heads_map_update_patch.dat
-talking_heads_map_update_patch_THAT.dat
+talking_heads_that_rpu_map_update_patch.dat
 
 ; Gameplay overhauls
 rpu_y_ecco.dat
 
 ; Patches for EcCo
-x_rpu_companion_expansion_ecco_patch.dat
+
 
 ; QoL/tweaks
 fo2tweaks.dat

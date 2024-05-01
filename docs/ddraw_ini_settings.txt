@@ -1,6 +1,6 @@
 [Misc]
 
-VersionString=FALLOUT II 1.02d  RPU v26 + map_update_v2 + EcCo v0.9.1
+VersionString=FALLOUT II 1.02d  RPU v29 + map_update + EcCo v0.9.4
 
 DamageFormula=0
 

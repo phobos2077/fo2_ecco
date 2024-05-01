@@ -1,5 +1,6 @@
-for 0.9.3:
-- release
+for 0.9.*:
+- make sure weapon skill investments are relevant (reduce AP ammo AC penalty, increase high-tier NPC's AC)
+- playtest
 
 
 for "future":
@@ -7,8 +8,7 @@ for "future":
 - Stimpak & Healing powder heal amt to depend upon First Aid skill
 - Crafting: use items from party members inventory
 - Crafting: read config from INI file and texts from game/craft.msg
-- port "grenades anywhere" script from FO2Tweaks?
-- port auto-cursor from FO2Tweaks (with modifications)
+- Crafting: add small XP rewards for crafting
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - sneak attack msg from combat.msg
 - replace "handmade grenade" sprite
@@ -16,7 +16,15 @@ for "future":
 - add info about bonus move points to stat description
 
 
+Considering:
+- make stimpak irradiation optional using set_proto_data
+- port "grenades anywhere" script from FO2Tweaks?
+- port auto-cursor from FO2Tweaks (with modifications)
+
+
 IDEAS:
+- Hunting Rifle -> Scoped for Slags rewards
+- Marcus Scoped Rifle  to something better as reward
 - remove early link to EPA (it has too OP enemies and loot)?
 - Reduce ammo/drug loot in containers similar to critter loot and FNV Famine mod (less reduction for closed containers, etc.)
 - one more "unarmed" weapon above Spiked Knuckles (knuckles with knife?)
