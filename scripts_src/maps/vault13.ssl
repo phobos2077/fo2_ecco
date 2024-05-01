@@ -33,6 +33,7 @@
 #define NAME                    SCRIPT_VAULT13
 
 #include "../headers/command.h"
+#undef EXP_FOUND_V13
 #define EXP_FOUND_V13  (1000) // pbs: lowered from 2000
 
 export variable i_matt_obj;

@@ -253,8 +253,8 @@ procedure Node989 begin
 end
 procedure Node988 begin
    dude_caps_adjust(2000);
-   give_pid_qty(dude_obj, PID_MICRO_FUSION_CELL, 3) // pbs
-   give_pid_qty(dude_obj, PID_SMALL_ENERGY_CELL, 3) // pbs
+   give_pid_qty(dude_obj, PID_MICRO_FUSION_CELL, 3) // pbs: was 5
+   give_pid_qty(dude_obj, PID_SMALL_ENERGY_CELL, 3) // pbs: was 5
    give_pid_qty(dude_obj, PID_PLASMA_GRENADE, 1)
 end
 procedure Node987 begin

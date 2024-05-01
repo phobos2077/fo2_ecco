@@ -58,7 +58,7 @@
 
 #define MIN_DMG                         (40)
 #define MAX_DMG                         (60)
-#define DAMAGE_TYPE                     DMG_explosion
+#define DAMAGE_TYPE                     DMG_explosive_dam
 
 #define MINE_ACTIVE                     (0)
 #define MINE_DISARMED                   (1)
@@ -257,7 +257,7 @@ procedure Trap_Detection begin
            if (Range_Mod > PERCEPTION_BONUS) then
                Range_Mod:= PERCEPTION_BONUS;
 
-           Detection_Roll:=do_check(source_obj,STAT_pe,Range_Mod);
+           Detection_Roll = roll_vs_stat(source_obj, STAT_pe, Range_Mod);
 
            if (is_success(Detection_Roll)) then begin
 

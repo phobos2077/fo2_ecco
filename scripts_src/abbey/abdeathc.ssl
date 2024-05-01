@@ -76,7 +76,6 @@ end
 
 procedure destroy_p_proc begin
    inc_evil_critter
-   // phobos2077: only give exp for killing the mother
    if (self_pid == PID_LARGE_DEATHCLAW or self_pid == PID_TOUGH_DEATHCLAW) then begin
       give_exp_points(500);
       display_msg(mstr(102));
@@ -161,6 +160,5 @@ procedure map_enter_p_proc begin
    end
    set_self_team(TEAM_DEATHCLAW);
    set_self_ai(AI_GENERIC_DEATH_CLAW);
-   // phobos2077: fix home tile
    if (starttile == 0) then set_starttile(self_tile);
 end

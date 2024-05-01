@@ -69,6 +69,15 @@ import variable i_guard_captain_obj;
    should be placed in here.
 *******************************************************************/
 
+procedure start begin
+end
+
+procedure timed_event_p_proc begin
+end
+
+/********************************************************************
+********************************************************************/
+
 procedure check_tamper begin
    ndebug("i_guard_captain_obj: " + i_guard_captain_obj);
    if (i_guard_captain_obj > 0) then begin
@@ -80,15 +89,6 @@ procedure check_tamper begin
       end
    end
 end
-
-procedure start begin
-end
-
-procedure timed_event_p_proc begin
-end
-
-/********************************************************************
-********************************************************************/
 
 procedure use_p_proc begin
    call check_tamper;

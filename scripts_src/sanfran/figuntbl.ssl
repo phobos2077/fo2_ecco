@@ -155,7 +155,7 @@ procedure map_enter_p_proc begin
             ndebug("table 1 set");
             tmp_box := move_critical_items();
             //Used to be on Table 3
-            check_restock_item(PID_BOTTLE_CAPS, 1000, 8000, 100)   // by phobos2077 - max increased from 2000 to 8000 
+            check_restock_item(PID_BOTTLE_CAPS, 1000, 8000, 100)   // pbs: max from 2000
             check_restock_item(PID_FLAMER, 1, 2, 60)
             check_restock_item(PID_MINIGUN, 1, 3, 65)
             check_restock_item(PID_ROCKET_LAUNCHER, 1, 3, 30)

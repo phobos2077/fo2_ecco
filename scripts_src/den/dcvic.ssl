@@ -409,6 +409,8 @@ procedure talk_p_proc begin
       set_global_var(GVAR_FIND_VIC, 2);
       set_vic_known(state_vic_known_name);
       if ((Vic_In_Party) or (party_is_waiting)) then begin
+         find_party_background;
+         ndebug("PartyMemberBackground == "+PartyMemberBackground);
          start_dialog_at_node_check_talking_head(PARTY_NODE_X, 57, PartyMemberBackground);
       end else if (vic_free) then begin
          //added by killap

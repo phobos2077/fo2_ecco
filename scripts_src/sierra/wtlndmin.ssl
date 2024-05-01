@@ -58,7 +58,7 @@
 
 #define MIN_DMG                         (40)
 #define MAX_DMG                         (60)
-#define DAMAGE_TYPE                     DMG_explosion
+#define DAMAGE_TYPE                     DMG_explosive_dam
 
 #define MINE_ACTIVE                     (0)
 #define MINE_DISARMED                   (1)
@@ -225,15 +225,15 @@ procedure Trap_Detection begin
            if (Range_Mod > PERCEPTION_BONUS) then
                Range_Mod:= PERCEPTION_BONUS;
 
-           Detection_Roll:=do_check(source_obj,STAT_pe,Range_Mod);
+           Detection_Roll = roll_vs_stat(source_obj, STAT_pe, Range_Mod);
 
-           if (is_success(Detection_Roll)) then begin
+           if is_success(Detection_Roll) then begin
 
                set_local_var(LVAR_Trap_Found,1);
                reg_anim_clear(source_obj);
                Trap:=create_object_sid(ART_TRAP_VISIBLE,self_tile,self_elevation,CUR_SCRIPT);
 
-               if (is_critical(Detection_Roll)) then begin
+               if is_critical(Detection_Roll) then begin
                    if (source_obj == dude_obj) then
                        display_msg(mstr(100));
                    else if ((proto_data(obj_pid(source_obj),cr_body_type) == CR_BODY_BIPED) and (obj_can_see_obj(source_obj,dude_obj))) then

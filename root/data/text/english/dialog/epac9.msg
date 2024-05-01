@@ -26,7 +26,7 @@
 {228}{}{Mentats}
 {229}{}{Psycho}
 {380}{}{Rad-X}
-{381}{}{Rad Away}
+{381}{}{RadAway}
 {382}{}{Something Special}
 {383}{}{Nothing}
 
@@ -55,24 +55,24 @@
 {272}{}{Make a Doctor's Bag.}
 
 # Node  8  [Node009]
-{280}{}{Great choice! To make a First Aid Kit, please feed me: one Stimpak, one Empty Hypodermic needle, one Poison Antidote and one Rad Away! Yum-yum!}
+{280}{}{Great choice! To make a First Aid Kit, please feed me: one Stimpak, one Empty Hypodermic needle, one Poison Antidote and one RadAway! Yum-yum!}
 {282}{}{Make a First Aid Kit.}
 
 # Node  9  [Node010]
-{290}{}{Great choice! To make Poison, please feed me: one Empty Hypodermic needle, one Scorpion Tail and one Nuka Cola! Yum-yum!}
+{290}{}{Great choice! To make Poison, please feed me: one Empty Hypodermic needle, one Scorpion Tail and one Nuka-Cola! Yum-yum!}
 {292}{}{Make some poison.}
 
 # Node  10  [Node011]
-{300}{}{Great choice! To make Buffout, please feed me: one First Aid Kit, one bottle of Beer and one Nuka Cola! Yum-yum!}
+{300}{}{Great choice! To make Buffout, please feed me: one First Aid Kit, one bottle of Beer and one Nuka-Cola! Yum-yum!}
 {302}{}{Make Buffout.}
 
 # Node  11  [Node012]
-{310}{}{Great choice! To make Rad-X, please feed me: one First Aid Kit and one Nuka Cola! Yum-yum!}
+{310}{}{Great choice! To make Rad-X, please feed me: one First Aid Kit and one Nuka-Cola! Yum-yum!}
 {312}{}{Make a Rad-X.}
 
 # Node  12  [Node013]
-{320}{}{Great choice! To make Rad Away, please feed me: one Nuka Cola, one Empty Hypodermic needle and one Stimpak! Yum-yum!}
-{322}{}{Make a Rad Away.}
+{320}{}{Great choice! To make RadAway, please feed me: one Nuka-Cola, one Empty Hypodermic needle and one Stimpak! Yum-yum!}
+{322}{}{Make a RadAway.}
 
 # Node  13  [Node014]
 {330}{}{Great choice! To make a Poison Antidote, please feed me: one Scorpion Tail and one bottle of Booze! Yum-yum!}

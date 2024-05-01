@@ -102,7 +102,7 @@ procedure GetZone begin
    if (val) then
       return ZONE_3;
 
-   INBOUNDS(350, 1400, 1100, 1500, val) // pbs: fixed coordinates
+   INBOUNDS(350, 1400, 1100, 1500, val)
    if (val) then
       return ZONE_4;
 

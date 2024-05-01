@@ -302,7 +302,7 @@ procedure Node904 begin
    set_global_var(GVAR_ABBEY_ESCORT_BROTHER_JASON,2);
    add_obj_to_inven(dude_obj,item);
    inc_general_rep(3);
-   give_xp(500);
+   give_xp(500); // pbs: was 800
    display_msg(mstr(1000));
 end
 

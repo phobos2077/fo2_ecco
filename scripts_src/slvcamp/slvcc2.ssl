@@ -265,8 +265,6 @@ end
 procedure Node002 begin
    if (has_rep_slaver) then begin
       floater_rand(304 - dude_is_female, 312 + dude_is_male);
-   end else if (map_var(MVAR_Came_With_Rangers) == 2) then begin
-      floater(910);
    end else begin
       floater_rand(300, 302);
    end

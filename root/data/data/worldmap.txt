@@ -368,12 +368,10 @@ type_00=ratio:10%, pid:16777424, Item:273, Item:4, Item:(0-10)41, Script:765    
 type_01=ratio:10%, pid:16777424, Item:273, Item:4, Item:(0-10)41, Script:770               ; Nomad Shaman
 type_02=ratio:40%, pid:16777424, Item:49, Item:284, Item:7, Item:(0-10)41, Script:622      ; Male Nomad w/ Antidote, Meat Jerky, and Spear
 type_03=ratio:40%, pid:16777426, Item:273, Item:4, Item:(0-10)41, Script:622               ; Female Nomad w/ Healing Powder and  Knife
-type_04=pid:16777226, If (Rand(10%)), Script:203                            ; Brahmin
-type_05=pid:16777226, If (Rand(15%)), Script:203                            ; Brahmin
+type_04=pid:16777268, If (Rand(10%)), Script:1129                           ; Male Orphan
+type_05=pid:16777269, If (Rand(15%)), Script:1129                           ; Female Orphan
 position=cone, spacing:2
-;765 - chief
-;770 - shaman
-
+team_num=129      ; TEAM_RND_NOMAD
 
 [Encounter: ARROK_Molerats]
 type_00=ratio:85%, pid:16777326, Script:617                     ; Molerats
@@ -419,10 +417,11 @@ type_01=ratio:30%, pid:16777283, Item:21(wielded), Script:623   ; Strong Peasant
 type_02=ratio:15%, pid:16777279, Item:320, Script:623           ; Weak Peasant Male w/ Sharpened Pole
 type_03=ratio:30%, pid:16777280, Item:300(wielded), Item:4, Script:623             ; Weak Peasant Female w/ Zip Gun & Knife
 type_04=ratio:5%, pid:16777270, Script:623                      ; Male Loser - killap - adult male proto, so why child script?
-type_05=pid:16777269, Script:1129                                ; Female Child
-type_06=pid:16777268, Script:1129                                ; Male Child - killap - no longer uses adult proto with child script
+type_05=pid:16777269, Script:1129                               ; Female Child
+type_06=pid:16777268, Script:1129                               ; Male Child - killap - no longer uses adult proto with child script
 type_07=Dead, pid:16777298                                      ; Dead Dog
 position=Surrounding, Spacing:6, Distance:7
+team_num=131   ; TEAM_RND_HOMELESS
 
 [Encounter: KLA_Farmers]
 type_00=ratio:67%, pid:16777281, Item:629, Item:(0-3)71, Item:(0-10)41, Script:493  ; Average Peasant Male w/ 9mm SMG and Fruit
@@ -430,12 +429,7 @@ type_01=ratio:25%, pid:16777282, Item:299, Item:29, Item:(1-2)71, Item:(0-10)41,
 type_02=ratio:4%, pid:16777269, Item:71, Script:785             ; Female Child w/ Fruit
 type_03=ratio:4%, pid:16777268, Script:785                      ; Male Child	-killap - no longer uses adult proto with child script
 type_04=Dead, pid:16777298                                      ; Dead Dog
-;position=Surrounding
-;position=straight_line, spacing:1
-;position=straight_line, spacing:2
-;position=double_line, spacing:1
-;position=wedge, spacing:2
-;position=cone, spacing:2
+team_num=183   ; TEAM_RND_FARMER
 position=huddle, spacing:1
 
 [Encounter: KLA_Golden_Geckos]
@@ -515,13 +509,7 @@ type_02=ratio:20%, pid:16777233, Script:628                                     
 type_03=ratio:20%, pid:16777238, Script:628                                     ; Strong Male Slave
 type_04=ratio:10%, pid:16777243, Script:628                                     ; Generic Female Slave
 type_05=ratio:10%, pid:16777244, Script:628                                     ; Generic Male Slave
-;position=Surrounding
-;position=straight_line, spacing:1
-;position=straight_line, spacing:2
-;position=double_line, spacing:1
 position=wedge, spacing:2
-;position=cone, spacing:2
-;position=huddle, spacing:1
 
 [Encounter: DEN_Slave_Run]
 type_00=ratio:50%, pid:16777433, Item:5(wielded), Item:(0-10)41, Script:627                    ; Male Slaver w/ Club
@@ -796,7 +784,6 @@ type_02=ratio:25%, pid:16777437, Item:9(wielded), Item:(0-20)41, Script:787     
 type_03=ratio:25%, pid:16777437, Item:629(wielded), Item:(0-20)41, Script:787                              ; Homesteader female w/ 9mm SMG
 type_04=pid:16777269, Script:788                                                                           ; Homesteader child - female
 type_05=pid:16777268, Script:788                                                                           ; Homesteader child - male
-
 position=huddle, spacing:2
 
 [Encounter: RDRC_Broken_Hills_Caravan]
@@ -888,7 +875,7 @@ position=double_line, spacing:3
 
 
 [Encounter: FRAN_Mercenaries]
-type_00=ratio:25%, pid:16777470, Item:24(wielded), Item:(0-50)41, Script:486                               ; Mercenary male w/ Plasma pistol
+type_00=ratio:25%, pid:16777470, Item:24(wielded), Item:(0-50)41, Script:486                               ; Mercenary male w/ Plasma Pistol
 type_01=ratio:10%, pid:16777470, Item:388(wielded), Item:(0-50)41, Script:486                              ; Mercenary male w/ Needler Pistol
 type_02=ratio:15%, pid:16777257, Item:(1-3)26(wielded), Item:(0-50)41, Script:486                          ; Tough Guard female w/ Plasma Grenades
 type_03=ratio:20%, pid:16777471, Item:116(wielded), Item:(0-50)41, Script:486                              ; Merceneary female w/ Ripper
@@ -3007,9 +2994,9 @@ enc_08=Chance:15%,Enc:(2-4) Bounty_Hunter_Low AMBUSH Player, If(Global(0) < -500
 enc_09=Chance:15%,Enc:(2-4) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(0) < -500) And If(Player(Level) > 6) And If(Player(Level) < 13)
 enc_10=Chance:15%,Enc:(2-4) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(0) < -500) And If(Player(Level) > 12) And If(Player(Level) < 19)
 enc_11=Chance:15%,Enc:(2-5) Bounty_Hunter_High AMBUSH Player, If(Global(0) < -500) And If(Player(Level) > 18)
-enc_11=Chance:10%,Enc:(4-7) Morton_Brother, If(Global(386) > 0) And If(Global(386) < 6)
-enc_12=Chance:5%,Counter:1,Special,Map:Special Bridge Encounter,Enc:Special1, If(Player(Level) > 9) And If(Global(605) < 1)
-enc_13=Chance:3%,Counter:1,Special,Map:Special Holy Encounter 2,Enc:Special1, If(Global(614) > 0) And If(Global(606) < 1)
+enc_12=Chance:10%,Enc:(4-7) Morton_Brother, If(Global(386) > 0) And If(Global(386) < 6)
+enc_13=Chance:5%,Counter:1,Special,Map:Special Bridge Encounter,Enc:Special1, If(Player(Level) > 9) And If(Global(605) < 1)
+enc_14=Chance:3%,Counter:1,Special,Map:Special Holy Encounter 2,Enc:Special1, If(Global(614) > 0) And If(Global(606) < 1)
 
 [Encounter Table 69]
 lookup_name=Wild6_D                                                                         ; Area between New Reno and NCR

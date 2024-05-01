@@ -1048,6 +1048,7 @@ end
 /*
 procedure Node994 begin
    set_local_var(LVAR_Diplomatic_Approach,1);
+   set_global_var(GVAR_QUEST_VAULT_VILLAGE, VILLAGE_QUEST_SPEAK_WITH_COUNCIL);
    //choosing diplomacy rather than giving weapons. Need a global var set here...
 end
 */
@@ -1059,8 +1060,6 @@ procedure Node037 begin
 end
 */
 
-//-- Old Joe Fluff nodes
-
 procedure Node038 begin
    Reply(601);
    NOption(602, Node999, 004);
@@ -1071,13 +1070,6 @@ procedure Node039 begin
    Reply(604);
    NOption(605, Node999, 004);
    NOption(606, Node041, 004);
-end
-
-//not used anymore...
-procedure Node040 begin
-   Reply(607);
-   NOption(608, Node999, 004);
-   NOption(609, Node041, 004);
 end
 
 procedure Node041 begin
