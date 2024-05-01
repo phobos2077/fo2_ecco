@@ -1,7 +1,7 @@
 pid: 31
 messageId: 3100
 name: .44 Magnum JHP
-description: A brick of ammunition, .44 magnum caliber, hollow-points.
+description: A brick of ammunition, .44 Magnum caliber, jacketed hollow-point.
 fid: 1
 lightDistance: 0
 lightIntensity: 0
@@ -18,7 +18,7 @@ soundId: '0'
 ammoData:
   caliber: 9
   quantity: 12
-  armorClassMod: 10
+  armorClassMod: 0
   damageResistanceMod: 20
   damageMult: 9
   damageDiv: 5

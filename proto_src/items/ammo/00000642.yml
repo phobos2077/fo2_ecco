@@ -18,7 +18,7 @@ soundId: '0'
 ammoData:
   caliber: 18
   quantity: 20
-  armorClassMod: -10
+  armorClassMod: 0
   damageResistanceMod: -50
   damageMult: 4
   damageDiv: 5

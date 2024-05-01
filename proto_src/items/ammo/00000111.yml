@@ -1,7 +1,7 @@
 pid: 111
 messageId: 11100
-name: .44 magnum FMJ
-description: A brick of ammunition, .44 magnum caliber, full metal jacket.
+name: .44 Magnum FMJ
+description: A brick of ammunition, .44 Magnum caliber, full metal jacket.
 fid: 1
 lightDistance: 0
 lightIntensity: 0
@@ -18,7 +18,7 @@ soundId: '0'
 ammoData:
   caliber: 9
   quantity: 12
-  armorClassMod: -10
+  armorClassMod: 0
   damageResistanceMod: -20
   damageMult: 1
   damageDiv: 1

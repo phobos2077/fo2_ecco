@@ -1,7 +1,7 @@
 pid: 29
 messageId: 2900
 name: 10mm JHP
-description: 'Ammunition. Caliber: 10mm, jacketed hollow-points'
+description: 'Ammunition. Caliber: 10mm, jacketed hollow-point.'
 fid: 1
 lightDistance: 0
 lightIntensity: 0
@@ -18,7 +18,7 @@ soundId: '0'
 ammoData:
   caliber: 8
   quantity: 20
-  armorClassMod: 10
+  armorClassMod: 0
   damageResistanceMod: 10
   damageMult: 3
   damageDiv: 2

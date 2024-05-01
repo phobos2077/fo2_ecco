@@ -1,34 +1,34 @@
 Import;ProFILE;NAME;PID;Caliber;AC Adjust;DR Adjust;Dam Mult;Dam Div
 ;00000008.pro;Explosive Rocket;14;Rocket [1];0;0;3;2
-;00000029.pro;10mm JHP;29;10mm [8];10;10;3;2
-;00000030.pro;10mm AP;30;10mm [8];-10;-30;4;5
-;00000031.pro;.44 Magnum JHP;31;.44 cal [9];10;20;9;5
-;00000032.pro;Flamethrower Fuel;32;Flamethrower Fuel [2];-30;20;5;4
-;00000033.pro;14mm AP;33;14mm [10];-20;-50;1;1
+;00000029.pro;10mm JHP;29;10mm [8];0;10;3;2
+;00000030.pro;10mm AP;30;10mm [8];0;-30;4;5
+;00000031.pro;.44 Magnum JHP;31;.44 cal [9];0;20;9;5
+;00000032.pro;Flamethrower Fuel;32;Flamethrower Fuel [2];-25;20;5;4
+;00000033.pro;14mm AP;33;14mm [10];0;-50;1;1
 ;00000034.pro;.223 FMJ;34;.223 [5];0;-10;1;1
-;00000035.pro;5mm JHP;35;5mm [6];10;0;4;3
-;00000036.pro;5mm AP;36;5mm [6];-10;-35;1;1
-;00000037.pro;Rocket AP;37;Rocket [1];-20;-60;1;1
+;00000035.pro;5mm JHP;35;5mm [6];0;0;4;3
+;00000036.pro;5mm AP;36;5mm [6];0;-35;1;1
+;00000037.pro;Rocket AP;37;Rocket [1];-15;-60;1;1
 ;00000038.pro;Small Energy Cell;38;C Energy Cell [3];0;-10;1;1
 ;00000039.pro;Micro Fusion Cell;39;D Energy Cell [4];0;-20;1;1
 ;00000095.pro;12 ga. Buckshot;95;12-gauge [11];-15;20;8;5
-;00000111.pro;.44 magnum FMJ;111;.44 cal [9];-10;-20;1;1
+;00000111.pro;.44 Magnum FMJ;111;.44 cal [9];0;-20;1;1
 ;00000121.pro;9mm ball;121;9mm [12];0;0;1;1
 ;00000163.pro;BB's;163;None [0];0;0;1;1
 ;00000274.pro;Robo Rocket Ammo;274;Rocket [1];0;-25;1;1
 ;00000357.pro;.45 Caliber;357;.45 cal [14];0;0;1;1
 ;00000358.pro;2mm EC;358;2mm [15];-30;-50;1;1
-;00000359.pro;4.7mm Caseless;359;4.7mm caseless [16];-5;-30;4;3
+;00000359.pro;4.7mm Caseless;359;4.7mm caseless [16];-10;-30;4;3
 ;00000360.pro;9mm AP;360;9mm [12];0;-30;1;1
 ;00000361.pro;HN Needler Cartridge;361;HN needler [17];-10;0;1;1
 ;00000362.pro;HN AP Needler Cartridge;362;HN needler [17];-10;-40;4;3
 ;00000363.pro;7.62mm FMJ;363;7.62mm [18];0;-10;1;1
-;00000382.pro;Flamethrower Fuel MKII;382;Flamethrower Fuel [2];-40;-10;1;1
+;00000382.pro;Flamethrower Fuel MKII;382;Flamethrower Fuel [2];-25;-15;1;1
 ;00000610.pro;.50 BMG;610;.50 cal [19];-10;-50;1;1
 ;00000614.pro;12 ga. Slugs;614;12-gauge [11];0;-20;1;1
-;00000615.pro;.223 AP;615;.223 [5];-10;-50;4;5
+;00000615.pro;.223 AP;615;.223 [5];0;-50;4;5
 ;00000631.pro;40mm HE Grenades;631;40mm grenade [20];0;-10;1;1
 ;00000632.pro;40mm IC Grenades;632;40mm grenade [20];0;0;4;3
-;00000633.pro;14mm JHP;633;14mm [10];10;-10;3;2
+;00000633.pro;14mm JHP;633;14mm [10];0;-10;3;2
 ;00000641.pro;12 ga. Dragon Breath;641;12-gauge [11];-15;-10;5;4
-;00000642.pro;7.62mm AP;642;7.62mm [18];-10;-50;4;5
+;00000642.pro;7.62mm AP;642;7.62mm [18];0;-50;4;5

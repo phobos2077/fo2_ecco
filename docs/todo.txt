@@ -1,5 +1,4 @@
 for 0.9.*:
-- make sure weapon skill investments are relevant (reduce AP ammo AC penalty, increase high-tier NPC's AC)
 - playtest
 
 

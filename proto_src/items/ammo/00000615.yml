@@ -18,7 +18,7 @@ soundId: '0'
 ammoData:
   caliber: 5
   quantity: 30
-  armorClassMod: -10
+  armorClassMod: 0
   damageResistanceMod: -50
   damageMult: 4
   damageDiv: 5

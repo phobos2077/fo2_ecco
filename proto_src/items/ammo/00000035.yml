@@ -18,7 +18,7 @@ soundId: '0'
 ammoData:
   caliber: 6
   quantity: 40
-  armorClassMod: 10
+  armorClassMod: 0
   damageResistanceMod: 0
   damageMult: 4
   damageDiv: 3

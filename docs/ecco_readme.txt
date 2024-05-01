@@ -138,7 +138,6 @@
 
 
 > ARMOR:
-- Base AC is now = AG * 1.5 (was AG * 1, applies to all critters)
 - Armor Class lowered for heavy armor (metal and power). AC only affects hit chance, so it makes sense bigger/bulkier target is easier to hit.
 - Laser resistance changed: leather - zero protection, combat - mediocre, metal - good, power armor & tesla - great protection.
 - Explosion and Fire resistance slightly lowered for some armor.
