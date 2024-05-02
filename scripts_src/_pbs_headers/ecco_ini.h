@@ -1,6 +1,7 @@
 #ifndef ECCO_INI_H
 #define ECCO_INI_H
 
+#define INI_SFALL          "ddraw.ini"
 #define INI_COMBAT         "ecco\\combat.ini"
 #define INI_ECONOMY        "ecco\\barter.ini"
 #define INI_MISC           "ecco\\misc.ini"

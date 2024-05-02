@@ -29,6 +29,7 @@
 procedure start;
 procedure load_damage_types_from_ini;
 procedure load_attack_mode_from_ini;
+procedure load_settings_from_sfall_perks_ini;
 procedure combatdamage_handler;
 procedure itemdamage_handler;
 procedure deathanim2_handler;
@@ -66,6 +67,8 @@ variable
    ini_damage_types,
    ini_dr_adjust_by_attack_mode,
    ini_debug,
+   living_anatomy_bonus,
+   pyromaniac_bonus,
    death_anims_normal,
    death_anims_maximum;
 
@@ -81,6 +84,7 @@ procedure start begin
 
       call load_damage_types_from_ini;
       call load_attack_mode_from_ini;
+      call load_settings_from_sfall_perks_ini;
 
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
@@ -134,6 +138,22 @@ procedure load_attack_mode_from_ini begin
       end
    end
    debug_verbose("Loaded DR adjust by attack modes "+debug_array_str(ini_dr_adjust_by_attack_mode));
+end
+
+#define load_perk_bonus(var, setting, def) \
+   var := get_int_from_ini(perksIni, "PerksTweak", setting); \
+   if (var != -1) then begin \
+      debug_verbose(string_format("Loaded %s = %d", setting, var)); \
+   end else begin \
+      var := def; \
+   end
+
+procedure load_settings_from_sfall_perks_ini begin
+   variable perksIni := get_str_from_ini(INI_SFALL, "Misc", "PerksFile");
+   if perksIni == "" then return;
+
+   load_perk_bonus(living_anatomy_bonus, "LivingAnatomyBonus", 5)
+   load_perk_bonus(pyromaniac_bonus, "PyromaniacBonus", 5)
 end
 
 procedure get_weapon_attack_mode_by_attack_type(variable weapon, variable attackType) begin
@@ -268,9 +288,9 @@ procedure combatdamage_handler begin
    if (ctdSource == dude_obj) then begin
       if has_trait(TRAIT_PERK, ctdSource, PERK_living_anatomy_perk) and (critter_kill_type(ctdTarget) != KILL_TYPE_robot_kills)
          and (critter_kill_type(ctdTarget) != KILL_TYPE_alien_kills) then
-         calcAmount += 5;
+         calcAmount += living_anatomy_bonus;
       if has_trait(TRAIT_PERK, ctdSource, PERK_pyromaniac_perk) and (dmgType == DMG_fire) then
-         calcAmount += 10; // increase from 5
+         calcAmount += pyromaniac_bonus;
    end
 
    // Clear trap hold on knockdown.
@@ -589,12 +609,14 @@ procedure map_enter_p_proc begin
 end
 
 procedure check_damage_formula begin
-  variable damage_formula = get_ini_setting("ddraw.ini|Misc|DamageFormula");
-  if damage_formula != 0 then begin
-    debug_msg("Damage Formula set to, resetting" + damage_formula);
-    set_ini_setting("ddraw.ini|Misc|DamageFormula", 0);
-    float_msg(dude_obj, "EcCo: damage formula setting in ddraw.ini was incorrect, damage mod failed to load. The setting is fixed now. EXIT AND RE-LAUNCH THE GAME now.", FLOAT_MSG_WARNING);
-    return false;
-  end
-  return true;
+   variable damageFormulaSetting := (INI_SFALL + "|Misc|DamageFormula");
+   variable damage_formula := get_ini_setting(damageFormulaSetting);
+   if damage_formula == 0 then return;
+
+   debug_log_fmt("Damage Formula was set to %d, resetting.", damage_formula);
+   set_ini_setting(damageFormulaSetting, 0);
+   message_box(
+      "EcCo: \nDamageFormula in ddraw.ini was incorrect, damage mod failed to load.\nIt is fixed now. Please, restart the game.",
+      MSGBOX_NORMAL);
+   signal_close_game;
 end
