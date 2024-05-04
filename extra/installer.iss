@@ -1,10 +1,10 @@
-;;;
+п»ї;;;
 ;;;    
 ;;;
 
 [Setup]
 #define MyAppName "Fallout 2: EcCo Gameplay Overhaul"
-#define MyAppVersion "0.9.4"
+#define MyAppVersion "0.9.5"
 #define MyAppPublisher "phobos2077"
 
 #define DocsDir "..\docs\"
@@ -17,7 +17,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-4
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-WIP
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no
@@ -38,7 +38,7 @@ VersionInfoVersion={#MyAppVersion}
 ;Compression=lzma
 OutputDir=.
 
-AppCopyright=Copyright © 2024, (phobos2077)
+AppCopyright=Copyright В© 2024, (phobos2077)
 InfoBeforeFile={#DocsDir}ecco_readme.txt
 SetupIconFile=fallout.ico
 WizardSmallImageFile=phobos.bmp
@@ -59,29 +59,34 @@ Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [CustomMessages]
 ; English
-en.InstallFull=Full install
+en.InstallFull=Full install (recommended)
 en.InstallCustom=Custom install
 en.InstallNull=Uncheck all
 
-en.CMain=EcCo mod
-en.CEconomy=Economy Rebalance
-en.CCombat=Combat Rebalance: weapons, ammo and items
+en.CMain=EcCo Gameplay Overhaul mod
+en.CCombatFreeMove=Bonus move points for high AG characters
+en.CCarryUnspentAP=Carry up to 2 unspent AP to next round
+en.RemoveBonusRoF=Remove Bonus Rate of Fire perk
+en.StimpakRadiation=Stimpaks slightly irradiate on use
 
 en.WFalloutNotFound=Fallout not detected in selected directory (fallout2.exe), mod won't work. Install anyway?
 en.WRPNotFound=Restoration Project not detected in selected directory! This mod is only compatible with RPU 2.6 or above. Are you sure you want to continue?
 en.WRPMapUpdateNotFound=RPU: Maps Updated not detected in selected directory! This mod will not work without that. Are you sure you want to continue?
 
 ; Russian
-ru.InstallFull=Полная установка
-ru.InstallCustom=Выборочная установка
-ru.InstallNull=Ничего не выбирать
+ru.InstallFull=РџРѕР»РЅР°СЏ СѓСЃС‚Р°РЅРѕРІРєР° (СЂРµРєРѕРјРµРЅРґСѓРµС‚СЃСЏ)
+ru.InstallCustom=Р’С‹Р±РѕСЂРѕС‡РЅР°СЏ СѓСЃС‚Р°РЅРѕРІРєР°
+ru.InstallNull=РќРёС‡РµРіРѕ РЅРµ РІС‹Р±РёСЂР°С‚СЊ
 
-ru.CEconomy=Экономический ребаланс
-ru.CCombat=Боевой Ребаланс: Оружие, боеприпасы и предметы
+ru.CMain=EcCo - РїРµСЂРµСЂР°Р±РѕС‚РєР° РіРµР№РјРїР»РµСЏ
+ru.CCombatFreeMove=Р‘РѕРЅСѓСЃРЅС‹Рµ РћР” РІСЃРµРј РїРµСЂСЃРѕРЅР°Р¶Р°Рј СЃ РІС‹СЃРѕРєРѕР№ Р›РѕРІРєРѕСЃС‚СЊСЋ
+ru.CCarryUnspentAP=РџРµСЂРµРЅРѕСЃ С‡Р°СЃС‚Рё РЅРµРїРѕС‚СЂР°С‡РµРЅРЅС‹С… РћР” РЅР° СЃР»РµРґСѓСЋС‰РёС… С…РѕРґ
+ru.RemoveBonusRoF=РЈРґР°Р»РёС‚СЊ РїРµСЂРє "Р‘РѕРЅСѓСЃ СЃРєРѕСЂРѕСЃС‚СЂРµР»СЊРЅРѕСЃС‚Рё"
+ru.StimpakRadiation=РЎС‚РёРјРїР°РєРё СЃР»РµРіРєР° РѕР±Р»СѓС‡Р°СЋС‚ РїСЂРё РїСЂРёРјРµРЅРµРЅРёРё
 
-ru.WFalloutNotFound=По указанному пути не найдена установленная игра (fallout2.exe), мод не будет работать! Все равно установить?
-ru.WRPNotFound=Restoration Project не обнаружен в указанной папке! Данный мод совместим только с RPU 2.6. Все равно продолжить?
-ru.WRPMapUpdateNotFound=RPU: Maps Updated не обнаружен в указанной папке! Данный мод без него работать не будет. Всё равно продолжить?
+ru.WFalloutNotFound=РџРѕ СѓРєР°Р·Р°РЅРЅРѕРјСѓ РїСѓС‚Рё РЅРµ РЅР°Р№РґРµРЅР° СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅР°СЏ РёРіСЂР° (fallout2.exe), РјРѕРґ РЅРµ Р±СѓРґРµС‚ СЂР°Р±РѕС‚Р°С‚СЊ! Р’СЃРµ СЂР°РІРЅРѕ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ?
+ru.WRPNotFound=Restoration Project РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅ РІ СѓРєР°Р·Р°РЅРЅРѕР№ РїР°РїРєРµ! Р”Р°РЅРЅС‹Р№ РјРѕРґ СЃРѕРІРјРµСЃС‚РёРј С‚РѕР»СЊРєРѕ СЃ RPU 2.6. Р’СЃРµ СЂР°РІРЅРѕ РїСЂРѕРґРѕР»Р¶РёС‚СЊ?
+ru.WRPMapUpdateNotFound=RPU: Maps Updated РЅРµ РѕР±РЅР°СЂСѓР¶РµРЅ РІ СѓРєР°Р·Р°РЅРЅРѕР№ РїР°РїРєРµ! Р”Р°РЅРЅС‹Р№ РјРѕРґ Р±РµР· РЅРµРіРѕ СЂР°Р±РѕС‚Р°С‚СЊ РЅРµ Р±СѓРґРµС‚. Р’СЃС‘ СЂР°РІРЅРѕ РїСЂРѕРґРѕР»Р¶РёС‚СЊ?
 
 
 [Types]
@@ -90,11 +95,11 @@ Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
 ;Name: "null"; Description: "{cm:InstallNull}"
 
 [Components]
-Name: "main"; Description: "EcCo mod"; Types: full custom; Flags: fixed
-Name: "combat_free_move"; Description: "Bonus move points for high AG characters"; Types: full
-Name: "carry_unspent_ap"; Description: "Carry up to 2 unspent AP to next round"; Types: full
-Name: "remove_bonus_rof"; Description: "Remove Bonus Rate of Fire perk (recommended)"; Types: full
-Name: "stimpak_radiation"; Description: "Stimpaks give small dose of radiation on use (recommended)"; Types: full
+Name: "main"; Description: "{cm:CMain}"; Types: full custom; Flags: fixed
+Name: "combat_free_move"; Description: "{cm:CCombatFreeMove}"; Types: full
+Name: "carry_unspent_ap"; Description: "{cm:CCarryUnspentAP}"; Types: full
+Name: "remove_bonus_rof"; Description: "{cm:RemoveBonusRoF}"; Types: full
+Name: "stimpak_radiation"; Description: "{cm:StimpakRadiation}"; Types: full
 
 [InstallDelete]
 Type: files; Name: "{app}\data\worldmap.dat"

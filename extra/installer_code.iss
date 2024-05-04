@@ -29,7 +29,8 @@ end;
 
 // *********** clickable link
  var  
- MouseLabel,SiteLabel: TLabel;  
+  //MouseLabel,
+  SiteLabel: TLabel;  
   
  procedure SiteLabelOnClick(Sender: TObject);  
  var  
@@ -60,13 +61,8 @@ end;
 
 // components larger
 
-type
-  TPositionStorage = array of Integer;
-
 var
   CompPageModified: Boolean;
-  CompPagePositions: TPositionStorage;
-
 
 //procedure SaveComponentsPage(out Storage: TPositionStorage);
 //begin
