@@ -13,11 +13,6 @@
 #include "ecco_ids.h"
 #include "ecco_log.h"
 
-#define msg(x)                      display_msg(x)
-
-#define debug_log(msg)		debug_msg(SCRIPT_REALNAME": "+msg)
-#define debug_log_fmt(msg, ...)		debug_msg(SCRIPT_REALNAME": "+string_format(msg, __VA_ARGS__))
-#define debug_err(msg)		debug_msg("! ERROR ! "SCRIPT_REALNAME": "+msg)
 
 #define dude_skill(x)               (has_skill(dude_obj, x))
 

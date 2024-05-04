@@ -30,12 +30,12 @@ drugData:
   amount1:
   - -5
   - 0
-  - 10
+  - 0
   duration2: 5
   amount2:
   - -10
   - 0
-  - 15
+  - 25
   addictionChance: 0
   withdrawalEffect: -1
   withdrawalOnset: 0

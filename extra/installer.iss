@@ -93,6 +93,8 @@ Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
 Name: "main"; Description: "EcCo mod"; Types: full custom; Flags: fixed
 Name: "combat_free_move"; Description: "Bonus move points for high AG characters"; Types: full
 Name: "carry_unspent_ap"; Description: "Carry up to 2 unspent AP to next round"; Types: full
+Name: "remove_bonus_rof"; Description: "Remove Bonus Rate of Fire perk (recommended)"; Types: full
+Name: "stimpak_radiation"; Description: "Stimpaks give small dose of radiation on use (recommended)"; Types: full
 
 [InstallDelete]
 Type: files; Name: "{app}\data\worldmap.dat"
@@ -137,6 +139,9 @@ Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer4"; String
 Filename: "{app}\mods\ecco\combat.ini"; Section: "COMBAT_FREE_MOVE"; Key: "mult_dude"; String: "0"; Components: not combat_free_move
 Filename: "{app}\mods\ecco\combat.ini"; Section: "COMBAT_FREE_MOVE"; Key: "mult_npc"; String: "0"; Components: not combat_free_move
 Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "carry_unspent_ap"; String: "0"; Components: not carry_unspent_ap
+Filename: "{app}\mods\ecco\misc.ini"; Section: "ITEM_TWEAKS"; Key: "stimpak_radiation_disable"; String: "1"; Components: not stimpak_radiation
+
+Filename: "{app}\sfall\perks.ini"; Section: "5"; Key: "Level"; String: "15"; Components: not remove_bonus_rof
 
                                                                               
 [Run]

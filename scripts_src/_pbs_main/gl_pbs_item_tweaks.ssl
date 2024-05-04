@@ -1,0 +1,36 @@
+/*
+   Custom item tweaks to allow disabling certain changes in EcCo.
+*/
+
+#define SCRIPT_REALNAME       "gl_pbs_item_tweaks"
+
+#define INI_TWEAKS_SECTION     "ITEM_TWEAKS"
+
+#include "../headers/itempid.h"
+#include "../sfall/define_extra.h"
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/ecco_log.h"
+
+procedure start;
+
+procedure reset_drug_stat3(variable pid) begin
+   set_proto_data(pid, PROTO_DR_STAT_C, -1);
+   set_proto_data(pid, PROTO_DR_AMOUNT_1_C, 0);
+   set_proto_data(pid, PROTO_DR_AMOUNT_2_C, 0);
+   set_proto_data(pid, PROTO_DR_AMOUNT_3_C, 0);
+end
+
+procedure apply_tweaks begin
+   if (get_int_from_ini(INI_MISC, INI_TWEAKS_SECTION, "stimpak_radiation_disable")) then begin
+      call reset_drug_stat3(PID_STIMPAK);
+      call reset_drug_stat3(PID_SUPER_STIMPAK);
+      debug_log("Removed radiation effects from stimpaks.");
+   end
+   //debug_msg("Loaded emp effects for armor pids: "+debug_array_str(array_keys(emp_effect_armor_pids))+" and fids: "+debug_array_str(array_keys(emp_effect_armor_fids)));
+end
+
+procedure start begin
+   if game_loaded then begin
+      call apply_tweaks;
+   end
+end

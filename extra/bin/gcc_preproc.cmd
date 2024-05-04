@@ -1,2 +1,2 @@
 @echo off
-gcc -E -x c -P -Werror -Wfatal-errors -o "%~nx1.tmp" "%1"
+gcc -E -x c -Werror -Wfatal-errors -o "%~nx1.tmp" "%1"

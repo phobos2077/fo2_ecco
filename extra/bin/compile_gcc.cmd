@@ -11,7 +11,7 @@ echo %~n3 | findstr /i /r "^hs_ ^gl_ ^test[0-9]" >nul && (
 set out=
 if not "%3"=="" set out=-o %3
 
-gcc -E -x c -P -Werror -Wfatal-errors -o "%~nx1.tmp" "%1"
+gcc -E -x c -Werror -Wfatal-errors -o "%~nx1.tmp" "%1"
 rem if errorlevel 1 exit /b %errorlevel%
 echo compile.exe -q -l -O2 %sce% "%~nx1.tmp" %out%
 compile.exe -q -l -O2 %sce% "%~nx1.tmp" %out%
