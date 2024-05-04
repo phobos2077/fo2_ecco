@@ -4,8 +4,12 @@
 
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
 #include "../sfall/lib.arrays.h"
-#include "../_pbs_headers/ecco.h"
+
+#include "../_pbs_headers/ecco_ids.h"
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/ecco_msg.h"
 
 variable
    in_combat := false,
@@ -104,7 +108,7 @@ procedure afterhitroll_handler begin
          begin
             // force critical and display message
             set_sfall_return(3);
-            if (attacker == dude_obj) then display_msg(combat_mstr(5001));
+            if (attacker == dude_obj) then display_msg(string_format(mstr_ecco_combat(100), obj_name(target)));
          end
          call add_array_set(set_who_see_dude, target);
       end else if (target == dude_obj and obj_type(attacker) == OBJ_TYPE_CRITTER) then begin

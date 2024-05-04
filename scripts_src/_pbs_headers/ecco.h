@@ -135,8 +135,6 @@
 
 #define obj_team(obj)   (has_trait(TRAIT_OBJECT, obj, OBJECT_TEAM_NUM))
 
-#define combat_mstr(num)      message_str(SCRIPT_TEST2, num)
-
 #define actual_ammo_count(crit, obj)   ((obj_is_carrying_obj(crit, obj) - 1)*get_proto_data(obj_pid(obj), PROTO_AM_PACK_SIZE) + get_weapon_ammo_count(obj))
 
 #define is_using_ammo_pid(crit, pid)    (get_weapon_ammo_pid(critter_inven_obj(crit, 1)) == pid or get_weapon_ammo_pid(critter_inven_obj(crit, 2)) == pid)

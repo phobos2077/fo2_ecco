@@ -18,7 +18,9 @@ procedure start;
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.inven.h"
 #include "../sfall/lib.math.h"
+
 #include "../_pbs_headers/ecco.h"
+#include "../_pbs_headers/ecco_msg.h"
 
 variable
    ini_destroy_weapon_percent,
@@ -112,7 +114,7 @@ procedure try_destroy_weapon(variable critter, variable weapon) begin
    if (droppedSoFar > 0 and percentageSoFar < ini_destroy_weapon_percent) then begin
       // Display message for active hand only.
       if ((get_flags(weapon) bwand FLAG_RIGHT_HAND) != 0) then
-         display_msg(obj_name(critter) + " " + mstr_combat(313 + is_female(critter)*100) + ".");
+         display_msg(string_format(mstr_ecco_combat(200 + is_female(critter)*10 + random(0, 2)), obj_name(critter), obj_name(weapon)));
       variable toRemove := count / 2 if count > 1 else 1;
       removed := rm_mult_objs_from_inven(critter, weapon, toRemove);
       destroy_object(weapon);

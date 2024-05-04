@@ -9,21 +9,21 @@ for "future":
 - Crafting: read config from INI file and texts from game/craft.msg
 - Crafting: add small XP rewards for crafting
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
-- sneak attack msg from combat.msg
 - replace "handmade grenade" sprite
 - replace Throwing Axe sprite
 - add info about bonus move points to stat description
 
 
 Considering:
-- make stimpak irradiation optional using set_proto_data
+- add crafting components like rocks and junk to human enemy bodies on death with small probability
+- Hunting Rifle -> Scoped for Slags rewards
+- Marcus Scoped Rifle  to something better as reward
 - port "grenades anywhere" script from FO2Tweaks?
 - port auto-cursor from FO2Tweaks (with modifications)
 
 
 IDEAS:
-- Hunting Rifle -> Scoped for Slags rewards
-- Marcus Scoped Rifle  to something better as reward
+- remove bonus move points based on AG, but make perk more accessible? (and give it to some NPC's?)
 - remove early link to EPA (it has too OP enemies and loot)?
 - Reduce ammo/drug loot in containers similar to critter loot and FNV Famine mod (less reduction for closed containers, etc.)
 - one more "unarmed" weapon above Spiked Knuckles (knuckles with knife?)
@@ -32,9 +32,13 @@ IDEAS:
 - smoke grenade? (an immediate cloud of smoke in all directions that blocks LOS)
 - add more drug types (Med-X?)
 - add machete (above Combat Knife, non-thrown alternative to Axe)
+- add late-game super spear, above Piston Spear (Plasma?)
 - make robots drop "robot parts" and use them in crafting
 - subsequent shots to the same target cost less AP (except bursts) - but can make guns even more powerful compared to melee/unarmed
 - guaranteed damage bonus for head/eye shots? (will need to be countered by changing hit chance formula to require higher skill for 95%)
 - barter: the more you sell to the same trader, the less is selling price
 - some new trap-related perk (arm traps in combat?)
 - add simple ready-to-go traps (maybe to vendors), without having to install explosive
+
+
+REJECTED IDEAS:
