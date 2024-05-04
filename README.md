@@ -67,7 +67,7 @@ For a detailed description of all features, see [full readme](https://github.com
 
 ## COMPATIBILITY
 
-Can ONLY be installed on top of the *Restoration Project: Updated* v26 with *Maps Updated* by Pixote.
+Can ONLY be installed on top of the *Restoration Project: Updated* with *Maps Updated* by Pixote (see release page for more info).
 
 Start of a new game is **required**, if you're updating from EcCo 0.6.2 or basic RPU.
 
@@ -75,7 +75,7 @@ Start of a new game is **required**, if you're updating from EcCo 0.6.2 or basic
 - Full built-in support, no patches needed (if you previously used compatibility patches, DELETE them)
 
 ### [Companion Expansion](https://www.nexusmods.com/fallout2/mods/70):
-- Has conflicts, requires patch! (see releases page for more info)
+- Has conflicts, requires patch!
 
 ### [Inventory Filter](https://github.com/rotators/InventoryFilter/raw/master/archive/F2-InventoryFilter_v2.0.2_en.rar) (2.0.2 from github):
 - SmartBarter option seems to cause issues with barter, avoid!
