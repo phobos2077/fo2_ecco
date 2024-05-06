@@ -54,15 +54,15 @@ procedure keypress_handler begin
       if (hotkey_pressed_now(crafting_hotkey, key)) then begin
          if combat_is_initialized then
             call warning_combat;
-         else if (not(get_game_mode) and mode <= 0) then begin
+         else if (not(get_game_mode) and mode <= MODE_EXIT) then begin
             call batch_init;
       	end
-      end else if (mode > 0) then begin
+      end else if (mode > MODE_EXIT) then begin
          oldMode := mode;
          if (key == DIK_ESCAPE) then begin
             call exit_mode;
          end else if (key >= DIK_1 and key <= DIK_9) then begin
-            if (mode == 2) then begin
+            if (mode == MODE_ITEM_OPTIONS) then begin
                if (key == DIK_1 and can_batch) then
                   call batch_one_item;
                else if (key == DIK_2 and can_batch and max_batch > 1) then
@@ -71,21 +71,21 @@ procedure keypress_handler begin
                   call undo_one_item;
                else if (key == DIK_4 and can_undo and max_undo > 1) then
                   call undo_all_items;
-            end else if (mode == 1 or mode == 5) then begin
+            end else if (mode == MODE_ITEMS_LIST or mode == MODE_CATEGORY_LIST) then begin
                optionProc := "item_options_" + (key - DIK_1);
-               debug_msg("select "+optionProc); // this debug is needed to prevent stupid optimizer from removing the string!
+               debug_msg("select " + optionProc); // this debug is needed to prevent stupid optimizer from removing the string!
                call optionProc;
             end
-         end else if (key == DIK_0 and mode <= 4) then begin
-            if (mode == 2) then
+         end else if (key == DIK_0 and mode <= MODE_UNDO_OK) then begin
+            if (mode == MODE_ITEM_OPTIONS) then
                call items_list_mode;
-            else if (mode == 1 and use_categories) then
+            else if (mode == MODE_ITEMS_LIST and use_categories) then
                call item_categories_mode;
-            else if (mode >= 3) then
+            else if (mode >= MODE_BATCH_OK) then
                call item_options_mode;
-         end else if (key == DIK_COMMA and mode == 1 and has_prev_page) then begin
+         end else if (key == DIK_COMMA and mode == MODE_ITEMS_LIST and has_prev_page) then begin
             call list_back_proc;
-         end else if (key == DIK_PERIOD and mode == 1 and has_next_page) then begin
+         end else if (key == DIK_PERIOD and mode == MODE_ITEMS_LIST and has_next_page) then begin
             call list_next_proc;
          end
          if (mode != oldMode) then
@@ -162,7 +162,8 @@ end
 procedure start begin
 	if (game_loaded) then begin
       //craft_msg := add_extra_msg_file("craft.msg");
-		crafting_hotkey := parse_hotkey(cfg_crafting_hotkey);
+      //craft_cfg := load_crafting_config;
+		crafting_hotkey := parse_hotkey(load_raw_crafting_config.Main.hotkey);
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
       register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
 

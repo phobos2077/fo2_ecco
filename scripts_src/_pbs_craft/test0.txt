@@ -153,7 +153,7 @@ SCIENCE:50
 
 
 [ITEM]
-612                               # new fire resistance grug
+612                               # fire resistance grug
 pcx/items/drugskin.pcx
 90070
 CRFT_DRG                          # drugs schematics
@@ -171,7 +171,7 @@ SCIENCE:80
 
 
 [ITEM]
-620                               # new carry weight drug
+620                               # carry weight drug
 pcx/items/drugcrry.pcx
 47074
 CRFT_DRG                          # drugs schematics
