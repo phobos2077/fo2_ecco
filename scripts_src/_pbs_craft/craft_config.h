@@ -6,7 +6,8 @@
 #include "../sfall/lib.strings.h"
 
 variable
-   craft_cfg;
+   craft_cfg,
+   craft_raw_cfg;
 
 procedure load_crafting_config;
 
@@ -59,7 +60,7 @@ end
 
 procedure load_crafting_config begin
    variable
-      ini := load_raw_crafting_config,
+      ini := craft_raw_cfg,
       iniMain := ini["Main"],
       cfg := create_array_map;
    

@@ -32,11 +32,13 @@
 // should typically be ITEMS_PER_SCREEN + 2
 #define MAX_CATEGORIES          (ITEMS_PER_SCREEN + 2)
 
+#define EXTRA_MSG_NAME          "pbs_craft.msg"
 #define pcx_path(name)          "pcx\\" #name ".pcx"
 
+
 variable begin
-   // TODO: craft_msg;
-   mode;
+   craft_msg_id;
+   craft_ui_mode;
    use_categories := false;
 
    cur_recipe;
@@ -60,14 +62,17 @@ variable begin
    display_line;
 end
 
+procedure mstr_craft(variable num) begin
+   return message_str_game(craft_msg_id, num);
+end
+
 // TODO:
-//#define bstr(x)                 message_str(craft_msg, x)
-#define bstr(x)                 message_str(SCRIPT_TEST0, x)
 #define skill_name(x)           mstr_skill(100 + x)
 
 #define has_prev_page           (cur_pos > 0)
 #define has_next_page           (cur_pos + ITEMS_PER_SCREEN < items_avail - 1)
 
+procedure init_crafting;
 procedure display_next_option(variable i, variable text, variable value);
 procedure redraw_win_idle;
 procedure count_items_avail;
@@ -105,6 +110,12 @@ pure procedure skill_names(variable skills);
 
 /******************************************************************************/
 
+
+procedure init_crafting begin
+   craft_msg_id := add_extra_msg_file(EXTRA_MSG_NAME);
+   craft_ui_mode := MODE_EXIT;
+   craft_raw_cfg := load_raw_crafting_config;
+end
 
 
 procedure recipe_is_available(variable recipe) begin
@@ -157,14 +168,14 @@ procedure show_cancel_button(variable winName) begin
    AddButtonProc("but2", do_cancel_on, do_cancel_off, do_cancel_down, do_cancel_up);
    SetFont(103);
    SetTextColor(0.52, 0.75, 0.15);
-   Format(bstr(120), 154, 6, 200, 30, 0);
+   Format(mstr_craft(120), 154, 6, 200, 30, 0);
    SetFont(101);
    SetTextColor(0.0, 1.0, 0.0);
    ShowWin;
 end
 
-procedure batch_init begin
-   craft_debug("batch_init()");
+procedure show_crafting_window begin
+   craft_debug("show_crafting_window()");
    stop_game;
 
    if not craft_cfg then craft_cfg := load_crafting_config;
@@ -215,9 +226,9 @@ procedure batch_init begin
    end
 
    if (use_categories) then begin
-      mode := MODE_CATEGORY_LIST;
+      craft_ui_mode := MODE_CATEGORY_LIST;
    end else begin
-      mode := MODE_ITEMS_LIST;
+      craft_ui_mode := MODE_ITEMS_LIST;
       if (items_avail == 0) then
          call count_items_avail;
    end
@@ -244,39 +255,39 @@ procedure count_items_avail begin
 end
 
 procedure loop_mode begin
-   while (mode != MODE_EXIT) do begin
-      craft_debug("loop_mode(): " + mode);
-      if (mode == MODE_ITEMS_LIST)         then call display_items_list;
-      else if (mode == MODE_ITEM_OPTIONS)  then call display_item_options;
-      else if (mode == MODE_BATCH_OK)      then call display_batch_ok;
-      else if (mode == MODE_UNDO_OK)       then call display_undo_ok;
-      else if (mode == MODE_CATEGORY_LIST) then call display_category_list;
+   while (craft_ui_mode != MODE_EXIT) do begin
+      craft_debug("loop_mode(): " + craft_ui_mode);
+      if (craft_ui_mode == MODE_ITEMS_LIST)         then call display_items_list;
+      else if (craft_ui_mode == MODE_ITEM_OPTIONS)  then call display_item_options;
+      else if (craft_ui_mode == MODE_BATCH_OK)      then call display_batch_ok;
+      else if (craft_ui_mode == MODE_UNDO_OK)       then call display_undo_ok;
+      else if (craft_ui_mode == MODE_CATEGORY_LIST) then call display_category_list;
    end
 end
 
 procedure exit_mode begin
-   mode := MODE_EXIT;
+   craft_ui_mode := MODE_EXIT;
 end
 
 procedure items_list_mode begin
-   mode := MODE_ITEMS_LIST;
+   craft_ui_mode := MODE_ITEMS_LIST;
 end
 
 procedure item_options_mode begin
-   mode := MODE_ITEM_OPTIONS;
+   craft_ui_mode := MODE_ITEM_OPTIONS;
 end
 
 procedure batch_ok_mode begin
-   mode := MODE_BATCH_OK;
+   craft_ui_mode := MODE_BATCH_OK;
 end
 
 procedure undo_ok_mode begin
-   mode := MODE_UNDO_OK;
+   craft_ui_mode := MODE_UNDO_OK;
 end
 
 procedure item_categories_mode begin
    cur_category := 0;
-   mode := MODE_CATEGORY_LIST;
+   craft_ui_mode := MODE_CATEGORY_LIST;
 end
 
 procedure display_category_list begin
@@ -289,7 +300,7 @@ procedure display_category_list begin
    craft_debug("display_category_list(): SayStart");
    SayStart;
       MouseShape(pcx_path(st1), 0, 0);
-      SayReply("r_display_list", bstr(210));
+      SayReply("r_display_list", mstr_craft(210));
 
       call redraw_win_idle;
       cur_category := 0;
@@ -303,11 +314,11 @@ procedure display_category_list begin
       end
       for (cat := 1; cat < MAX_CATEGORIES + 1; cat++) begin
          if (catList[cat]) then begin
-            call display_next_option(optionNum, bstr(40 + cat), cat);
+            call display_next_option(optionNum, mstr_craft(40 + cat), cat);
             optionNum += 1;
          end
       end
-      // SayOption(bstr(101), exit_mode);
+      // SayOption(mstr_craft(101), exit_mode);
    SayEnd;
    craft_debug("display_category_list(): SayEnd");
 end
@@ -316,12 +327,12 @@ procedure display_items_list begin
    craft_debug("display_items_list(): sayStart");
    SayStart;
       MouseShape(pcx_path(st1), 0, 0);
-      SayReply("r_display_list", bstr(200));
+      SayReply("r_display_list", mstr_craft(200));
       //SayOptionColor(5, 9, 255);
       SayOptionFlags(justifyleft);
       call display_items_avail;
       //SayOptionFlags(justifycenter bwor textshadow bwor textdirect);
-      craft_debug("display_items_list: sayoption "+bstr(101));
+      craft_debug("display_items_list: sayoption "+mstr_craft(101));
    SayEnd;
    craft_debug("display_items_list(): SayEnd");
 end
@@ -334,15 +345,15 @@ procedure display_item_options begin
       SayReply("r_item_options", proto_data(cur_recipe.pid, it_description));
       call draw_item_pcx;
       call draw_item_properties;
-      if (max_batch > 0) then SayOption("1. " + bstr(103), batch_one_item);
-      if (max_batch > 1) then SayOption("2. " + bstr(108) + bstr(110) + (max_batch * cur_recipe.qty) + bstr(111), batch_all_items);
-      if (max_undo > 0) then SayOption("3. " + bstr(104), undo_one_item);
-      if (max_undo > 1) then SayOption("4. " + bstr(109) + bstr(110) + max_undo + bstr(111), undo_all_items);
-      SayOption("0: "+bstr(102), items_list_mode);
+      if (max_batch > 0) then SayOption("1. " + mstr_craft(103), batch_one_item);
+      if (max_batch > 1) then SayOption("2. " + mstr_craft(108) + mstr_craft(110) + (max_batch * cur_recipe.qty) + mstr_craft(111), batch_all_items);
+      if (max_undo > 0) then SayOption("3. " + mstr_craft(104), undo_one_item);
+      if (max_undo > 1) then SayOption("4. " + mstr_craft(109) + mstr_craft(110) + max_undo + mstr_craft(111), undo_all_items);
+      SayOption("0: "+mstr_craft(102), items_list_mode);
       if (use_categories) then
-         SayOption(bstr(112), item_categories_mode);
+         SayOption(mstr_craft(112), item_categories_mode);
       else
-         SayOption("Esc. " + bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
+         SayOption("Esc. " + mstr_craft(101), exit_mode); // we have to display at least 2 options to prevent error...
    SayEnd;
    craft_debug("display_item_options: SayEnd()");
 end
@@ -351,9 +362,9 @@ procedure display_batch_ok begin
     craft_debug("display_batch_ok: SayStart()");
     SayStart;
         MouseShape(pcx_path(st1), 0, 0);
-        SayReply("r_batch_item", bstr(201));
-        SayOption("0. "+bstr(100), item_options_mode);
-        SayOption("Esc. " + bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
+        SayReply("r_batch_item", mstr_craft(201));
+        SayOption("0. "+mstr_craft(100), item_options_mode);
+        SayOption("Esc. " + mstr_craft(101), exit_mode); // we have to display at least 2 options to prevent error...
     SayEnd;
     craft_debug("display_batch_ok: SayEnd()");
 end
@@ -362,9 +373,9 @@ procedure display_undo_ok begin
     craft_debug("display_undo_ok: SayStart()");
     SayStart;
         MouseShape(pcx_path(st1), 0, 0);
-        SayReply("r_undo_batch", bstr(202));
-        SayOption("0. " + bstr(100), item_options_mode);
-        SayOption("Esc. " + bstr(101), exit_mode); // we have to display at least 2 options to prevent error...
+        SayReply("r_undo_batch", mstr_craft(202));
+        SayOption("0. " + mstr_craft(100), item_options_mode);
+        SayOption("Esc. " + mstr_craft(101), exit_mode); // we have to display at least 2 options to prevent error...
     SayEnd;
     craft_debug("display_undo_ok: SayEnd()");
 end
@@ -401,7 +412,7 @@ procedure display_items_avail begin
    /*while (skip_counter < cur_pos) do begin
       if (recipe_is_available) then skip_counter += 1;
    end*/
-   //if (cur_section_start != SECTION_START) then SayOption(bstr(106), list_back_proc);
+   //if (cur_section_start != SECTION_START) then SayOption(mstr_craft(106), list_back_proc);
    foreach (key: name in (craft_cfg.recipeNames)) begin
       recipe := craft_cfg.recipes[key];
       if (recipe_is_available(recipe)) then begin
@@ -413,18 +424,18 @@ procedure display_items_avail begin
          optionNum += 1;
       end
    end
-   if (has_prev_page) then SayOption("<. " + bstr(106), list_back_proc);
-   if (has_next_page) then SayOption(">. " + bstr(105), list_next_proc);
-   //if ((cur_section_start - SECTION_START) / SECTION_STEP + ITEMS_PER_SCREEN < items_avail) then SayOption(bstr(105), list_next_proc);
+   if (has_prev_page) then SayOption("<. " + mstr_craft(106), list_back_proc);
+   if (has_next_page) then SayOption(">. " + mstr_craft(105), list_next_proc);
+   //if ((cur_section_start - SECTION_START) / SECTION_STEP + ITEMS_PER_SCREEN < items_avail) then SayOption(mstr_craft(105), list_next_proc);
    if (use_categories) then
-      SayOption("0. " + bstr(112), item_categories_mode);
+      SayOption("0. " + mstr_craft(112), item_categories_mode);
    if (items_avail == 0) then
-      SayOption(bstr(107), exit_mode);
+      SayOption(mstr_craft(107), exit_mode);
 end
 
 procedure item_selected(variable idx) begin
-   craft_debug(string_format("Selected item %d [%d], mode: %d", item_values[idx], idx, mode));
-   if (mode == MODE_CATEGORY_LIST) then begin
+   craft_debug(string_format("Selected item %d [%d], craft_ui_mode: %d", item_values[idx], idx, craft_ui_mode));
+   if (craft_ui_mode == MODE_CATEGORY_LIST) then begin
       cur_category := item_values[idx];
       call count_items_avail; // count available items within selected category
       call items_list_mode;
@@ -515,7 +526,7 @@ procedure batch_item(variable num) begin
    end
    hours := cur_recipe.time * num / 60;
    mins  := cur_recipe.time * num % 60;
-   display_msg(bstr(400) + proto_data(cur_recipe.pid, it_name) + bstr(402) + (num * cur_recipe.qty) + bstr(403) + hours + bstr(404) + mins + bstr(405));
+   display_msg(mstr_craft(400) + proto_data(cur_recipe.pid, it_name) + mstr_craft(402) + (num * cur_recipe.qty) + mstr_craft(403) + hours + mstr_craft(404) + mins + mstr_craft(405));
    call batch_ok_mode;
 end
 
@@ -540,7 +551,7 @@ procedure undo_batch(variable num) begin
    call remove_items_pid(dude_obj, cur_recipe.pid, num * cur_recipe.qty);
    hours := cur_recipe.time * num / 60;
    mins  := cur_recipe.time * num % 60;
-   display_msg(bstr(401) + proto_data(cur_recipe.pid, it_name) + bstr(402) + (num * cur_recipe.qty) + bstr(403) + hours + bstr(404) + mins + bstr(405));
+   display_msg(mstr_craft(401) + proto_data(cur_recipe.pid, it_name) + mstr_craft(402) + (num * cur_recipe.qty) + mstr_craft(403) + hours + mstr_craft(404) + mins + mstr_craft(405));
    call undo_ok_mode;
 end
 
@@ -563,7 +574,7 @@ end
 procedure draw_tools_required begin
    variable list, hasAny, i, pid, str, hasAll := true;
    craft_debug("draw_tools_required()");
-   Format(bstr(300), 25, display_line, 250, 10, justifycenter);
+   Format(mstr_craft(300), 25, display_line, 250, 10, justifycenter);
    display_line += 10;
    if (len_array(cur_recipe.tools) > 0) then foreach (list in (cur_recipe.tools)) begin
       hasAny := false;
@@ -577,7 +588,7 @@ procedure draw_tools_required begin
          end
          str := proto_data(pid, it_name);
          if (i) then
-            str := bstr(150) + str;
+            str := mstr_craft(150) + str;
          Format(str, 25, display_line, 250, 10, justifyleft);
          display_line += 10;
          i += 1;
@@ -586,7 +597,7 @@ procedure draw_tools_required begin
    end else begin
       // If no tools needed - display "No".
       SetTextColor(0.0, 1.0, 0.0);
-      Format(bstr(303), 25, display_line, 250, 10, justifyleft);
+      Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
       display_line += 10;
    end
    display_line += 10;
@@ -598,7 +609,7 @@ procedure draw_skills_required begin
 
    craft_debug("draw_skills_required()");
    SetTextColor(0.0, 1.0, 0.0);
-   Format(bstr(301), 25, display_line, 250, 10, justifycenter);
+   Format(mstr_craft(301), 25, display_line, 250, 10, justifycenter);
    display_line += 10;
    if (len_array(cur_recipe.skills) > 0) then foreach (list in (cur_recipe.skills)) begin
       if (check_skill_sum(dude_obj, list)) then begin
@@ -621,7 +632,7 @@ procedure draw_skills_required begin
    end else begin
       // If no skills - display "No".
       SetTextColor(0.0, 1.0, 0.0);
-      Format(bstr(303), 25, display_line, 250, 10, justifyleft);
+      Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
       display_line += 10;
    end
    display_line += 10;
@@ -633,7 +644,7 @@ procedure draw_components_required begin
 
    craft_debug("draw_components_required()");
    SetTextColor(0.0, 1.0, 0.0);
-   Format(bstr(302), 25, display_line, 250, 10, justifycenter);
+   Format(mstr_craft(302), 25, display_line, 250, 10, justifycenter);
    display_line += 10;
    max_batch := 32767;
    if (len_array(cur_recipe.input) > 0) then foreach (list in (cur_recipe.input)) begin
@@ -655,7 +666,7 @@ procedure draw_components_required begin
             qty := qty * get_proto_data(pid, PROTO_AM_PACK_SIZE);
          str := proto_data(pid, it_name) + ": " + qty;
          if (i) then
-            str := bstr(150) + str;
+            str := mstr_craft(150) + str;
          Format(str, 25, display_line, 250, 10, justifyleft);
          display_line += 10;
          i += 1;
@@ -667,7 +678,7 @@ procedure draw_components_required begin
       // If no components found - display "No".
       max_batch := 1; // so we can actually produce the thing.. out of thin air?
       SetTextColor(0.0, 1.0, 0.0);
-      Format(bstr(303), 25, display_line, 250, 10, justifyleft);
+      Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
       display_line += 10;
    end
    display_line += 10;
@@ -718,14 +729,14 @@ procedure draw_item_properties begin
 
    // Display time required for crafting.
    SetTextColor(0.0, 1.0, 0.0);
-   Format(bstr(304), 25, display_line, 250, 10, justifycenter);
+   Format(mstr_craft(304), 25, display_line, 250, 10, justifycenter);
    display_line += 10;
 
    hours := cur_recipe.time / 60;
    mins  := cur_recipe.time % 60;
-   Format(bstr(305) + hours, 25, display_line, 250, 10, justifyleft);
+   Format(mstr_craft(305) + hours, 25, display_line, 250, 10, justifyleft);
    display_line += 10;
-   Format(bstr(306) + mins, 25, display_line, 250, 10, justifyleft);
+   Format(mstr_craft(306) + mins, 25, display_line, 250, 10, justifyleft);
 
    ShowWin;
 end

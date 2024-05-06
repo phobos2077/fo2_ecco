@@ -39,7 +39,7 @@ procedure warning_combat begin
    if (warning_msg == false) then begin
       warning_msg := true;
       play_sfx(SFX_ERROR);
-      sfall_func2("message_box", bstr(121), MSGBOX_NORMAL);
+      sfall_func2("message_box", mstr_craft(121), MSGBOX_NORMAL);
       warning_msg := false;
    end
 end
@@ -54,15 +54,15 @@ procedure keypress_handler begin
       if (hotkey_pressed_now(crafting_hotkey, key)) then begin
          if combat_is_initialized then
             call warning_combat;
-         else if (not(get_game_mode) and mode <= MODE_EXIT) then begin
-            call batch_init;
+         else if (not(get_game_mode) and craft_ui_mode <= MODE_EXIT) then begin
+            call show_crafting_window;
       	end
-      end else if (mode > MODE_EXIT) then begin
-         oldMode := mode;
+      end else if (craft_ui_mode > MODE_EXIT) then begin
+         oldMode := craft_ui_mode;
          if (key == DIK_ESCAPE) then begin
             call exit_mode;
          end else if (key >= DIK_1 and key <= DIK_9) then begin
-            if (mode == MODE_ITEM_OPTIONS) then begin
+            if (craft_ui_mode == MODE_ITEM_OPTIONS) then begin
                if (key == DIK_1 and max_batch > 0) then
                   call batch_one_item;
                else if (key == DIK_2 and max_batch > 1) then
@@ -71,24 +71,24 @@ procedure keypress_handler begin
                   call undo_one_item;
                else if (key == DIK_4 and max_undo > 1) then
                   call undo_all_items;
-            end else if (mode == MODE_ITEMS_LIST or mode == MODE_CATEGORY_LIST) then begin
+            end else if (craft_ui_mode == MODE_ITEMS_LIST or craft_ui_mode == MODE_CATEGORY_LIST) then begin
                optionProc := "item_options_" + (key - DIK_1);
                debug_msg("select " + optionProc); // this debug is needed to prevent stupid optimizer from removing the string!
                call optionProc;
             end
-         end else if (key == DIK_0 and mode <= MODE_UNDO_OK) then begin
-            if (mode == MODE_ITEM_OPTIONS) then
+         end else if (key == DIK_0 and craft_ui_mode <= MODE_UNDO_OK) then begin
+            if (craft_ui_mode == MODE_ITEM_OPTIONS) then
                call items_list_mode;
-            else if (mode == MODE_ITEMS_LIST and use_categories) then
+            else if (craft_ui_mode == MODE_ITEMS_LIST and use_categories) then
                call item_categories_mode;
-            else if (mode >= MODE_BATCH_OK) then
+            else if (craft_ui_mode >= MODE_BATCH_OK) then
                call item_options_mode;
-         end else if (key == DIK_COMMA and mode == MODE_ITEMS_LIST and has_prev_page) then begin
+         end else if (key == DIK_COMMA and craft_ui_mode == MODE_ITEMS_LIST and has_prev_page) then begin
             call list_back_proc;
-         end else if (key == DIK_PERIOD and mode == MODE_ITEMS_LIST and has_next_page) then begin
+         end else if (key == DIK_PERIOD and craft_ui_mode == MODE_ITEMS_LIST and has_next_page) then begin
             call list_next_proc;
          end
-         if (mode != oldMode) then
+         if (craft_ui_mode != oldMode) then
             tap_key(DIK_ESCAPE);
       end
    end
@@ -119,10 +119,10 @@ procedure do_up begin
       play_sfx(SFX_BUTTON_UP);
       call warning_combat;
    end
-   else if (not(get_game_mode) and mode <= 0) then begin
+   else if (not(get_game_mode) and craft_ui_mode <= 0) then begin
       //set_sfall_global("openfixi", 1);
       play_sfx(SFX_BUTTON_UP);
-      //call batch_init in 1;
+      //call show_crafting_window in 1;
       batch_scheduled := true;
       set_global_script_repeat(5);
    end
@@ -161,10 +161,8 @@ end
 
 procedure start begin
 	if (game_loaded) then begin
-      //craft_msg := add_extra_msg_file("craft.msg");
-      //craft_cfg := load_crafting_config;
-      variable craftCfg := load_raw_crafting_config;
-		crafting_hotkey := parse_hotkey(craftCfg.Main.hotkey);
+      call init_crafting;
+		crafting_hotkey := parse_hotkey(craft_raw_cfg.Main.hotkey);
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
       register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
 
@@ -179,7 +177,7 @@ procedure start begin
       //debug_msg("gl_fixit repeats");
       if (batch_scheduled) then begin
          batch_scheduled := false;
-         call batch_init;
+         call show_crafting_window;
       end
       set_global_script_repeat(0);
    end
