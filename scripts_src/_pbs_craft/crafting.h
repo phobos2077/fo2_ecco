@@ -60,6 +60,7 @@ variable begin
    button_pressed;
 
    display_line;
+   num_options;
 end
 
 procedure mstr_craft(variable num) begin
@@ -292,7 +293,6 @@ end
 
 procedure display_category_list begin
    variable
-      optionNum := 0,
       catList,
       key, recipe,
       cat;
@@ -312,10 +312,11 @@ procedure display_category_list begin
             catList[cat] := 1;
          end
       end
+      num_options := 0;
       for (cat := 1; cat < MAX_CATEGORIES + 1; cat++) begin
          if (catList[cat]) then begin
-            call display_next_option(optionNum, mstr_craft(40 + cat), cat);
-            optionNum += 1;
+            call display_next_option(num_options, mstr_craft(40 + cat), cat);
+            num_options += 1;
          end
       end
       // SayOption(mstr_craft(101), exit_mode);
@@ -359,25 +360,25 @@ procedure display_item_options begin
 end
 
 procedure display_batch_ok begin
-    craft_debug("display_batch_ok: SayStart()");
-    SayStart;
-        MouseShape(pcx_path(st1), 0, 0);
-        SayReply("r_batch_item", mstr_craft(201));
-        SayOption("0. "+mstr_craft(100), item_options_mode);
-        SayOption("Esc. " + mstr_craft(101), exit_mode); // we have to display at least 2 options to prevent error...
-    SayEnd;
-    craft_debug("display_batch_ok: SayEnd()");
+   craft_debug("display_batch_ok: SayStart()");
+   SayStart;
+      MouseShape(pcx_path(st1), 0, 0);
+      SayReply("r_batch_item", mstr_craft(201));
+      SayOption("0. "+mstr_craft(100), item_options_mode);
+      SayOption("Esc. " + mstr_craft(101), exit_mode); // we have to display at least 2 options to prevent error...
+   SayEnd;
+   craft_debug("display_batch_ok: SayEnd()");
 end
 
 procedure display_undo_ok begin
-    craft_debug("display_undo_ok: SayStart()");
-    SayStart;
-        MouseShape(pcx_path(st1), 0, 0);
-        SayReply("r_undo_batch", mstr_craft(202));
-        SayOption("0. " + mstr_craft(100), item_options_mode);
-        SayOption("Esc. " + mstr_craft(101), exit_mode); // we have to display at least 2 options to prevent error...
-    SayEnd;
-    craft_debug("display_undo_ok: SayEnd()");
+   craft_debug("display_undo_ok: SayStart()");
+   SayStart;
+      MouseShape(pcx_path(st1), 0, 0);
+      SayReply("r_undo_batch", mstr_craft(202));
+      SayOption("0. " + mstr_craft(100), item_options_mode);
+      SayOption("Esc. " + mstr_craft(101), exit_mode); // we have to display at least 2 options to prevent error...
+   SayEnd;
+   craft_debug("display_undo_ok: SayEnd()");
 end
 
 procedure list_next_proc begin
@@ -402,26 +403,26 @@ end
 
 procedure display_items_avail begin
    variable
-      optionNum := 0,
-      skip_counter := 0,
+      skipCounter := 0,
       recipe, key, name;
    craft_debug("display_items_avail()");
    //call redraw_win_dscr;
    call redraw_win_idle;
 
-   /*while (skip_counter < cur_pos) do begin
-      if (recipe_is_available) then skip_counter += 1;
+   /*while (skipCounter < cur_pos) do begin
+      if (recipe_is_available) then skipCounter += 1;
    end*/
    //if (cur_section_start != SECTION_START) then SayOption(mstr_craft(106), list_back_proc);
+   num_options := 0;
    foreach (key: name in (craft_cfg.recipeNames)) begin
       recipe := craft_cfg.recipes[key];
       if (recipe_is_available(recipe)) then begin
-         if skip_counter < cur_pos then begin
-            skip_counter += 1;
+         if skipCounter < cur_pos then begin
+            skipCounter += 1;
             continue;
          end
-         call display_next_option(optionNum, name, recipe);
-         optionNum += 1;
+         call display_next_option(num_options, name, recipe);
+         num_options += 1;
       end
    end
    if (has_prev_page) then SayOption("<. " + mstr_craft(106), list_back_proc);
@@ -434,6 +435,7 @@ procedure display_items_avail begin
 end
 
 procedure item_selected(variable idx) begin
+   if (idx >= num_options) then return;
    craft_debug(string_format("Selected item %d [%d], craft_ui_mode: %d", item_values[idx], idx, craft_ui_mode));
    if (craft_ui_mode == MODE_CATEGORY_LIST) then begin
       cur_category := item_values[idx];
@@ -742,15 +744,17 @@ procedure draw_item_properties begin
 end
 
 procedure draw_item_pcx begin
-   variable w, h;
-   // TODO: get size from FRM directly
-   w := cur_recipe.pic_w;
-   h := cur_recipe.pic_h;
+   variable w, h, data, fid := proto_data(cur_recipe.pid, it_inv_fid);
+   data := art_frame_data(fid, 0, 0); // this requires sfall update
+   //w := cur_recipe.pic_w;
+   //h := cur_recipe.pic_h;
+   w := data[0];
+   h := data[1];
    craft_debug("draw_item_pcx "+cur_recipe.pid+", size: "+w+"x"+h);
    call redraw_win_dscr;
    SelectWin("win_dscr");
-   //DisplayGFX(cur_pcx, 150 - w/2, 55 - h/2, w, h);
-   draw_image_scaled(proto_data(cur_recipe.pid, it_inv_fid), 0, 150 - w/2, 55 - h/2, w, h);
+   draw_image_scaled(fid, 0, 150 - w/2, 55 - h/2, w, h);
+   //draw_image(proto_data(cur_recipe.pid, it_inv_fid), 0, 150 - w/2, 55 - h/2, false);
    ShowWin;
 end
 

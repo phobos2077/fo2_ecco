@@ -18,7 +18,6 @@ procedure parse_item_cfg(variable value) begin
       i := string_find(value, ":"),
       pid, qty;
 
-   //craft_debug("parse item '"+value+"', i = "+i);
    if (i >= 0) then begin
       pid := atoi(substr(value, 0, i));
       qty := atoi(substr(value, i + 1, 0));
@@ -70,7 +69,6 @@ procedure load_crafting_config begin
 
    craft_debug("crafting cfg main: " + debug_array_str(cfg));
 
-   cfg.party_members = array_fixed(array_transform_kv(ini["Party_Members"], @string_to_int, @string_to_int));
    cfg.recipes := create_array_map;
    //cfg.categories := create_array_map;
    cfg.recipeNames := create_array_map;
