@@ -11,14 +11,14 @@
 
 /*
    TODO:
-   - allow to consume components from party members directly
+   - count ammo components per bullet to avoid exploiting (e.g. use 1 bullet item as 30 bullets)
    - consider replacing dialog with scripted windows, text and buttons
 */
 
 #define craft_debug(text)       if (true) then debug_msg("[craft] "+text)
 
+#include "craft_utils.h"
 #include "craft_config.h"
-
 
 #define ITEMS_PER_SCREEN        9
 
@@ -63,10 +63,11 @@ procedure mstr_craft(variable num) begin
    return message_str_game(craft_msg_id, num);
 end
 
-#define skill_name(x)           mstr_skill(100 + x)
-
 #define has_prev_page           (cur_pos > 0)
 #define has_next_page           (cur_pos + ITEMS_PER_SCREEN < items_avail - 1)
+
+#define SetText_GREEN           SetTextColor(0.0, 1.0, 0.0)
+#define SetText_RED             SetTextColor(1.0, 0.0, 0.0)
 
 procedure init_crafting;
 procedure display_next_option(variable i, variable text, variable value);
@@ -100,10 +101,6 @@ procedure undo_one_item;
 procedure undo_all_items;
 
 procedure loop_mode;
-
-procedure get_party_member_with_skill(variable skills);
-pure procedure check_skill_sum(variable crit, variable skills);
-pure procedure skill_names(variable skills);
 
 /******************************************************************************/
 
@@ -166,7 +163,7 @@ procedure show_cancel_button(variable winName) begin
    SetTextColor(0.52, 0.75, 0.15);
    Format(mstr_craft(120), 154, 6, 200, 30, 0);
    SetFont(101);
-   SetTextColor(0.0, 1.0, 0.0);
+   SetText_GREEN;
    ShowWin;
 end
 
@@ -186,7 +183,7 @@ procedure show_crafting_window begin
 
    SetFont(5);
    SaySetSpacing(3);
-   SetTextColor(0.0, 1.0, 0.0);
+   SetText_GREEN;
    SetHighlightColor(1.0, 1.0, 1.0);
    SetHighlightColor(1.0, 1.0, 0.64);
 
@@ -495,12 +492,12 @@ procedure batch_item(variable num) begin
    gfade_in(400);
 
    foreach (orList in (cur_recipe.input)) begin
-      // remove first item from "OR" orList that player has
+      // remove first item from "OR" orList that player party has
       foreach (componentData in orList) begin
          pid := cfg_item_pid(componentData);
          qty := cfg_item_qty(componentData);
-         if (obj_is_carrying_obj_pid(dude_obj, pid) >= qty) then begin
-            call remove_items_pid(dude_obj, pid, qty * num);
+         if (party_is_carrying_obj_pid(pid) >= qty * num) then begin
+            call party_remove_items_pid(pid, qty * num);
             break;
          end
       end
@@ -534,7 +531,7 @@ procedure undo_batch(variable num) begin
          call add_items_pid(dude_obj, cfg_item_pid(componentData), cfg_item_qty(componentData) * num);
       end
    end
-   call remove_items_pid(dude_obj, cur_recipe.pid, num * cur_recipe.qty);
+   call party_remove_items_pid(cur_recipe.pid, num * cur_recipe.qty);
    hours := cur_recipe.time * num / 60;
    mins  := cur_recipe.time * num % 60;
    display_msg(mstr_craft(401) + proto_data(cur_recipe.pid, it_name) + mstr_craft(402) + (num * cur_recipe.qty) + mstr_craft(403) + hours + mstr_craft(404) + mins + mstr_craft(405));
@@ -566,11 +563,11 @@ procedure draw_tools_required begin
       hasAny := false;
       i := 0;
       foreach (pid in list) begin
-         if (obj_is_carrying_obj_pid(dude_obj, pid)) then begin
-            SetTextColor(0.0, 1.0, 0.0);
+         if (party_is_carrying_obj_pid(pid)) then begin
+            SetText_GREEN;
             hasAny := true;
          end else begin
-            SetTextColor(1.0, 0.0, 0.0);
+            SetText_RED;
          end
          str := proto_data(pid, it_name);
          if (i) then
@@ -582,7 +579,7 @@ procedure draw_tools_required begin
       if (not hasAny) then hasAll := false;
    end else begin
       // If no tools needed - display "No".
-      SetTextColor(0.0, 1.0, 0.0);
+      SetText_GREEN;
       Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
       display_line += 10;
    end
@@ -594,21 +591,21 @@ procedure draw_skills_required begin
    variable list, str, hasAll := true;
 
    craft_debug("draw_skills_required()");
-   SetTextColor(0.0, 1.0, 0.0);
+   SetText_GREEN;
    Format(mstr_craft(301), 25, display_line, 250, 10, justifycenter);
    display_line += 10;
    if (len_array(cur_recipe.skills) > 0) then foreach (list in (cur_recipe.skills)) begin
       if (check_skill_sum(dude_obj, list)) then begin
-         SetTextColor(0.0, 1.0, 0.0);
+         SetText_GREEN;
          str := "";
       end else begin
          // check party members skills
          str := get_party_member_with_skill(list) if craft_cfg.use_party else 0;
          if (str) then begin
-            SetTextColor(0.0, 1.0, 0.0);
+            SetText_GREEN;
             str := " (" + str + ")";
          end else begin
-            SetTextColor(1.0, 0.0, 0.0);
+            SetText_RED;
             hasAll := false;
             str := "";
          end
@@ -617,7 +614,7 @@ procedure draw_skills_required begin
       display_line += 10;
    end else begin
       // If no skills - display "No".
-      SetTextColor(0.0, 1.0, 0.0);
+      SetText_GREEN;
       Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
       display_line += 10;
    end
@@ -629,7 +626,7 @@ procedure draw_components_required begin
    variable list, hasAny, i, numBatches, maxGroupBatch, itemData, pid, qty, str, hasAll := true;
 
    craft_debug("draw_components_required()");
-   SetTextColor(0.0, 1.0, 0.0);
+   SetText_GREEN;
    Format(mstr_craft(302), 25, display_line, 250, 10, justifycenter);
    display_line += 10;
    max_batch := 32767;
@@ -640,13 +637,13 @@ procedure draw_components_required begin
       foreach itemData in list begin
          pid := cfg_item_pid(itemData);
          qty := cfg_item_qty(itemData);
-         if (obj_is_carrying_obj_pid(dude_obj, pid) >= qty) then begin
-            SetTextColor(0.0, 1.0, 0.0);
+         numBatches := party_is_carrying_obj_pid(pid) / qty;
+         if (numBatches > 0) then begin
+            SetText_GREEN;
             hasAny := true;
          end else begin
-            SetTextColor(1.0, 0.0, 0.0);
+            SetText_RED;
          end
-         numBatches := obj_is_carrying_obj_pid(dude_obj, pid) / qty;
          if (numBatches > maxGroupBatch) then maxGroupBatch := numBatches;
          if (proto_data(pid, it_type) == item_type_ammo) then
             qty := qty * get_proto_data(pid, PROTO_AM_PACK_SIZE);
@@ -663,7 +660,7 @@ procedure draw_components_required begin
    end else begin
       // If no components found - display "No".
       max_batch := 1; // so we can actually produce the thing.. out of thin air?
-      SetTextColor(0.0, 1.0, 0.0);
+      SetText_GREEN;
       Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
       display_line += 10;
    end
@@ -691,7 +688,7 @@ procedure draw_item_properties begin
    craft_debug("draw_item_properties " + pid);
    SelectWin("win_dscr");
    // Item name
-   SetTextColor(0.0, 1.0, 0.0);
+   SetText_GREEN;
    str := proto_data(pid, it_name);
    qty := cur_recipe.qty;
    if (proto_data(pid, it_type) == item_type_ammo) then
@@ -709,12 +706,12 @@ procedure draw_item_properties begin
    if not(hasTools and hasSkills and hasComponents) then max_batch := 0;
 
    // Check if disassembly is possible.
-   max_undo := obj_is_carrying_obj_pid(dude_obj, cur_recipe.pid)
+   max_undo := party_is_carrying_obj_pid(cur_recipe.pid)
       if (cur_recipe.undo and hasTools and hasSkills)
       else 0;
 
    // Display time required for crafting.
-   SetTextColor(0.0, 1.0, 0.0);
+   SetText_GREEN;
    Format(mstr_craft(304), 25, display_line, 250, 10, justifycenter);
    display_line += 10;
 
@@ -741,44 +738,5 @@ procedure draw_item_pcx begin
    //draw_image(proto_data(cur_recipe.pid, it_inv_fid), 0, 150 - w/2, 55 - h/2, false);
    ShowWin;
 end
-
-#define critter_body_type(crit)        (proto_data(obj_pid(crit), cr_body_type))
-#define critter_can_craft(crit)        (critter_body_type(crit) == CR_BODY_BIPED or critter_body_type(crit) == CR_BODY_ROBOTIC)
-
-procedure get_party_member_with_skill(variable skills) begin
-   variable ret := 0;
-   variable obj;
-   //craft_debug("search skill "+debug_array_str(skills)+" at least " + level);
-   foreach (obj in party_member_list_critters) begin
-      if (obj and critter_can_craft(obj) and check_skill_sum(obj, skills)) then begin
-         ret := obj_name(obj);// proto_data(obj_pid, cr_name)
-      end
-   end
-   return ret;
-end
-
-pure procedure check_skill_sum(variable crit, variable skills) begin
-   variable
-      total := 0,
-      numSkills := len_array(skills) - 1,
-      i;
-
-   for (i := 0; i < numSkills; i++) begin
-      total += has_skill(crit, skills[i]);
-   end
-   return total >= skills[numSkills];
-end
-
-pure procedure skill_names(variable skills) begin
-   variable
-      str := "", numSkills := len_array(skills) - 1,
-      i;
-   for (i := 0; i < numSkills; i++) begin
-      if (i > 0) then str += " + ";
-      str += skill_name(skills[i]);
-   end
-   return str;
-end
-
 
 #endif
