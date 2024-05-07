@@ -11,8 +11,8 @@
 
 /*
    TODO:
-   - use custom game msg file
-   - get rid of "say" and "reply" stuff, use normal windows with text and buttons
+   - allow to consume components from party members directly
+   - consider replacing dialog with scripted windows, text and buttons
 */
 
 #define craft_debug(text)       if (true) then debug_msg("[craft] "+text)
@@ -43,20 +43,16 @@ variable begin
 
    cur_recipe;
    cur_category;
-//    last_saved_pos;
    cur_pos;
    items_avail;
    max_batch;
    max_undo;
-
-//    pcx_show;
 
    item_values;
 
    win_x := 0;
    win_y := 0;
 
-   mouse_over;
    button_pressed;
 
    display_line;
@@ -67,7 +63,6 @@ procedure mstr_craft(variable num) begin
    return message_str_game(craft_msg_id, num);
 end
 
-// TODO:
 #define skill_name(x)           mstr_skill(100 + x)
 
 #define has_prev_page           (cur_pos > 0)
@@ -77,6 +72,7 @@ procedure init_crafting;
 procedure display_next_option(variable i, variable text, variable value);
 procedure redraw_win_idle;
 procedure count_items_avail;
+
 procedure draw_item_properties;
 procedure draw_item_pcx;
 
@@ -137,12 +133,10 @@ procedure recipe_is_available(variable recipe) begin
 end
 
 procedure do_cancel_on begin
-   mouse_over := true;
 end
 
 procedure do_cancel_off begin
    if (button_pressed == true) then play_sfx("IB1LU1X1");
-   mouse_over := false;
    button_pressed := false;
 end
 
@@ -157,7 +151,8 @@ procedure do_cancel_up begin
    button_pressed := false;
    play_sfx("IB1LU1X1");
    call exit_mode;
-   tap_key(DIK_ESCAPE);
+   SayQuit;
+   //tap_key(DIK_ESCAPE); // a hack to close the dialog without actually clicking on any reply options
 end
 
 procedure show_cancel_button(variable winName) begin
@@ -181,8 +176,6 @@ procedure show_crafting_window begin
 
    if not craft_cfg then craft_cfg := load_crafting_config;
 
-   //cur_section_start := SECTION_START;
-   //last_saved_pos := cur_section_start;
    cur_pos := 0;
    items_avail := 0;
    cur_category := 0;
@@ -390,15 +383,15 @@ procedure list_back_proc begin
 end
 
 procedure redraw_win_dscr begin
-    SelectWin("win_dscr");
-    Display(pcx_path(w_dscr));
-    ShowWin;
+   SelectWin("win_dscr");
+   Display(pcx_path(w_dscr));
+   ShowWin;
 end
 
 procedure redraw_win_idle begin
-    SelectWin("win_dscr");
-    Display(pcx_path(w_idle));
-    ShowWin;
+   SelectWin("win_dscr");
+   Display(pcx_path(w_idle));
+   ShowWin;
 end
 
 procedure display_items_avail begin
@@ -409,10 +402,6 @@ procedure display_items_avail begin
    //call redraw_win_dscr;
    call redraw_win_idle;
 
-   /*while (skipCounter < cur_pos) do begin
-      if (recipe_is_available) then skipCounter += 1;
-   end*/
-   //if (cur_section_start != SECTION_START) then SayOption(mstr_craft(106), list_back_proc);
    num_options := 0;
    foreach (key: name in (craft_cfg.recipeNames)) begin
       recipe := craft_cfg.recipes[key];
@@ -423,11 +412,11 @@ procedure display_items_avail begin
          end
          call display_next_option(num_options, name, recipe);
          num_options += 1;
+         if (num_options >= ITEMS_PER_SCREEN) then break;
       end
    end
    if (has_prev_page) then SayOption("<. " + mstr_craft(106), list_back_proc);
    if (has_next_page) then SayOption(">. " + mstr_craft(105), list_next_proc);
-   //if ((cur_section_start - SECTION_START) / SECTION_STEP + ITEMS_PER_SCREEN < items_avail) then SayOption(mstr_craft(105), list_next_proc);
    if (use_categories) then
       SayOption("0. " + mstr_craft(112), item_categories_mode);
    if (items_avail == 0) then
@@ -441,7 +430,7 @@ procedure item_selected(variable idx) begin
       cur_category := item_values[idx];
       call count_items_avail; // count available items within selected category
       call items_list_mode;
-   end else begin
+   end else if (craft_ui_mode == MODE_ITEMS_LIST) then begin
       cur_recipe := item_values[idx];
       call item_options_mode;
    end
@@ -461,6 +450,7 @@ _optProc(9) \
 _optProc(10) \
 _optProc(11)
 
+// Dialog option handlers.
 #define _optProc(NNN) \
 pure procedure item_options_##NNN begin \
    call item_selected(NNN); \
@@ -470,22 +460,16 @@ optProcs
 #undef _optProc
 
 
-procedure no_p_proc begin
-   // A hack to ensure these procedures aren't removed during optimization...
-   /*if game_time < 0 then begin
-      #define _optProc(NNN) debug_msg(@item_options_##NNN);
-      optProcs
-      #undef _optProc
-   end*/
-end
-
 procedure display_next_option(variable i, variable text, variable value) begin
    if (i < 9) then
       text := ""+(i+1)+". "+text;
 
    craft_debug(string_format("Displaying option %d: %s with value %d", i, text, value));
    item_values[i] := value;
-   //SayOption(text, "item_options_"+i);
+
+   // For some reason, passing callback as string doesn't work with SayOption (I suspect this is how sslc does proc arguments...)
+   // So generate this ugly series of IFs with direct references to every handler.
+   // >> doesn't work: // SayOption(text, "item_options_"+i);
 
    #define _optProc(NNN) \
    if (i == NNN) then SayOption(text, item_options_##NNN);
