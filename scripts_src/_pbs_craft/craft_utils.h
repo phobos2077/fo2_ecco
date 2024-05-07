@@ -48,17 +48,81 @@ procedure obj_name_proc(variable obj) begin
    return obj_name(obj) if obj else "(null)";
 end
 
+#define ammo_pid_pack_size(pid)                           get_proto_data(pid, PROTO_AM_PACK_SIZE)
+#define actual_ammo_count(inven, item, packSize)          (obj_is_carrying_obj(inven, item) - 1) * packSize + get_weapon_ammo_count(item)
+
+procedure obj_is_carrying_bullets_pid(variable invenObj, variable pid) begin
+   variable
+      i := 0,
+      numBullets := 0,
+      packSize := ammo_pid_pack_size(pid),
+      item := inven_ptr(invenObj, 0);
+
+   while (item) do begin
+      if (obj_pid(item) == pid) then begin
+         numBullets += actual_ammo_count(invenObj, item, packSize);
+      end
+      i += 1;
+      item := inven_ptr(invenObj, i);
+   end
+   return numBullets;
+end
+
+procedure remove_bullets_pid(variable invenObj, variable pid, variable quantity) begin
+   variable
+      toRemove := quantity,
+      packSize,
+      item := obj_carrying_pid_obj(invenObj, pid),
+      i, numPacks, numInTop, numInStack, rmvd, newPacks, newInTop, newInStack;
+
+   if (item == 0) then return 0;
+
+   packSize := ammo_pid_pack_size(pid);
+   numPacks := obj_is_carrying_obj(invenObj, item);
+   numInTop := get_weapon_ammo_count(item);
+   numInStack := (numPacks - 1) * packSize + numInTop;
+   craft_debug(string_format("remove_bullets_pid(%s, %s, %d): found %d bullets.", obj_name(invenObj), proto_data(pid, it_name), quantity, numInStack));
+
+   newInStack := numInStack - toRemove;  // numInStack - math_min(toRemove, numInStack);
+   if (newInStack < 0) then newInStack := 0;
+
+   newInTop := newInStack % packSize;
+   newPacks := newInStack / packSize;
+   if (newInTop == 0) then
+      newInTop := packSize;
+   else
+      newPacks += 1;
+
+   if (newPacks < numPacks) then begin
+      rmvd := rm_mult_objs_from_inven(invenObj, item, numPacks - newPacks);
+      destroy_object(item);
+      craft_debug(string_format("remove_bullets_pid: reduced item count: %d - %d = %d", numPacks, rmvd, numPacks - rmvd));
+   end
+   if (newPacks > 0) then begin
+      item := obj_carrying_pid_obj(invenObj, pid);
+      set_weapon_ammo_count(item, newInTop);
+      craft_debug(string_format("remove_bullets_pid: set top count: %d -> %d", numInTop, newInTop));
+   end
+   return (numInStack - newInStack);
+end
+
 procedure party_is_carrying_obj_pid(variable pid) begin
-   variable sum := 0;
-   variable obj, num;
+   variable
+      sum := 0,
+      isAmmo := proto_data(pid, it_type) == item_type_ammo,
+      obj, num;
+
    foreach (obj in party_member_list_all) begin
       if (obj and obj_is_visible_flag(obj)) then begin
-         num := obj_is_carrying_obj_pid(obj, pid);
+         num := obj_is_carrying_bullets_pid(obj, pid) if isAmmo else obj_is_carrying_obj_pid(obj, pid);
          if (num > 0) then
             craft_debug(string_format("party_is_carrying_obj_pid(%s): %s has %d", proto_data(pid, it_name), obj_name_proc(obj), num));
          sum += num;
       end
    end
+   // For ammo, we calculate sum in individual bullets but return a number of *full* packs (as if ammo is combined in one inventory)
+   if (sum > 0 and isAmmo) then
+      sum := sum / ammo_pid_pack_size(pid);
    craft_debug(string_format("party_is_carrying_obj_pid(%s): sum = %d", proto_data(pid, it_name), sum));
    return sum;
 end
@@ -66,8 +130,9 @@ end
 // Remove given number of items from party, starting with closest members to the player
 procedure party_remove_items_pid(variable pid, variable quantity) begin
    variable
-      toRemove := quantity,
       partyDistMap := temp_array_map,
+      isAmmo := proto_data(pid, it_type) == item_type_ammo,
+      toRemove := quantity * (ammo_pid_pack_size(pid) if isAmmo else 1),
       obj, d, rmvd;
    
    craft_debug("party_remove_items_pid(" + proto_data(pid, it_name) + ",  " + quantity + ")");
@@ -79,13 +144,17 @@ procedure party_remove_items_pid(variable pid, variable quantity) begin
    sort_map_value(partyDistMap);
    //craft_debug("sorted party: " + debug_array_str(array_transform(array_keys(partyDistMap), @obj_name_proc)));
    foreach (obj: d in partyDistMap) begin
-      rmvd := remove_items_pid(obj, pid, toRemove);
+      rmvd := remove_bullets_pid(obj, pid, toRemove) if isAmmo else remove_items_pid(obj, pid, toRemove);
       if (rmvd > 0) then
          craft_debug(string_format("party_remove_items_pid: removed %d from %s (dist: %d)", rmvd, obj_name_proc(obj), d));
       toRemove -= rmvd;
       if (toRemove <= 0) then break;
    end
-   return quantity - toRemove;
+   rmvd := quantity - toRemove;
+   // For ammo, we removed based on individual bullets, so return a number of full stacks removed
+   if (rmvd > 0 and isAmmo) then
+      rmvd := rmvd / ammo_pid_pack_size(pid);
+   return rmvd;
 end
 
 #endif // PBS_CRAFT_UTILS_H

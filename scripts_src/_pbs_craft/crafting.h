@@ -11,7 +11,6 @@
 
 /*
    TODO:
-   - count ammo components per bullet to avoid exploiting (e.g. use 1 bullet item as 30 bullets)
    - consider replacing dialog with scripted windows, text and buttons
 */
 
