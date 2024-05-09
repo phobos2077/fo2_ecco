@@ -21,14 +21,18 @@ procedure delete_button;
 #include "crafting.h"
 
 variable crafting_hotkey;
-variable warning_msg, show_crafting_scheduled, crafting_button_shown, screen_center_x;
+variable warning_msg, show_crafting_scheduled, crafting_button_shown;
 
 #define WIN_CRAFT_BTN         "helwin"
 #define SFX_BUTTON_DOWN       "butin4"
 #define SFX_BUTTON_UP         "IB2LU1X1"
 #define SFX_ERROR             "IISXXXX1"
-#define PCX_BUTTON_DOWN       pcx_path(mfdown)
-#define PCX_BUTTON_UP         pcx_path(mfup)
+#define PCX_BUTTON_DOWN       pcx_path(cftbtndn)
+#define PCX_BUTTON_UP         pcx_path(cftbtnup)
+#define BUTTON_WIDTH          19
+#define BUTTON_HEIGHT         24
+#define BUTTON_BOTTOM_OFFSET  62
+#define BUTTON_RIGHT_OFFSET   399
 
 
 procedure warning_combat begin
@@ -126,10 +130,12 @@ end
 // Create the button
 procedure create_button begin
    if crafting_button_shown then return;
-
-   create_win_flag(WIN_CRAFT_BTN, (screen_center_x + 238), (get_screen_height - 98), 24, 23, WIN_FLAG_DONTMOVE bwor WIN_FLAG_TRANSPARENT);
+   variable
+      x := get_interface_x(WINTYPE_IFACEBAR) + get_interface_width(WINTYPE_IFACEBAR) - BUTTON_RIGHT_OFFSET,
+      y := (get_screen_height - BUTTON_BOTTOM_OFFSET);
+   create_win_flag(WIN_CRAFT_BTN, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, WIN_FLAG_DONTMOVE bwor WIN_FLAG_TRANSPARENT);
    SelectWin(WIN_CRAFT_BTN);
-   AddButton("but", 0, 0, 24, 23);
+   AddButton("but", 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT);
    AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);
    AddButtonProc("but", do_on, do_off, do_down, do_up);
    ShowWin;
@@ -160,10 +166,7 @@ procedure start begin
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
       register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
 
-      screen_center_x  := (get_screen_width / 2);
-      if ((get_ini_setting("f2_res.ini|IFACE|IFACE_BAR_WIDTH") != 800) or (screen_center_x < 400)) then begin
-         screen_center_x -= 80;
-      end
+      //display_msg(string_format("iface x: %d, w: %d", get_interface_x(WINTYPE_IFACEBAR), get_interface_width(WINTYPE_IFACEBAR)));
       call create_button;
 
       set_global_script_type(1);
