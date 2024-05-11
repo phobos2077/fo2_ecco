@@ -8,6 +8,7 @@
 #define skill_name(x)                   mstr_skill(100 + x)
 #define critter_body_type(crit)        (proto_data(obj_pid(crit), cr_body_type))
 #define critter_can_craft(crit)        (critter_body_type(crit) == CR_BODY_BIPED or critter_body_type(crit) == CR_BODY_ROBOTIC)
+#define PARTY_DONATE_MAX_DIST          30
 
 pure procedure check_skill_sum(variable crit, variable skills) begin
    variable
@@ -18,7 +19,7 @@ pure procedure check_skill_sum(variable crit, variable skills) begin
    for (i := 0; i < numSkills; i++) begin
       total += has_skill(crit, skills[i]);
    end
-   return total >= skills[numSkills];
+   return 1 if total >= skills[numSkills] else -total;
 end
 
 procedure get_party_member_with_skill(variable skills) begin
@@ -26,7 +27,7 @@ procedure get_party_member_with_skill(variable skills) begin
    variable obj;
    //craft_debug("search skill "+debug_array_str(skills)+" at least " + level);
    foreach (obj in party_member_list_critters) begin
-      if (obj and critter_can_craft(obj) and check_skill_sum(obj, skills)) then begin
+      if (obj and critter_can_craft(obj) and check_skill_sum(obj, skills) > 0) then begin
          ret := obj_name(obj);// proto_data(obj_pid, cr_name)
       end
    end
@@ -50,6 +51,7 @@ end
 
 #define ammo_pid_pack_size(pid)                           get_proto_data(pid, PROTO_AM_PACK_SIZE)
 #define actual_ammo_count(inven, item, packSize)          (obj_is_carrying_obj(inven, item) - 1) * packSize + get_weapon_ammo_count(item)
+#define item_pid_pack_size(pid)                           (ammo_pid_pack_size(pid) if (proto_data(pid, it_type) == item_type_ammo) else 1)
 
 procedure obj_is_carrying_bullets_pid(variable invenObj, variable pid) begin
    variable
@@ -106,24 +108,33 @@ procedure remove_bullets_pid(variable invenObj, variable pid, variable quantity)
    return (numInStack - newInStack);
 end
 
-procedure party_is_carrying_obj_pid(variable pid) begin
+procedure party_member_can_donate_items(variable obj) begin
+   return obj == dude_obj
+      or (obj
+         and obj_is_visible_flag(obj)
+         and elevation(obj) == elevation(dude_obj)
+         and tile_distance_objs(dude_obj, obj) <= PARTY_DONATE_MAX_DIST);
+end
+
+procedure party_is_carrying_obj_pid(variable pid, variable returnAmmoCount := false) begin
    variable
       sum := 0,
       isAmmo := proto_data(pid, it_type) == item_type_ammo,
       obj, num;
 
    foreach (obj in party_member_list_all) begin
-      if (obj and obj_is_visible_flag(obj)) then begin
+      if (party_member_can_donate_items(obj)) then begin
          num := obj_is_carrying_bullets_pid(obj, pid) if isAmmo else obj_is_carrying_obj_pid(obj, pid);
-         if (num > 0) then
+         if (num > 0) then begin
             craft_debug(string_format("party_is_carrying_obj_pid(%s): %s has %d", proto_data(pid, it_name), obj_name_proc(obj), num));
-         sum += num;
+            sum += num;
+         end
       end
    end
-   // For ammo, we calculate sum in individual bullets but return a number of *full* packs (as if ammo is combined in one inventory)
-   if (sum > 0 and isAmmo) then
-      sum := sum / ammo_pid_pack_size(pid);
    craft_debug(string_format("party_is_carrying_obj_pid(%s): sum = %d", proto_data(pid, it_name), sum));
+   // For ammo, we calculate sum in individual bullets but return a number of *full* packs (as if ammo is combined in one inventory)
+   if (sum > 0 and isAmmo and (not returnAmmoCount)) then
+      sum := sum / ammo_pid_pack_size(pid);
    return sum;
 end
 
@@ -137,7 +148,7 @@ procedure party_remove_items_pid(variable pid, variable quantity) begin
    
    craft_debug("party_remove_items_pid(" + proto_data(pid, it_name) + ",  " + quantity + ")");
    foreach (obj in party_member_list_all) begin
-      if (obj and obj_is_visible_flag(obj)) then begin
+      if (party_member_can_donate_items(obj)) then begin
          partyDistMap[obj] := tile_distance_objs(dude_obj, obj) + 1; // +1 to avoid 0-unset behavior
       end
    end

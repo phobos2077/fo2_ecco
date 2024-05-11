@@ -55,6 +55,8 @@ variable begin
    button_pressed;
 
    display_line;
+   display_cur_str;
+
    num_options;
 end
 
@@ -65,7 +67,11 @@ end
 #define has_prev_page           (cur_pos > 0)
 #define has_next_page           (cur_pos + ITEMS_PER_SCREEN < items_avail - 1)
 
+#define COLOR_GREEN             0
+#define COLOR_RED               1
+#define COLOR_DARK_GREEN        2
 #define SetText_GREEN           SetTextColor(0.0, 1.0, 0.0)
+#define SetText_DARK_GREEN      SetTextColor(0.0, 0.3, 0.0)
 #define SetText_RED             SetTextColor(1.0, 0.0, 0.0)
 
 procedure init_crafting;
@@ -126,6 +132,10 @@ procedure recipe_is_available(variable recipe) begin
       end
    end
    return true;
+end
+
+procedure cur_recipe_batch_size begin
+   return cur_recipe.qty * item_pid_pack_size(cur_recipe.pid);
 end
 
 procedure do_cancel_on begin
@@ -206,6 +216,8 @@ procedure show_crafting_window begin
    ShowWin;
 
    call show_cancel_button("win_btn");
+
+   play_sfx("IB1P1XX1");
 
    if (craft_cfg.categories == 1) then begin
       use_categories := true;
@@ -336,7 +348,7 @@ procedure display_item_options begin
       call draw_item_pcx;
       call draw_item_properties;
       if (max_batch > 0) then SayOption("1. " + mstr_craft(103), batch_one_item);
-      if (max_batch > 1) then SayOption("2. " + mstr_craft(108) + mstr_craft(110) + (max_batch * cur_recipe.qty) + mstr_craft(111), batch_all_items);
+      if (max_batch > 1) then SayOption("2. " + mstr_craft(108) + " (" + (max_batch * cur_recipe_batch_size) + ")", batch_all_items);
       if (max_undo > 0) then SayOption("3. " + mstr_craft(104), undo_one_item);
       if (max_undo > 1) then SayOption("4. " + mstr_craft(109) + mstr_craft(110) + max_undo + mstr_craft(111), undo_all_items);
       SayOption("0: "+mstr_craft(102), items_list_mode);
@@ -508,7 +520,8 @@ procedure batch_item(variable num) begin
    end
    hours := cur_recipe.time * num / 60;
    mins  := cur_recipe.time * num % 60;
-   display_msg(mstr_craft(400) + proto_data(cur_recipe.pid, it_name) + mstr_craft(402) + (num * cur_recipe.qty) + mstr_craft(403) + hours + mstr_craft(404) + mins + mstr_craft(405));
+   display_msg(string_format(mstr_craft(400), proto_data(cur_recipe.pid, it_name), (num * cur_recipe_batch_size))
+      + string_format(mstr_craft(402), hours, mins));
    call batch_ok_mode;
 end
 
@@ -533,7 +546,8 @@ procedure undo_batch(variable num) begin
    call party_remove_items_pid(cur_recipe.pid, num * cur_recipe.qty);
    hours := cur_recipe.time * num / 60;
    mins  := cur_recipe.time * num % 60;
-   display_msg(mstr_craft(401) + proto_data(cur_recipe.pid, it_name) + mstr_craft(402) + (num * cur_recipe.qty) + mstr_craft(403) + hours + mstr_craft(404) + mins + mstr_craft(405));
+   display_msg(string_format(mstr_craft(401), proto_data(cur_recipe.pid, it_name), (num * cur_recipe_batch_size))
+      + string_format(mstr_craft(402), hours, mins));
    call undo_ok_mode;
 end
 
@@ -553,81 +567,95 @@ procedure undo_all_items begin
    call undo_batch(max_undo);
 end
 
+procedure display_newline(variable num := 1) begin
+   display_line += 10 * num;
+   display_cur_str := "";
+end
+
+procedure display_print(variable text, variable newLine := true, variable color := COLOR_GREEN, variable justify := 0) begin
+   variable
+      w := (get_text_width(display_cur_str) if display_cur_str != "" else 0),
+      x := (20 + w),
+      width := (270 - w);
+   if (color == COLOR_DARK_GREEN) then
+      SetText_DARK_GREEN;
+   else if (color == COLOR_RED) then
+      SetText_RED;
+   else
+      SetText_GREEN;
+
+   //craft_debug("Format("+text+", x = " + x + ", w = " + width);
+   //if (width >= 0 or width >= get_text_width(text)) then
+   Format(text, x, display_line, width, 20, justify);
+   //else debug_msg("[craft] ! ERROR ! Attempt to display text beyond display area: " + text + ", x = " + x + ", w = " + width);
+   if (newLine) then begin
+      display_line += 10;
+      display_cur_str := "";
+   end else
+      display_cur_str += text;
+end
+
 procedure draw_tools_required begin
-   variable list, hasAny, i, pid, str, hasAll := true;
+   variable list, hasThis, hasAny, i, pid, str, hasAll := true;
    craft_debug("draw_tools_required()");
-   Format(mstr_craft(300), 25, display_line, 250, 10, justifycenter);
-   display_line += 10;
+   call display_print(mstr_craft(300), true, COLOR_GREEN, justifycenter);
    if (len_array(cur_recipe.tools) > 0) then foreach (list in (cur_recipe.tools)) begin
       hasAny := false;
       i := 0;
       foreach (pid in list) begin
-         if (party_is_carrying_obj_pid(pid)) then begin
-            SetText_GREEN;
-            hasAny := true;
-         end else begin
-            SetText_RED;
-         end
+         hasThis := party_is_carrying_obj_pid(pid);
+         hasAny := hasAny or hasThis;
          str := proto_data(pid, it_name);
          if (i) then
             str := mstr_craft(150) + str;
-         Format(str, 25, display_line, 250, 10, justifyleft);
-         display_line += 10;
+         call display_print(str, false, COLOR_GREEN if hasThis else COLOR_RED);
+         call display_newline;
          i += 1;
       end
       if (not hasAny) then hasAll := false;
    end else begin
-      // If no tools needed - display "No".
-      SetText_GREEN;
-      Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
-      display_line += 10;
+      call display_print(mstr_craft(303));
    end
-   display_line += 10;
+   call display_newline;
    return hasAll;
 end
 
 procedure draw_skills_required begin
-   variable list, str, hasAll := true;
+   variable list, str, partyStr, dudeSkill, hasThis, hasAll := true;
 
    craft_debug("draw_skills_required()");
-   SetText_GREEN;
-   Format(mstr_craft(301), 25, display_line, 250, 10, justifycenter);
-   display_line += 10;
+   call display_print(mstr_craft(301), true, COLOR_GREEN, justifycenter);
    if (len_array(cur_recipe.skills) > 0) then foreach (list in (cur_recipe.skills)) begin
-      if (check_skill_sum(dude_obj, list)) then begin
-         SetText_GREEN;
-         str := "";
+      dudeSkill := check_skill_sum(dude_obj, list);
+      if (dudeSkill > 0) then begin
+         hasThis := true;
       end else begin
          // check party members skills
-         str := get_party_member_with_skill(list) if craft_cfg.use_party else 0;
-         if (str) then begin
-            SetText_GREEN;
-            str := " (" + str + ")";
-         end else begin
-            SetText_RED;
-            hasAll := false;
-            str := "";
-         end
+         partyStr := get_party_member_with_skill(list) if craft_cfg.use_party else 0;
+         hasThis := partyStr != 0;
       end
-      Format(skill_names(list) + ": " + list[len_array(list) - 1] + str, 25, display_line, 250, 10, justifyleft);
-      display_line += 10;
+      hasAll := hasAll and hasThis;
+      str := skill_names(list) + ": " + list[len_array(list) - 1];
+      if (not hasThis) then
+         str += " (" + (-dudeSkill) + ")";
+      call display_print(str, false, COLOR_GREEN if hasThis else COLOR_RED);
+      if (partyStr != 0) then
+         call display_print(" (" + partyStr + ")", false, COLOR_DARK_GREEN);
+      call display_newline;
    end else begin
       // If no skills - display "No".
-      SetText_GREEN;
-      Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
-      display_line += 10;
+      call display_print(mstr_craft(303));
    end
-   display_line += 10;
+   call display_newline;
    return hasAll;
 end
 
 procedure draw_components_required begin
-   variable list, hasAny, i, numBatches, maxGroupBatch, itemData, pid, qty, str, hasAll := true;
+   variable list, hasAny, i, hasQty, numBatches, maxGroupBatch, itemData, pid, qty, packSize, str, w,
+      hasAll := true;
 
    craft_debug("draw_components_required()");
-   SetText_GREEN;
-   Format(mstr_craft(302), 25, display_line, 250, 10, justifycenter);
-   display_line += 10;
+   call display_print(mstr_craft(302), true, COLOR_GREEN, justifycenter);
    max_batch := 32767;
    if (len_array(cur_recipe.input) > 0) then foreach (list in (cur_recipe.input)) begin
       hasAny := false;
@@ -635,22 +663,21 @@ procedure draw_components_required begin
       maxGroupBatch := 0; // maximum number of batches within single OR group
       foreach itemData in list begin
          pid := cfg_item_pid(itemData);
-         qty := cfg_item_qty(itemData);
-         numBatches := party_is_carrying_obj_pid(pid) / qty;
+         packSize := get_proto_data(pid, PROTO_AM_PACK_SIZE)
+            if (proto_data(pid, it_type) == item_type_ammo)
+            else 1;
+         qty := cfg_item_qty(itemData) * packSize;
+         hasQty := party_is_carrying_obj_pid(pid, true);
+         numBatches := hasQty / qty;
          if (numBatches > 0) then begin
-            SetText_GREEN;
             hasAny := true;
-         end else begin
-            SetText_RED;
          end
          if (numBatches > maxGroupBatch) then maxGroupBatch := numBatches;
-         if (proto_data(pid, it_type) == item_type_ammo) then
-            qty := qty * get_proto_data(pid, PROTO_AM_PACK_SIZE);
-         str := proto_data(pid, it_name) + ": " + qty;
+         str := proto_data(pid, it_name) + ": " + qty + " (" + hasQty + ")";
          if (i) then
             str := mstr_craft(150) + str;
-         Format(str, 25, display_line, 250, 10, justifyleft);
-         display_line += 10;
+         call display_print(str, false, COLOR_GREEN if numBatches > 0 else COLOR_RED);
+         call display_newline;
          i += 1;
       end
       // Restrict the max batch by a group with smallest number of potential batches
@@ -659,11 +686,9 @@ procedure draw_components_required begin
    end else begin
       // If no components found - display "No".
       max_batch := 1; // so we can actually produce the thing.. out of thin air?
-      SetText_GREEN;
-      Format(mstr_craft(303), 25, display_line, 250, 10, justifyleft);
-      display_line += 10;
+      call display_print(mstr_craft(303), true);
    end
-   display_line += 10;
+   call display_newline;
    return hasAll;
 end
 
@@ -683,19 +708,18 @@ procedure draw_item_properties begin
       componentData;
 
    display_line := 100;
+   display_cur_str := "";
    pid := cur_recipe.pid;
    craft_debug("draw_item_properties " + pid);
    SelectWin("win_dscr");
    // Item name
-   SetText_GREEN;
    str := proto_data(pid, it_name);
-   qty := cur_recipe.qty;
-   if (proto_data(pid, it_type) == item_type_ammo) then
-      qty := qty * get_proto_data(pid, PROTO_AM_PACK_SIZE);
+   qty := cur_recipe_batch_size;
 
-   if (qty > 1) then str := str + " x" + qty;
-   Format(str, 25, display_line, 250, 10, justifycenter);
-   display_line += 30;
+   call display_print(str, true, COLOR_GREEN, justifycenter);
+   if (qty > 1) then
+      call display_print(" x" + qty, true, COLOR_GREEN, justifycenter);
+   call display_newline(2);
 
    hasTools := draw_tools_required;
    hasSkills := draw_skills_required;
@@ -710,16 +734,17 @@ procedure draw_item_properties begin
       else 0;
 
    // Display time required for crafting.
-   SetText_GREEN;
-   Format(mstr_craft(304), 25, display_line, 250, 10, justifycenter);
-   display_line += 10;
+   call display_print(mstr_craft(304), true, COLOR_GREEN, justifycenter);
 
    hours := cur_recipe.time / 60;
    mins  := cur_recipe.time % 60;
-   Format(mstr_craft(305) + hours, 25, display_line, 250, 10, justifyleft);
-   display_line += 10;
-   Format(mstr_craft(306) + mins, 25, display_line, 250, 10, justifyleft);
-
+   call display_print(string_format(mstr_craft(307), hours, mins) + ((" (" + qty + ")") if (max_batch > 1) else ""));
+   if (max_batch > 1) then begin
+      mins := cur_recipe.time * max_batch;
+      hours := mins / 60;
+      mins := mins % 60;
+      call display_print(string_format(mstr_craft(307), hours, mins) + " (" + (qty * max_batch) + ")");
+   end
    ShowWin;
 end
 

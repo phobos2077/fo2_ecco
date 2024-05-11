@@ -54,10 +54,11 @@
 {304}{}{[Time]}
 {305}{}{Hours: }
 {306}{}{Minutes: }
+{307}{}{%d h %d m}
 
-{400}{}{Created: }
-{401}{}{Dismantled: }
-{402}{}{ (}
+{400}{}{Created: %s (%d). }
+{401}{}{Dismantled: %s (%d). }
+{402}{}{%d h %d m passed.}
 {403}{}{ unit(s)). }
 {404}{}{ h. }
 {405}{}{ m. passed.}

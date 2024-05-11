@@ -44,6 +44,10 @@ procedure warning_combat begin
    end
 end
 
+procedure schedule_show_crafting begin
+   show_crafting_scheduled := true;
+   set_global_script_repeat(1);
+end
 
 procedure keypress_handler begin
    variable pressed := get_sfall_arg,
@@ -55,8 +59,7 @@ procedure keypress_handler begin
          if combat_is_initialized then
             call warning_combat;
          else if (not(get_game_mode) and craft_ui_mode <= MODE_EXIT) then begin
-            show_crafting_scheduled := true;
-            set_global_script_repeat(5);
+            call schedule_show_crafting;
       	end
       end else if (craft_ui_mode > MODE_EXIT) then begin
          oldMode := craft_ui_mode;
@@ -123,7 +126,7 @@ procedure do_up begin
       play_sfx(SFX_BUTTON_UP);
       //call show_crafting_window in 1; // this doesn't work
       show_crafting_scheduled := true;
-      set_global_script_repeat(5);
+      call schedule_show_crafting;
    end
 end
 
