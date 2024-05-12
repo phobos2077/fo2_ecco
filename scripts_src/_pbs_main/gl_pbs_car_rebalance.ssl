@@ -1,0 +1,67 @@
+/*
+   Car travel mod:
+
+   - Reduces both speed and fuel consumption by 25%.
+   - This means: car with no upgrades will have the same mileage as vanilla, but will take longer (in real time and game time) to there.
+   - Fuel cell regulator effect on fuel consumption is nerfed from -50% to -30%.
+   - Removed -10% fuel consumption bonus for New reno car upgrade (it already increases mileage considerably due to 25% more speed).
+*/
+
+#include "../sfall/sfall.h"
+#include "../headers/global.h"
+
+#define GAS_TANK_CAPACITY                   (80000)
+
+variable step_remainder;
+
+/*
+Runs continuously during worldmap travel on car.
+
+int     arg0 - vanilla car speed (between 3 and 8 "steps")
+int     arg1 - vanilla fuel consumption (100 and below)
+
+int     ret0 - car speed override (pass -1 if you just want to override fuel consumption)
+int     ret1 - fuel consumption override
+*/
+procedure cartravel_hook begin
+   variable steps, subSteps, fuel,
+      origSteps := get_sfall_arg,
+      origFuel := get_sfall_arg;
+
+   /* VANILLA FO2 LOGIC, for reference:
+   steps := 3;
+   if (global_var(GVAR_CAR_BLOWER)) then steps += 1;
+   if (global_var(GVAR_NEW_RENO_CAR_UPGRADE)) then steps += 1;
+   if (global_var(GVAR_NEW_RENO_SUPER_CAR)) then steps += 3;
+
+   fuel := 100;
+   if (global_var(GVAR_NEW_RENO_SUPER_CAR)) then fuel -= fuel * 90 / 100;
+   if (global_var(GVAR_NEW_RENO_CAR_UPGRADE)) then fuel -= fuel * 10 / 100;
+   if (global_var(GVAR_CAR_UPGRADE_FUEL_CELL_REGULATOR)) then fuel /= 2;
+   */
+
+   steps := (origSteps + 1) * 0.75 - 1; // +1 accounts for 1 unskippable step
+   step_remainder += steps - floor(steps);
+   steps := floor(steps) + floor(step_remainder);
+   step_remainder -= floor(step_remainder);
+
+   fuel := 75;
+   if (global_var(GVAR_NEW_RENO_SUPER_CAR)) then fuel -= fuel * 80 / 100;
+   //if (global_var(GVAR_NEW_RENO_CAR_UPGRADE)) then fuel -= fuel * 10 / 100;
+   if (global_var(GVAR_CAR_UPGRADE_FUEL_CELL_REGULATOR)) then fuel -= fuel * 30 / 100;
+
+   debug_msg(string_format("car orig: %d, %d, calc: %d, %d", origSteps, origFuel, steps, fuel));
+   set_sfall_return(steps);
+   set_sfall_return(fuel);
+end
+
+/* FOR TESTING, disable encounters:
+procedure enc_hook begin
+   if (get_sfall_arg == 0) then
+      set_sfall_return(-1);
+end*/
+
+procedure start begin
+   register_hook_proc(HOOK_CARTRAVEL, cartravel_hook);
+   //register_hook_proc(HOOK_ENCOUNTER, cartravel_hook);
+end
