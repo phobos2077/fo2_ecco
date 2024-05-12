@@ -145,7 +145,7 @@ procedure party_is_carrying_obj_pid(variable pid, variable returnAmmoCount := fa
          end
       end
    end
-   craft_debug(string_format("party_is_carrying_obj_pid(%s): sum = %d", proto_data(pid, it_name), sum));
+   //craft_debug(string_format("party_is_carrying_obj_pid(%s): sum = %d", proto_data(pid, it_name), sum));
    // For ammo, we calculate sum in individual bullets but return a number of *full* packs (as if ammo is combined in one inventory)
    if (sum > 0 and isAmmo and (not returnAmmoCount)) then
       sum := sum / ammo_pid_pack_size(pid);

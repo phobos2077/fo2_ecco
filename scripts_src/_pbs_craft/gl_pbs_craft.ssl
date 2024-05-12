@@ -169,7 +169,6 @@ procedure start begin
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
       register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
 
-      //display_msg(string_format("iface x: %d, w: %d", get_interface_x(WINTYPE_IFACEBAR), get_interface_width(WINTYPE_IFACEBAR)));
       call create_button;
 
       set_global_script_type(1);

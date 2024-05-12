@@ -128,7 +128,7 @@ procedure recipe_is_available(variable recipe) begin
       gvar := recipe.gvar;
       if (gvar == "NEVER") then
          return false;
-      else if (gvar != "") then begin
+      else if (gvar and gvar != "") then begin
          gvarVal := get_sfall_global_int(gvar) if atoi(gvar) == 0 else global_var(atoi(gvar));
          if (gvarVal == 0) then
             return false;
@@ -771,10 +771,8 @@ end
 procedure draw_item_pcx begin
    variable w, h, data, fid := proto_data(cur_recipe.pid, it_inv_fid);
    data := art_frame_data(fid, 0, 0); // this requires sfall update
-   //w := cur_recipe.pic_w;
-   //h := cur_recipe.pic_h;
-   w := data[0];
-   h := data[1];
+   w := data[0] if data else 50;
+   h := data[1] if data else 50;
    craft_debug("draw_item_pcx "+cur_recipe.pid+", size: "+w+"x"+h);
    call redraw_win_dscr;
    SelectWin("win_dscr");

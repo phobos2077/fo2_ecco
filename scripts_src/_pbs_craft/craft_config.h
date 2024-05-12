@@ -48,11 +48,6 @@ procedure parse_skill_sum_list(variable value) begin
    return array_fixed(skills);
 end
 
-procedure parse_comma_list(variable value, variable transformFunc) begin
-   if (value == "") then return 0;
-   return array_fixed(array_transform(string_split(value, ","), transformFunc));
-end
-
 #define cfg_item_pid(itemData)                   (itemData bwand 0xFFFF)
 #define cfg_item_qty(itemData)                   (itemData / 0x10000)
 
@@ -77,7 +72,7 @@ procedure load_crafting_config begin
    //cfg.categories := create_array_map;
    cfg.recipeNames := create_array_map;
 
-   variable sectName, section;
+   variable sectName, section, key, val;
    variable recipePrefix := "Recipe ";
    foreach (sectName: section in ini) begin
       if (string_starts_with(sectName, recipePrefix)) then begin
@@ -91,19 +86,25 @@ procedure load_crafting_config begin
          recipeCfg := array_fixed({
             "pid": cfg_item_pid(output),
             "qty": cfg_item_qty(output),
-            "pic_w": atoi(section.pic_w),
-            "pic_h": atoi(section.pic_h),
             "gvar": section.gvar,
             "time": atoi(section.time),
-            "undo": atoi(section.undo),
-            "category": atoi(section.category)
+            "undo": atoi(section.undo) if section.undo else 0,
+            "category": atoi(section.category) if section.category else 0
          });
 
-         craft_debug("crafting recipe " + recipeKey + ": " + debug_array_str(recipeCfg));
+         //craft_debug("crafting recipe " + recipeKey + ": " + debug_array_str(recipeCfg));
          
-         recipeCfg.tools := parse_comma_list(section.tools, @parse_pid_or_list);
-         recipeCfg.skills := parse_comma_list(section.skills, @parse_skill_sum_list);
-         recipeCfg.input := parse_comma_list(section.input, @parse_component_or_list);
+         recipeCfg.tools := create_array_list(0);  // parse_comma_list(section.tools, @parse_pid_or_list);
+         recipeCfg.skills := create_array_list(0); //parse_comma_list(section.skills, @parse_skill_sum_list);
+         recipeCfg.input := create_array_list(0);  //parse_comma_list(section.input, @parse_component_or_list);
+         foreach (key: val in section) begin
+            if (string_starts_with(key, "tool")) then
+               call array_push(recipeCfg.tools, parse_pid_or_list(val));
+            else if (string_starts_with(key, "skill")) then
+               call array_push(recipeCfg.skills, parse_skill_sum_list(val));
+            else if (string_starts_with(key, "input")) then
+               call array_push(recipeCfg.input, parse_component_or_list(val));
+         end
 
          //craft_debug("crafting recipe " + recipeKey + " tools: " + debug_array_str_deep(recipeCfg.tools, 2));
          //craft_debug("crafting recipe " + recipeKey + " skills: " + debug_array_str_deep(recipeCfg.skills, 2));
@@ -115,6 +116,7 @@ procedure load_crafting_config begin
    end
    sort_map_value(cfg.recipeNames);
    //craft_debug("crafting recipes sorted: " + debug_array_str(cfg.recipeNames));
+   craft_debug("Loaded crafting recipes: " + len_array(cfg.recipes));
    return cfg;
 end
 

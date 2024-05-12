@@ -27,10 +27,11 @@ fOut = open(outFilename, 'w')
 
 #curItem = None
 itemNum = 0
-commentPos = 36
+commentPos = 24
 section = 0
-andData = None
-andComments = None
+#andData = None
+#andComments = None
+andListIdx = 0
 
 #def writeCurItem():
 #    fOut.write("\n\n[" + curItem["name"] + "]")
@@ -83,16 +84,23 @@ def writeAndList(key):
     writePair(key, ",".join(andData), ", ".join(andComments))
 
 def initAndList():
+    global andListIdx
+    andListIdx = 1
     #print("Init and lists")
-    global andData
-    global andComments
-    andData = []
-    andComments = []
+    #global andData
+    #global andComments
+    #andData = []
+    #andComments = []
 
-def appendAndList(data, comment):
-    #print("And lists {} {}".format(andData, andComments))
-    andData.append(data)
-    andComments.append(comment or data)
+def writeAndListPair(key, data, comment):
+    global andListIdx
+    writePair("{}{}".format(key, andListIdx), data, comment)
+    andListIdx += 1
+
+#def appendAndList(data, comment):
+#    #print("And lists {} {}".format(andData, andComments))
+#    andData.append(data)
+#    andComments.append(comment or data)
 
 for line in fIn:
     m = re.search(r"^([^#\s]*) *(#[^\n]+)?", line)
@@ -105,7 +113,7 @@ for line in fIn:
         itemNum += 1
         #curItem = {}
 
-    elif (section == 1):
+    elif (section == 1): # [ITEM]
         if (data == "[TOOLS]"):
             initAndList()
             section = 2
@@ -117,48 +125,47 @@ for line in fIn:
             fOut.write("[Recipe {}]\n".format(name))
             writePair("output", data)
 
-        elif (fieldNum == 3):
-            num = int(data)
-            writePair("pic_w", num // 1000)
-            writePair("pic_h", num % 1000, comment)
+        #elif (fieldNum == 3):
+        #    num = int(data)
+        #    writePair("pic_w", num // 1000)
+        #    writePair("pic_h", num % 1000, comment)
 
         elif (fieldNum == 4):
-            writePair("gvar", data, comment)
+            if (data != ""):
+                writePair("gvar", data, comment)
 
         elif (fieldNum == 5):
             writePair("time", int(data) // 600, comment)
 
         elif (fieldNum == 6):
-            writePair("undo", int(data == "YES"), comment)
+            if (data == "YES"):
+                writePair("undo", "1", comment)
 
         elif (fieldNum == 7):
             writePair("category", data, comment)
 
         fieldNum += 1
 
-    elif (section == 2):
+    elif (section == 2): # [TOOLS]
         if (data == "[SKILLS]"):
-            writeAndList("tools")
             initAndList()
             section = 3
 
         elif (data != ""):
-            appendAndList(data, comment)
+            writeAndListPair("tool", data, comment.replace("PID_", ""))
 
-    elif (section == 3):
+    elif (section == 3): # [SKILLS]
         if (data == "[COMPONENTS]"):
-            writeAndList("skills")
             initAndList()
             section = 4
         
         elif (data != ""):
-            appendAndList(replaceSkills(data), comment or data)
+            writeAndListPair("skill", replaceSkills(data), comment or data[:(data.find(":"))])
 
-    elif (section == 4):
+    elif (section == 4): # [COMPONENTS]
         if (data != ""):
-            appendAndList(data, comment)
+            writeAndListPair("input", data, comment.replace("PID_", ""))
         else:
-            writeAndList("input")
             fOut.write("\n")
             section = 0
 
