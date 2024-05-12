@@ -771,8 +771,9 @@ end
 procedure draw_item_pcx begin
    variable w, h, data, fid := proto_data(cur_recipe.pid, it_inv_fid);
    data := art_frame_data(fid, 0, 0); // this requires sfall update
-   w := data[0] if data else 50;
-   h := data[1] if data else 50;
+   // TODO: get rid of pic_w/pic_h after sfall update
+   w := data[0] if data else cur_recipe.pic_w;
+   h := data[1] if data else cur_recipe.pic_h;
    craft_debug("draw_item_pcx "+cur_recipe.pid+", size: "+w+"x"+h);
    call redraw_win_dscr;
    SelectWin("win_dscr");

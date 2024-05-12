@@ -86,6 +86,9 @@ procedure load_crafting_config begin
          recipeCfg := array_fixed({
             "pid": cfg_item_pid(output),
             "qty": cfg_item_qty(output),
+            // TODO: get rid of pic_w/pic_h after sfall update
+            "pic_w": atoi(section.pic_w),
+            "pic_h": atoi(section.pic_h),
             "gvar": section.gvar,
             "time": atoi(section.time),
             "undo": atoi(section.undo) if section.undo else 0,

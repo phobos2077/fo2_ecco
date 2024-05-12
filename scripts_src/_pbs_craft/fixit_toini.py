@@ -125,10 +125,10 @@ for line in fIn:
             fOut.write("[Recipe {}]\n".format(name))
             writePair("output", data)
 
-        #elif (fieldNum == 3):
-        #    num = int(data)
-        #    writePair("pic_w", num // 1000)
-        #    writePair("pic_h", num % 1000, comment)
+        elif (fieldNum == 3):
+            num = int(data)
+            writePair("pic_w", num // 1000)
+            writePair("pic_h", num % 1000, comment)
 
         elif (fieldNum == 4):
             if (data != ""):

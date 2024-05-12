@@ -153,7 +153,7 @@ SCIENCE:50
 
 
 [ITEM]
-612                               # fire resistance grug
+612                               # DRAGON_SKIN
 pcx/items/drugskin.pcx
 90070
 CRFT_DRG                          # drugs schematics
@@ -171,7 +171,7 @@ SCIENCE:80
 
 
 [ITEM]
-620                               # carry weight drug
+620                               # HERCULES
 pcx/items/drugcrry.pcx
 47074
 CRFT_DRG                          # drugs schematics
@@ -249,7 +249,7 @@ REPAIR:60
 # AMMO
 
 [ITEM]
-614                              # new 12ga slug ammo
+614                              # SHOTGUN_SLUGS
 pcx/items/ssslugs.pcx
 74060
 CRFT_AMM                         # ammo craft schematics
@@ -267,7 +267,7 @@ REPAIR:50
 
 
 [ITEM]
-641:2                            # new 12ga incendiary
+641:2                            # DRAGON_BREATH
 pcx/items/ssbcksht.pcx
 79060
 CRFT_AMM                         # ammo craft schematics
