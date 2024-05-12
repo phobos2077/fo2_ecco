@@ -45,6 +45,20 @@ pure procedure skill_names(variable skills) begin
    return str;
 end
 
+procedure recipe_max_average_skill(variable recipe) begin
+   variable list, skill, skillAvg, numSkills, i,
+      maxAvg := 0;
+   if (len_array(recipe.skills) > 0) then foreach (list in (recipe.skills)) begin
+      numSkills := len_array(list) - 1;
+      if (numSkills >= 1) then begin
+         skillAvg := list[numSkills] / numSkills;
+         if (skillAvg > maxAvg) then
+            maxAvg = skillAvg;
+      end
+   end
+   return maxAvg;
+end
+
 procedure obj_name_proc(variable obj) begin
    return obj_name(obj) if obj else "(null)";
 end

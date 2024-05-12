@@ -5,9 +5,6 @@ for 0.9.*:
 for "future":
 - add early game Flamerthrower (Incinerator)
 - Stimpak & Healing powder heal amt to depend upon First Aid skill
-- Crafting: use items from party members inventory
-- Crafting: read config from INI file and texts from game/craft.msg
-- Crafting: add small XP rewards for crafting
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - replace "handmade grenade" sprite
 - replace Throwing Axe sprite

@@ -62,3 +62,5 @@
 {403}{}{ unit(s)). }
 {404}{}{ h. }
 {405}{}{ m. passed.}
+
+{420}{}{You gain %d experience points for creating a new item.}

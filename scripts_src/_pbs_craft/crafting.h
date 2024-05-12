@@ -32,6 +32,7 @@
 #define MAX_CATEGORIES          (ITEMS_PER_SCREEN + 2)
 
 #define EXTRA_MSG_NAME          "pbs_craft.msg"
+#define EXP_MAP_NAME            "pbs_craft_exp"
 #define pcx_path(name)          "pcx\\" #name ".pcx"
 
 
@@ -39,6 +40,7 @@ variable begin
    craft_msg_id;
    craft_ui_mode;
    use_categories := false;
+   craft_exp_map; // maps output item PID to 1 if exp was granted for crafting
 
    cur_recipe;
    cur_category;
@@ -114,6 +116,7 @@ procedure init_crafting begin
    craft_msg_id := add_extra_msg_file(EXTRA_MSG_NAME);
    craft_ui_mode := MODE_EXIT;
    craft_raw_cfg := load_raw_crafting_config;
+   craft_exp_map := load_create_array_map(EXP_MAP_NAME);
 end
 
 
@@ -138,6 +141,22 @@ procedure cur_recipe_batch_size begin
    return cur_recipe.qty * item_pid_pack_size(cur_recipe.pid);
 end
 
+procedure gain_exp_for_crafting begin
+   variable
+      skillMult := craft_cfg.exp_skill_mult,
+      pid := cur_recipe.pid;
+   if (skillMult <= 0 or craft_exp_map[pid] > 0) then return;
+   
+   variable
+      skillMaxAvg := recipe_max_average_skill(cur_recipe),
+      roundTo := craft_cfg.exp_round_to,
+      exp := ceil(skillMaxAvg * skillMult * 1.0 / roundTo) * roundTo;
+
+   give_exp_points(exp);
+   display_msg(sprintf(mstr_craft(420), exp));
+   craft_exp_map[pid] := 1;
+end
+
 procedure do_cancel_on begin
 end
 
@@ -158,7 +177,6 @@ procedure do_cancel_up begin
    play_sfx("IB1LU1X1");
    call exit_mode;
    SayQuit;
-   //tap_key(DIK_ESCAPE); // a hack to close the dialog without actually clicking on any reply options
 end
 
 procedure show_cancel_button(variable winName) begin
@@ -522,6 +540,8 @@ procedure batch_item(variable num) begin
    mins  := cur_recipe.time * num % 60;
    display_msg(string_format(mstr_craft(400), proto_data(cur_recipe.pid, it_name), (num * cur_recipe_batch_size))
       + string_format(mstr_craft(402), hours, mins));
+
+   call gain_exp_for_crafting;
    call batch_ok_mode;
 end
 

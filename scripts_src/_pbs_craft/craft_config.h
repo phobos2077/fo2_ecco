@@ -3,6 +3,7 @@
 
 #include "../sfall/sfall.h"
 #include "../sfall/lib.arrays.h"
+#include "../sfall/lib.math.h"
 #include "../sfall/lib.strings.h"
 
 variable
@@ -56,6 +57,7 @@ end
 #define cfg_item_qty(itemData)                   (itemData / 0x10000)
 
 #define cfg_parse_int_def(cfg, ini, name, def)   cfg.name := atoi(ini.name) if ini.name else def
+#define cfg_parse_def_clamp(parseFn, cfg, ini, name, def, min, max)   cfg.name := math_clamp(parseFn(ini.name) if ini.name else def, min, max)
 
 procedure load_crafting_config begin
    variable
@@ -66,6 +68,8 @@ procedure load_crafting_config begin
    cfg_parse_int_def(cfg, iniMain, use_party, 0);
    cfg_parse_int_def(cfg, iniMain, categories, 0);
    cfg_parse_int_def(cfg, iniMain, use_gvars, 0);
+   cfg_parse_def_clamp(atof, cfg, iniMain, exp_skill_mult, 0.0, 0.0, 10.0);
+   cfg_parse_def_clamp(atoi, cfg, iniMain, exp_round_to, 1, 1, 100);
 
    craft_debug("crafting cfg main: " + debug_array_str(cfg));
 
