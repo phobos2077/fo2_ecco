@@ -1,8 +1,8 @@
 pid: 611
 messageId: 61100
-name: Throwing Axe
-description: 'Throwing axe. Perfectly balanced and sharpened. Work of a master blacksmith.
-  Min ST: 5.'
+name: Hatchet
+description: 'Ideal tool for chopping wood and skulls. Balanced for throwing. Min
+  ST: 5.'
 fid: 213
 lightDistance: 0
 lightIntensity: 0
@@ -18,15 +18,15 @@ inventoryFid: 117440917
 soundId: '4'
 weaponData:
   animationCode: 1
-  minDamage: 16
-  maxDamage: 24
+  minDamage: 10
+  maxDamage: 20
   damageType: DAMAGE_TYPE_NORMAL
-  maxRange1: 18
+  maxRange1: 12
   maxRange2: 1
   projectilePid: 83886086
   minStrength: 5
   actionPointCost1: 5
-  actionPointCost2: 5
+  actionPointCost2: 4
   criticalFailureType: 1
   perk: PERK_WEAPON_KNOCKBACK
   rounds: 0
