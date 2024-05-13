@@ -1,8 +1,12 @@
 /**
-   Damage bonus for throwing weapons based on Throwing skill.
+   INI-configurable throwing weapons buffs:
+   - Damage bonus based on Throwing Skill
+   - Flat crit-chance bonus + Luck-based bonus
 */
 
 #define SCRIPT_REALNAME       "gl_throwing_bonus"
+
+#define INI_SECTION           "THROWING"
 
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
@@ -14,7 +18,8 @@
 variable
    ini_damage_bonus_skill_mult,
    ini_bonus_crit_chance,
-   ini_bonus_crit_chance_luck_mult;
+   ini_bonus_crit_chance_luck_mult,
+   ini_apply_melee_dmg;
 
 procedure start;
 procedure itemdamage_handler;
@@ -22,11 +27,12 @@ procedure rollcheck_handler;
 
 procedure start begin
    if game_loaded then begin
-      float_from_ini_file_clamped(damage_bonus_skill_mult, INI_COMBAT, "THROWING", 0.0, 10.0);
-      int_from_ini_file_clamped(bonus_crit_chance, INI_COMBAT, "THROWING", 0, 100);
-      int_from_ini_file_clamped(bonus_crit_chance_luck_mult, INI_COMBAT, "THROWING", 0, 100);
+      float_from_ini_file_clamped(damage_bonus_skill_mult, INI_COMBAT, INI_SECTION, 0.0, 10.0);
+      int_from_ini_file_clamped(bonus_crit_chance, INI_COMBAT, INI_SECTION, 0, 100);
+      int_from_ini_file_clamped(bonus_crit_chance_luck_mult, INI_COMBAT, INI_SECTION, 0, 100);
+      int_from_ini_file(apply_melee_dmg, INI_COMBAT, INI_SECTION);
 
-      if ini_damage_bonus_skill_mult > 0.01 then begin
+      if (ini_apply_melee_dmg > 0 or ini_damage_bonus_skill_mult > 0.01) then begin
          register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
       end
       if (ini_bonus_crit_chance > 0) then begin
@@ -105,7 +111,7 @@ end
    int     ret1 - The new maximum damage
 */
 procedure itemdamage_handler begin
-	variable dmgMin, dmgMax, weapon, attacker, attackType, isMelee;
+	variable dmgMin, dmgMax, weapon, attacker, attackType, isMelee, meleeDmg;
 	variable weaponPid, skill, attackModes, attackMode, damageType;
 
    dmgMin := get_sfall_arg;
@@ -117,30 +123,34 @@ procedure itemdamage_handler begin
    
    if (weapon) then begin
       weaponPid := obj_pid(weapon);
-      damageType := get_proto_data(weaponPid, 48);
+      damageType := get_proto_data(weaponPid, PROTO_WP_DMG_TYPE);
       //debug_msg("itemdamage: "+dmgMin+"-"+dmgMax+", wpn: "+weaponPid+", type: "+attackType+", dmg typ: "+damageType);
-
       if (damageType == DMG_normal_dam and attackType >= ATKTYPE_LWEP1 and attackType <= ATKTYPE_RWEP2) then begin
          // actual weapon attack mode
          attackMode := weapon_attack_mode(weaponPid, attackType);
          //debug_msg("atkmode: " + attackMode);
          if (attackMode == ATTACK_MODE_THROW) then begin
-            skill := has_skill(attacker, SKILL_THROWING);
-            if (skill < 0) then skill := 0;
-
-            //agility := get_critter_stat(attacker, STAT_ag) - 5;
-            //if (agility < 0) then agility := 0;
-
-            // orig. method (skill only):
-            dmgMax := floor(dmgMax * (1 + skill * ini_damage_bonus_skill_mult / 100.0));
-            // method 1:
-            // dmgMax := floor(dmgMax * (1 + (agility / 5) + (skill / 100.0)));
-            // method 2: (me not like it)
-            // dmgMax := dmgMax + agility + (skill / 20);
-            // method 3 (combined):
-            //dmgMax := dmgMax + agility + floor(dmgMax * (skill / 100.0));
-            debug_log("dmg (sk:"+skill+"): "+dmgMin+"-"+dmgMax);
-
+            // In vanilla, Melee Damage only applies to Melee and Unarmed attacks. This applies it to Throwing as well.
+            if (ini_apply_melee_dmg > 0) then begin
+               meleeDmg := get_critter_stat(attacker, STAT_melee_dmg);
+               dmgMax += meleeDmg;
+               debug_log("applying Melee Damage "+meleeDmg+" for new max dmg = "+dmgMax);
+            end
+            if (ini_damage_bonus_skill_mult > 0.01) then begin
+               //agility := get_critter_stat(attacker, STAT_ag) - 5;
+               //if (agility < 0) then agility := 0;
+               skill := has_skill(attacker, SKILL_THROWING);
+               if (skill < 0) then skill := 0;
+               // orig. method (skill only):
+               dmgMax := floor(dmgMax * (1 + skill * ini_damage_bonus_skill_mult / 100.0));
+               // method 1:
+               // dmgMax := floor(dmgMax * (1 + (agility / 5) + (skill / 100.0)));
+               // method 2: (me not like it)
+               // dmgMax := dmgMax + agility + (skill / 20);
+               // method 3 (combined):
+               //dmgMax := dmgMax + agility + floor(dmgMax * (skill / 100.0));
+               debug_log("skill-based dmg bonus (sk:"+skill+"): "+dmgMin+"-"+dmgMax);
+            end
             set_sfall_arg(0, dmgMin);
             set_sfall_arg(1, dmgMax);
             set_sfall_return(dmgMin);

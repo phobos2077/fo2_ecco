@@ -64,6 +64,7 @@ variable
    ini_dt_mode_negative,
    ini_dt_mult_positive,
    ini_dt_mult_negative,
+   ini_unarmed_weapon_punch_bonus,
    ini_damage_types,
    ini_dr_adjust_by_attack_mode,
    ini_debug,
@@ -80,6 +81,7 @@ procedure start begin
       int_from_ini_file(dt_mode_negative, INI_COMBAT, INI_SECTION);
       float_from_ini_file_clamped(dt_mult_positive, INI_COMBAT, INI_SECTION, 0.0, 10);
       float_from_ini_file_clamped(dt_mult_negative, INI_COMBAT, INI_SECTION, 0.0, 10);
+      int_from_ini_file(unarmed_weapon_punch_bonus, INI_COMBAT, INI_SECTION);
       int_from_ini_file(debug, INI_COMBAT, INI_SECTION);
 
       call load_damage_types_from_ini;
@@ -482,6 +484,25 @@ begin
    return calc_dtdr_vanilla_plus(targetDT, targetDR, ammoDR);
 end
 
+procedure dude_primary_punch_bonus_damage begin
+   variable
+      st := get_critter_stat(dude_obj, STAT_st),
+      ag := get_critter_stat(dude_obj, STAT_ag),
+      lvl := get_pc_stat(PCSTAT_level),
+      sk := has_skill(dude_obj, SKILL_UNARMED_COMBAT);
+
+   // Vanilla values
+   // TODO: read directly from engine, when it will become possible
+   if (lvl >= 9 and sk >= 100 and st >= 5 and ag >= 7) then
+      return 7; // Lightning Punch
+   else if (lvl >= 6 and sk >= 75 and st >= 5 and ag >= 6) then
+      return 5; // Hammer Punch
+   else if (sk >= 55 and ag >= 6) then
+      return 3; // Strong Punch
+
+   return 0;
+end
+
 /*
    HOOK_ITEMDAMAGE
    Runs when retrieving the damage rating of the player's used weapon. (Which may be their fists.)
@@ -501,11 +522,23 @@ procedure itemdamage_handler begin
    item_damage_max := get_sfall_arg;
    item_damage_weapon := get_sfall_arg;
    item_damage_attacker := get_sfall_arg;
-   //variable
-   //   attackType := get_sfall_arg,
-   //   isMelee := get_sfall_arg;
+   variable
+      attackType := get_sfall_arg;
+      //isMelee := get_sfall_arg;
 
    //display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max + ", wpn: "+(obj_pid(item_damage_weapon) if item_damage_weapon else 0)+", attackType: "+attackType+", isMelee: "+isMelee);
+   if (ini_unarmed_weapon_punch_bonus > 0 and item_damage_weapon) then begin
+      variable attackMode := weapon_attack_mode(obj_pid(item_damage_weapon), attackType);
+      if (item_damage_attacker == dude_obj and attackMode == ATTACK_MODE_PUNCH) then begin
+         variable punchBonus := dude_primary_punch_bonus_damage;
+         item_damage_min += punchBonus;
+         item_damage_max += punchBonus;
+         set_sfall_arg(0, item_damage_min);
+         set_sfall_arg(1, item_damage_max);
+         // no point doing set_sfall_return because we override the whole damage calculation anyway, and this hook doesn't affect values displayed in Inventory screen
+         debug_verbose("Applied primary punch bonus " + punchBonus);
+      end
+   end
 end
 
 /*
