@@ -1,6 +1,6 @@
 -====================-
 -===   EcCo mod   ===-
--=== v0.9.4 BETA  ===-
+-=== v0.9.5 BETA  ===-
 -====================-
 						by phobos2077
 
@@ -133,7 +133,7 @@
 - Increased melee damage bonus for high ST characters
 - Super sledge takes 4,5 AP instead of 3,4 (same as regular sledge).
 - Wakizashi blade is much more powerful.
-- New weapons: one spear and one sledge type.
+- New weapons: one spear, one knife and one sledge type.
 - Some melee oriented NPCs made more dangerous.
 
 
@@ -169,7 +169,8 @@
 
 
 > MISC:
-- Small adjustments to base value formulas of some skills for better balance
+- Slightly nerfed car travel speed and fuel consumption upgrades to buff Outdoorsman skill and increase money sink.
+- Small adjustments to base value formulas of some skills for better balance.
 - Buffed some underused perks: Demolition Expert, Pyromaniac, Survivalist, MrFixit, Medic, Ghost, Ranger, Harmless, Salesman.
 - Some mine traps in the game became more dangerous.
 - Nerfed slot jinxer perk: slots break for month instead of 1 day, high rollers give 2/5 of initial money and there is a luck-based chance to fail. You can still become insanely rich by gambling.

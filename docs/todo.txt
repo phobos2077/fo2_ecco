@@ -3,11 +3,10 @@ for 0.9.*:
 
 
 for "future":
+- add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
 - add early game Flamerthrower (Incinerator)
 - Stimpak & Healing powder heal amt to depend upon First Aid skill
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
-- replace "handmade grenade" sprite
-- replace Throwing Axe sprite
 - add info about bonus move points to stat description
 
 

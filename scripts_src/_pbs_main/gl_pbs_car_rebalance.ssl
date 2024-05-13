@@ -50,7 +50,7 @@ procedure cartravel_hook begin
    //if (global_var(GVAR_NEW_RENO_CAR_UPGRADE)) then fuel -= fuel * 10 / 100;
    if (global_var(GVAR_CAR_UPGRADE_FUEL_CELL_REGULATOR)) then fuel -= fuel * 30 / 100;
 
-   debug_msg(string_format("car orig: %d, %d, calc: %d, %d", origSteps, origFuel, steps, fuel));
+   //debug_msg(string_format("car orig: %d, %d, calc: %d, %d", origSteps, origFuel, steps, fuel));
    set_sfall_return(steps);
    set_sfall_return(fuel);
 end
