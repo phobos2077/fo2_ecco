@@ -1,0 +1,93 @@
+/**
+ * Unlocks gory death animations for melee weapons.
+ */
+
+#define SCRIPT_REALNAME  "melee_gore_unlock"
+
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+#include "../sfall/lib.math.h"
+#include "../_pbs_headers/deathanim_utils.h"
+
+#include "../_pbs_headers/ecco_log.h"
+#include "../_pbs_headers/ecco_ini.h"
+
+
+#define INI_FILE                "ecco\\combat.ini"
+#define INI_DEATHANIM_SECTION   "DEATHANIM"
+
+#define WPN_ANIM_SWORD              (0x0E) // (S)
+
+variable begin
+   ini_melee_gore_dmg_normal;
+   ini_melee_gore_dmg_maximum;
+end
+
+procedure start;
+
+procedure deathanim2_handler begin
+   variable weaponPID, attacker, target, damage, animID, oldAnimID, isMaximum;
+
+   weaponPID := get_sfall_arg;
+   attacker := get_sfall_arg;
+   target := get_sfall_arg;
+   damage := get_sfall_arg;
+   animID := get_sfall_arg;
+
+   oldAnimID := animID;
+
+   //debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID);
+
+   // Gory melee death anims
+   if (weaponPID > 0
+      and (animID == ANIM_fall_back or animID == ANIM_fall_front)
+      and violence_filter_setting >= VLNCLVL_NORMAL
+      and damage >= ini_melee_gore_dmg_normal) then begin
+      variable
+         attackType := get_object_data(combat_data, C_ATTACK_HIT_MODE),
+         weaponMode := weapon_attack_mode(weaponPID, attackType),
+         damageType := get_proto_data(weaponPID, PROTO_WP_DMG_TYPE),
+         wpnAnim := get_proto_data(weaponPID, PROTO_WP_ANIM);
+
+      display_msg(string_format("weapon %d mode = %d, dmgType = %d, atkType = %d, violence filter = %d", weaponPID, weaponMode, damageType, attackType, violence_filter_setting));
+      if ((weaponMode == ATTACK_MODE_PUNCH and damageType == DMG_normal_dam)
+         or weaponMode == ATTACK_MODE_KICK
+         or weaponMode == ATTACK_MODE_THRUST
+         or weaponMode == ATTACK_MODE_SWING
+         or (weaponMode == ATTACK_MODE_THROW and damageType != DMG_explosion)) then
+      begin
+         isMaximum := (damage >= ini_melee_gore_dmg_maximum and violence_filter_setting >= VLNCLVL_MAX);
+         if (damageType == DMG_normal_dam) then begin
+            if (isMaximum) then begin
+               if (weaponMode == ATTACK_MODE_SWING and (wpnAnim == WPN_ANIM_KNIFE or wpnAnim == WPN_ANIM_SWORD)) then
+                  animID := ANIM_sliced_in_half;
+               else
+                  animID := ANIM_big_hole;
+            end
+         end else begin
+            animID := get_array(get_death_anims_maximum if isMaximum else get_death_anims_normal, damageType);
+         end
+      end
+   end
+
+   if (animID != oldAnimID) then begin
+      if (validate_critter_anim(target, animID)) then begin
+         debug_log("Triggering gory death animation for %s: %d", obj_name(target), animID);
+         set_sfall_return(animID);
+         set_sfall_arg(4, animID);
+      end else begin
+         debug_log_fmt("Failed to trigger gore for %s - animation doesn't exist: %d", obj_name(target), animID);
+      end
+   end
+end
+
+procedure start begin
+   if game_loaded then begin
+      int_from_ini_file_clamped(melee_gore_dmg_normal, INI_COMBAT, INI_DEATHANIM_SECTION, 0, 500);
+      int_from_ini_file_clamped(melee_gore_dmg_maximum, INI_COMBAT, INI_DEATHANIM_SECTION, ini_melee_gore_dmg_normal, 999);
+      if (ini_melee_gore_dmg_normal > 0 and ini_melee_gore_dmg_maximum > 0) then begin
+         register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
+      end
+   end
+end

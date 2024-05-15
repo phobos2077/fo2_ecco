@@ -25,6 +25,7 @@
 #include "../_pbs_headers/ecco_log.h"
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/math_ext.h"
+#include "../_pbs_headers/deathanim_utils.h"
 
 procedure start;
 procedure load_damage_types_from_ini;
@@ -69,9 +70,7 @@ variable
    ini_dr_adjust_by_attack_mode,
    ini_debug,
    living_anatomy_bonus,
-   pyromaniac_bonus,
-   death_anims_normal,
-   death_anims_maximum;
+   pyromaniac_bonus;
 
 procedure start begin
    if game_loaded then begin
@@ -91,27 +90,6 @@ procedure start begin
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
       register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
-
-      death_anims_normal := [
-         ANIM_dancing_autofire,
-         ANIM_sliced_in_half,
-         ANIM_charred_body,
-         ANIM_charred_body,
-         ANIM_electrify,
-         ANIM_fall_back,
-         ANIM_big_hole
-      ];
-      fix_array(death_anims_normal);
-      death_anims_maximum := [
-         ANIM_chunks_of_flesh,
-         ANIM_sliced_in_half,
-         ANIM_fire_dance,
-         ANIM_melted_to_nothing,
-         ANIM_electrified_to_nothing,
-         ANIM_fall_back,
-         ANIM_exploded_to_nothing
-      ];
-      fix_array(death_anims_maximum);
    end
 end
 
@@ -310,10 +288,7 @@ procedure combatdamage_handler begin
          if (random(0, 100) < 50) then knockback := false;
       end
       if knockback then begin
-         if (weaponPerk == PERK_weapon_knockback) then
-            calcKnockback := calcAmount / 5;
-         else
-            calcKnockback := calcAmount / 10;
+         calcKnockback := calcAmount / (5 if (weaponPerk == PERK_weapon_knockback) else 10);
 
          if stoneWall then calcKnockback /= 2;
       end
@@ -539,23 +514,6 @@ procedure itemdamage_handler begin
          debug_verbose("Applied primary punch bonus " + punchBonus);
       end
    end
-end
-
-/*
-
-*/
-
-#define critter_anim_fid(objFid, animType, rot)       ((rot * 0x10000000) bwor ((animType * 0x10000) bwand 0xFF0000) bwor (objFid bwand 0xF00FFFF))
-
-procedure validate_critter_anim(variable critter, variable animType) begin
-   variable objFid := obj_art_fid(critter);
-   variable rot := objFid bwand 0x70000000;
-   // This is based on vanilla logic from art_id_()
-   if (animType != ANIM_fire_dance and animType >= ANIM_fall_back and animType <= ANIM_fall_front_blood) then begin
-      if (art_exists(critter_anim_fid(objFid, animType, 1))) then
-         return true;
-   end
-   return art_exists(critter_anim_fid(objFid, animType, 0));
 end
 
 /*
