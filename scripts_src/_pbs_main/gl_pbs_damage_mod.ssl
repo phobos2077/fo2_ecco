@@ -66,6 +66,9 @@ variable
    ini_dt_mult_positive,
    ini_dt_mult_negative,
    ini_unarmed_weapon_punch_bonus,
+   ini_knockback_limit,
+   ini_knockback_div,
+   ini_knockback_perk_div,
    ini_damage_types,
    ini_dr_adjust_by_attack_mode,
    ini_debug,
@@ -81,6 +84,9 @@ procedure start begin
       float_from_ini_file_clamped(dt_mult_positive, INI_COMBAT, INI_SECTION, 0.0, 10);
       float_from_ini_file_clamped(dt_mult_negative, INI_COMBAT, INI_SECTION, 0.0, 10);
       int_from_ini_file(unarmed_weapon_punch_bonus, INI_COMBAT, INI_SECTION);
+      int_from_ini_file_clamped(knockback_limit, INI_COMBAT, INI_SECTION, 0, 999);
+      int_from_ini_file_clamped(knockback_div, INI_COMBAT, INI_SECTION, 1, 999);
+      int_from_ini_file_clamped(knockback_perk_div, INI_COMBAT, INI_SECTION, 1, 999);
       int_from_ini_file(debug, INI_COMBAT, INI_SECTION);
 
       call load_damage_types_from_ini;
@@ -279,7 +285,7 @@ procedure combatdamage_handler begin
    end
    if knockback
       and ((get_flags(target) bwand FLAG_MULTIHEX) == 0)
-      and (dmgType == DMG_explosion or weapon == 0 or weaponSubType == WEAPON_TYPE_MELEE)
+      and (dmgType == DMG_explosion or weapon == 0 or weaponSubType == WEAPON_TYPE_MELEE or weaponPerk == PERK_weapon_knockback)
       and (pbs_trap_hold_critters[target] == 0) // critters caught in traps should not move until released
       and ((get_proto_data(obj_pid(target), PROTO_CR_FLAGS) bwand CFLG_NOKNOCKDOWN) == 0) then begin // critter_flag_check_
 
@@ -288,9 +294,12 @@ procedure combatdamage_handler begin
          if (random(0, 100) < 50) then knockback := false;
       end
       if knockback then begin
-         calcKnockback := calcAmount / (5 if (weaponPerk == PERK_weapon_knockback) else 10);
-
+         calcKnockback := calcAmount / (ini_knockback_perk_div if (weaponPerk == PERK_weapon_knockback) else ini_knockback_div);
          if stoneWall then calcKnockback /= 2;
+
+         // new logic: knockback limit
+         if (calcKnockback > ini_knockback_limit) then
+            calcKnockback := ini_knockback_limit;
       end
    end
 
@@ -345,7 +354,7 @@ end
 procedure calc_damage(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus, variable criticalMult,
       variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType)
 begin
-   variable accumulatedDamage, ammoDiv, ammoMult, ammoDR, i, baseDamage, bulletDamage, staticMult, calcDTDR, bypassArmor, criticalRounds;
+   variable accumulatedDamage, ammoDiv, ammoMult, ammoDR, i, baseDamage, bulletDamage, staticMult, calcDTDR, bypassArmor, criticalRounds, attackMode;
    if (rounds <= 0) then begin
       return 0;
    end
@@ -356,7 +365,10 @@ begin
    ammoDR := get_ammo_value(weapon, PROTO_AM_DR_MOD); // we use DR mod as DT&DR mod
 
    // DR Adjust mod by attack mode
-   ammoDR += ini_dr_adjust_by_attack_mode[get_weapon_attack_mode_by_attack_type(weapon, attackType)];
+   attackMode := get_weapon_attack_mode_by_attack_type(weapon, attackType);
+   if (attackMode != ATTACK_MODE_THROW or dmgType == DMG_normal_dam) then begin // don't apply to thrown explosives
+      ammoDR += ini_dr_adjust_by_attack_mode[attackMode];
+   end
 
    bypassArmor := (flags bwand DAM_BYPASS) and dmgType != DMG_emp;
 
