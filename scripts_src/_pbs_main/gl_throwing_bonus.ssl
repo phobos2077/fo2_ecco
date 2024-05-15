@@ -2,6 +2,7 @@
    INI-configurable throwing weapons buffs:
    - Damage bonus based on Throwing Skill
    - Flat crit-chance bonus + Luck-based bonus
+   - Returning Boomerang mechanic
 */
 
 #define SCRIPT_REALNAME       "gl_throwing_bonus"
@@ -13,17 +14,25 @@
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.math.h"
 #include "../sfall/lib.inven.h"
+#include "../sfall/lib.obj.h"
+
 #include "../_pbs_headers/ecco.h"
 
 variable
    ini_damage_bonus_skill_mult,
    ini_bonus_crit_chance,
    ini_bonus_crit_chance_luck_mult,
-   ini_apply_melee_dmg;
+   ini_apply_melee_dmg,
+   ini_return_weapon_pids,
+   ini_return_catch_skill_mod,
+   thrown_owner,
+   thrown_items;
 
 procedure start;
 procedure itemdamage_handler;
 procedure rollcheck_handler;
+procedure combatturn_handler;
+procedure removeinvenobj_handler;
 
 procedure start begin
    if game_loaded then begin
@@ -31,12 +40,19 @@ procedure start begin
       int_from_ini_file_clamped(bonus_crit_chance, INI_COMBAT, INI_SECTION, 0, 100);
       int_from_ini_file_clamped(bonus_crit_chance_luck_mult, INI_COMBAT, INI_SECTION, 0, 100);
       int_from_ini_file(apply_melee_dmg, INI_COMBAT, INI_SECTION);
+      int_list_from_ini_file(return_weapon_pids, INI_COMBAT, INI_SECTION);
+      int_from_ini_file(return_catch_skill_mod, INI_COMBAT, INI_SECTION);
 
       if (ini_apply_melee_dmg > 0 or ini_damage_bonus_skill_mult > 0.01) then begin
          register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
       end
       if (ini_bonus_crit_chance > 0) then begin
          register_hook_proc(HOOK_ROLLCHECK, rollcheck_handler);
+      end
+
+      if (len_array(ini_return_weapon_pids) > 0) then begin
+         register_hook_proc(HOOK_COMBATTURN, combatturn_handler);
+         register_hook_proc(HOOK_REMOVEINVENOBJ, removeinvenobj_handler);
       end
    end
 end
@@ -157,5 +173,86 @@ procedure itemdamage_handler begin
             set_sfall_return(dmgMax);
          end
       end
+   end
+end
+
+/*procedure return_thrown_item begin
+   //display_msg("Timed called at "+game_time);
+   if (thrown_item and thrown_owner) then begin
+      debug_log_fmt("Returning thrown weapon %s back to %s", obj_name(thrown_item), obj_name(thrown_owner));
+      add_obj_to_inven(thrown_owner, thrown_item);
+      wield_obj_critter(thrown_owner, thrown_item);
+   end
+end*/
+
+
+/*
+Runs before and after each turn in combat (for both PC and NPC).
+
+int     arg0 - event type:
+               1 - start of turn
+               0 - normal end of turn
+              -1 - combat ends abruptly (by script or by pressing Enter during PC turn)
+              -2 - combat ends normally (hook always runs at the end of combat)
+Critter arg1 - critter doing the turn
+int     arg2 - 1 at the start/end of the player's turn after loading a game saved in combat mode, 0 otherwise
+
+int     ret0 - pass 1 at the start of turn to skip the turn, pass -1 at the end of turn to force end of combat
+*/
+procedure combatturn_handler begin
+   variable
+      eventType := get_sfall_arg,
+      critter := get_sfall_arg,
+      item, isFirst;
+   
+   if (critter == thrown_owner and thrown_items and eventType <= 0) then begin
+      isFirst := true;
+      foreach (item in thrown_items) begin
+         if (not is_success(roll_vs_skill(critter, SKILL_THROWING, ini_return_catch_skill_mod))) then continue;
+
+         debug_log_fmt("Returning thrown weapon %s back to %s", obj_name(item), obj_name(thrown_owner));
+         add_obj_to_inven(thrown_owner, item);
+         if (isFirst) then begin
+            if (critter == dude_obj) then begin
+               display_msg(sprintf(mstr_ecco_combat(120), obj_name(item)));
+            end
+            if (not get_active_weapon(critter)) then
+               wield_obj_critter(thrown_owner, item);
+            isFirst = false;
+         end
+      end
+   end
+   thrown_owner := 0;
+   if (thrown_items) then
+      clear_array(thrown_items);
+end
+
+
+/*
+Runs when an object is removed from a container or critter's inventory for any reason.
+
+Obj     arg0 - the owner that the object is being removed from
+Item    arg1 - the item that is being removed
+int     arg2 - the number of items to remove
+int     arg3 - The reason the object is being removed (see RMOBJ_* constants)
+Obj     arg4 - The destination object when the item is moved to another object, 0 otherwise
+*/
+procedure removeinvenobj_handler begin
+   variable
+      owner := get_sfall_arg,
+      item := get_sfall_arg,
+      num := get_sfall_arg,
+      reason := get_sfall_arg;
+
+   //display_msg(string_format("removeinvenobj %s(%d) from %s (reason: %d, flag: %x)", obj_name(item), num, obj_name(owner), reason, get_object_data(item, OBJ_DATA_FLAGS)));
+   // Return thrown Boomerangs back to owner
+   if (reason == RMOBJ_THROW and is_in_array(obj_pid(item), ini_return_weapon_pids) and num == 1) then begin
+      if (not thrown_items) then
+         thrown_items := create_array_list(0);
+      thrown_owner := owner;
+      call array_push(thrown_items, item);
+      //thrown_flags := get_object_data(item, OBJ_DATA_FLAGS);
+      //call return_thrown_item in 3; // very unreliable, needs to happen after attack ends, but animation length varies...
+      //display_msg("Called scheduled at "+game_time);
    end
 end

@@ -11,7 +11,9 @@
 #include "../sfall/define_extra.h"
 
 #include "ecco_ids.h"
+#include "ecco_ini.h"
 #include "ecco_log.h"
+#include "ecco_msg.h"
 
 
 #define dude_skill(x)               (has_skill(dude_obj, x))

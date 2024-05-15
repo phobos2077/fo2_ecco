@@ -2,6 +2,8 @@
 # stealth
 {100}{}{You caught %s off guard with unexpected attack.}
 
+# boomerang
+{120}{}{You manage to catch a %s on return.}
 
 # destroy weapon - male
 {200}{}{%s damaged his %s beyond repair.}

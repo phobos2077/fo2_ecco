@@ -50,7 +50,7 @@ procedure deathanim2_handler begin
          damageType := get_proto_data(weaponPID, PROTO_WP_DMG_TYPE),
          wpnAnim := get_proto_data(weaponPID, PROTO_WP_ANIM);
 
-      display_msg(string_format("weapon %d mode = %d, dmgType = %d, atkType = %d, violence filter = %d", weaponPID, weaponMode, damageType, attackType, violence_filter_setting));
+      //display_msg(string_format("weapon %d mode = %d, dmgType = %d, atkType = %d, violence filter = %d", weaponPID, weaponMode, damageType, attackType, violence_filter_setting));
       if ((weaponMode == ATTACK_MODE_PUNCH and damageType == DMG_normal_dam)
          or weaponMode == ATTACK_MODE_KICK
          or weaponMode == ATTACK_MODE_THRUST

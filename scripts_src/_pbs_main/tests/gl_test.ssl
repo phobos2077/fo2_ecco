@@ -107,14 +107,17 @@ procedure keypress_hook begin
       end
    end
    if (key == DIK_F3) then begin
-      move_to(dude_obj, tile_under_cursor, dude_elevation);
-      if (get_cursor_mode == 1 and obj_under_cursor(true, false)) then begin
-         //obj := obj_under_cursor(true, false);
-         //variable tile := tile_num(obj);
-         //destroy_object(obj);
-         //obj := create_object_sid(16777224, tile, dude_elevation, 1313);
-         //set_script(obj, 1049); // NIBASDOR
-         //display_msg(string_format("Set script for %s to %d", obj_name(obj), 1049));
+      if (get_cursor_mode == 1) then begin
+         if (obj_under_cursor(true, false)) then begin
+            obj := obj_under_cursor(true, false);
+            //variable tile := tile_num(obj);
+            destroy_object(obj);
+            //obj := create_object_sid(16777224, tile, dude_elevation, 1313);
+            //set_script(obj, 1049); // NIBASDOR
+            //display_msg(string_format("Set script for %s to %d", obj_name(obj), 1049));
+         end
+      end else begin
+         move_to(dude_obj, tile_under_cursor, dude_elevation);
       end
       //variable block := obj_blocking_line(Greeting_Watcher, tile_under_cursor, BLOCKING_TYPE_SHOOT);
       //display_msg(string_format("%s blocking: %s", obj_name_safe(Greeting_Watcher), obj_name_safe(block)));
