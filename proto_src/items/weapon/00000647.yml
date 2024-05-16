@@ -1,0 +1,36 @@
+pid: 647
+messageId: 64700
+name: Makeshift Laser Pistol
+description: 'A crude directed energy weapon crafted from parts of various devices.
+  Limited in range but burns right through armor. Min ST: 3.'
+fid: 34
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x6'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 2
+weight: 4
+cost: 750
+inventoryFid: 117440954
+soundId: '0'
+weaponData:
+  animationCode: 5
+  minDamage: 12
+  maxDamage: 20
+  damageType: DAMAGE_TYPE_LASER
+  maxRange1: 15
+  maxRange2: 0
+  projectilePid: 83886089
+  minStrength: 3
+  actionPointCost1: 5
+  actionPointCost2: 0
+  criticalFailureType: 3
+  perk: PERK_WEAPON_ACCURATE
+  rounds: 0
+  caliber: 3
+  ammoTypePid: 38
+  ammoCapacity: 5
+  soundCode: C

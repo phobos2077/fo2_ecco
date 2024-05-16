@@ -29,7 +29,7 @@ weaponData:
   actionPointCost1: 5
   actionPointCost2: 6
   criticalFailureType: 2
-  perk: PERK_WEAPON_ENHANCED_KNOCKOUT
+  perk: PERK_WEAPON_KNOCKBACK
   rounds: 2
   caliber: 11
   ammoTypePid: 95

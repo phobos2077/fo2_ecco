@@ -159,6 +159,7 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_DESERT_EAGLE, 1, 3, 100)
             check_restock_item(PID_HUNTING_RIFLE, 1, 3, 100)
             check_restock_item(PID_SNIPER_RIFLE, 1, 1, 100) // pbs
+            check_restock_item(PID_BOZAR, 1, 1, 25) // pbs
             check_restock_item(PID_PBS_COWBOY_REPEATER, 1, 1, 40) // pbs
             check_restock_item(PID_SHOTGUN, 1, 3, 100)
             check_restock_item(PID_ASSAULT_RIFLE, 1, 1, 50)
@@ -198,10 +199,10 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_PBS_7_62MM_AP, 1, 3, 50) // pbs
             check_restock_item(PID_FN_FAL_HPFA, 1, 3, 100)
             check_restock_item(PID_HK_P90C, 1, 2, 100)
-            check_restock_item(PID_BOZAR, 1, 1, 25) // pbs
             check_restock_item(PID_PBS_14MM_SMG, 1, 1, 25) // pbs
             check_restock_item(PID_POWER_FIST, 0, 2, 100)
             check_restock_item(PID_10MM_AP, 5, 10, 100)
+            check_restock_item(PID_FLAMETHROWER_FUEL, 1, 5, 100) // pbs
 
             check_restock_item(PID_FRAG_GRENADE, 1, 7, 60)
             check_restock_item(PID_THROWING_KNIFE, 7, 10, 45)

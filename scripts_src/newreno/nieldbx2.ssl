@@ -31,6 +31,8 @@
 #define LVAR_Restock_Time                 (0)
 #define LVAR_Restock_Time_Fix             (1) //added by killap
 
+#include "../_pbs_headers/ecco_ids.h"
+
 /* Standard Script Procedures */
 procedure start;
 procedure map_enter_p_proc;
@@ -61,8 +63,8 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_HK_CAWS, 1, 1, 25)
          check_restock_item(PID_SUPER_SLEDGE, 1, 1, 25)
          check_restock_item(PID_BOZAR, 1, 1, 25)
-         check_restock_item(PID_LIGHT_SUPPORT_WEAPON, 1, 1, 25) // new
          check_restock_item(PID_INDEPENDENT, 1, 1, 20) // new
+         check_restock_item(PID_PBS_MGL, 1, 1, 25)
          call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (random(2,4) * ONE_GAME_DAY) + game_time);
       end

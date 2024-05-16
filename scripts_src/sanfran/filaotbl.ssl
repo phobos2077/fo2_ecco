@@ -161,6 +161,7 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_M60, 1, 2, 45)
             check_restock_item(PID_LASER_RIFLE_EXT_CAP, 1, 1, 40)
             check_restock_item(PID_MAGNETO_LASER_PISTOL, 1, 1, 40)
+            check_restock_item(PID_PBS_PLASMA_LANCE, 1, 1, 25)
 
 //Used to be table 3
 

@@ -81,17 +81,8 @@
 - New ammo types for existing calibers: 12ga Slugs, "special" 12ga ammo, .223AP, 7.62mm AP, 14mm JHP.
 
 
-> NEW WEAPONS:
-- Taser (stuns enemies from a short distance)
-- one .44 Magnum weapon
-- one 14mm automatic weapon
-- 40mm grenade launchers (two types) with two types of grenades
-- Late-game non-firearm weapons: one "unarmed", a spear weapon, a sledge weapon, two throwing weapons
-- A new craftable grenade
-
-
 > GUNS:
-- New gun for .44 Magnum and 14mm calibers to add variety and make these calibers feel "complete".
+- New guns for .44 Magnum and 14mm calibers to add variety and make these calibers feel "complete".
 - Reload now costs 4 AP up from 2. This makes magazine capacity a much bigger factor.
 - Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
 - Sawed off shotgun have a duplet (burst) firing mode with single shot animation and correct death animations.
@@ -105,35 +96,37 @@
 
 
 > BIG GUNS:
-- Two new 40mm Grenade weapons added to make Big Guns skill more useful in early-to-mid game.
+- Two new 40mm Grenade weapons and a new flamethrower added to make Big Guns skill more useful in early-to-mid game.
 - Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
 - M60 is a true machine gun: more powerful with 100 rounds ammo capacity.
 - ST now adds to base skill.
 
 
 > ENERGY WEAPONS:
-- Taser to stun enemies.
+- New Taser Pistol to stun enemies and a new laser weapon for early/mid game will make this skill useful earlier.
 - Laser weapons are now very effective against everything below Combat/Metal Armor.
 - "Real" Turbo Plasma rifle, costs 4 AP for shot (max damage reduced a bit).
 - Strong single-shot energy weapons now spend more than 1 cell round for each shot.
 
 
 > THROWING:
-- All throwing non-explosive weapons now have a big critical chance boost.
-- Stats for throwing weapons were improved to make them more useful.
-- New, more powerful, non-explosive throwing weapons for mid-game.
+- New grenade type that you can craft yourself, as well as recipe for Molotov will ensure weapon availability early.
+- New, more powerful, melee thrown weapons for mid-game, including some that return to you after throw on successful skill roll.
+- All thrown melee weapons now have a big critical chance and armor penetration boost.
+- Melee Damage stat now also applies to thrown weapons, just like it does for Melee.
+- Stats for thrown weapons were improved to make them more useful.
 - Molotov Cocktail now inflicts fire damage and does not knock back targets.
 - Increased damage by all grenades.
 - EMP grenades now can temporarily disrupt power armors, forcing target to lose turn (also their radius was increased).
 
 
 > MELEE & UNARMED:
+- New weapons added (two "spear" type, one "knife", one "sledge") to fill the gaps in weapon progression for most weapon animation types.
 - Thrust attacks now do better against armored enemies, but will cost 1 AP more than swings.
 - The cost of unarmed special attacks has been lowered to 4 for punches and 5 for kicks (taken from Weapons Redone mod).
 - Increased melee damage bonus for high ST characters
 - Super sledge takes 4,5 AP instead of 3,4 (same as regular sledge).
 - Wakizashi blade is much more powerful.
-- New weapons: one spear, one knife and one sledge type.
 - Some melee oriented NPCs made more dangerous.
 
 

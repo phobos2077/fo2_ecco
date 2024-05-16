@@ -75,6 +75,9 @@
 #define PID_PBS_COWBOY_REPEATER     (643)
 #define PID_PBS_14MM_SMG            (644)
 #define PID_PBS_TRAP_KIT_BEAR       (645)
+#define PID_PBS_FLAMER_LT           (646)
+#define PID_PBS_LASER_PISTOL_LT     (647)
+#define PID_PBS_PLASMA_LANCE        (648)
 
 // new scenery
 #define PID_PBS_SPIKE_TRAP           (0x02000000 + 2335)

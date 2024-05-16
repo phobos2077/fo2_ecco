@@ -47,8 +47,9 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_KNIFE, 1, 1, 40)
          check_restock_item(PID_MOLOTOV_COCKTAIL, 1, 3, 40)
          check_restock_item(PID_MICRO_FUSION_CELL, 1, 6, 40)
-         check_restock_item(PID_PUMP_PARTS, 1, 3, 70) // pbs
-         check_restock_item(PID_ROPE, 1, 2, 50) // pbs
+         check_restock_item(PID_SMALL_ENERGY_CELL, 1, 4, 70) // pbs
+         check_restock_item(PID_PUMP_PARTS, 1, 5, 70) // pbs
+         check_restock_item(PID_ROPE, 1, 3, 50) // pbs
          call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (random(3,5) * ONE_GAME_DAY) + game_time);
       end

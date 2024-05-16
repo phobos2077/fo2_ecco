@@ -1,7 +1,8 @@
 pid: 637
 messageId: 63700
 name: Boomerang
-description: 'Ancient thrown weapon. Min ST: 3.'
+description: 'Ancient hand-thrown weapon. Carefully balanced to fly back into the
+  hands of a skillful thrower. Min ST: 4.'
 fid: 214
 lightDistance: 0
 lightIntensity: 0
@@ -12,18 +13,18 @@ type: ITEM_TYPE_WEAPON
 material: 1
 size: 1
 weight: 1
-cost: 125
+cost: 150
 inventoryFid: 117440943
 soundId: '0'
 weaponData:
   animationCode: 1
-  minDamage: 10
-  maxDamage: 20
+  minDamage: 8
+  maxDamage: 16
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 28
   maxRange2: 0
   projectilePid: 83886086
-  minStrength: 3
+  minStrength: 4
   actionPointCost1: 5
   actionPointCost2: 0
   criticalFailureType: 1

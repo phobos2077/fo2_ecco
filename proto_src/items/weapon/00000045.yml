@@ -1,8 +1,8 @@
 pid: 45
 messageId: 4500
 name: Throwing Knife
-description: 'A knife, balanced specifically for throwing. Made of titanium, and laser
-  sharpened. Min ST: 3.'
+description: 'A knife, balanced specifically for throwing. Extremely sharp. Min ST:
+  3.'
 fid: 28
 lightDistance: 0
 lightIntensity: 0
@@ -19,7 +19,7 @@ soundId: '4'
 weaponData:
   animationCode: 1
   minDamage: 6
-  maxDamage: 12
+  maxDamage: 10
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 22
   maxRange2: 0

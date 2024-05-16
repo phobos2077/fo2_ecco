@@ -87,7 +87,7 @@
 {4400}{}{Ice Chest}
 {4401}{}{On old-style ice chest. The hinges are in good working condition.}
 {4500}{}{Throwing Knife}
-{4501}{}{A knife, balanced specifically for throwing. Made of titanium, and laser sharpened. Min ST: 3.}
+{4501}{}{A knife, balanced specifically for throwing. Extremely sharp. Min ST: 3.}
 {4600}{}{Bag}
 {4601}{}{An average sized bag. Made from weaved brahmin hairs.}
 {4700}{}{First Aid Kit}
@@ -1211,7 +1211,7 @@
 {63600}{}{Capital}
 {63601}{}{Capital: A Critique of Political Economy. Book describes the process of circulation of capital. You already feel as it starts to circulate towards your pocket.}
 {63700}{}{Boomerang}
-{63701}{}{Ancient thrown weapon. Min ST: 3.}
+{63701}{}{Ancient hand-thrown weapon. Carefully balanced to fly back into the hands of a skillful thrower. Min ST: 4.}
 {63800}{}{Spiked Sledge}
 {63801}{}{Heavy sledgehammer with sharp spikes for additional effect. Min ST: 6.}
 {63900}{}{Piston Spear}
@@ -1228,3 +1228,9 @@
 {64401}{}{When you need the most firepower in the smallest package. Caliber: 14mm. Min ST: 6.}
 {64500}{}{Bear Trap}
 {64501}{}{This trap can hold down a large animal, like a bear. But there are no bears around here...}
+{64600}{}{Incinerator}
+{64601}{}{Typically used to burn garbage. Requires specialized fuel to work properly. Min ST: 6.}
+{64700}{}{Makeshift Laser Pistol}
+{64701}{}{A crude directed energy weapon crafted from parts of various devices. Limited in range but burns right through armor. Min ST: 3.}
+{64800}{}{Plasma Lance}
+{64801}{}{Creates an arc of plasma at it's tip that can melt just about anything. You don't want to be on the receiving end of it. Min ST: 5.}

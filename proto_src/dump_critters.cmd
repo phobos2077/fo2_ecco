@@ -8,7 +8,7 @@ rem goto vanilla
 
 cd ..\root\data\proto\critters
 for /r %%i in (*.pro) do (
-    "%script_path%" "%%~fi" > %out_path%\%%~ni.json
+    py "%script_path%" "%%~fi" > %out_path%\%%~ni.json
 )
 
 goto end

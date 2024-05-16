@@ -1,0 +1,36 @@
+pid: 646
+messageId: 64600
+name: Incinerator
+description: 'Typically used to burn garbage. Requires specialized fuel to work properly.
+  Min ST: 6.'
+fid: 24
+lightDistance: 0
+lightIntensity: 0
+flags: '0x8'
+extendedFlags: '0x308'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 6
+weight: 12
+cost: 1250
+inventoryFid: 117440952
+soundId: '0'
+weaponData:
+  animationCode: 8
+  minDamage: 30
+  maxDamage: 60
+  damageType: DAMAGE_TYPE_FIRE
+  maxRange1: 3
+  maxRange2: 0
+  projectilePid: -1
+  minStrength: 6
+  actionPointCost1: 6
+  actionPointCost2: 0
+  criticalFailureType: 6
+  perk: NONE
+  rounds: 1
+  caliber: 2
+  ammoTypePid: 32
+  ammoCapacity: 5
+  soundCode: I

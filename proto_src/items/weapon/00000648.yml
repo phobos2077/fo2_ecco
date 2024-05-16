@@ -1,0 +1,36 @@
+pid: 648
+messageId: 64800
+name: Plasma Lance
+description: 'Creates an arc of plasma at it''s tip that can melt just about anything.
+  You don''t want to be on the receiving end of it. Min ST: 5.'
+fid: 42
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa004'
+sid: -1
+type: ITEM_TYPE_WEAPON
+material: 1
+size: 5
+weight: 12
+cost: 4000
+inventoryFid: 117440953
+soundId: '0'
+weaponData:
+  animationCode: 4
+  minDamage: 32
+  maxDamage: 64
+  damageType: DAMAGE_TYPE_PLASMA
+  maxRange1: 3
+  maxRange2: 8
+  projectilePid: 83886087
+  minStrength: 5
+  actionPointCost1: 5
+  actionPointCost2: 5
+  criticalFailureType: 1
+  perk: PERK_WEAPON_PENETRATE
+  rounds: 0
+  caliber: 4
+  ammoTypePid: 39
+  ammoCapacity: 12
+  soundCode: F
