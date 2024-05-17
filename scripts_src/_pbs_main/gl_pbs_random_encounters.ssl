@@ -1,0 +1,83 @@
+/*
+   Random encounter tweaks:
+   - For all NPC's spawned without any extra ammo for their guns, add some.
+*/
+#define SCRIPT_REALNAME             "pbs_random_encounters"
+
+#include "../sfall/sfall.h"
+#include "../sfall/lib.inven.h"
+#include "../sfall/lib.obj.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+
+#include "../_pbs_headers/ecco_ids.h"
+#include "../_pbs_headers/ecco_log.h"
+
+variable begin
+   encounter_map_id;
+end
+
+#define weapon_pid_can_burst(pid)      (weapon_attack_mode1(pid) == ATTACK_MODE_BURST or weapon_attack_mode2(pid) == ATTACK_MODE_BURST)
+
+procedure ensure_npcs_ammo begin
+   variable critter, weapon, weaponPid, ammoPid, ammoCaliber, magSize, packSize, ammoNeeded, ammoActual;
+   foreach (critter in list_as_array(LIST_CRITTERS)) begin
+      if (not critter or critter == dude_obj or obj_in_party(critter)) then
+         continue;
+
+      weapon := critter_inven_obj(critter, INVEN_TYPE_RIGHT_HAND);
+      if (weapon) then begin
+         weaponPid := obj_pid(weapon);
+         ammoCaliber := get_proto_data(weaponPid, PROTO_WP_CALIBER);
+         ammoPid := get_weapon_ammo_pid(weapon);
+         magSize := get_proto_data(weaponPid, PROTO_WP_MAG_SIZE);
+         if (ammoPid > 0 and magSize > 0) then begin
+            packSize := get_proto_data(ammoPid, PROTO_AM_PACK_SIZE);
+            ammoNeeded := random(1, 3)
+               if (weapon_pid_can_burst(weaponPid) or ammoCaliber == CALIBER_ROCKET or ammoCaliber == CALIBER_40MM_GRENADE)
+               else 1;
+
+            ammoActual := obj_is_carrying_obj_pid(critter, ammoPid);
+            if (ammoActual < ammoNeeded) then begin
+               call add_items_pid(critter, ammoPid, ammoNeeded - ammoActual);
+               debug_log(string_format("%s had less ammo (%d) than needed (%d) for his %s. Correcting.", obj_name(critter), ammoActual, ammoNeeded, obj_name_safe(weapon)));
+            end
+         end
+      end
+   end
+end
+
+/*
+Runs whenever a random encounter occurs (except the Horrigan meeting and scripted encounters), or when the player enters a local map from the world map. You can override the map for loading or the encounter.
+
+int     arg0 - event type: 0 - when a random encounter occurs, 1 - when the player enters from the world map
+int     arg1 - the map ID that the encounter will load (see MAPS.h or Maps.txt)
+int     arg2 - 1 when the encounter occurs is a special encounter, 0 otherwise
+
+int     ret0 - overrides the map ID, or pass -1 for event type 0 to cancel the encounter and continue traveling
+int     ret1 - pass 1 to cancel the encounter and load the specified map from the ret0 (only for event type 0)
+*/
+procedure encounter_hook begin
+   variable
+      eventType := get_sfall_arg,
+      mapId := get_sfall_arg,
+      isSpecial := get_sfall_arg;
+
+   //display_msg("encounter hook: type "+eventType+", mapId: "+mapId+", isSpecial: "+isSpecial);
+   if (eventType == 0 and not isSpecial) then
+      encounter_map_id := mapId;
+end
+
+procedure map_enter_p_proc begin
+   if (encounter_map_id >= 0 and cur_map_index == encounter_map_id) then begin
+      call ensure_npcs_ammo;
+   end
+   encounter_map_id := -1;
+end
+
+procedure start begin
+   if (game_loaded) then begin
+      encounter_map_id := -1;
+      register_hook_proc(HOOK_ENCOUNTER, encounter_hook);
+   end
+end

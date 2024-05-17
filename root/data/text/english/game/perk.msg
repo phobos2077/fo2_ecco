@@ -209,7 +209,7 @@
 {1178}{}{You have extra inherent protection against thermal attacks.}   # Phoenix Assault Enhancement
 {1179}{}{You have gained +10% resistance to both poison and radiation.} # Vault City Inoculations
 {1180}{}{With this Perk, you gain +1 to your Strength when you drop below 1/2 of your max hit points.}  # Adrenaline Rush
-{1181}{}{You are more alert outdoors and enemies are less likely to sneak up on you. With this Perk you get a +3 to your perception in random encounters when determining placement.}  # Cautious Nature
+{1181}{}{You are more alert outdoors and enemies are less likely to sneak up on you. With this Perk you get a +5 to your perception in random encounters when determining placement.}  # Cautious Nature
 {1182}{}{You pay much closer attention to the smaller details when reading. You gain 50% more skill points when reading books.}  # Comprehension
 {1183}{}{You are an expert when it comes to the fine art of handling explosive traps. They always go off when they're supposed to, as well as causing extra damage.}  # Demolition Expert
 {1184}{}{You can roll with the best of them.  You gain +20% to your gambling skill.}  # Gambler
