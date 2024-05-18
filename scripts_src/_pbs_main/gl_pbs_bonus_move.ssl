@@ -13,16 +13,31 @@
 
 
 variable
-   //ini_stat_dude,
-   //ini_stat_npc,
-   //ini_mult_dude,
-   //ini_mult_npc,
-   //ini_shift,
+   ini_stat_dude,
+   ini_stat_npc,
+   ini_mult_dude,
+   ini_mult_npc,
+   ini_stat_shift,
    ini_melee_npc_bonus_ag,
    ini_move_points_per_level;
 
 
+procedure get_free_move_from_stat_npc(variable critter) begin
+   if (ini_mult_npc <= 0.01) then return 0;
+   variable
+      statVal := get_critter_stat(critter, ini_stat_npc);
+   return round(math_max(statVal + ini_stat_shift, 0) * ini_mult_npc);
+end
+
+procedure get_free_move_from_stat_dude begin
+   if (ini_mult_dude <= 0.01) then return 0;
+   variable
+      statVal := get_critter_stat(dude_obj, ini_stat_dude);
+   return round(math_max(statVal + ini_stat_shift, 0) * ini_mult_dude);
+end
+
 procedure get_free_move_npc(variable critter) begin
+   if (ini_move_points_per_level <= 0 or ini_melee_npc_bonus_ag <= 0) then return 0;
    variable 
       ag := get_critter_stat(critter, STAT_ag),
       weapon := get_active_weapon(critter),
@@ -59,12 +74,7 @@ procedure combatturn_hook begin
       critter := get_sfall_arg;
 
    if (eventType == 1 and critter != dude_obj) then begin
-      /*
-      variable
-         ag := get_critter_stat(critter, STAT_ag),
-         freeMove := round(math_max(ag + ini_shift, 0) * ini_mult_npc);
-      */
-      variable freeMove := get_free_move_npc(critter);
+      variable freeMove := get_free_move_npc(critter) + get_free_move_from_stat_npc(critter);
       if (freeMove > 0) then begin
          set_combat_free_move(freeMove);
          debug_msg("gl_combat_free_move: Setting combat_free_move for NPC "+obj_name(critter)+"'s turn to "+freeMove);
@@ -95,15 +105,9 @@ procedure stdprocedure_hook begin
 
    if (handler == combat_proc and self == dude_obj and param == COMBAT_SUBTYPE_TURN) then begin
       //display_msg("combat_proc. self: "+obj_name_safe(self)+", source: "+obj_name_safe(source)+", target: "+obj_name_safe(target)+", param: "+param);
-      
-      /* OLD logic
-      variable
-         statVal := get_critter_stat(self, ini_stat_dude),
-         freeMove := round(math_max(statVal + ini_shift, 0) * ini_mult_dude);
-      */
       variable
          baseFreeMove := get_combat_free_move,
-         freeMove := get_free_move_dude;
+         freeMove := get_free_move_dude + get_free_move_from_stat_dude;
       if (freeMove != baseFreeMove) then begin
          set_combat_free_move(freeMove);
          debug_msg("gl_combat_free_move: Setting combat_free_move for player's turn from "+baseFreeMove+" to "+freeMove);
@@ -116,19 +120,20 @@ procedure start begin
 
    int_from_ini_file_clamped(melee_npc_bonus_ag, INI_COMBAT, INI_SECTION, 0, 10);
    int_from_ini_file_clamped(move_points_per_level, INI_COMBAT, INI_SECTION, 0, 10);
-   //int_from_ini_file_clamped(stat_dude, INI_COMBAT, INI_SECTION, STAT_st, STAT_lu);
-   //int_from_ini_file_clamped(stat_npc, INI_COMBAT, INI_SECTION, STAT_st, STAT_lu);
-   //float_from_ini_file_clamped(mult_dude, INI_COMBAT, INI_SECTION, 0.0, 10.0);
-   //float_from_ini_file_clamped(mult_npc, INI_COMBAT, INI_SECTION, 0.0, 10.0);
-   //int_from_ini_file_clamped(shift, INI_COMBAT, INI_SECTION, -9, 0);
+
+   int_from_ini_file_clamped(stat_dude, INI_COMBAT, INI_SECTION, STAT_st, STAT_lu);
+   int_from_ini_file_clamped(stat_npc, INI_COMBAT, INI_SECTION, STAT_st, STAT_lu);
+   int_from_ini_file_clamped(stat_shift, INI_COMBAT, INI_SECTION, -9, 0);
+   float_from_ini_file_clamped(mult_dude, INI_COMBAT, INI_SECTION, 0.0, 10.0);
+   float_from_ini_file_clamped(mult_npc, INI_COMBAT, INI_SECTION, 0.0, 10.0);
 
    if (ini_move_points_per_level == 0) then
       ini_move_points_per_level := 2;
 
-   if (ini_move_points_per_level != 2) then begin
+   if (ini_move_points_per_level != 2 or ini_mult_dude > 0.01) then begin
       register_hook_proc(HOOK_STDPROCEDURE, stdprocedure_hook);
    end
-   if (ini_melee_npc_bonus_ag > 0) then begin
+   if (ini_melee_npc_bonus_ag > 0 or ini_mult_npc > 0.01) then begin
       register_hook_proc(HOOK_COMBATTURN, combatturn_hook);
    end
 end
