@@ -67,7 +67,8 @@
 > COMBAT:
 - A couple of unspent AP points carry over to the next round. This should make low-AG builds more viable and make difference between weapon AP cost less dramatic.
 - Opening inventory has no cost, but every action requires 2 AP (except reload, see below).
-- All characters now get a bonus move points (not AP!) for every AG point above 5. This should allow melee characters to close on their gun-wielding foes and make combat more dynamic.
+- Bonus Move perk level requirement was lowered and it now grants 3 Move Points per level instead of 2.
+- Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
 
 
 > AMMO:
