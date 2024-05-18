@@ -22,7 +22,7 @@ weaponData:
   minDamage: 16
   maxDamage: 26
   damageType: DAMAGE_TYPE_LASER
-  maxRange1: 35
+  maxRange1: 30
   maxRange2: 0
   projectilePid: 83886089
   minStrength: 3

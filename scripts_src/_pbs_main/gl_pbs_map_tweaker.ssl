@@ -187,6 +187,15 @@ procedure command_script(variable tileNum, variable elev, variable tileObj, vari
    end
 end
 
+procedure command_lock(variable tileNum, variable elev, variable tileObj, variable args) begin
+   if (not tileObj) then begin
+      debug_err_cmd("l: no object found", tileNum);
+      return;
+   end
+   obj_lock(tileObj);
+   debug_log_cmd(sprintf("locked %s", obj_name(tileObj)), tileNum);
+end
+
 procedure get_command_handler(variable cmd) begin
    switch (cmd) begin
       case "a":
@@ -197,15 +206,25 @@ procedure get_command_handler(variable cmd) begin
          return @command_wield;
       case "s":
          return @command_script;
+      case "l":
+         return @command_lock;
       default:
          return 0;
    end
 end
 
 procedure execute_command(variable cmdStr, variable tileNum, variable elev) begin
+   /* TODO: multi-character commands?
+   variable i := 0, chr;
+   chr := charcode(cmdStr[i]);
+   while (chr > 'a' and chr < 'z') do begin
+      i += 1;
+      chr := charcode(cmdStr[i]);
+   end*/
    variable
       cmd := cmdStr[0],
-      args := string_split(substr(cmdStr, 1, 0), ":"),
+      argStr := substr(cmdStr, 1, 0),
+      args := string_split(argStr, ":") if (strlen(argStr) > 0) else [],
       handler := get_command_handler(cmd);
 
    if (not handler) then begin
