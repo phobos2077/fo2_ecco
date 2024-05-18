@@ -14,3 +14,8 @@
 {210}{}{%s damaged her %s beyond repair.}
 {211}{}{%s lost her %s in the heat of battle.}
 {212}{}{%s shattered her %s to pieces while defending.}
+
+
+# first aid
+{300}{}{ Restores %d-%d HP.}
+{301}{}{ Restores %d HP.}

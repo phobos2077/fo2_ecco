@@ -4,14 +4,11 @@ for 0.9.*:
 
 for "future":
 - add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
-- Stimpak & Healing powder heal amt to depend upon First Aid skill
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
-- add info about bonus move points to stat description
 
 
 Considering:
-- buff Sharpened Spear & Sledge (check progression)
-- add Cattle Prod Modoc, VC, Gecko, Broken Hills (check balance)
+- add Cattle Prod to Modoc, VC, Gecko, Broken Hills (check balance)
 - add crafting components like rocks and junk to human enemy bodies on death with small probability
 - Hunting Rifle -> Scoped for Slags rewards
 - Marcus Scoped Rifle  to something better as reward
@@ -20,13 +17,9 @@ Considering:
 
 
 IDEAS:
-- script for automatically adjusting/randomizing NPC equipment in random encounters
 - crafting robes?
 - crafting more advanced items require Workbench (scenery object) in close proximity (check FRM from FOnline)
 - add another Sword-like weapon to take advantage of new Wakizashi animation in RPU (Make-shift sword? Between Wakizashi and Combat Knife, but heavy)
-- Bonus Move perk should give 3-4 points per level instead of 2 + simulate select NPCs to have this perk
-- bonus move points based on EN instead of AG
-- remove bonus move points based on AG, but make perk more accessible? (and give it to some NPC's?)
 - remove early link to EPA (it has too OP enemies and loot)? - on the other hand, the area has lots of difficult random encounters!
 - Reduce ammo/drug loot in containers similar to critter loot and FNV Famine mod (less reduction for closed containers, etc.)
 - one more "unarmed" weapon above Spiked Knuckles (knuckles with knife?)

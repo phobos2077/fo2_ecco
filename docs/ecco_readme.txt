@@ -178,7 +178,7 @@
 Talking Heads Addon & Talking Heads Actually Talk (THAT):
 - Full built-in support, no patches needed (if you previously used compatibility patches, DELETE them)
 
-Inventory Filter (2.0.2 from github):
+Inventory Filter (2.0.3+ from github):
 - SmartBarter option seems to cause issues with barter, avoid!
 
 FO2Tweaks:
@@ -194,7 +194,7 @@ Companion Expansion:
 
 -=== CREDITS ===-
 
-Mod was developed by phobos2077 between 2010 and 2023 (with years-long gaps).
+Mod was developed by phobos2077 between 2010 and 2024 (with years-long gaps).
 
 Additional dialogs, designs, flow fixes: Lujo.
 Russian translators: Pyran, Drobovik, phobos2077, Frederika, PolarTulip.
@@ -213,7 +213,6 @@ Many thanks to following people, who made this mod possible:
 - vad for F12se - an invaluable mod testing/debugging tool
 - PercivalCrump for another save editor with unique features
 - Ziro for solid balance advice
-- pelicano for his Party Orders addon
 - Haenlomal, Glovz and Burn for their damage formulas that inspired me to make my own
 - people at NMA and Nuclear-City forums for useful comments
 - Black Isle Studios (R.I.P.) for my favorite game of all time!

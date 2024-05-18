@@ -64,10 +64,11 @@ en.InstallCustom=Custom install
 en.InstallNull=Uncheck all
 
 en.CMain=EcCo Gameplay Overhaul mod
-en.CCombatFreeMove=Bonus move points for high AG characters
+;en.CCombatFreeMove=Bonus move points for high AG characters
 en.CCarryUnspentAP=Carry up to 2 unspent AP to next round
 en.RemoveBonusRoF=Remove Bonus Rate of Fire perk
 en.StimpakRadiation=Stimpaks slightly irradiate on use
+en.StimpakSkillScaling=Stimpaks & Healing Powders heal amount scales with First Aid skill
 
 en.WFalloutNotFound=Fallout not detected in selected directory (fallout2.exe), mod won't work. Install anyway?
 en.WRPNotFound=Restoration Project not detected in selected directory! This mod is only compatible with RPU 2.6 or above. Are you sure you want to continue?
@@ -79,10 +80,11 @@ ru.InstallCustom=Выборочная установка
 ru.InstallNull=Ничего не выбирать
 
 ru.CMain=EcCo - переработка геймплея
-ru.CCombatFreeMove=Бонусные ОД всем персонажам с высокой Ловкостью
+;ru.CCombatFreeMove=Бонусные ОД всем персонажам с высокой Ловкостью
 ru.CCarryUnspentAP=Перенос части непотраченных ОД на следующих ход
 ru.RemoveBonusRoF=Удалить перк "Бонус скорострельности"
 ru.StimpakRadiation=Стимпаки слегка облучают при применении
+ru.StimpakSkillScaling=Эффективность стимпаков и лечебных порошков зависит от навыка первой помощи
 
 ru.WFalloutNotFound=По указанному пути не найдена установленная игра (fallout2.exe), мод не будет работать! Все равно установить?
 ru.WRPNotFound=Restoration Project не обнаружен в указанной папке! Данный мод совместим только с RPU 2.6. Все равно продолжить?
@@ -96,9 +98,9 @@ Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
 
 [Components]
 Name: "main"; Description: "{cm:CMain}"; Types: full custom; Flags: fixed
-Name: "combat_free_move"; Description: "{cm:CCombatFreeMove}"; Types: full
 Name: "carry_unspent_ap"; Description: "{cm:CCarryUnspentAP}"; Types: full
 Name: "remove_bonus_rof"; Description: "{cm:RemoveBonusRoF}"; Types: full
+Name: "stimpak_skill_scaling"; Description: "{cm:StimpakSkillScaling}"; Types: full
 Name: "stimpak_radiation"; Description: "{cm:StimpakRadiation}"; Types: full
 
 [InstallDelete]
@@ -141,10 +143,9 @@ Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer4"; String
 
 ;Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "CheckWeaponAmmoCost"; String: "1"; Components: combat
 
-Filename: "{app}\mods\ecco\combat.ini"; Section: "COMBAT_FREE_MOVE"; Key: "mult_dude"; String: "0"; Components: not combat_free_move
-Filename: "{app}\mods\ecco\combat.ini"; Section: "COMBAT_FREE_MOVE"; Key: "mult_npc"; String: "0"; Components: not combat_free_move
 Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "carry_unspent_ap"; String: "0"; Components: not carry_unspent_ap
 Filename: "{app}\mods\ecco\misc.ini"; Section: "ITEM_TWEAKS"; Key: "stimpak_radiation_disable"; String: "1"; Components: not stimpak_radiation
+Filename: "{app}\mods\ecco\misc.ini"; Section: "FIRST_AID"; Key: "ini_healing_skill_max"; String: "0"; Components: not stimpak_skill_scaling
 
 Filename: "{app}\sfall\perks.ini"; Section: "5"; Key: "Level"; String: "15"; Components: not remove_bonus_rof
 

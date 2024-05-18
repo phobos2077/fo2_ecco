@@ -23,17 +23,17 @@ drugData:
   - NONE
   - STAT_CURRENT_RADIATION_LEVEL
   amount:
-  - 75
+  - 60
   - 0
   - 0
   duration1: 1
   amount1:
-  - -5
+  - -3
   - 0
   - 0
   duration2: 5
   amount2:
-  - -10
+  - -6
   - 0
   - 25
   addictionChance: 0
