@@ -10,6 +10,7 @@
 - Custom crafting schematics designed to serve game's balance and add variety, including new game items.
 - All "schematics" are divided into several categories, you need to find teacher for each category.
 - Knowing schematics is not enough: to start crafting you may also need skills, components and tools.
+- Gain a little EXP for crafting a new item for the first time.
 - Craftable food that heals a little, reduces negative effects and increases some stats.
 - Crafting menu is accessible by clicking a new button on main panel or with a hotkey: Ctrl+C.
 - New book for Doctor skill (required to craft drugs).
@@ -31,16 +32,16 @@
 
 
 > BARTER:
-- Selling prices are affected by skill. (at lower levels prices may drop as low as 25% from their normal margin). This way, if you want to get rich by selling weapons, upgrade your Barter, or you'll need to sell many times more than before.
+- Selling prices are affected by skill. (at lower levels prices may drop as low as 25% from their normal margin). This way, if you want to get rich by selling weapons, invest into Barter, or you'll need to sell many times more than before.
 - Buying prices are comparable to base game, but have a steeper curve (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
 - Some misc items prices were adjusted, so you can still make profit selling them, especially in early game (gecko pelts and scorpion tails in Klamath, etc.).
-- Some items have their prices differ between towns to reflect demand.
+- Some items have their prices differ between towns to simulate supply/demand differences.
 - New book for Barter skill added.
 
 
 > STEALING:
 - Steal rolls calculation changed to make stealing harder but encourage investing into the skill.
-- if Steal roll fails but Catch roll also fails - fails steal without getting caught instead of just succeeding, as in vanilla.
+- If Steal roll fails but Catch roll also fails - fails steal without getting caught instead of just succeeding, as in vanilla.
 - Stealing now correctly uses number of items stolen when calculating difficulty.
 - Stealing money and other weightless items now adds to difficulty based on cost.
 - Karma penalty based on total value of goods being stolen.
@@ -49,14 +50,14 @@
 > LOOTING:
 - There is a chance a weapon will get destroyed when critter dies (except unique and rare weapons).
 - Corpses are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
-- Loot slightly reduced/rearranged in various containers across the game, especially in certain underground installations.
+- Loot slightly reduced/rearranged in various containers across the game, especially in certain underground facilities.
 - NPCs will be more likely to detect if you're stealing from their property.
 - EPA: room with most powerful stuff at security level will be harder to get in.
-- Measures to prevent trivial stealing from some places in Redding, New Reno and NCR.
+- Measures introduced to prevent trivial stealing from some places in Redding, New Reno and NCR.
 
 
 > NEW QUEST CONTENT:
-- Craft learning (see "crafting" section).
+- Learning crafting recipes (see "crafting" section).
 - One of the trappers in Klamath can now teach you gecko skinning (not free).
 - Kill groups of robbers near Redding.
 - Hunt down several rogues throughout the wastelend, one-by-one (NCR).
@@ -66,8 +67,8 @@
 
 > COMBAT:
 - A couple of unspent AP points carry over to the next round. This should make low-AG builds more viable and make difference between weapon AP cost less dramatic.
-- Opening inventory has no cost, but every action requires 2 AP (except reload, see below).
-- Bonus Move perk level requirement was lowered and it now grants 3 Move Points per level instead of 2.
+- Opening inventory has no cost, but every action (except reload, see below) requires 2 AP (or 1 with Quick Pockets).
+- Bonus Move perk is now available at level 3 (was 6) and grants 3 Move Points per level (was 2).
 - Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
 
 

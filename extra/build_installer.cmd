@@ -1,3 +1,3 @@
 @ECHO OFF
 
-C:\Programs\InnoSetup6\ISCC.exe /Qp installer.iss
+C:\Programs\InnoSetup5u\ISCC.exe /Qp installer.iss

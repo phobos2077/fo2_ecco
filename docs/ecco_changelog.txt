@@ -1,5 +1,54 @@
 -=== CHANGELOG ===-
 
+v0.9.5
+> Crafting:
+- redesigned crafting button and item description window
+- added feature to use crafting tools/components from all party members (including car trunk) in proximity, instead of just the dude
+- added recipes to craft throwing knives, boomerangs and a new gun
+- added experience gain when crafting a new item for the first time
+- added more rocks to several locations and random countainers
+- rewritten to load schematics from data\config\pbs_craft.ini and text from text\<lang>\pbs_craft.msg
+- fixed multiple issues with ammo crafting, now individual bullets are properly displayed and accounted for
+- fixed several UI issues
+
+> Combat:
+- added scaling of Stimpak efficiency with First Aid skill
+- replaced Free Move system with buffed Bonus Move perk (available at lvl 3, 3 AP/rank) and simple condition to grant Melee NPC's 1 rank of this perk
+- unlocked gory death animations for Unarmed, Melee & Throwing even without Bloody Mess perk, similar to other weapons
+- applied Melee Damage value to Throwing attacks, just like it does to Melee and Unarmed (Normal damage type only)
+- applied bonus damage of a current primary Punch attack to any "punch"-type weapons for the player
+- added new Boomerang returning mechanic
+- added knockback effect to select shotguns
+- added alternative Throwing skill requirement for Pyromaniac perk
+- knockback distances slightly decreased and maximum distance is lowered to "halfway across the screen"
+
+> Weapons:
+- added new early/mid game weapons: fire-based Big Gun, Laser weapon
+- added new late game Spear
+- added new art for Home-Made Grenade
+- replaced Throwing Axe with Hatchet with new art and similar role
+- various minor weapon stat tweaks, mostly Melee & Throwing
+
+> Worldmap:
+- nerfed Car speed and fuel efficiency upgrades slightly
+- added script that ensures all gun-wielding NPC's have some extra ammo
+- increased variety of a few encounters with new weapons
+- buffed Cautious Nature distance bonus (requires future sfall update)
+
+> Misc:
+- increased MFC pack size to 24
+- nerfed container loot and HP of guards at Salvatore base
+- rebalanced ammo AC modifiers and Power Armors AC slightly to make sure skill investments are relevant (closer to vanilla)
+- improved text messages when enemy weapon is lost and when sneak attack is performed
+- limited effect stacking of new drugs + Hercules carry weight bonus reduced
+- various internal improvements
+
+> Installer:
+- added options to disable a few controversial mod changes
+- RU localization
+- revert to InnoSetup 5 to restore WinXP support
+
+
 v0.9.4
 - Compatibility with RPU v29
 
