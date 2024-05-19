@@ -78,6 +78,7 @@
 #define PID_PBS_FLAMER_LT           (646)
 #define PID_PBS_LASER_PISTOL_LT     (647)
 #define PID_PBS_PLASMA_LANCE        (648)
+#define PID_PBS_CRAFT_SCHEMA        (649)
 
 // new scenery
 #define PID_PBS_SPIKE_TRAP           (0x02000000 + 2335)

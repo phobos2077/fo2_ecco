@@ -64,3 +64,5 @@
 {405}{}{ m. passed.}
 
 {420}{}{You gain %d experience points for creating a new item.}
+{430}{}{You have learned to make %s.}
+{431}{}{You already knew how to make %s.}
