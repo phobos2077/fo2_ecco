@@ -15,7 +15,7 @@ procedure get_craft_schemas begin
    return craft_schemas_map;
 end
 
-#define schema_is_known(id)        ((get_array(craft_schemas_map, id) != 0) if craft_schemas_map else 0)
+#define schema_is_known(id)        get_array(get_craft_schemas, id)
 #define schema_set_as_known(id)    set_array(get_craft_schemas, id, 1)
 
 /**
