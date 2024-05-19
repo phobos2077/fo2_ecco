@@ -7,6 +7,7 @@ v0.9.5
 - added recipes to craft throwing knives, boomerangs and a new gun
 - added experience gain when crafting a new item for the first time
 - added more rocks to several locations and random countainers
+- added new way to acquire recipes: by buying schematic from a trader and using it
 - rewritten to load schematics from data\config\pbs_craft.ini and text from text\<lang>\pbs_craft.msg
 - fixed multiple issues with ammo crafting, now individual bullets are properly displayed and accounted for
 - fixed several UI issues
@@ -27,6 +28,7 @@ v0.9.5
 - added new late game Spear
 - added new art for Home-Made Grenade
 - replaced Throwing Axe with Hatchet with new art and similar role
+- improved Scoped weapon aiming
 - various minor weapon stat tweaks, mostly Melee & Throwing
 
 > Worldmap:

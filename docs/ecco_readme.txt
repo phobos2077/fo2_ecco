@@ -7,8 +7,8 @@
 
 > CRAFTING:
 - New crafting system based on Mr.Fixit by Team-X and Fix-Boy by Lexx with many improvements.
-- Custom crafting schematics designed to serve game's balance and add variety, including new game items.
-- All "schematics" are divided into several categories, you need to find teacher for each category.
+- Custom crafting schematics designed to serve game's balance and add variety, including new item types.
+- Unlock crafting schematics by finding teachers, buying blueprints from traders, and other means.
 - Knowing schematics is not enough: to start crafting you may also need skills, components and tools.
 - Gain a little EXP for crafting a new item for the first time.
 - Craftable food that heals a little, reduces negative effects and increases some stats.
@@ -94,6 +94,7 @@
 - Bursts rebalanced to differ in bullet spread between weapon types (thanks to sfall). This makes certain guns work in new roles with effective mid-long range bursts. Expect guns that should have small recoil to do better at long-range bursts.
 - Burst sizes were reduced across the board and rebalanced. This should make bursts viable with the added ammo scarcity.
 - In critical bursts, only half of bullets will "inherit" the increased damage and penetration of the critical. This should balance against bursts being more "accurate".
+- Better Scoped weapon aiming: penalty distance reduced (8 -> 6), perception mult increased (2.5x -> 3x)
 - Almost every weapon was subjectively improved (main concerns were: more interesting balance between weapons, taking new ammo behavior into account, BUT not going too far from vanilla stats, except those weapons mentioned specifically).
 
 

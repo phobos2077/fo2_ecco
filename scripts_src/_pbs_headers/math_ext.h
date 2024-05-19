@@ -1,8 +1,11 @@
 #ifndef PBS_MATH_EXT_H
 #define PBS_MATH_EXT_H
 
-// 1.2 has 20% chance to be rounded up to 2
-// by burn
+/**
+ * Rounds float value to one of the two nearest integers using probability.
+ * - Example: 1.2 has 20% chance to be rounded up to 2
+ * - Idea from Burn.
+ */
 procedure math_round_chance(variable val) begin
    variable intVal = floor2(val);
    variable chance = (val - intVal)*100;
