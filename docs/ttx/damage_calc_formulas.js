@@ -197,7 +197,7 @@ var yaamFormula = {
 
 var eccoFormula = {
     ...vanillaFormula,
-    name: "EcCo 0.9+ (DT add-)",
+    name: "EcCo 0.9.0+ (DT add-)",
     dtMultPositive: 0,
     dtMultNegative: 1.3,
     burstCriticalFraction: 0.5,
@@ -250,7 +250,7 @@ var eccoFormula = {
 
 var eccoFormula2 = {
     ...eccoFormula,
-    name: "EcCo (DT mult)",
+    name: "EcCo (DT mult) - UNUSED",
     dtMultPositive: 2,
     dtMultNegative: 1.3,
     dtdr: function(ctx, noBypass) {

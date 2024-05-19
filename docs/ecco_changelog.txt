@@ -46,7 +46,7 @@ v0.9.5
 - various internal improvements
 
 > Installer:
-- added options to disable a few controversial mod changes
+- added options to disable a few experimental mod changes
 - RU localization
 - revert to InnoSetup 5 to restore WinXP support
 
