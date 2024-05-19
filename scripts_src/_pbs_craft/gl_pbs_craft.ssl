@@ -20,7 +20,7 @@ procedure delete_button;
 
 #include "crafting.h"
 
-variable crafting_hotkey;
+variable crafting_hotkey, schema_pids;
 variable warning_msg, show_crafting_scheduled, crafting_button_shown;
 
 #define WIN_CRAFT_BTN         "helwin"
@@ -162,8 +162,6 @@ procedure gamemodechange_handler begin
    end
 end
 
-#include "craft_schematics.h"
-
 procedure useobj_handler begin
    variable
       user := get_sfall_arg,   
@@ -173,21 +171,18 @@ procedure useobj_handler begin
       isKnown,
       craftedPid;
 
-   // TODO: read from ini
-   if (objPid == 649) then begin
+   if (is_in_array(objPid, schema_pids)) then begin
       craftedPid := get_weapon_ammo_count(obj);
-      gvarName := item_schematic_sgvar(craftedPid);
-      isKnown := get_sfall_global_int(gvarName) > 0;
+      isKnown := schema_is_known(craftedPid);
       display_msg(string_format(mstr_pbs_craft(430 + isKnown), proto_data(craftedPid, it_name)));
-      set_sfall_global(gvarName, 1);
+      schema_set_as_known(craftedPid);
       set_sfall_return(1);
    end
 end
 
 procedure descriptionobj_handler begin
    variable obj := get_sfall_arg, objPid := obj_pid(obj), craftedPid;
-   // TODO: read from ini
-   if (objPid == 649) then begin
+   if (is_in_array(objPid, schema_pids)) then begin
       craftedPid := get_weapon_ammo_count(obj);
       set_sfall_return(sprintf(proto_data(objPid, it_description), proto_data(craftedPid, it_name)));
    end
@@ -197,6 +192,7 @@ procedure start begin
 	if (game_loaded) then begin
       call init_crafting;
 		crafting_hotkey := parse_hotkey(craft_raw_cfg.Main.hotkey);
+      schema_pids := array_fixed(string_split_ints(craft_raw_cfg.Main.schematic_pids, ","));
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
       register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
       register_hook_proc(HOOK_DESCRIPTIONOBJ, descriptionobj_handler);

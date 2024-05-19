@@ -1234,5 +1234,7 @@
 {64701}{}{A crude directed energy weapon crafted from parts of various devices. Limited in range but burns right through armor. Min ST: 3.}
 {64800}{}{Plasma Lance}
 {64801}{}{Creates an arc of plasma at it's tip that can melt just about anything. You don't want to be on the receiving end of it. Min ST: 5.}
-{64900}{}{Crafting schematics}
-{64901}{}{A schematic detailing tools, components and steps required to create a %s.}
+{64900}{}{Schematics}
+{64901}{}{A paper with some crude drawings and instructions for creating: %s.}
+{65000}{}{Blueprints}
+{65001}{}{A set of blueprints and instructions for creating: %s.}

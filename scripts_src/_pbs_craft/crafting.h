@@ -19,6 +19,7 @@
 #include "craft_msg.h"
 #include "craft_utils.h"
 #include "craft_config.h"
+#include "craft_schematics.h"
 
 #define mstr_craft(num)         mstr_pbs_craft(num)
 
@@ -129,6 +130,10 @@ procedure recipe_is_available(variable recipe) begin
          if (gvarVal == 0) then
             return false;
       end
+   end
+   if (craft_cfg.use_schematics and recipe.schema) then begin
+      if (not schema_is_known(recipe.pid)) then
+         return false;
    end
    return true;
 end

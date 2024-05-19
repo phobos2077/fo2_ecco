@@ -63,6 +63,7 @@ procedure load_crafting_config begin
    cfg_parse_int_def(cfg, iniMain, use_party, 0);
    cfg_parse_int_def(cfg, iniMain, categories, 0);
    cfg_parse_int_def(cfg, iniMain, use_gvars, 0);
+   cfg_parse_int_def(cfg, iniMain, use_schematics, 0);
    cfg_parse_def_clamp(atof, cfg, iniMain, exp_skill_mult, 0.0, 0.0, 10.0);
    cfg_parse_def_clamp(atoi, cfg, iniMain, exp_round_to, 1, 1, 100);
 
@@ -90,6 +91,7 @@ procedure load_crafting_config begin
             "pic_w": atoi(section.pic_w),
             "pic_h": atoi(section.pic_h),
             "gvar": section.gvar,
+            "schema": atoi(section.schema) if section.schema else 0,
             "time": atoi(section.time),
             "undo": atoi(section.undo) if section.undo else 0,
             "category": atoi(section.category) if section.category else 0
