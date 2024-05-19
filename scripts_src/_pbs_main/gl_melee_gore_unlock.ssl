@@ -73,7 +73,7 @@ procedure deathanim2_handler begin
 
    if (animID != oldAnimID) then begin
       if (validate_critter_anim(target, animID)) then begin
-         debug_log("Triggering gory death animation for %s: %d", obj_name(target), animID);
+         debug_log_fmt("Triggering gory death animation for %s: %d", obj_name(target), animID);
          set_sfall_return(animID);
          set_sfall_arg(4, animID);
       end else begin

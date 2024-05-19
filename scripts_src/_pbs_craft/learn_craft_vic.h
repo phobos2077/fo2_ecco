@@ -35,7 +35,7 @@ end
 procedure NodeCraft4 begin
   Reply(5105);
   set_sfall_global(SGVAR_CRAFT_BLADES, 1);
-  display_msg(fixit_mstr(87));
+  display_msg(mstr_pbs_craft(87));
   NOption(5106, NodeCraft5, 004);
   //NOption(5130, Node110, 004);
 end

@@ -63,7 +63,7 @@ procedure NodeCraft4 begin
   gfade_out(400);
   game_time_advance(18000);
   set_sfall_global(SGVAR_CRAFT_FOOD, 1);
-  display_msg(fixit_mstr(88));
+  display_msg(mstr_pbs_craft(88));
   gfade_in(400);
   Reply(2021);
   NOption(2023, Node013, 004);

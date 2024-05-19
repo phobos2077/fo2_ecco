@@ -1,7 +1,7 @@
 #ifndef ECCO_MSG_H
 #define ECCO_MSG_H
 
-#include "sfall/sfall.h"
+#include "../sfall/sfall.h"
 
 variable combat_msg_id;
 

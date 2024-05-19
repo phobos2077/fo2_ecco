@@ -594,7 +594,7 @@ end
 procedure Node021 begin
    Reply(320);
    set_sfall_global(SGVAR_CRAFT_TOOLS, 1); // pbs: unlock crafting of Super Tool Kit
-   display_msg(fixit_mstr(89));
+   display_msg(mstr_pbs_craft(89));
    NOption(321,Node022,004);
 end
 

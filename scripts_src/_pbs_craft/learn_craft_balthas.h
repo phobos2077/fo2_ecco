@@ -67,7 +67,7 @@ procedure NodeCraft4 begin
   game_time_advance(18000);
   set_sfall_global(SGVAR_CRAFT_JACKET, 1);
   set_sfall_global(SGVAR_CRAFT_LEATHER, 1);
-  display_msg(fixit_mstr(82));
+  display_msg(mstr_pbs_craft(82));
   gfade_in(400);
   Reply(1041);
   NOption(1042, Node999, 004);

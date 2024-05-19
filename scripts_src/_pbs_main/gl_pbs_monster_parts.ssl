@@ -47,7 +47,7 @@ procedure drop_monster_parts(variable critter) begin
          call add_item_pid(critter, PID_PBS_DEATH_CLAW);
          if (get_sfall_global_int(SGVAR_CRAFT_DEATHCLAW) == false) then
             if (is_success(roll_vs_skill(dude_obj, SKILL_REPAIR, 0))) then begin
-               display_msg(fixit_mstr(90));
+               display_msg(mstr_pbs_craft(90));
                set_sfall_global(SGVAR_CRAFT_DEATHCLAW, true);
             end
       end

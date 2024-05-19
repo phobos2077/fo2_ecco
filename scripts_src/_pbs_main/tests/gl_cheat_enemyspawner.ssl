@@ -30,7 +30,7 @@ variable enemy_types;
 
 #define is_throwing_weapon_pid(pid)          (weapon_attack_mode1(pid) == ATTACK_MODE_THROW)
 
-procedure spawn_enemy(variable type, variable tile) begin
+procedure spawn_enemy(variable type, variable tile := 0) begin
    variable critter, pid, sid, weaponPid, weapon, ammoPid, stimpaks, female;
    switch (type) begin
       case ENEMY_ENCLAVE:
@@ -80,17 +80,17 @@ procedure spawn_enemy(variable type, variable tile) begin
          return;
    end
 
-   critter := create_object_sid(pid, tile, dude_elevation, sid);
+   critter := create_object_sid(pid, tile or tile_under_cursor, dude_elevation, sid);
    if (weaponPid) then begin
       weapon := add_items_pid(critter, weaponPid, 3 if is_throwing_weapon_pid(weaponPid) else 1);
       //wield_obj_critter(critter, weapon);
       ammoPid := get_proto_data(weaponPid, PROTO_WP_AMMO_PID);
       if (ammoPid > 0) then
          call add_items_pid(critter, ammoPid, random(1, 3));
-      if stimpaks then
-         call add_items_pid(critter, PID_STIMPAK, stimpaks);
       wield_obj_critter(critter, weapon);
    end
+   if stimpaks then
+      call add_items_pid(critter, PID_STIMPAK, stimpaks);
    return critter;
 end
 
@@ -124,16 +124,16 @@ procedure keypress_handler begin
          call spawn_enemies_circle(ENEMY_FARMER, 2);
       end
       if (keyCode == DIK_6) then begin
-         variable crit := spawn_enemy(ENEMY_DEATHCLAW, tile_under_cursor);
+         variable crit := spawn_enemy(ENEMY_DEATHCLAW);
          reg_anim_clear(crit);
          reg_anim_begin();
          reg_anim_obj_move_to_obj(crit, dude_obj, -1);
          reg_anim_end();
       end
       if (keyCode == DIK_7) then
-         call spawn_enemy(ENEMY_ENCLAVE, tile_under_cursor);
+         call spawn_enemy(ENEMY_ENCLAVE);
       if (keyCode == DIK_8) then
-         call spawn_enemy(ENEMY_THROWER, tile_under_cursor);
+         call spawn_enemy(ENEMY_MELEE);
       if (keyCode == DIK_9) then
          call spawn_enemies_circle(ENEMY_ALIEN, 1);
    end

@@ -16,8 +16,11 @@
 
 #define craft_debug(text)       if (true) then debug_msg("[craft] "+text)
 
+#include "craft_msg.h"
 #include "craft_utils.h"
 #include "craft_config.h"
+
+#define mstr_craft(num)         mstr_pbs_craft(num)
 
 #define ITEMS_PER_SCREEN        9
 
@@ -31,13 +34,11 @@
 // should typically be ITEMS_PER_SCREEN + 2
 #define MAX_CATEGORIES          (ITEMS_PER_SCREEN + 2)
 
-#define EXTRA_MSG_NAME          "pbs_craft.msg"
 #define EXP_MAP_NAME            "pbs_craft_exp"
 #define pcx_path(name)          "pcx\\" #name ".pcx"
 
 
 variable begin
-   craft_msg_id;
    craft_ui_mode;
    use_categories := false;
    craft_exp_map; // maps output item PID to 1 if exp was granted for crafting
@@ -60,10 +61,6 @@ variable begin
    display_cur_str;
 
    num_options;
-end
-
-procedure mstr_craft(variable num) begin
-   return message_str_game(craft_msg_id, num);
 end
 
 #define has_prev_page           (cur_pos > 0)
@@ -113,7 +110,6 @@ procedure loop_mode;
 
 
 procedure init_crafting begin
-   craft_msg_id := add_extra_msg_file(EXTRA_MSG_NAME);
    craft_ui_mode := MODE_EXIT;
    craft_raw_cfg := load_raw_crafting_config;
    craft_exp_map := load_create_array_map(EXP_MAP_NAME);

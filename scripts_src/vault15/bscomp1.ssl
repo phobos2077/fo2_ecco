@@ -199,6 +199,6 @@ procedure NodeCraft1 begin
    Reply(201);
    set_sfall_global(SGVAR_CRAFT_ELECTRONICS, 1);
    set_sfall_global(SGVAR_CRAFT_ELECTRONICS2, 1);
-   display_msg(fixit_mstr(85));
+   display_msg(mstr_pbs_craft(85));
    ENDOPTION;
 end

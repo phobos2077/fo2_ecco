@@ -430,7 +430,7 @@
 {5101}{}{Well, I AM a mechanic, boss, but, err, I'm more of a repairman. Not what you'd call a tradesman. Or a crafter.}
 {5102}{}{So you can't in fact make anything... meckanicky?}
 {5103}{}{Well... I can sharpen a spear.}
-{5104}{}{There's guys in my village who can sharpen spears! Do you know of anyone who's more of a crafter?}
+{5104}{}{Guys in my village can sharpen spears! Do you know of anyone who's more of a crafter?}
 {51041}{}{That's better than nothing. Show me.}
 {5105}{}{Here's how you do it... [Vic explains] You'll need a piece of flint though. Mom probably has some.}
 {5106}{}{Ok, noted. Do you know of anyone who's more of a crafter?}

@@ -79,7 +79,7 @@ procedure NodeCraft5 begin
   gfade_out(400);
   game_time_advance(30 * ONE_GAME_MINUTE);
   set_sfall_global(SGVAR_CRAFT_DRUGS, 1);
-  display_msg(fixit_mstr(84));
+  display_msg(mstr_pbs_craft(84));
   gfade_in(400);
   Reply(1041);
   NOption(g_mstr(202), Node999, 004);

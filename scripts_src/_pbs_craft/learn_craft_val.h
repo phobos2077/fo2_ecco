@@ -60,7 +60,7 @@ procedure NodeCraft5 begin
    gfade_out(400);
    game_time_advance(18000);
    set_sfall_global(SGVAR_CRAFT_ELECTRONICS, 1);
-   display_msg(fixit_mstr(85));
+   display_msg(mstr_pbs_craft(85));
    gfade_in(400);
    Reply(521);
    BackOption(g_mstr(202), 004)

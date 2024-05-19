@@ -369,7 +369,7 @@ procedure NodeCraft3 begin
    Reply(537);
    
    set_sfall_global(SGVAR_CRAFT_JACKET, 1);
-   display_msg(fixit_mstr(82));
+   display_msg(mstr_pbs_craft(82));
    set_local_var(LVAR_Teacher, teacher_taught);
    item_caps_adjust(dude_obj, -CRAFT_PRICE);
    

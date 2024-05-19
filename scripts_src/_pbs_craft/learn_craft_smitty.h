@@ -67,7 +67,7 @@ procedure NodeCraft4 begin
   gfade_out(400);
   game_time_advance(18000);
   set_sfall_global(SGVAR_CRAFT_EXPLOSIVES, 1);
-  display_msg(fixit_mstr(81));
+  display_msg(mstr_pbs_craft(81));
   gfade_in(400);
   Reply(721);
   NOption(722, Node999, 004);

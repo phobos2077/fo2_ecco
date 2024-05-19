@@ -1,9 +1,9 @@
 #ifndef LEARN_CRAFT_H
 #define LEARN_CRAFT_H
 
-#define fixit_mstr(x)               message_str(SCRIPT_TEST0,x)
+#include "craft_msg.h"
 
-#define dude_barter     (has_skill(dude_obj,SKILL_BARTER))
+#define dude_barter                 (has_skill(dude_obj,SKILL_BARTER))
 
 // new GVARs (using Reserved GVARs 11-20)
 //#define GVAR_CRAFT_EXPLOSIVES     (644)
@@ -29,7 +29,8 @@
 #define SGVAR_CRAFT_TOOLS          "CRFT_TOL"
 #define SGVAR_CRAFT_DEATHCLAW      "CRFT_GNT"
 
-#define crafting_mod_available   (message_str(SCRIPT_TEST0, 1000) != "Error")
+// TODO: option to disable crafting?
+#define crafting_mod_available     (true)
 
 #include "../headers/global.h"
 #include "../headers/scripts.h"
