@@ -10,9 +10,19 @@
 #include "../sfall/sfall.h"
 #include "../headers/global.h"
 
+#include "../_pbs_headers/ecco_ini.h"
+
 #define GAS_TANK_CAPACITY                   (80000)
 
-variable step_remainder;
+#define INI_FILE           INI_MISC
+#define INI_SECTION        "CAR_TRAVEL"
+
+variable
+   ini_enable_tweaks,
+   ini_speed_mult,
+   ini_fuel_consumption_base,
+   ini_fuel_cell_regulator_percent,
+   step_remainder;
 
 /*
 Runs continuously during worldmap travel on car.
@@ -40,15 +50,15 @@ procedure cartravel_hook begin
    if (global_var(GVAR_CAR_UPGRADE_FUEL_CELL_REGULATOR)) then fuel /= 2;
    */
 
-   steps := (origSteps + 1) * 0.75 - 1; // +1 accounts for 1 unskippable step
+   steps := (origSteps + 1) * ini_speed_mult - 1; // +1 accounts for 1 unskippable step
    step_remainder += steps - floor(steps);
    steps := floor(steps) + floor(step_remainder);
    step_remainder -= floor(step_remainder);
 
-   fuel := 75;
+   fuel := ini_fuel_consumption_base;
    if (global_var(GVAR_NEW_RENO_SUPER_CAR)) then fuel -= fuel * 80 / 100;
    //if (global_var(GVAR_NEW_RENO_CAR_UPGRADE)) then fuel -= fuel * 10 / 100;
-   if (global_var(GVAR_CAR_UPGRADE_FUEL_CELL_REGULATOR)) then fuel -= fuel * 30 / 100;
+   if (global_var(GVAR_CAR_UPGRADE_FUEL_CELL_REGULATOR)) then fuel -= fuel * ini_fuel_cell_regulator_percent / 100;
 
    //debug_msg(string_format("car orig: %d, %d, calc: %d, %d", origSteps, origFuel, steps, fuel));
    set_sfall_return(steps);
@@ -62,6 +72,15 @@ procedure enc_hook begin
 end*/
 
 procedure start begin
-   register_hook_proc(HOOK_CARTRAVEL, cartravel_hook);
-   //register_hook_proc(HOOK_ENCOUNTER, cartravel_hook);
+   if (game_loaded) then begin
+      int_from_ini_file(enable_tweaks, INI_FILE, INI_SECTION);
+      if (not ini_enable_tweaks) then return;
+
+      float_from_ini_file_clamped(speed_mult, INI_FILE, INI_SECTION, 0.25, 3);
+      int_from_ini_file_clamped(fuel_consumption_base, INI_FILE, INI_SECTION, 0, 1000);
+      int_from_ini_file_clamped(fuel_cell_regulator_percent, INI_FILE, INI_SECTION, 0, 100);
+
+      register_hook_proc(HOOK_CARTRAVEL, cartravel_hook);
+      //register_hook_proc(HOOK_ENCOUNTER, cartravel_hook);
+   end
 end

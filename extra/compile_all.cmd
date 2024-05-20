@@ -35,7 +35,7 @@ exit /b
 :RunCompile
 cd /d "%~dp1"
 rem "%compile%" -l -O2 -p -s -q -n "%%~nxi" -o "%output%/%%~ni.int"
-call compile_gcc "%~nx1" -o "%output%/%~n1.int"
+call compile_wcc "%~nx1" -o "%output%/%~n1.int"
 set compileErr=%errorlevel%
 if %compileErr% geq 1 (
     set /a ne+=1 >nul

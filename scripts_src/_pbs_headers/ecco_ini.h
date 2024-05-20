@@ -1,6 +1,7 @@
 #ifndef ECCO_INI_H
 #define ECCO_INI_H
 
+#include "../sfall/lib.math.h"
 #include "../sfall/lib.strings.h"
 
 #define INI_SFALL          "ddraw.ini"
