@@ -1,5 +1,13 @@
 -=== CHANGELOG ===-
 
+v0.9.6:
+> Balance:
+- changed monster part quests requirements/rewards ratio to make economic sense
+- minor weapon stat tweaks
+
+> Installer:
+- added more options for disabling some mod features
+
 v0.9.5
 > Crafting:
 - redesigned crafting button and item description window

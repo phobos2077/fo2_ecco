@@ -23,7 +23,7 @@ weaponData:
   minDamage: 18
   maxDamage: 24
   damageType: DAMAGE_TYPE_NORMAL
-  maxRange1: 45
+  maxRange1: 40
   maxRange2: 40
   projectilePid: -1
   minStrength: 6

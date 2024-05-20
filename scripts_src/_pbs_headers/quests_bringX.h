@@ -19,7 +19,7 @@
 		end_dialogue;                               \
     end
 
-#define is_new_monsterparts_enabled         get_ini_setting("combat.ini|ONDEATH|drop_monster_parts")
+#define is_new_monsterparts_enabled         get_ini_setting("combat.ini|MONSTER_PARTS|enable")
 
 // GVAR_BRINGX_* statuses:
 #define BRINGX_QUEST_TAKEN   (1)
@@ -37,8 +37,8 @@
 // <0 - time when next available
 #define LVAR_BRING_X    (8)
 
-#define _BRING_REWARD    (3000)
-#define _BRING_COUNT       (10)
+#define _BRING_REWARD    (6000)
+#define _BRING_COUNT        (8)
 
 #define is_first_bring     (local_var(LVAR_BRING_X) == 0)
 
@@ -107,7 +107,7 @@ end
 // <0 - quest was completed, time when next available
 #define LVAR_BRING_X    (8)
 
-#define _BRING_REWARD    (1000)
+#define _BRING_REWARD    (1200)
 #define _BRING_COUNT       (10)
 
 #define is_first_bring     (local_var(LVAR_BRING_X) == 0 or local_var(LVAR_BRING_X) == 1)
