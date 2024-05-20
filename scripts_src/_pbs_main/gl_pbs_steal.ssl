@@ -199,6 +199,10 @@ procedure gamemodechange_hook begin
 end
 
 procedure start begin
+   if (not game_loaded) then return;
+
+   if (get_int_from_ini(INI_FILE, INI_SECTION, "enable_tweaks") <= 0) then return;
+
    int_from_ini_file(chance_steal_count_mod_mult, INI_FILE, INI_SECTION);
    int_from_ini_file(chance_facing_mod, INI_FILE, INI_SECTION);
    float_from_ini_file(chance_size_mod_mult, INI_FILE, INI_SECTION);
@@ -211,4 +215,6 @@ procedure start begin
    //register_hook_proc(HOOK_ROLLCHECK, rollcheck_hook);
    register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_hook);
    register_hook_proc(HOOK_STDPROCEDURE, stdprocedure_hook);
+
+   debug_log("Steal tweaks initailized");
 end

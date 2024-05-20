@@ -4,7 +4,7 @@
 
 [Setup]
 #define MyAppName "Fallout 2: EcCo Gameplay Overhaul"
-#define MyAppVersion "0.9.5"
+#define MyAppVersion "0.9.6"
 #define MyAppPublisher "phobos2077"
 
 #define DocsDir "..\docs\"
@@ -17,7 +17,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-5
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-WIP
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no
@@ -71,6 +71,7 @@ en.CThrowingMeleeDmg=Apply Melee Damage stat to Throwing weapons
 en.CStimpakRadiation=Stimpaks slightly irradiate on use
 en.CStimpakSkillScaling=Stimpaks & Healing Powders heal amount scales with First Aid skill
 en.CCarTravelTweaks=Car Travel changes (25% slower)
+en.CStealTweaks=Steal changes
 
 en.WFalloutNotFound=Fallout not detected in selected directory (fallout2.exe), mod won't work. Install anyway?
 en.WRPNotFound=Restoration Project not detected in selected directory! This mod is only compatible with RPU 2.6 or above. Are you sure you want to continue?
@@ -92,6 +93,7 @@ ru.CThrowingMeleeDmg=Применять урон ближнего боя к ме
 ru.CStimpakRadiation=Стимпаки слегка облучают при применении
 ru.CStimpakSkillScaling=Эффективность стимпаков и лечебных порошков зависит от навыка первой помощи
 ru.CCarTravelTweaks=Изменения параметров автомобиля (25% медленнее)
+ru.CStealTweaks=Изменения воровства
 
 ru.WFalloutNotFound=По указанному пути не найдена установленная игра (fallout2.exe), мод не будет работать! Все равно установить?
 ru.WRPNotFound=Restoration Project не обнаружен в указанной папке! Данный мод совместим только с RPU 2.6. Все равно продолжить?
@@ -108,12 +110,14 @@ Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
 
 [Components]
 Name: "main"; Description: "{cm:CMain}"; Types: full custom; Flags: fixed
+;Name: "option"; Description: "{cm:COptions}"; Types: full
 Name: "carry_unspent_ap"; Description: "{cm:CCarryUnspentAP}"; Types: full
 Name: "remove_bonus_rof"; Description: "{cm:CRemoveBonusRoF}"; Types: full
 Name: "throwing_melee_dmg"; Description: "{cm:CThrowingMeleeDmg}"; Types: full
 Name: "stimpak_skill_scaling"; Description: "{cm:CStimpakSkillScaling}"; Types: full
 Name: "stimpak_radiation"; Description: "{cm:CStimpakRadiation}"; Types: full
 Name: "car_travel_tweaks"; Description: "{cm:CCarTravelTweaks}"; Types: full
+Name: "steal_tweaks"; Description: "{cm:CStealTweaks}"; Types: full
 
 [InstallDelete]
 Type: files; Name: "{app}\data\worldmap.dat"
@@ -160,6 +164,7 @@ Filename: "{app}\mods\ecco\combat.ini"; Section: "THROWING"; Key: "apply_melee_d
 Filename: "{app}\mods\ecco\misc.ini"; Section: "ITEM_TWEAKS"; Key: "stimpak_radiation_disable"; String: "1"; Components: not stimpak_radiation
 Filename: "{app}\mods\ecco\misc.ini"; Section: "FIRST_AID"; Key: "ini_healing_skill_max"; String: "0"; Components: not stimpak_skill_scaling
 Filename: "{app}\mods\ecco\misc.ini"; Section: "CAR_TRAVEL"; Key: "enable_tweaks"; String: "0"; Components: not car_travel_tweaks
+Filename: "{app}\mods\ecco\misc.ini"; Section: "STEAL"; Key: "enable_tweaks"; String: "0"; Components: not steal_tweaks
 
 Filename: "{app}\sfall\perks.ini"; Section: "5"; Key: "Level"; String: "15"; Components: not remove_bonus_rof
 

@@ -20,6 +20,10 @@ end
 
 /**
  * Adds one recipe item for a given crafted item, if it doesn't exist. If recipe is known, deletes the item.
+ * 
+ * @arg {int} schematicPid - PID of schematic item to create
+ * @arg {int} craftedItemPid - PID of item to unlock crafting of
+ * @arg {int} probability - % probability of spawn, if conditions are met.
  */
 procedure check_restock_craft_schematic(variable schematicPid, variable craftedItemPid, variable probability := 100) begin
    variable item, isKnown;
