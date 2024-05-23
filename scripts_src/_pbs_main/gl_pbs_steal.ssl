@@ -45,6 +45,9 @@ procedure is_in_front(variable thief, variable target) begin
    return diff != 0 and diff != 1 and diff != 5;
 end
 
+/**
+ * Exactly like FO2 roll_check functions, but without returning "how_much" and disabling criticals in first days
+ */
 procedure random_roll(variable rollMod, variable critChance) begin
    variable
       delta := rollMod - random(1, 100),

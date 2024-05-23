@@ -213,6 +213,20 @@ procedure show_skill_use_messages(variable skill, variable successCount) begin
 end
 
 /**
+ * Exactly like FO2 roll_check functions, but without returning "how_much" and disabling criticals in the first day.
+ */
+procedure roll_check(variable rollMod, variable critChance) begin
+   variable
+      delta := rollMod - random(1, 100),
+      roll;
+
+   if (delta < 0) then begin
+      return ROLL_CRITICAL_FAILURE if (random(1, 100) <= -delta / 10) else ROLL_FAILURE;
+   end
+   return ROLL_CRITICAL_SUCCESS if (random(1, 100) <= delta / 10 + critChance) else ROLL_SUCCESS;
+end
+
+/**
  * A partial implementation of skill_use function from the engine, with only healing-related code. Returns true if skill use was successful.
  * @arg {ObjectPtr} user - Critter using the skill
  * @arg {ObjectPtr} target - Skill use target
@@ -354,6 +368,92 @@ procedure healing_skill_use_impl(variable user, variable target, variable skill,
 
                if (not skillUseSlotAdded) then
                   call skill_use_slot_add(SKILL_DOCTOR);
+
+               clear_critter_combat_flag(target, COMBAT_STATE_FLEEING);
+               successCount := 1;
+               call show_skill_use_messages(skill, successCount);
+               giveExp := false;
+            end else begin
+               // You fail to do any healing.
+               display_msg(sprintf(mstr_skill(503), how_much(0)));
+            end
+
+            fade_in;
+         end else if (user == dude_obj) then begin
+            // 501: You look healty already
+            // 502: %s looks healthy already
+            display_msg(mstr_skill(501)
+               if (target == dude_obj)
+               else sprintf(mstr_skill(502), obj_name(target)));
+         end
+         if (user == dude_obj) then begin
+            game_time_advance(ONE_GAME_HOUR * healingAttempts);
+         end
+      end
+      case SKILL_REPAIR: begin
+         if (critter_body_type(target) != CR_BODY_ROBOTIC) then begin
+            // You cannot repair that.
+            display_msg(mstr_skill(553));
+            return false;
+         end
+         if (skill_use_slot_available(SKILL_REPAIR) == -1) then begin
+            // 590: You've taxed your ability with that skill. Wait a while.
+            // 591: You're too tired.
+            // 592: The strain might kill you.
+            display_msg(mstr_skill(590 + random(0, 2)));
+            return false;
+         end
+         if (critter_is_dead(target)) then begin
+            // You got it?
+            display_msg(mstr_skill(1101));
+            return false;
+         end
+         if (curHp < maxHp or critter_is_crippled(target)) then begin
+            fade_out;
+
+            for (i := 0; i < len_array(healable_damage_flags); i++) begin
+               if ((critter_dmg_flags(target) bwand healable_damage_flags[i]) != 0) then begin
+                  healingAttempts += 1;
+                  roll := roll_vs_skill(user, skill, critChance);
+                  if (roll == ROLL_SUCCESS or roll == ROLL_CRITICAL_SUCCESS) then begin
+                     clear_critter_dmg_flag(target, healable_damage_flags[i]);
+                     clear_critter_combat_flag(target, COMBAT_STATE_FLEEING);
+                     // 520: You heal your %s.
+                     // 521: You heal the %s.
+                     prefixMsg := 520 if (target == dude_obj) else 521;
+                     call skill_use_slot_add(SKILL_REPAIR);
+                     successCount := 1;
+                     skillUseSlotAdded := true;
+                  end else begin
+                     // 525: You fail to heal your %s.
+                     // 526: You fail to heal the %s.
+                     prefixMsg := 525 if (target == dude_obj) else 526;
+                  end
+                  // 530: damaged eye
+                  // 531: crippled left arm
+                  // 532: crippled right arm
+                  // 533: crippled right leg
+                  // 534: crippled left leg
+                  display_msg(sprintf(mstr_skill(prefixMsg), mstr_skill(530 + i)));
+                  call show_skill_use_messages(skill, successCount);
+                  giveExp := false;
+               end
+            end
+
+            // For some reason, original code uses roll_check here, which is lower level function that doesn't take party member's skills into account, unlike roll_vs_skill (which calls into skill_result
+            roll := roll_check(has_skill(user, skill), critChance);
+
+            if (roll == ROLL_SUCCESS or roll == ROLL_CRITICAL_SUCCESS) then begin
+               hpToHeal = random(minHpToHeal + 4, maxHpToHeal + 10);
+               critter_heal(target, hpToHeal);
+
+               if (user == dude_obj) then begin
+                  // You heal %d hit points.
+                  display_msg(sprintf(mstr_skill(500), math_min(maxHp - curHp, hpToHeal)));
+               end
+
+               if (not skillUseSlotAdded) then
+                  call skill_use_slot_add(SKILL_REPAIR);
 
                clear_critter_combat_flag(target, COMBAT_STATE_FLEEING);
                successCount := 1;
