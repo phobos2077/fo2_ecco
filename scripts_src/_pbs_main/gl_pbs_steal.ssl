@@ -17,6 +17,7 @@
 #include "../sfall/lib.obj.h"
 
 #define SCRIPT_REALNAME    "gl_pbs_steal"
+#include "../_pbs_headers/engine_funcs.h"
 #include "../_pbs_headers/ecco_log.h"
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/math_ext.h"
@@ -43,20 +44,6 @@ procedure is_in_front(variable thief, variable target) begin
    variable diff = get_cur_rot(thief) - get_cur_rot(target);
    if (diff < 0) then diff = -diff;
    return diff != 0 and diff != 1 and diff != 5;
-end
-
-/**
- * Exactly like FO2 roll_check functions, but without returning "how_much" and disabling criticals in first days
- */
-procedure random_roll(variable rollMod, variable critChance) begin
-   variable
-      delta := rollMod - random(1, 100),
-      roll;
-
-   if (delta < 0) then begin
-      return ROLL_CRITICAL_FAILURE if (random(1, 100) <= -delta / 10) else ROLL_FAILURE;
-   end
-   return ROLL_CRITICAL_SUCCESS if (random(1, 100) <= delta / 10 + critChance) else ROLL_SUCCESS;
 end
 
 /*
@@ -114,7 +101,7 @@ procedure steal_hook begin
    if (thief == dude_obj and party_member_obj(obj_pid(target))) then begin
       stealRoll = ROLL_CRITICAL_SUCCESS;
    end else begin
-      stealRoll = random_roll(stealChance, get_critter_stat(thief, STAT_crit_chance));
+      stealRoll = roll_check(stealChance, get_critter_stat(thief, STAT_crit_chance));
    end
 
    variable catchRoll;
@@ -133,7 +120,7 @@ procedure steal_hook begin
          end
       end
       catchChance -= stealModifier;
-      catchRoll = random_roll(catchChance, 0);
+      catchRoll = roll_check(catchChance, 0);
    end
 
    // pbs: added new outcome when steal roll is FAILURE but catch roll is unsuccessful, prevent steal without getting caught.
