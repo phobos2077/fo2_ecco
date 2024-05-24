@@ -1,8 +1,9 @@
 /*
-   First aid tweaks:
-   - Healing items immediate heal amount will be scaled with First Aid skill (player only).
+   First Aid/Doctor/Repair healing tweaks:
+   - Moved some variables to ini for tweaking
+   - Skill boosters: added charges-based system as alternative to random chance item removal
 */
-#define SCRIPT_REALNAME             "pbs_first_aid"
+#define SCRIPT_REALNAME             "pbs_healing_skills"
 
 #include "../sfall/sfall.h"
 #include "../sfall/lib.arrays.h"
@@ -21,67 +22,36 @@
 #include "../_pbs_headers/ecco_msg.h"
 
 #define INI_FILE        INI_MISC
-#define INI_SECTION     "FIRST_AID"
+#define INI_SECTION     "HEALING"
 
-#define HI_STAT_MIN_HP     (1)
-#define HI_STAT_MAX_HP     (2)
+#define COMBAT_STATE_FLEEING     (4)
+
+#define critter_max_hp(cr)       get_critter_stat(cr, STAT_max_hit_points)
+#define critter_body_type(cr)    proto_data(obj_pid(cr), cr_body_type)
+#define critter_dmg_flags(cr)    get_object_data(cr, OBJ_DATA_DAMAGE_FLAGS)
+#define critter_combat_flags(cr) get_object_data(cr, OBJ_DATA_COMBAT_STATE)
+
+#define clear_critter_flag(cr, offset, flag)  set_object_data(cr, offset, get_object_data(cr, offset) bwand bwnot(flag))
+#define clear_critter_dmg_flag(cr, flag)      clear_critter_flag(cr, OBJ_DATA_DAMAGE_FLAGS, flag)
+#define clear_critter_combat_flag(cr, flag)   clear_critter_flag(cr, OBJ_DATA_COMBAT_STATE, flag)
+
+#define kit_pid_is_limited_use(pid)   (pid == PID_DOCTORS_BAG or pid == PID_FIRST_AID_KIT or pid == PID_PARAMEDICS_BAG or pid == PID_FIELD_MEDIC_KIT)
 
 variable begin
-   ini_healing_drug_pids;
-   ini_healing_mult_min;
-   ini_healing_mult_max;
-   ini_healing_skill_max;
-   default_stats;
-end
-
-#define is_scalable_healing_item(itemPid)          (proto_data(itemPid, it_type) == item_type_drug and is_in_array(itemPid, ini_healing_drug_pids))
-
-procedure remember_default_stats begin
-   variable pid, stats;
-   default_stats := create_array_map;
-   foreach (pid in ini_healing_drug_pids) begin
-      default_stats[pid] := array_fixed({
-         HI_STAT_MIN_HP: get_proto_data(pid, PROTO_DR_AMOUNT_1_A),
-         HI_STAT_MAX_HP: get_proto_data(pid, PROTO_DR_AMOUNT_1_B)
-      });
-   end
-end
-
-procedure calculate_healing_min_max(variable itemPid, variable user, variable forDisplay := false) begin
-   variable
-      defaultMinHp := default_stats[itemPid][HI_STAT_MIN_HP],
-      defaultMaxHp := default_stats[itemPid][HI_STAT_MAX_HP],
-      skill := has_skill(user, SKILL_FIRST_AID),
-      skillFactor := math_min(1.0 * skill / ini_healing_skill_max, 1.0),
-      mult := ini_healing_mult_min + (ini_healing_mult_max - ini_healing_mult_min) * skillFactor,
-      minHp := defaultMinHp * mult,
-      maxHp := (defaultMaxHp * mult) if (defaultMaxHp > 0) else 0;
-   
-   if (forDisplay) then begin
-      minHp := floor(minHp);
-      maxHp := ceil(maxHp);
-   end else begin
-      minHp := math_round_chance(minHp);
-      maxHp := math_max(math_round_chance(maxHp), minHp) if (maxHp > 0) else 0;
-   end
-   return [minHp, maxHp];
+   ini_use_charges;
+   ini_kit_charges;
+   ini_skill_uses_per_day;
+   skill_boosters;
+   times_skill_used;
+   healable_damage_flags;
 end
 
 
-/*
-procedure is_healing_item(variable item) begin
-
-   variable itemPid := obj_pid(item), hpStatIsA, hpStatIsB, hpAmt;
-   if (obj_type(item) != OBJ_TYPE_ITEM or proto_data(itemPid, it_type) != item_type_drug) then return false;
-
-   hpStatIsA := (get_proto_data(itemPid, PROTO_DR_STAT_A) == STAT_current_hp);
-   hpStatIsB := (get_proto_data(itemPid, PROTO_DR_STAT_B) == STAT_current_hp);
-   if (not hpStatIsA and not hpStatIsB) then return false;
-
-   hpAmt := get_proto_data(itemPid, PROTO_DR_AMOUNT_1_A) if hpStatIsA else get_proto_data(itemPid, PROTO_DR_AMOUNT_1_B);
-   return hpAmt > 0;
+procedure healing_skill_item_charges(variable item) begin
+   variable charges := get_weapon_ammo_count(item);
+   return charges if charges > 0 else ini_kit_charges;
 end
-*/
+
 
 /*
 Runs when using the examine action icon to display the description of an object. You can override the description text. An example usage would be to add an additional description to the item based on player's stats/skills.
@@ -98,97 +68,60 @@ procedure descriptionobj_hook begin
    variable
       obj := get_sfall_arg,
       objPid := obj_pid(obj),
-      healAmt, str;
+      str, curCharges;
 
-   if ((obj_type(obj) != OBJ_TYPE_ITEM) or (not is_scalable_healing_item(objPid))) then return;
+   if ((obj_type(obj) != OBJ_TYPE_ITEM) or (not kit_pid_is_limited_use(objPid))) then return;
 
-   healAmt := calculate_healing_min_max(objPid, dude_obj, true);
-   str := string_format(mstr_ecco_combat(300), healAmt[0], healAmt[1])
-      if (healAmt[1] > 0)
-      else string_format(mstr_ecco_combat(301), healAmt[0]);
-   set_sfall_return(message_str_game(GAME_MSG_PRO_ITEM, get_proto_data(objPid, PROTO_TEXTID) + 1) + str);
+   curCharges := healing_skill_item_charges(obj);
+   str := string_format(mstr_ecco_combat(310), curCharges);
+   set_sfall_return(proto_data(objPid, it_description) + str);
 end
 
-#define COMBAT_STATE_FLEEING     (4)
-
-#define critter_max_hp(cr)       get_critter_stat(cr, STAT_max_hit_points)
-#define critter_body_type(cr)    proto_data(obj_pid(cr), cr_body_type)
-#define critter_dmg_flags(cr)    get_object_data(cr, OBJ_DATA_DAMAGE_FLAGS)
-#define critter_combat_flags(cr) get_object_data(cr, OBJ_DATA_COMBAT_STATE)
-
-
-#define clear_critter_flag(cr, offset, flag)  set_object_data(cr, offset, get_object_data(cr, offset) bwand bwnot(flag))
-#define clear_critter_dmg_flag(cr, flag)      clear_critter_flag(cr, OBJ_DATA_DAMAGE_FLAGS, flag)
-#define clear_critter_combat_flag(cr, flag)   clear_critter_flag(cr, OBJ_DATA_COMBAT_STATE, flag)
-
-// SKILL USE SSL implementation
-
-#define SKILL_COUNT                (18)
-#define SKILLS_MAX_USES_PER_DAY     (3)
-
-variable times_skill_used, healable_damage_flags, healing_skill_items;
 
 procedure skill_use_slot_available(variable skill) begin
-   variable slot, time, hoursSinceLastUsage,
-      skillOffset := skill * SKILLS_MAX_USES_PER_DAY;
+   variable slot, time, hoursSinceLastUsage, timesUsed;
 
    // Lazy init array
    if (not times_skill_used) then
-      times_skill_used := create_array_list(SKILL_COUNT * SKILLS_MAX_USES_PER_DAY);
+      times_skill_used := create_array_map;
 
-   for (slot := 0; slot < SKILLS_MAX_USES_PER_DAY; slot++) begin
-      if (times_skill_used[skillOffset + slot] == 0) then
+   if (not times_skill_used[skill]) then
+      times_skill_used[skill] := create_array_list(ini_skill_uses_per_day);
+
+   timesUsed := times_skill_used[skill];
+   for (slot := 0; slot < ini_skill_uses_per_day; slot++) begin
+      if (timesUsed[slot] == 0) then
          return slot;
    end
    time := game_time;
-   hoursSinceLastUsage = (time - times_skill_used[skillOffset + 0]) / ONE_GAME_HOUR;
+   hoursSinceLastUsage = (time - timesUsed[0]) / ONE_GAME_HOUR;
    if (hoursSinceLastUsage <= 24) then begin
       return -1;
    end
-   return SKILLS_MAX_USES_PER_DAY - 1;
+   return ini_skill_uses_per_day - 1;
 end
 
 procedure skill_use_slot_add(variable skill) begin
-   variable i,
-      slot := skill_use_slot_available(skill),
-      skillOffset := skill * SKILLS_MAX_USES_PER_DAY;
+   variable i, timesUsed,
+      slot := skill_use_slot_available(skill);
+
    if (slot == -1) then
       return -1;
 
-   if (times_skill_used[skillOffset + slot] != 0) then begin
+   timesUsed := times_skill_used[skill];
+   if (timesUsed[slot] != 0) then begin
+      // Shift all earlier use times to make use for the new time.
       for (i := 0; i < slot; i++) begin
-         times_skill_used[skillOffset + i] := times_skill_used[skillOffset + i + 1];
+         timesUsed[i] := timesUsed[i + 1];
       end
    end
 
-   times_skill_used[skillOffset + slot] = game_time;
+   timesUsed[slot] = game_time;
    return 0;
 end
 
-procedure use_slot_unavailable_display_msg(variable skill) begin
-   if (skill_use_slot_available(SKILL_FIRST_AID) == -1) then begin
-      // 590: You've taxed your ability with that skill. Wait a while.
-      // 591: You're too tired.
-      // 592: The strain might kill you.
-      display_msg(mstr_skill(590 + random(0, 2)));
-      return true;
-   end
-   return false;
-end
-
-procedure critter_is_dead_display_msg(variable target, variable msgId := 0) begin
-   if (critter_is_dead(target)) then begin
-      // 512: You can't heal the dead.
-      // 513: Let the dead rest in peace.
-      // 514: It's dead, get over it.
-      display_msg(mstr_skill((512 + random(0, 2)) if (msgId == 0) else msgId));
-      return true;
-   end
-   return false;
-end
-
 /**
- * A refactored version of skill_use function from the engine, for use with healing skills only. Returns true if skill use was successful.
+ * A refactored version of skill_use function from the engine, for use with healing skills only. Returns true if skill use was attempted (succesfull or not).
  * @arg {ObjectPtr} user
  * @arg {ObjectPtr} target
  * @arg {int} skill - First Aid, Doctor or Repair
@@ -321,6 +254,24 @@ procedure use_healing_skill(variable user, variable target, variable skill, vari
    end
    // TODO: not sure if this is needed
    //exec_map_update_scripts
+   return true;
+end
+
+/**
+ * Use healing skill booster item's supplies. Returns true when supplies run out.
+ * @arg {ObjectPtr} item - First Aid Kit, Doctor's Bag, etc.
+ * @ret {bool}
+ */
+procedure use_item_supplies(variable item) begin
+   display_msg("use_supplies " + ini_use_charges + ", " +  healing_skill_item_charges(item));
+   if (ini_use_charges) then begin
+      variable curCharges := healing_skill_item_charges(item);
+      if (curCharges <= 1) then
+         return true;
+
+      set_weapon_ammo_count(item, curCharges - 1);
+   end else
+      return random(1, ini_kit_charges) == 1;
 end
 
 /**
@@ -332,38 +283,46 @@ end
  */
 procedure protinst_use_item_on(variable user, variable target, variable item) begin
    variable begin
-      messageId := -1;
+      depletedMsgId;
       skillBonus := 0;
       skill := -1;
    end
    switch (obj_pid(item)) begin
       case PID_DOCTORS_BAG: begin
          // The supplies in the Doctor's Bag run out.
-         messageId = 900;
+         depletedMsgId = 900;
          skillBonus = 20;
          skill = SKILL_DOCTOR;
       end
       case PID_FIRST_AID_KIT: begin
          // The supplies in the First Aid Kit run out.
-         messageId = 901;
+         depletedMsgId = 901;
          skillBonus = 20;
          skill = SKILL_FIRST_AID;
       end
       case PID_PARAMEDICS_BAG: begin
          // The supplies in the Paramedic's Bag run out.
-         messageId = 910;
+         depletedMsgId = 910;
          skillBonus = 40;
          skill = SKILL_DOCTOR;
       end
       case PID_FIELD_MEDIC_KIT: begin
          // The supplies in the Field Medic First Aid Kit run out.
-         messageId = 911;
+         depletedMsgId = 911;
          skillBonus = 40;
          skill = SKILL_FIRST_AID;
       end
+      case PID_MULTI_TOOL: begin
+         skillBonus = 20;
+         skill = SKILL_REPAIR;
+      end
+      case PID_SUPER_TOOL_KIT: begin
+         skillBonus = 40;
+         skill = SKILL_REPAIR;
+      end
    end
    if (skill == -1) then
-      return -1;
+      return -1; // use engine handler
    
    if (combat_is_initialized) then begin
       // You cannot do that in combat.
@@ -375,13 +334,13 @@ procedure protinst_use_item_on(variable user, variable target, variable item) be
    if (not use_healing_skill(user, target, skill, skillBonus)) then
       return 0;
 
-   if (random(1, 10) != 1) then
+   if (not depletedMsgId or not use_item_supplies(item)) then
       return 0;
 
    if (user == dude_obj) then
-      display_msg(mstr_proto(messageId));
+      display_msg(mstr_proto(depletedMsgId));
 
-   return 1;
+   return 1; // remove the item
 end
 
 /*
@@ -405,23 +364,7 @@ procedure useobjon_hook begin
       target := get_sfall_arg,
       user := get_sfall_arg,
       item := get_sfall_arg,
-      itemPid := obj_pid(item),
       useItemResult;
-
-   //display_msg(string_format("%s tries to use %s (%d)", obj_name(user), obj_name(item), proto_data(itemPid, it_type)));
-   if (is_scalable_healing_item(itemPid)) then begin
-      if (user == dude_obj) then begin
-         variable
-            healingAmt := calculate_healing_min_max(itemPid, user);
-
-         set_proto_data(itemPid, PROTO_DR_AMOUNT_1_A, healingAmt[0]);
-         set_proto_data(itemPid, PROTO_DR_AMOUNT_1_B, healingAmt[1]);
-         debug_log(string_format("Changed %s min: %d, max: %d", obj_name(item), healingAmt[0], healingAmt[1]));
-      end else begin // for NPC's always use defaults
-         set_proto_data(itemPid, PROTO_DR_AMOUNT_1_A, default_stats[itemPid][HI_STAT_MIN_HP]);
-         set_proto_data(itemPid, PROTO_DR_AMOUNT_1_B, default_stats[itemPid][HI_STAT_MAX_HP]);
-      end
-   end
 
    useItemResult := protinst_use_item_on(user, target, item);
    if (useItemResult != -1) then
@@ -454,36 +397,18 @@ procedure useskill_hook begin
       isSuccess := use_healing_skill(user, target, skill, skillBonus);
       set_sfall_return(0 if isSuccess else 1);
    end
-   
-   // TODO: skill usage limits, exp gain, dead critter check, robotic check, skill roll, screen fade
-   /*if (skill == SKILL_FIRST_AID) then begin
-      display_msg(string_format("user = %s, target = %s, bonus = %d", obj_name(user), obj_name(target), skillBonus));
-      
-      if (curHp < maxHp) then begin
-         toHeal := math_min(maxHp - curHp, 5);
-         critter_heal(target, toHeal);
-         if (user == dude_obj) then begin
-            display_msg(sprintf(mstr_skill(500), toHeal));
-         end
-         set_object_data(target, OBJ_DATA_COMBAT_STATE, get_object_data(target, OBJ_DATA_COMBAT_STATE) bwand (-5)); // remove fleeing flag
-      end
-   end*/
-
 end
 
 procedure start begin
    if (game_loaded) then begin
-      int_list_from_ini_file(healing_drug_pids, INI_FILE, INI_SECTION);
-      float_from_ini_file_clamped(healing_mult_min, INI_FILE, INI_SECTION, 0.0, 10.0);
-      float_from_ini_file_clamped(healing_mult_max, INI_FILE, INI_SECTION, ini_healing_mult_min, 10.0);
-      int_from_ini_file_clamped(healing_skill_max, INI_FILE, INI_SECTION, 0, 300);
+      if (not get_int_from_ini(INI_FILE, INI_SECTION, "skill_use_mod")) then return;
 
-      call remember_default_stats;
+      int_from_ini_file(use_charges, INI_FILE, INI_SECTION);
+      int_from_ini_file_clamped(kit_charges, INI_FILE, INI_SECTION, 1, 10000);
+      int_from_ini_file_clamped(skill_uses_per_day, INI_FILE, INI_SECTION, 1, 10);
 
       register_hook_proc(HOOK_USEOBJON, useobjon_hook);
       register_hook_proc(HOOK_USESKILL, useskill_hook);
-      if (ini_healing_skill_max > 0 and ini_healing_mult_max > 0.01) then begin
-         register_hook_proc(HOOK_DESCRIPTIONOBJ, descriptionobj_hook);
-      end
+      register_hook_proc(HOOK_DESCRIPTIONOBJ, descriptionobj_hook);
    end
 end

@@ -1,6 +1,10 @@
 #ifndef ENGINE_FUNCTIONS_H
 #define ENGINE_FUNCTIONS_H
 
+/*
+   Copies or partial copies of some engine functions in SSL.
+*/
+
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 
@@ -24,6 +28,7 @@ procedure roll_check(variable rollMod, variable critChance) begin
    return ROLL_CRITICAL_SUCCESS if (random(1, 100) <= delta / 10 + critChance) else ROLL_SUCCESS;
 end
 
+// This data is in the struct in the engine, written as switch for simplicity.
 procedure get_skill_xp(variable skill) begin
    switch (skill) begin
       case SKILL_FIRST_AID: return 25;

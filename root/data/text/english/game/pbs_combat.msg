@@ -19,3 +19,6 @@
 # first aid
 {300}{}{ Restores %d-%d HP.}
 {301}{}{ Restores %d HP.}
+
+# skill booster kits
+{310}{}{ It has supplies for %d more uses.}
