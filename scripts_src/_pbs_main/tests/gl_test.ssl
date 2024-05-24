@@ -6,90 +6,9 @@
 #include "..\..\sfall\dik.h"
 #include "..\..\sfall\command_lite.h"
 
-//#define get_my_config   sfall_func2("config_load", "data\\worldmap.txt", true)
-#define get_my_config     get_ini_config("data\\huge.ini")
 
-procedure load_config_test begin
-   variable
-      config = get_my_config,
-      firstSectName = array_key(config, 0),
-      firstSect = config[firstSectName],
-      key, val;
-   display_msg("config loaded: "+config+", sects: "+len_array(config)+", first:"+array_key(config, 0));
+#include "arrays_testcase.ssl"
 
-   display_msg("huges length: "+strlen(config.huges.hugek));
-   
-   display_msg("["+firstSectName+"] " + len_array(firstSect));
-   /*foreach (key: val in firstSect) begin
-      display_msg("  "+key+" = "+val);
-   end*/
-
-   //config = get_my_config;
-   //display_msg("config reloaded: "+config+", sects: "+len_array(config)+", first:"+array_key(config, 0));
-end
-
-procedure load_config_test_2 begin
-   variable tmp, sec, sect, key, val;
-
-   //display_msg("initest= "+get_ini_string("..\\..\\iniTEST.ini|Section3C|old_string"));
-   tmp := get_ini_config_db("_bak/iniTEST.ini");
-   display_msg("get_ini_config, id: " + tmp);
-   foreach (sec: sect in tmp) begin
-      foreach (key: val in sect) begin
-         display_msg("Section: " + sec + ", key: " + key + ", val: " + val);
-      end
-   end
-
-   /*tmp := get_ini_config("HIDDEN.ini");
-   display_msg("get_ini_config, id: " + tmp);
-   foreach (sec: sect in tmp) begin
-      foreach (key: val in sect) begin
-         display_msg("Section: " + sec + ", key: " + key + ", val: " + val);
-      end
-   end*/
-end
-
-procedure get_ini_section_test begin
-   //display_array(get_ini_sections("ecco/combat.ini"));
-   
-   display_array(get_ini_section("ecco\\combat.ini", "ATTACK_modes"));
-   display_msg("list: "+get_ini_string("ecco\\combat.ini|CRITTER_loot|DEStroy_weapon_list"));
-end
-
-procedure get_long_ini_str_test begin
-   variable section := get_ini_section("data\\huge.ini", "huges");
-   display_msg("hugek from get_ini_section: "+strlen(section.hugek));
-   display_msg("hugek frok get_ini_string: "+strlen(get_ini_string("data\\huge.ini|huges|hugek")));
-end
-
-procedure huge_string_test begin
-   variable str := "", i;
-   
-   for (i = 64; i <= 1088; i += 64) begin
-      str += sprintf("%064d", i);
-   end
-
-   display_msg("Longest string Ever: ");
-   display_msg(str);
-
-   variable arr := temp_array_list(1);
-   arr[0] = str;
-
-   display_msg("After array Ever: ");
-   display_msg(arr[0]);
-end
-
-procedure string_find_test begin
-   //display_array(get_ini_sections("ecco/combat.ini"));
-   
-   display_msg(""+string_find("a big fucking string", "string"));
-   display_msg(""+string_find_from("a big fucking string fuck", "fuck", 5));
-   display_msg(""+string_find("Not Here!", "hErE"));
-   display_msg(""+string_find(string_tolower("BUT Here!"), "here"));
-   display_msg(""+string_starts_with("Traps_WTF", "Traps_"));
-end
-
-#define get_num(x)   get_ini_setting("data\\huge.ini|strtol|"+#x)
 
 procedure keypress_hook begin
    variable
@@ -127,26 +46,8 @@ end
 procedure start begin
    if not game_loaded then return;
 
+   // call arrays_lib_tests;
+
    register_hook_proc(HOOK_KEYPRESS, keypress_hook);
-
-   //debug_msg("Dude tile: "+tile_num(dude_obj));
-   //create_object_sid(98, 27351, 0, -1);
-   //display_msg(sprintf("Sound = %c", get_proto_data(644, 100)));
-   //display_array(array_transform({"1g":"2 ","3g":"4.1 ?"}, @string_to_float));
    
-   //call string_find_test;
-   //call get_long_ini_str_test;
-   //call load_config_test;
-   //call load_config_test_2;
-   //call get_ini_section_test;
-   //call huge_string_test;
-
-   //display_msg("atoi. binary: "+atoi("0b1001101")+", octal: "+atoi("0115")+", hex: "+atoi("0x4d")+", dec: "+atoi("77"));
-   //display_msg("get_ini_setting binary: "+get_num(bin)+", octal: "+get_num(oct)+", hex: "+get_num(hex)+", dec: "+get_num(dec));
-
-   //display_msg(sprintf("__ a=%010d, b=%.4f %s %Z yyaay....\.=-=", 12));
-  // display_msg(string_format("a=%04d, b=%.2f, and S=%Z|%s| %c", 12, 0.1353, "woop", 2323, 6, 7, 8) );
-   //string_find(1);
-   //string_find(1,2,3,4);
-   //create(1,2,3)
 end

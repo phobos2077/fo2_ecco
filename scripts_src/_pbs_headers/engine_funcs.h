@@ -7,25 +7,37 @@
 
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
+#include "ecco_ini.h"
 
 #define DAM_CRIP                 (DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT bwor DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_BLIND)
 #define critter_cur_hp(cr)       get_critter_stat(cr, STAT_current_hp)
 #define critter_has_dmg_flag(cr, flag)        ((get_object_data(cr, OBJ_DATA_DAMAGE_FLAGS) bwand flag) != 0)
 
+variable sfall_ini_RemoveCriticalTimelimits := -2;
+
 /**
- * Exactly like FO2 roll_check functions, but without returning "how_much" and disabling criticals in the first day.
+ * Exactly like FO2 roll_check function, but without returning "how_much".
  * @arg {int} rollMod
- * @arg {int} critChance
+ * @arg {int} critSuccessMod
  */
-procedure roll_check(variable rollMod, variable critChance) begin
+procedure roll_check(variable rollMod, variable critSuccessMod) begin
    variable
       delta := rollMod - random(1, 100),
-      roll;
+      roll, criticalsAllowed;
+
+   if (sfall_ini_RemoveCriticalTimelimits == -2) then
+      sfall_ini_RemoveCriticalTimelimits := get_int_from_ini(INI_SFALL, "Misc", "RemoveCriticalTimelimits");
+
+   criticalsAllowed := (sfall_ini_RemoveCriticalTimelimits > 0) or (game_time >= ONE_GAME_DAY);
 
    if (delta < 0) then begin
-      return ROLL_CRITICAL_FAILURE if (random(1, 100) <= -delta / 10) else ROLL_FAILURE;
+      return ROLL_CRITICAL_FAILURE
+         if (criticalsAllowed and random(1, 100) <= -delta / 10)
+         else ROLL_FAILURE;
    end
-   return ROLL_CRITICAL_SUCCESS if (random(1, 100) <= delta / 10 + critChance) else ROLL_SUCCESS;
+   return ROLL_CRITICAL_SUCCESS
+      if (criticalsAllowed and random(1, 100) <= delta / 10 + critSuccessMod)
+      else ROLL_SUCCESS;
 end
 
 // This data is in the struct in the engine, written as switch for simplicity.
@@ -70,6 +82,18 @@ procedure critter_is_dead(variable critter) begin
       return true;
 
    return false;
+end
+
+procedure critter_body_type(variable critter) begin
+   if (not critter) then begin
+      debug_msg("\nError: critter_body_type: pobj was NULL!");
+      return CR_BODY_BIPED;
+   end
+
+   if (obj_type(critter) != OBJ_TYPE_CRITTER) then
+      return CR_BODY_BIPED;
+
+   return proto_data(obj_pid(critter), cr_body_type);
 end
 
 procedure critter_is_crippled(variable critter) begin
