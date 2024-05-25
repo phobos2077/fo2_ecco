@@ -136,7 +136,7 @@ procedure create_button begin
    variable
       x := get_interface_x(WINTYPE_IFACEBAR) + get_interface_width(WINTYPE_IFACEBAR) - BUTTON_RIGHT_OFFSET,
       y := (get_screen_height - BUTTON_BOTTOM_OFFSET);
-   create_win_flag(WIN_CRAFT_BTN, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, WIN_FLAG_DONTMOVE bwor WIN_FLAG_TRANSPARENT);
+   create_win_flag(WIN_CRAFT_BTN, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, WIN_FLAG_DONTMOVE bwor WIN_FLAG_MOVEONTOP);
    SelectWin(WIN_CRAFT_BTN);
    AddButton("but", 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT);
    AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);

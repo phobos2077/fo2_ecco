@@ -1,12 +1,26 @@
 -=== CHANGELOG ===-
 
 v0.9.6:
+> Healing:
+- replaced default FirstAid/Doctor/Repair skill usage with fully-featured scripted implementation
+- added critical healing success: restores more HP than normal
+- changed first aid kits, doctor bags, etc. will now have a fixed number of uses instead of a 10% chance to remove on every use
+- buffed restored HP amount for all 3 skills
+- buffed number of heal actions per day to 4 (from 3)
+- nerfed rest heal interval to 6 hours (from 3)
+- nerfed world travel heal interval to 24 hours (was 1 real-time second; requires future sfall update)
+- fixed numerious bugs and inconsistencies of vanilla system
+
+> Crafting:
+- fixed craft button disappearing when using external HRP
+
 > Balance:
 - changed monster part quests requirements/rewards ratio to make economic sense
 - minor weapon stat tweaks
 
 > Installer:
 - added more options for disabling some mod features
+
 
 v0.9.5
 > Crafting:

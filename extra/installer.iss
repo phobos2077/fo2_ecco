@@ -70,6 +70,7 @@ en.CRemoveBonusRoF=Removal of Bonus Rate of Fire perk
 en.CThrowingMeleeDmg=Apply Melee Damage stat to Throwing weapons
 en.CStimpakRadiation=Stimpaks slightly irradiate on use
 en.CStimpakSkillScaling=Stimpaks & Healing Powders heal amount scales with First Aid skill
+en.CHealingSkillsMod=Healing skills and passive healing overhaul
 en.CCarTravelTweaks=Car Travel changes (25% slower)
 en.CStealTweaks=Steal changes
 en.CMonsterParts=New critter body parts and related quests
@@ -93,6 +94,7 @@ ru.CRemoveBonusRoF=Удаление перка "Бонус скорострел�
 ru.CThrowingMeleeDmg=Применять урон ближнего боя к метательному оружию
 ru.CStimpakRadiation=Стимпаки слегка облучают при применении
 ru.CStimpakSkillScaling=Эффективность стимпаков и лечебных порошков зависит от навыка первой помощи
+ru.CHealingSkillsMod=Переработка навыков лечения и пассивного лечения
 ru.CCarTravelTweaks=Изменения параметров автомобиля (25% медленнее)
 ru.CStealTweaks=Изменения воровства
 ru.CMonsterParts=Новые части тел существ и связанные с ними квесты
@@ -116,6 +118,7 @@ Name: "main"; Description: "{cm:CMain}"; Types: full custom; Flags: fixed
 Name: "carry_unspent_ap"; Description: "{cm:CCarryUnspentAP}"; Types: full
 Name: "remove_bonus_rof"; Description: "{cm:CRemoveBonusRoF}"; Types: full
 Name: "throwing_melee_dmg"; Description: "{cm:CThrowingMeleeDmg}"; Types: full
+Name: "healing_skills_mod"; Description: "{cm:CHealingSkillsMod}"; Types: full
 Name: "stimpak_skill_scaling"; Description: "{cm:CStimpakSkillScaling}"; Types: full
 Name: "stimpak_radiation"; Description: "{cm:CStimpakRadiation}"; Types: full
 Name: "car_travel_tweaks"; Description: "{cm:CCarTravelTweaks}"; Types: full
@@ -166,7 +169,10 @@ Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "carry_unspent_a
 Filename: "{app}\mods\ecco\combat.ini"; Section: "THROWING"; Key: "apply_melee_dmg"; String: "0"; Components: not throwing_melee_dmg
 Filename: "{app}\mods\ecco\combat.ini"; Section: "MONSTER_PARTS"; Key: "enable"; String: "0"; Components: not monster_parts
 Filename: "{app}\mods\ecco\misc.ini"; Section: "ITEM_TWEAKS"; Key: "stimpak_radiation_disable"; String: "1"; Components: not stimpak_radiation
-Filename: "{app}\mods\ecco\misc.ini"; Section: "FIRST_AID"; Key: "ini_healing_skill_max"; String: "0"; Components: not stimpak_skill_scaling
+Filename: "{app}\mods\ecco\misc.ini"; Section: "HEALING_DRUGS"; Key: "skill_max"; String: "0"; Components: not stimpak_skill_scaling
+Filename: "{app}\mods\ecco\misc.ini"; Section: "HEALING_SKILLS"; Key: "skill_use_mod"; String: "0"; Components: not healing_skills_mod
+Filename: "{app}\mods\ecco\misc.ini"; Section: "HEALING_REST"; Key: "heal_time_rest"; String: "180"; Components: not healing_skills_mod
+Filename: "{app}\mods\ecco\misc.ini"; Section: "HEALING_REST"; Key: "heal_time_travel"; String: "0"; Components: not healing_skills_mod
 Filename: "{app}\mods\ecco\misc.ini"; Section: "CAR_TRAVEL"; Key: "enable_tweaks"; String: "0"; Components: not car_travel_tweaks
 Filename: "{app}\mods\ecco\misc.ini"; Section: "STEAL"; Key: "enable_tweaks"; String: "0"; Components: not steal_tweaks
 
