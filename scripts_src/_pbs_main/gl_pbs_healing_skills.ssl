@@ -23,9 +23,6 @@
 #include "../_pbs_headers/ecco_log.h"
 #include "../_pbs_headers/ecco_msg.h"
 
-#define INI_FILE        INI_MISC
-#define INI_SECTION     "HEALING"
-
 #define COMBAT_STATE_FLEEING     (4)
 
 #define obj_is_critter(obj)      (obj_type(obj) == OBJ_TYPE_CRITTER)
@@ -443,6 +440,20 @@ end
 #define _varstr(var)    ("; "#var" = " + ini_##var)
 #define _rngstr(var)    ("; "#var" = " + debug_array_str(ini_##var))
 
+#define INI_FILE          INI_MISC
+#define INI_SECTION       "HEALING_SKILLS"
+#define INI_SECTION_REST  "HEALING_REST"
+
+procedure apply_rest_heal_time_tweaks begin
+   variable
+      healRest := get_ini_value_def(INI_FILE, INI_SECTION_REST, "heal_time_rest", 180),
+      healTravel := get_ini_value_def(INI_FILE, INI_SECTION_REST, "heal_time_travel", 0);
+
+   set_rest_heal_time(healRest);
+   set_worldmap_heal_time(healTravel);
+   debug_log_fmt("Passive healing times set: rest = %d, worldmap = %d", healRest, healTravel);
+end
+
 procedure start begin
    if (game_loaded) then begin
       if (get_int_from_ini(INI_FILE, INI_SECTION, "skill_use_mod") <= 0) then return;
@@ -461,6 +472,8 @@ procedure start begin
       register_hook_proc(HOOK_USESKILL, useskill_hook);
       register_hook_proc(HOOK_DESCRIPTIONOBJ, descriptionobj_hook);
 
-      //set_rest_heal_time(1);
+      debug_log("Healing Skill mod enabled.");
+
+      call apply_rest_heal_time_tweaks;
    end
 end
