@@ -1,3 +1,9 @@
+/*
+   AI improvements:
+   - Configure certain parameters of called shot conditions, so it happens more consistently and frequently
+*/
+
+
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
@@ -139,10 +145,10 @@ procedure tohit_handler begin
       //ctdBodyPart := get_object_data(ctd, C_ATTACK_BODY_PART),
       //ctdFlags := get_object_data(ctd, C_ATTACK_FLAGS_TARGET);
 
-   debug_log(string_format("tohit %s = %d (same_tile: %d, use_dist: %d, part: %d)",
+   /*debug_log(string_format("tohit %s = %d (same_tile: %d, use_dist: %d, part: %d)",
       obj_name(attacker), hitChance, sameTile, useDist, bodyPart)
       /*+ string_format("; ctd: (crit: %s, part: %d, flags: %d)",
-      obj_name(ctdAttacker), ctdBodyPart, ctdFlags) */);
+      obj_name(ctdAttacker), ctdBodyPart, ctdFlags) );*/
    
    // A crazy hack based on understanding exactly when HOOK_TOHIT is called and how main_ctd is used by engine:
    // AI can do multiple calls of tohit before his attack, but he always makes one final call in compute_attack,
@@ -177,7 +183,7 @@ int     ret0 - pass 1 at the start of turn to skip the turn, pass -1 at the end 
 procedure combatturn_handler begin
    if (get_sfall_arg == 1) then begin
       turn_critter := get_sfall_arg;
-      debug_log_fmt("set turn_critter = %s", obj_name(turn_critter));
+      //debug_log_fmt("set turn_critter = %s", obj_name(turn_critter));
    end
 end
 

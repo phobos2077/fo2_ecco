@@ -1,0 +1,111 @@
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+
+#include "../sfall/lib.arrays.h"
+#include "../sfall/lib.obj.h"
+
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/ecco_log.h"
+
+#include "tests/criticals.h"
+
+#define SCRIPT_REALNAME    "pbs_critical_table"
+
+variable begin
+end
+
+procedure set_stat_fail_effect(variable killType, variable bodyPart, variable level, variable effect, variable stat, variable statMod) begin
+   set_critical_table(killType, bodyPart, level, CRITICAL_VALUE_FAIL_EFFECT, effect);
+   set_critical_table(killType, bodyPart, level, CRITICAL_VALUE_STAT_CHECK, stat);
+   set_critical_table(killType, bodyPart, level, CRITICAL_VALUE_STAT_MOD, statMod);
+end
+
+procedure set_arms_dmg_mult(variable killType, variable level, variable mult) begin
+   set_critical_table(killType, BODY_HIT_LEFT_ARM, level, CRITICAL_VALUE_MULT, mult);
+   set_critical_table(killType, BODY_HIT_RIGHT_ARM, level, CRITICAL_VALUE_MULT, mult);
+end
+
+procedure set_legs_dmg_mult(variable killType, variable level, variable mult) begin
+   set_critical_table(killType, BODY_HIT_LEFT_LEG, level, CRITICAL_VALUE_MULT, mult);
+   set_critical_table(killType, BODY_HIT_RIGHT_LEG, level, CRITICAL_VALUE_MULT, mult);
+end
+
+procedure add_stat_effect(variable killType, variable bodyPart, variable level, variable effect) begin
+   variable flags := get_critical_table(killType, bodyPart, level, CRITICAL_VALUE_EFFECTS);
+   set_critical_table(killType, bodyPart, level, CRITICAL_VALUE_EFFECTS, flags bwor effect);
+end
+
+procedure set_arms_stat_fail_effect(variable killType, variable level, variable effect, variable stat, variable statMod) begin
+   call set_stat_fail_effect(killType, BODY_HIT_LEFT_ARM, level, effect, stat, statMod);
+   call set_stat_fail_effect(killType, BODY_HIT_RIGHT_ARM, level, effect, stat, statMod);
+end
+
+procedure add_arms_effect(variable killType, variable level, variable effect) begin
+   call add_stat_effect(killType, BODY_HIT_LEFT_ARM, level, effect);
+   call add_stat_effect(killType, BODY_HIT_RIGHT_ARM, level, effect);
+end
+
+#define KILL_TYPE_player         (38) // from sfall
+
+procedure apply_critical_table_tweaks begin
+   variable humanoidNPCs := [KILL_TYPE_men_kills, KILL_TYPE_women_kills, KILL_TYPE_children_kills, KILL_TYPE_super_mutant_kills, KILL_TYPE_ghoul_kills];
+   variable killType, lvl;
+   foreach (killType in humanoidNPCs) begin
+      call set_arms_dmg_mult(killType, 1, 3); // from 3/4
+      call set_arms_dmg_mult(killType, 2, 3); // from 4
+
+      call set_legs_dmg_mult(killType, 1, 3); // from 3/4
+      call set_legs_dmg_mult(killType, 2, 3); // from 4
+
+      call set_arms_stat_fail_effect(killType, 0, DAM_DROP, STAT_ag, 0);
+      call set_arms_stat_fail_effect(killType, 1, DAM_DROP bwor DAM_LOSE_TURN, STAT_ag, 0);
+      for (lvl := 2; lvl <= 5; lvl++) begin
+         call add_arms_effect(killType, lvl, DAM_DROP);
+      end
+   end
+   
+   call set_legs_dmg_mult(KILL_TYPE_player, 3, 3); // from 4
+   //call set_arms_dmg_mult(KILL_TYPE_player, 2, 2); // from 3
+   call set_arms_stat_fail_effect(KILL_TYPE_player, 1, DAM_DROP, STAT_ag, 2);
+   call set_arms_stat_fail_effect(KILL_TYPE_player, 3, DAM_DROP, STAT_ag, 0);
+   for (lvl := 4; lvl <= 5; lvl++) begin
+      call add_arms_effect(KILL_TYPE_player, lvl, DAM_DROP);
+   end
+   debug_log("Critical table tweaks applied.");
+
+   //call dump_critical_tables;
+end
+
+
+procedure combatdamage_handler begin
+   variable
+      target := get_sfall_arg_at(0),
+      attacker := get_sfall_arg_at(1),
+      targetFlags := get_sfall_arg_at(4),
+      attackerFlags := get_sfall_arg_at(5);
+
+   debug_log_fmt("combatdmg Attacker (%s): %x, Target: %x", obj_name_safe(attacker), attackerFlags, targetFlags);
+   if (target and attacker and (attackerFlags bwand DAM_HIT) and (targetFlags bwand DAM_DROP)) then begin
+      variable targetWeapon := get_active_weapon(target);
+      if (targetWeapon) then begin
+         rm_obj_from_inven(target, targetWeapon);
+         move_to(targetWeapon, tile_num(target), elevation(target));
+         debug_log_fmt("DAM_DROP fix: %s drops %s", obj_name(target), obj_name(targetWeapon));
+      end
+   end
+end
+
+
+#define INI_FILE     INI_COMBAT
+#define INI_SECTION  "CRITICALS"
+
+procedure start begin
+   if not game_loaded then return;
+   if (get_ini_value_def(INI_FILE, INI_SECTION, "enable_tweaks", 0)) then begin
+      call apply_critical_table_tweaks;
+   end
+   if (get_ini_value_def(INI_FILE, INI_SECTION, "drop_flag_fix", 0)) then begin
+      register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
+   end
+end

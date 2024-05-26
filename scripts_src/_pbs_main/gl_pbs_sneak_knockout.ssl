@@ -69,7 +69,7 @@ procedure combatdamage_handler begin
    weapon := get_sfall_arg;
    body_part := get_sfall_arg;
    
-   if (target and attacker and weapon and obj_type(target) == OBJ_TYPE_CRITTER) then begin
+   if (target and attacker and weapon and obj_type(target) == OBJ_TYPE_CRITTER and (attacker_flags bwand DAM_HIT)) then begin
       //debug_msg("combatdamage: "+target+" (type:"+obj_type(target)+"), wpn: "+obj_pid(weapon)+", flags: "+target_flags+", part: "+body_part+", is behind: "+attacker_behind_target(attacker, target));
       // knockout people, hitting them in head with a club from behind
       skill := has_skill(attacker, SKILL_SNEAK);
@@ -87,4 +87,6 @@ procedure combatdamage_handler begin
    set_sfall_return(attacker_damage);
    set_sfall_return(target_flags);
    set_sfall_return(attacker_flags);
+
+   set_sfall_arg(4, target_flags);
 end

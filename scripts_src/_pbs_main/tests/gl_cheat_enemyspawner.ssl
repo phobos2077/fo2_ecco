@@ -26,6 +26,7 @@
 #define ENEMY_BOSS      (9)
 #define ENEMY_DEATHCLAW (10)
 #define ENEMY_THROWER   (11)
+#define ENEMY_SALVATORE (12)
 
 variable enemy_types;
 
@@ -46,6 +47,12 @@ procedure spawn_enemy(variable type, variable tile := 0) begin
          pid := PID_GUN_THUG_MALE + random(0, 1);
          sid := SCRIPT_ECBANDIT; // ecbandit
          weaponPid := PID_DESERT_EAGLE; // DE
+         stimpaks = 3;
+      case ENEMY_SALVATORE:
+         pid := PID_SALVATORE_THUG_1 + random(0, 1);
+         sid := SCRIPT_NCSALMEN;
+         weaponPid := PID_PBS_LASER_PISTOL_LT;
+         stimpaks := 4;
       case ENEMY_FARMER:
          pid := PID_MALE_FARMER + random(0, 1);
          sid := SCRIPT_ECFARMER;
@@ -125,8 +132,9 @@ procedure keypress_handler begin
    if isPressed and get_cursor_mode == 0 and key_pressed(DIK_LSHIFT) then begin
       //display_msg("key pressed "+keyCode);
       if (keyCode == DIK_5) then begin
-         //call spawn_enemy(ENEMY_BOSS, tile_under_cursor);
-         call spawn_enemies_circle(ENEMY_FARMER, 2);
+         //call spawn_enemy(ENEMY_BOSS);
+         call spawn_enemy(ENEMY_SALVATORE);
+         //call spawn_obj(PID_NS_FORCE_FIELD);
       end
       if (keyCode == DIK_6) then begin
          variable crit := spawn_enemy(ENEMY_DEATHCLAW);
