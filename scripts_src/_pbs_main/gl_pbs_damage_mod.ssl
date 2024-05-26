@@ -564,7 +564,9 @@ procedure deathanim2_handler begin
    dmgTypeNew := get_weapon_damage_type_override(weapon);
    if (dmgTypeNew == -1) then return;
 
-   deathAnim := death_anims_maximum[dmgTypeNew] if is_in_array(deathAnim, death_anims_maximum) else death_anims_normal[dmgTypeNew];
+   deathAnim := get_array(get_death_anims_maximum, dmgTypeNew)
+      if is_in_array(deathAnim, get_death_anims_maximum)
+      else get_array(get_death_anims_normal, dmgTypeNew);
    
    // Check if animation actually exists.
    if not validate_critter_anim(target, deathAnim) then begin

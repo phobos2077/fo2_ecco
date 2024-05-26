@@ -1,9 +1,11 @@
 -=== CHANGELOG ===-
 
 v0.9.6:
-> AI:
+> Combat & AI:
 - increased called (aimed) shot frequency of all enemies
+- added weapon drop effects to certain levels of critical hits
 - reduced minimum INT requirements for AI called shots to include many Gun-weilding NPC's in FO2
+- fixed bugged death animations for molotovs and 40mm IC grenades
 
 > Healing:
 - replaced default FirstAid/Doctor/Repair skill usage with fully-featured scripted implementation

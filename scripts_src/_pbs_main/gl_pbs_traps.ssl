@@ -19,10 +19,10 @@ procedure combatdamage_hook;
 	2) Loads INI variables.
 	3) Implements triggering traps in real-time (start proc) and turn-based (movecost_hook proc).
 	4) Implements hotkey to place trap.
+   5) Fixes death animation for trap kills (doesn't include traps.h)
 
 	Other scripts for traps:
 	test2.int            - skill-based interactions with assembled traps on the ground
-	hs_deathanim2.int    - fixes death animation for trap kills (doesn't include traps.h)
 
 	@author phobos2077
 
@@ -329,7 +329,7 @@ end
 // TODO: use or remove
 procedure ondeath_hook begin
 	variable critter := get_sfall_arg;
-	debug_log_fmt("ondeath: %d, lastTarget: %d", critter, pbs_trap_last_target);
+	// debug_log_fmt("ondeath: %d, lastTarget: %d", critter, pbs_trap_last_target);
 
 	if (critter and critter == pbs_trap_last_target) then begin
 		pbs_trap_last_target_dead := true;
@@ -346,13 +346,14 @@ procedure deathanim2_hook begin
    damage := get_sfall_arg;
    animID := get_sfall_arg;
 
-   debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID+", pbs_trap_last_target: "+pbs_trap_last_target);
+   //debug_msg("deathanim2: wpn: "+weaponPID+", att: "+sprintf("%X",obj_art_fid(attacker))+", targ: "+target+", dam: "+damage+", anim: "+animID+", pbs_trap_last_target: "+pbs_trap_last_target);
 
    // Override death animation when critter_dmg function is used from a trap
    if (obj_art_fid(attacker) == 0x20001F5 and pbs_trap_last_target == target and animID == ANIM_chunks_of_flesh) then begin
 		pbs_trap_last_target_dead := true;
       set_sfall_return(ANIM_fall_front);
 		set_sfall_arg(4, ANIM_fall_front);
+      debug_log_fmt("deathanim2: forcing ANIM_fall_front for %s", obj_name(target));
       return;
    end
 end

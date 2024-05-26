@@ -1,7 +1,5 @@
 for 0.9.6:
 - make sure all healing options are properly balanced
-- final script to force AI to use called shots more frequently
-- investigate reload death anim bug
 - playtest
 
 
