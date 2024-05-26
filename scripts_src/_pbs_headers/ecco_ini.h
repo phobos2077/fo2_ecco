@@ -12,8 +12,8 @@
 #define get_int_from_ini(file, section, setting)       get_ini_setting(file + "|" + section + "|" + setting)
 #define get_str_from_ini(file, section, setting)       get_ini_string(file + "|" + section + "|" + setting)
 #define get_float_from_ini(file, section, setting)     atof(get_str_from_ini(file, section, setting))
-#define get_list_from_ini(file, section, setting, func) array_transform(array_filter(string_split(get_str_from_ini(file, section, setting), ","), @string_null_or_empty), func)
-#define get_int_list_from_ini(file, section, setting)  get_list_from_ini(file, section, setting, @string_to_int)
+#define get_list_from_ini(file, section, setting, func) array_transform(array_filter(string_split(get_str_from_ini(file, section, setting), ","), @string_null_or_empty, true), func)
+#define get_int_list_from_ini(file, section, setting)  string_split_ints(get_str_from_ini(file, section, setting), ",")
 
 procedure get_ini_value_def(variable file, variable section, variable setting, variable defValue) begin
    variable
@@ -71,6 +71,7 @@ end
 //#define load_int_from_ini(name, def)                    ini_##name := get_int_from_ini_def(INI_FILE, INI_SECTION, #name, def)
 #define load_bool_from_ini(name, def)                           ini_##name := (get_ini_value_def(INI_FILE, INI_SECTION, #name, def) != 0)
 #define load_num_from_ini(name, def, min, max)                  ini_##name := math_clamp(get_ini_value_def(INI_FILE, INI_SECTION, #name, def), min, max)
+#define load_int_list_from_ini(name)                            ini_##name := array_fixed(get_int_list_from_ini(INI_FILE, INI_SECTION, #name))
 #define load_range_from_ini(name, defMin, defMax, min, max)     ini_##name := array_fixed(ini_parse_range_clamped(get_str_from_ini(INI_FILE, INI_SECTION, #name), defMin, defMax, min, max))
 
 #endif

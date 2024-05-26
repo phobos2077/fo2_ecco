@@ -1,6 +1,10 @@
 -=== CHANGELOG ===-
 
 v0.9.6:
+> AI:
+- increased called (aimed) shot frequency of all enemies
+- reduced minimum INT requirements for AI called shots to include many Gun-weilding NPC's in FO2
+
 > Healing:
 - replaced default FirstAid/Doctor/Repair skill usage with fully-featured scripted implementation
 - added critical healing success: restores more HP than normal

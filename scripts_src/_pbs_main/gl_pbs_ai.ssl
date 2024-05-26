@@ -1,25 +1,21 @@
-#include "../../sfall/sfall.h"
-#include "../../sfall/define_lite.h"
-#include "../../sfall/define_extra.h"
-#include "../../sfall/command_lite.h"
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+#include "../sfall/command_lite.h"
 
-#include "../../_pbs_headers/engine_funcs.h"
-#include "../../_pbs_headers/ecco_log.h"
+#include "../sfall/lib.arrays.h"
+
+#include "../_pbs_headers/engine_funcs.h"
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/ecco_log.h"
 
 #define SCRIPT_REALNAME    "pbs_ai"
 
 variable begin
+   ini_called_int_req;
+   ini_called_freq_mult;
    turn_critter;
    modified_hit_chance;
-end
-
-
-procedure get_min_iq_for_called begin
-   switch (combat_difficulty) begin
-      case DIFFICULTY_EASY: return 6;
-      case DIFFICULTY_MEDIUM: return 4; // many gun-user critters have IQ of 4, but in vanilla this was 5
-      case DIFFICULTY_HARD: return 2;
-   end
 end
 
 /**
@@ -68,15 +64,20 @@ end*/
  * @ret {int}
  */
 procedure ai_choose_bodypart(variable attacker, variable attackType, variable hitChanceRaw, variable oldBodyPart) begin
-   variable
-      weapon := item_hit_with(attacker, attackType);
+   variable weapon := item_hit_with(attacker, attackType);
 
    // TODO: check AP cost for called shot
    if (not item_w_called_shot_my(attacker, weapon, attackType)) then return BODY_UNCALLED;
 
-   variable attackerIq := get_critter_stat(attacker, STAT_iq);
-   if (attackerIq < get_min_iq_for_called) then return BODY_UNCALLED;
+   // Roll against called_freq.
+   variable calledFreq := ceil(get_object_ai_data(attacker, AI_CAP_CALLED_FREQ) * ini_called_freq_mult);
+   if (random(1, calledFreq) != 1) then return BODY_UNCALLED;
 
+   // Minimum INT check.
+   variable attackerIq := get_critter_stat(attacker, STAT_iq);
+   if (attackerIq < ini_called_int_req[combat_difficulty]) then return BODY_UNCALLED;
+
+   // Choose random body part that satisfies check against min_to_hit.
    variable bodyPart, resultPart, hitChance,
       isRanged := item_w_subtype(weapon, attackType) == WEAPON_TYPE_RANGED,
       oldModifier := calc_bodypart_hit_modifier(oldBodyPart, isRanged),
@@ -155,7 +156,7 @@ procedure tohit_handler begin
       if (newBodyPart != bodyPart) then begin
          set_object_data(ctd, C_ATTACK_BODY_PART, newBodyPart);
          set_sfall_return(modified_hit_chance);
-         set_sfall_arg(0, hitChance);
+         set_sfall_arg(0, modified_hit_chance);
       end
    end
 end
@@ -180,8 +181,30 @@ procedure combatturn_handler begin
    end
 end
 
+#define INI_FILE     INI_COMBAT
+#define INI_SECTION  "AI"
+
+procedure load_called_shot_settings begin
+   load_int_list_from_ini(called_int_req);
+   load_num_from_ini(called_freq_mult, 1.0, 0.0, 10.0);
+   
+   // Default INT requirements.
+   variable len := len_array(ini_called_int_req);
+   if (len < DIFFICULTY_HARD + 1) then begin
+      resize_array(ini_called_int_req, DIFFICULTY_HARD + 1);
+      ini_called_int_req[DIFFICULTY_HARD] := 3;
+   end
+   if (len < 2) then ini_called_int_req[DIFFICULTY_NORMAL] := 5;
+   if (len < 1) then ini_called_int_req[DIFFICULTY_EASY] := 7;
+   
+   debug_log_fmt("Called Shot tweaks enabled. called_freq mult: %.2f, INT req: %s", ini_called_freq_mult, debug_array_str(ini_called_int_req));
+end
+
 procedure start begin
    if not game_loaded then return;
+   if (get_ini_value_def(INI_FILE, INI_SECTION, "called_tweaks", 0) == 0) then return;
+
+   call load_called_shot_settings;
 
    register_hook_proc(HOOK_TOHIT, tohit_handler);
    register_hook_proc(HOOK_COMBATTURN, combatturn_handler);

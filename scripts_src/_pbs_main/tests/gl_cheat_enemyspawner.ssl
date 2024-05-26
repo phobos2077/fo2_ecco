@@ -10,6 +10,7 @@
 #include "..\..\sfall\lib.inven.h"
 #include "..\..\headers\animcomd.h"
 #include "..\..\headers\critrpid.h"
+#include "..\..\headers\scenepid.h"
 #include "..\..\headers\itempid.h"
 #include "..\..\headers\scripts.h"
 #include "..\..\_pbs_headers\ecco_ids.h"
@@ -29,6 +30,10 @@
 variable enemy_types;
 
 #define is_throwing_weapon_pid(pid)          (weapon_attack_mode1(pid) == ATTACK_MODE_THROW)
+
+procedure spawn_obj(variable pid, variable tile := 0) begin
+   return create_object_sid(pid, tile or tile_under_cursor, dude_elevation, -1);
+end
 
 procedure spawn_enemy(variable type, variable tile := 0) begin
    variable critter, pid, sid, weaponPid, weapon, ammoPid, stimpaks, female;

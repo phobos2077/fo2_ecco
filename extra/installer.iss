@@ -64,7 +64,7 @@ en.InstallCustom=Custom install
 en.InstallNull=Uncheck all
 
 en.CMain=EcCo Gameplay Overhaul mod
-;en.CCombatFreeMove=Bonus move points for high AG characters
+en.CAICalledShots=More frequent called shots by NPC's
 en.CCarryUnspentAP=Carry up to 2 unspent AP to next round
 en.CRemoveBonusRoF=Removal of Bonus Rate of Fire perk
 en.CThrowingMeleeDmg=Apply Melee Damage stat to Throwing weapons
@@ -88,7 +88,7 @@ ru.InstallCustom=Выборочная установка
 ru.InstallNull=Ничего не выбирать
 
 ru.CMain=EcCo - переработка геймплея
-;ru.CCombatFreeMove=Бонусные ОД всем персонажам с высокой Ловкостью
+ru.CAICalledShots=Более частые прицельные атаки ИИ
 ru.CCarryUnspentAP=Перенос части непотраченных ОД на следующих ход
 ru.CRemoveBonusRoF=Удаление перка "Бонус скорострельности"
 ru.CThrowingMeleeDmg=Применять урон ближнего боя к метательному оружию
@@ -115,6 +115,7 @@ Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
 [Components]
 Name: "main"; Description: "{cm:CMain}"; Types: full custom; Flags: fixed
 ;Name: "option"; Description: "{cm:COptions}"; Types: full
+Name: "ai_called_shots"; Description: "{cm:CAICalledShots}"; Types: full
 Name: "carry_unspent_ap"; Description: "{cm:CCarryUnspentAP}"; Types: full
 Name: "remove_bonus_rof"; Description: "{cm:CRemoveBonusRoF}"; Types: full
 Name: "throwing_melee_dmg"; Description: "{cm:CThrowingMeleeDmg}"; Types: full
@@ -165,6 +166,7 @@ Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer4"; String
 
 ;Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "CheckWeaponAmmoCost"; String: "1"; Components: combat
 
+Filename: "{app}\mods\ecco\combat.ini"; Section: "AI"; Key: "called_tweaks"; String: "0"; Components: not ai_called_shots
 Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "carry_unspent_ap"; String: "0"; Components: not carry_unspent_ap
 Filename: "{app}\mods\ecco\combat.ini"; Section: "THROWING"; Key: "apply_melee_dmg"; String: "0"; Components: not throwing_melee_dmg
 Filename: "{app}\mods\ecco\combat.ini"; Section: "MONSTER_PARTS"; Key: "enable"; String: "0"; Components: not monster_parts
