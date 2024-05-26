@@ -20,12 +20,13 @@ procedure start;
 #include "../sfall/lib.math.h"
 
 #include "../_pbs_headers/ecco.h"
+#include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/ecco_msg.h"
 
 variable
    ini_destroy_weapon_percent,
    ini_destroy_weapon_list,
-   ini_weapon_drop,
+   ini_weapon_drop_chance,
    ini_weapon_drop_dist,
    ini_weapon_drop_dir,
    ini_reduce_ammo_percent_min,
@@ -44,10 +45,10 @@ procedure reduce_item_count(variable invenobj, variable item, variable newCount)
 #define INI_FILE        INI_COMBAT
 #define INI_SECTION     "CRITTER_LOOT"
 
-#define load_ini_int(name)       int_from_ini_file(name, INI_COMBAT, INI_SECTION)
-#define load_ini_str(name)       str_from_ini_file(name, INI_COMBAT, INI_SECTION)
-#define load_ini_int_clamped(name, min, max)    int_from_ini_file_clamped(name, INI_COMBAT, INI_SECTION, min, max)
-#define load_ini_int_list(name)  int_list_from_ini_file(name, INI_COMBAT, INI_SECTION)
+//#define load_ini_int(name)       int_from_ini_file(name, INI_COMBAT, INI_SECTION)
+//#define load_ini_str(name)       str_from_ini_file(name, INI_COMBAT, INI_SECTION)
+//#define load_ini_int_clamped(name, min, max)    int_from_ini_file_clamped(name, INI_COMBAT, INI_SECTION, min, max)
+//#define load_ini_int_list(name)  int_list_from_ini_file(name, INI_COMBAT, INI_SECTION)
 
 /*
    HOOK_ONDEATH
@@ -66,7 +67,7 @@ procedure ondeath_handler begin
       if (ini_reduce_ammo_percent_min > 0 or ini_reduce_drugs_percent > 0 or ini_destroy_weapon_percent > 0) then begin
          call reduce_loot(critter);
       end
-      if (ini_weapon_drop) then begin
+      if (ini_weapon_drop_chance > 0 and random(1, 100) <= ini_weapon_drop_chance) then begin
          call drop_weapons(critter);
       end
    end
@@ -75,16 +76,16 @@ end
 procedure start begin
    if (game_loaded) then begin
    
-      load_ini_int(destroy_weapon_percent);
-      load_ini_int_list(destroy_weapon_list);
-      load_ini_int(weapon_drop);
-      load_ini_int(weapon_drop_dist);
-      load_ini_int(weapon_drop_dir);
+      load_num_from_ini(destroy_weapon_percent, 0, 0, 100);
+      load_int_list_from_ini(destroy_weapon_list);
+      load_num_from_ini(weapon_drop_chance, 0, 0, 100);
+      load_num_from_ini(weapon_drop_dist, 0, 0, 10);
+      load_num_from_ini(weapon_drop_dir, 0, 0, 5);
 
-      load_ini_int_clamped(reduce_ammo_percent_min, 0, 100);
-      load_ini_int_clamped(reduce_ammo_percent_max, ini_reduce_ammo_percent_min, 100);
-      load_ini_int_clamped(reduce_drugs_percent, 0, 100);
-      load_ini_int_list(reduce_drugs_pids);
+      load_num_from_ini(reduce_ammo_percent_min, 0, 0, 100);
+      load_num_from_ini(reduce_ammo_percent_max, ini_reduce_ammo_percent_min, ini_reduce_ammo_percent_min, 100);
+      load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
+      load_int_list_from_ini(reduce_drugs_pids);
 
       register_hook_proc(HOOK_ONDEATH, ondeath_handler);
    end
@@ -140,7 +141,9 @@ procedure drop_weapons(variable critter) begin
 
    for (i := 1; i <= 2; i++) begin
       weapon := critter_inven_obj(critter, i);
-      if (weapon and obj_item_subtype(weapon) == item_type_weapon and not(is_unarmed_weapon_pid(obj_pid(weapon)))) then 
+      if (weapon and obj_item_subtype(weapon) == item_type_weapon
+         and not is_unarmed_weapon_pid(obj_pid(weapon))
+         and not is_hidden_item(obj_pid(weapon))) then 
          break;
       else
          weapon := 0;

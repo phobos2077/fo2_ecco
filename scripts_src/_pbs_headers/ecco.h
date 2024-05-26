@@ -40,6 +40,7 @@
 #define get_proto_dmg_max(pid)       (get_proto_data(pid, PROTO_WP_DMG_MAX))
 
 #define is_unarmed_weapon_pid(pid)            (weapon_attack_mode1(pid) == ATTACK_MODE_PUNCH)
+#define is_hidden_item(pid)                   ((get_proto_data(pid, PROTO_FLAG_EXT) bwand HIDDEN_ITEM) != 0)
 
 #define critter_dt_by_dmg_type(crit, type)    (get_critter_stat(crit, STAT_dmg_thresh + type))
 #define critter_dr_by_dmg_type(crit, type)    (get_critter_stat(crit, STAT_dmg_resist + type))
