@@ -20,7 +20,6 @@ Considering:
 
 
 IDEAS:
-- buff effectiveness of using First Aid/Doctor skills for healing (it is super lame at 75%)
 - deflation: increase value of money buy reducing buying and selling price bias by the same % (will make monetary rewards more meaningful)
 - don't allow to craft "factory-level" items like Metal armor, but allow upgrades to Mk2
 - crafting some advanced leather armor

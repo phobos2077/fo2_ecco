@@ -1,0 +1,22 @@
+pid: 409
+messageId: 40900
+name: Paramedics Bag
+description: This bag contains instruments and drugs used by paramedics in the field.
+  The tools contained are specifically designed for high trauma and emergency cases.
+fid: 117
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xb000'
+sid: -1
+type: ITEM_TYPE_MISC
+material: 7
+size: 1
+weight: 6
+cost: 600
+inventoryFid: 117440769
+soundId: '0'
+miscData:
+  powerTypePid: -1
+  powerType: 0
+  charges: 12
