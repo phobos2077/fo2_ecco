@@ -25,6 +25,7 @@
 #include "../_pbs_headers/ecco_log.h"
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/math_ext.h"
+#include "../_pbs_headers/engine_funcs.h"
 #include "../_pbs_headers/deathanim_utils.h"
 
 procedure start;
@@ -40,7 +41,6 @@ procedure calc_damage(variable weapon, variable rounds, variable targetDT, varia
    variable criticalMult, variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType);
 procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypass,
    variable weaponPerk, variable attackType);
-procedure item_w_subtype(variable weapon, variable attackType);
 procedure get_ammo_value(variable weapon, variable param);
 procedure map_enter_p_proc;
 
@@ -574,25 +574,6 @@ procedure deathanim2_handler begin
    debug_verbose("Overriding death anim according to new damage type "+dmgTypeNew+" to "+deathAnim);
    set_sfall_return(deathAnim);
    set_sfall_arg(4, deathAnim);
-end
-
-procedure item_w_subtype(variable weapon, variable attackType) begin
-   variable attack_mode, type := WEAPON_TYPE_UNARMED;
-
-   if weapon and (attackType <= ATKTYPE_RWEP2) then begin
-      attack_mode := weapon_attack_mode(obj_pid(weapon), attackType);
-
-      if (attack_mode >= ATTACK_MODE_SINGLE) then
-         type := WEAPON_TYPE_RANGED;
-      else if (attack_mode == ATTACK_MODE_THROW) then
-         type := WEAPON_TYPE_THROWN;
-      else if (attack_mode >= ATTACK_MODE_SWING) then
-         type := WEAPON_TYPE_MELEE;
-      else if (attack_mode == ATTACK_MODE_NONE) then
-         type := WEAPON_TYPE_NONE;
-   end
-
-   return type;
 end
 
 procedure get_ammo_value(variable weapon, variable param) begin

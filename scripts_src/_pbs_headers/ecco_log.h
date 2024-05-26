@@ -7,4 +7,7 @@
 #define debug_err(msg)              debug_msg("! ERROR ! "SCRIPT_REALNAME": "+msg)
 #define debug_err_fmt(msg, ...)     debug_msg("! ERROR ! "SCRIPT_REALNAME": "+string_format(msg, __VA_ARGS__))
 
+// for debugging
+#define display_msg_fmt(msg, ...)   display_msg(string_format(msg, __VA_ARGS__))
+
 #endif

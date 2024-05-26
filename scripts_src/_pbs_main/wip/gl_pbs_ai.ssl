@@ -1,0 +1,188 @@
+#include "../../sfall/sfall.h"
+#include "../../sfall/define_lite.h"
+#include "../../sfall/define_extra.h"
+#include "../../sfall/command_lite.h"
+
+#include "../../_pbs_headers/engine_funcs.h"
+#include "../../_pbs_headers/ecco_log.h"
+
+#define SCRIPT_REALNAME    "pbs_ai"
+
+variable begin
+   turn_critter;
+   modified_hit_chance;
+end
+
+
+procedure get_min_iq_for_called begin
+   switch (combat_difficulty) begin
+      case DIFFICULTY_EASY: return 6;
+      case DIFFICULTY_MEDIUM: return 4; // many gun-user critters have IQ of 4, but in vanilla this was 5
+      case DIFFICULTY_HARD: return 2;
+   end
+end
+
+/**
+ * Similar to item_w_called_shot
+ */
+procedure item_w_called_shot_my(variable critter, variable weapon, variable attackType) begin
+   // Fast Shot trait
+   if (critter == dude_obj and has_trait(TRAIT_TRAIT, critter, TRAIT_fast_shot)) then
+      return false;
+   
+   variable attackMode;
+   // No aimed shot with burst
+   if (weapon) then begin
+      attackMode := weapon_attack_mode(obj_pid(weapon), attackType);
+      if (attackMode == ATTACK_MODE_BURST or attackMode == ATTACK_MODE_FLAME) then
+         return false;
+   end
+   variable dmgType := item_w_damage_type(critter, weapon);
+   return dmgType != DMG_explosion
+      and dmgType != DMG_fire
+      and dmgType != DMG_emp
+      and (dmgType != DMG_plasma or attackMode != ATTACK_MODE_THROW);
+end
+
+/*procedure pick_random_called_shot begin
+   variable rnd := random(1, 7);
+   switch (rnd) begin
+      case 1: return BODY_HIT_HEAD;
+      case 2: return BODY_HIT_LEFT_ARM;
+      case 3: return BODY_HIT_RIGHT_ARM;
+      case 4: return BODY_HIT_RIGHT_LEG;
+      case 5: return BODY_HIT_LEFT_LEG;
+      case 6: return BODY_HIT_EYES;
+      case 7: return BODY_HIT_GROIN;
+   end
+end*/
+
+#define calc_bodypart_hit_modifier(bodyPart, isRanged)     get_bodypart_hit_modifier(bodyPart) / (1 if isRanged else 2)
+
+/**
+ * Choose body part for called shot based on hit chances. "Spiritual successor" to engine's ai_called_shot.
+ * @arg {ObjectPtr} attacker
+ * @arg {int} attackType ATKTYPE_*
+ * @arg {int} hitChanceRaw - Calculated hit chance before 95% cap.
+ * @arg {int} oldBodyPart
+ * @ret {int}
+ */
+procedure ai_choose_bodypart(variable attacker, variable attackType, variable hitChanceRaw, variable oldBodyPart) begin
+   variable
+      weapon := item_hit_with(attacker, attackType);
+
+   // TODO: check AP cost for called shot
+   if (not item_w_called_shot_my(attacker, weapon, attackType)) then return BODY_UNCALLED;
+
+   variable attackerIq := get_critter_stat(attacker, STAT_iq);
+   if (attackerIq < get_min_iq_for_called) then return BODY_UNCALLED;
+
+   variable bodyPart, resultPart, hitChance,
+      isRanged := item_w_subtype(weapon, attackType) == WEAPON_TYPE_RANGED,
+      oldModifier := calc_bodypart_hit_modifier(oldBodyPart, isRanged),
+      hitChanceBase := hitChanceRaw - oldModifier,
+      aiMinToHit := get_object_ai_data(attacker, AI_CAP_MIN_TO_HIT),
+      bodyParts := [
+         BODY_HIT_HEAD,
+         BODY_HIT_LEFT_ARM,
+         BODY_HIT_RIGHT_ARM,
+         BODY_HIT_RIGHT_LEG,
+         BODY_HIT_LEFT_LEG,
+         BODY_HIT_EYES,
+         BODY_HIT_GROIN
+      ];
+   shuffle_array(bodyParts);
+
+   resultPart := BODY_HIT_TORSO;
+   foreach (bodyPart in bodyParts) begin
+      hitChance := hitChanceBase + calc_bodypart_hit_modifier(bodyPart, isRanged);
+      if (hitChance >= aiMinToHit) then begin
+         modified_hit_chance := math_clamp(hitChance, 0, 95);
+         resultPart := bodyPart;
+         break;
+      end
+   end
+   debug_log_fmt("ai_choose_bodypart (%s, attack: %d, base_chance: %d) = %d",
+      obj_name(attacker), attackType, hitChanceBase, resultPart);
+   return resultPart;
+end
+
+/*
+Runs when Fallout is calculating the chances of an attack striking a target. Runs after the hit chance is fully calculated normally, including applying the 95% cap.
+
+int     arg0 - The hit chance (capped)
+Critter arg1 - The attacker
+Critter arg2 - The target of the attack
+int     arg3 - The targeted bodypart
+int     arg4 - Source tile (may differ from attacker's tile, when AI is considering potential fire position)
+int     arg5 - Attack Type (see ATKTYPE_* constants)
+int     arg6 - Ranged flag. 1 if the hit chance calculation takes into account the distance to the target. This does not mean the attack is a ranged attack
+int     arg7 - The raw hit chance before applying the cap
+
+int     ret0 - The new hit chance. The value is limited to the range of -99 to 999
+*/
+procedure tohit_handler begin
+   variable
+      hitChance := get_sfall_arg,
+      attacker := get_sfall_arg,
+      target := get_sfall_arg,
+      bodyPart := get_sfall_arg,
+      fromTile := get_sfall_arg,
+      attackType := get_sfall_arg,
+      useDist := get_sfall_arg,
+      hitChanceRaw := get_sfall_arg,
+      sameTile := fromTile == tile_num(attacker),
+      ctd := combat_data,
+      ctdAttacker := get_object_data(ctd, C_ATTACK_SOURCE),
+      ctdTarget := get_object_data(ctd, C_ATTACK_TARGET);
+      //ctdBodyPart := get_object_data(ctd, C_ATTACK_BODY_PART),
+      //ctdFlags := get_object_data(ctd, C_ATTACK_FLAGS_TARGET);
+
+   debug_log(string_format("tohit %s = %d (same_tile: %d, use_dist: %d, part: %d)",
+      obj_name(attacker), hitChance, sameTile, useDist, bodyPart)
+      /*+ string_format("; ctd: (crit: %s, part: %d, flags: %d)",
+      obj_name(ctdAttacker), ctdBodyPart, ctdFlags) */);
+   
+   // A crazy hack based on understanding exactly when HOOK_TOHIT is called and how main_ctd is used by engine:
+   // AI can do multiple calls of tohit before his attack, but he always makes one final call in compute_attack,
+   // right after main_ctd was initialized but before most of the attack calculation, including AP cost, attack roll, damage, etc.
+   // To change body part here we can just set it in main_ctd.
+   // But we also need to make sure this TOHIT call returns modified (reduced) hit chance, for attack roll to use the correct value next.
+   if (sameTile and useDist and attacker != dude_obj and attacker == turn_critter and attacker == ctdAttacker and target == ctdTarget) then begin
+      variable
+         newBodyPart := ai_choose_bodypart(attacker, attackType, hitChanceRaw, bodyPart);
+
+      if (newBodyPart != bodyPart) then begin
+         set_object_data(ctd, C_ATTACK_BODY_PART, newBodyPart);
+         set_sfall_return(modified_hit_chance);
+         set_sfall_arg(0, hitChance);
+      end
+   end
+end
+
+/*
+Runs before and after each turn in combat (for both PC and NPC).
+
+int     arg0 - event type:
+               1 - start of turn
+               0 - normal end of turn
+              -1 - combat ends abruptly (by script or by pressing Enter during PC turn)
+              -2 - combat ends normally (hook always runs at the end of combat)
+Critter arg1 - critter doing the turn
+int     arg2 - 1 at the start/end of the player's turn after loading a game saved in combat mode, 0 otherwise
+
+int     ret0 - pass 1 at the start of turn to skip the turn, pass -1 at the end of turn to force end of combat
+*/
+procedure combatturn_handler begin
+   if (get_sfall_arg == 1) then begin
+      turn_critter := get_sfall_arg;
+      debug_log_fmt("set turn_critter = %s", obj_name(turn_critter));
+   end
+end
+
+procedure start begin
+   if not game_loaded then return;
+
+   register_hook_proc(HOOK_TOHIT, tohit_handler);
+   register_hook_proc(HOOK_COMBATTURN, combatturn_handler);
+end

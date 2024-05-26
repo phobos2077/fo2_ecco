@@ -106,4 +106,42 @@ procedure critter_is_crippled(variable critter) begin
    return critter_has_dmg_flag(critter, DAM_CRIP);
 end
 
+procedure item_hit_with(variable critter, variable attackType) begin
+   if (attackType == ATKTYPE_LWEP1 or attackType == ATKTYPE_LWEP2 or attackType == ATKTYPE_LWEP_RELOAD) then
+      return critter_inven_obj2(critter, INVEN_TYPE_LEFT_HAND);
+   if (attackType == ATKTYPE_RWEP1 or attackType == ATKTYPE_RWEP2 or attackType == ATKTYPE_RWEP_RELOAD) then
+      return critter_inven_obj2(critter, INVEN_TYPE_RIGHT_HAND);
+end
+
+/**
+ * Exactly like FO2 item_w_subtype, but with additional check for attackType to be left/right weapon attacks.
+ * @arg {ObjectPtr} weapon
+ * @arg {int} attackType - ATKTYPE_*
+ */
+procedure item_w_subtype(variable weapon, variable attackType) begin
+   variable attackMode, type := WEAPON_TYPE_UNARMED;
+
+   if weapon and (attackType <= ATKTYPE_RWEP2) then begin
+      attackMode := weapon_attack_mode(obj_pid(weapon), attackType);
+
+      if (attackMode >= ATTACK_MODE_SINGLE) then
+         type := WEAPON_TYPE_RANGED;
+      else if (attackMode == ATTACK_MODE_THROW) then
+         type := WEAPON_TYPE_THROWN;
+      else if (attackMode >= ATTACK_MODE_SWING) then
+         type := WEAPON_TYPE_MELEE;
+      else if (attackMode == ATTACK_MODE_NONE) then
+         type := WEAPON_TYPE_NONE;
+   end
+   return type;
+end
+
+procedure item_w_damage_type(variable critter, variable weapon) begin
+   return get_proto_data(obj_pid(weapon), PROTO_WP_DMG_TYPE)
+      if weapon
+      else (get_proto_data(obj_pid(critter), PROTO_CR_DMG_TYPE)
+         if obj_type(critter) == OBJ_TYPE_CRITTER
+         else DMG_normal_dam);
+end
+
 #endif
