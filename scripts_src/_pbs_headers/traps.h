@@ -134,7 +134,7 @@ procedure create_trap_object(variable type, variable tile, variable elev, variab
 end
 
 
-procedure random_roll_ext(variable rollMod, variable critChance, variable successOffset, variable successMult, variable failMult) begin
+procedure roll_check_ext(variable rollMod, variable critChance, variable successOffset, variable successMult, variable failMult) begin
    variable
       delta := rollMod - random(1, 100),
       roll;
@@ -154,7 +154,7 @@ procedure roll_vs_traps_ext(variable critter, variable rollMod) begin
       successMult := (5 - diffMult),
       failMult := (0.2 + 0.1 * diffMult);
 
-   return random_roll_ext(skillValue + rollMod, critChance, -50, successMult, failMult);
+   return roll_check_ext(skillValue + rollMod, critChance, -50, successMult, failMult);
 end
 
 procedure roll_critical(variable critter, variable bodyPart) begin

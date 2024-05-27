@@ -1,6 +1,6 @@
 -====================-
 -===   EcCo mod   ===-
--=== v0.9.5 BETA  ===-
+-=== v0.9.6 BETA  ===-
 -====================-
 						by phobos2077
 
@@ -70,6 +70,17 @@
 - Opening inventory has no cost, but every action (except reload, see below) requires 2 AP (or 1 with Quick Pockets).
 - Bonus Move perk is now available at level 3 (was 6) and grants 3 Move Points per level (was 2).
 - Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
+- Enemy AI will now use aimed shots much more often.
+- Critical hits to arms will sometimes make target drop their weapon.
+
+
+> Healing:
+- New healing system replaces the original to make First Aid & Doctor skills useful.
+- First Aid Kits & Doctor Bags have limited uses (instead of random 10% removal).
+- Much more HP is restored per skill use.
+- Critical successes restore even more and crit chance depends heavily on skill level.
+- Using kits & bags now has clear benefit: this ignores daily usage limits.
+- To have more reason for using these skills, all passive healing was considerably nerfed (now it matches in-game Healing Rate description from vanilla).
 
 
 > AMMO:
@@ -162,6 +173,7 @@
 - Weapon loadouts were adjusted in respect to new weapon balance.
 - Most new weapons are used by people in the wasteland.
 - Throwing weapons will be used against you more often.
+- Ranged enemies will sure to have some spare ammo.
 
 
 > MISC:

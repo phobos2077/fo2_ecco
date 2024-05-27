@@ -1,9 +1,10 @@
 /*
    First Aid/Doctor/Repair healing tweaks:
    - Fixes several vanilla bugs and inconsistent behavior around healing crippled limbs and HP at the same time
-   - Moved some variables to ini for tweaking
+   - Moved some variables and usable kit items to ini for tweaking
    - Kits: added charges-based system as alternative to random chance item removal
-   - Critical success multiplier for HP restored
+   - Kits usage circumvents daily usage limit (but not EXP gain limit)
+   - Critical success multiplier for HP restored (with custom critical chances multipliers)
 */
 #define SCRIPT_REALNAME             "pbs_healing_skills"
 
@@ -26,8 +27,10 @@
 #define COMBAT_STATE_FLEEING     (4)
 
 #define SKILL_ITEM_SKILL         (0)
-#define SKILL_ITEM_BONUS         (1)
-#define SKILL_ITEM_DEPLETEMSG    (2)
+#define SKILL_ITEM_SKILL_MOD     (1)
+#define SKILL_ITEM_CRIT_MOD      (2)
+#define SKILL_ITEM_DEPLETEMSG    (3)
+#define SKILL_ITEM_COUNT         (4)
 
 #define obj_is_critter(obj)      (obj_type(obj) == OBJ_TYPE_CRITTER)
 #define critter_max_hp(cr)       get_critter_stat(cr, STAT_max_hit_points)
@@ -45,7 +48,10 @@ variable begin
    ini_first_aid_hp;
    ini_doctor_hp;
    ini_healer_perk_hp;
+   ini_crit_success_chance_mult;
    ini_crit_success_mult;
+   ini_crit_fail_chance_mult;
+   ini_crit_fail_max_charges;
    ini_skill_biases;
    ini_skill_items;
    skill_boosters;
@@ -73,8 +79,6 @@ procedure kit_pid_is_limited_use(variable pid) begin
    if (not itemData) then return 0;
    return itemData[SKILL_ITEM_DEPLETEMSG] > 0;
 end
-
-
 
 procedure skill_use_slot_available(variable skill) begin
    variable slot, time, hoursSinceLastUsage, timesUsed;
@@ -137,6 +141,25 @@ procedure calc_hp_to_heal(variable user, variable skill, variable isCritical) be
    return random(healMin, healMax);
 end
 
+/**
+ * Similar to roll_check, but allows to customize critical success/failure delta multipliers (in vanilla it is always 1/10).
+ * @arg {int} rollMod
+ * @arg {int} critChance
+ * @arg {int} successMult
+ * @arg {int} failMult
+ * @ret {int}
+ */
+procedure roll_check_ext(variable rollMod, variable critChance, variable successMult, variable failMult) begin
+   variable
+      delta := rollMod - random(1, 100),
+      roll;
+
+   if (delta < 0) then begin
+      return ROLL_CRITICAL_FAILURE if (random(1, 100) <= -delta*failMult) else ROLL_FAILURE;
+   end
+   return ROLL_CRITICAL_SUCCESS if (random(1, 100) <= delta*successMult + critChance) else ROLL_SUCCESS;
+end
+
 // 530: damaged eye
 // 531: crippled left arm
 // 532: crippled right arm
@@ -145,18 +168,20 @@ end
 #define display_uncrippled_msg(dmgFlagIdx, prefixMsgId)     display_msg(sprintf(mstr_skill(prefixMsgId), mstr_skill(530 + dmgFlagIdx)))
 
 /**
- * A refactored version of skill_use function from the engine, for use with healing skills only. Returns number of healing attempts performed (HP and cripple flag removal).
+ * A refactored version of skill_use function from the engine, for use with healing skills only. Returns number of healing item charges to consume.
  * @arg {ObjectPtr} user
  * @arg {ObjectPtr} target
  * @arg {int} skill - First Aid, Doctor or Repair
  * @arg {int} skillBonus
+ * @arg {int} critChanceBonus - bonus to critical success chance
  * @arg {int} maxAttempts - if >0, limits how many types of healing can be performed, including healing limbs
  * @ret {int}
  */
-procedure use_healing_skill(variable user, variable target, variable skill, variable skillBonus, variable maxAttempts := -1) begin
+procedure use_healing_skill(variable user, variable target, variable skill, variable skillBonus, variable critChanceBonus := 0, variable maxAttempts := -1) begin
    variable curHp, maxHp, isRobot, isRepair, isFirstAid;
 
-   debug_log_fmt("use_healing_skill: user = %s, target = %s, bonus = %d, skill = %d", obj_name(user), obj_name(target), skillBonus, skill);
+   debug_log_fmt("use_healing_skill: user = %s, target = %s, bonus = %d/%d, skill = %d, game_difficulty = %d",
+      obj_name(user), obj_name(target), skillBonus, critChanceBonus, skill, difficulty_level);
    
    isRobot := (critter_body_type(target) == CR_BODY_ROBOTIC);
    isRepair := (skill == SKILL_REPAIR);
@@ -191,7 +216,7 @@ procedure use_healing_skill(variable user, variable target, variable skill, vari
       end
       return 0;
    end
-   if (skill_use_slot_available(skill) == -1) then begin
+   if (maxAttempts <= 0 and skill_use_slot_available(skill) == -1) then begin
       // 590: You've taxed your ability with that skill. Wait a while.
       // 591: You're too tired.
       // 592: The strain might kill you.
@@ -199,9 +224,10 @@ procedure use_healing_skill(variable user, variable target, variable skill, vari
       return 0;
    end
 
-   variable skillUseSlotAdded, roll, i, prefixMsg, usedLastSlot, healingAttempts,
-      skillLevel := has_skill(user, skill) + ini_skill_biases[skill] + skillBonus,
-      critChance := get_critter_stat(user, STAT_crit_chance) + skillBonus;
+   variable skillUseSlotAdded, roll, i, prefixMsg, usedLastSlot, usedCharges, healingAttempts,
+      skillLevel := has_skill(user, skill) + ini_skill_biases[skill],
+      critChance := get_critter_stat(user, STAT_crit_chance),
+      critFailMult := (difficulty_level + 1) * ini_crit_fail_chance_mult;
 
    fade_out;
 
@@ -222,24 +248,27 @@ procedure use_healing_skill(variable user, variable target, variable skill, vari
             continue;
 
          healingAttempts += 1;
-         roll := roll_check(skillLevel, critChance);
+         roll := roll_check_ext(skillLevel + skillBonus, 0, 0, critFailMult);
          if (is_success(roll)) then begin
             clear_critter_dmg_flag(target, healable_damage_flags[i]);
             clear_critter_combat_flag(target, COMBAT_STATE_FLEEING);
             // 520: You heal your %s.
             // 521: You heal the %s.
             display_uncrippled_msg(i, 520 if (target == dude_obj) else 521);
-            call skill_use_slot_add(skill);
-            if (user == dude_obj) then
+            if ((skill_use_slot_add(skill) != -1) and (user == dude_obj)) then
                call show_skill_use_messages(skill);
+
+            usedCharges += 1;
          end else begin
             // 525: You fail to heal your %s.
             // 526: You fail to heal the %s.
             display_uncrippled_msg(i, 525 if (target == dude_obj) else 526);
+            if (is_critical(roll)) then
+               usedCharges += 1;
          end
 
          // EcCo: fix healing beyond available slots
-         if ((skill_use_slot_available(skill) == -1) or (maxAttempts > 0 and healingAttempts >= maxAttempts)) then begin
+         if ((maxAttempts <= 0 and (skill_use_slot_available(skill) == -1)) or (maxAttempts > 0 and healingAttempts >= maxAttempts)) then begin
             usedLastSlot := true;
             break;
          end
@@ -250,7 +279,7 @@ procedure use_healing_skill(variable user, variable target, variable skill, vari
    if (curHp < maxHp and not usedLastSlot) then begin
       // Restore hit points.
       healingAttempts += 1;
-      roll := roll_check(skillLevel, critChance);
+      roll := roll_check_ext(skillLevel + skillBonus, critChance + critChanceBonus, ini_crit_success_chance_mult, critFailMult);
 
       if (is_success(roll)) then begin
          variable hpToHeal := calc_hp_to_heal(user, skill, is_critical(roll));
@@ -260,15 +289,20 @@ procedure use_healing_skill(variable user, variable target, variable skill, vari
             display_msg(sprintf(mstr_skill(500), math_min(maxHp - curHp, hpToHeal)));
          end
 
-         // EcCo: use up skill slot for HP healing even after cripple healing
-         call skill_use_slot_add(skill);
-
          clear_critter_combat_flag(target, COMBAT_STATE_FLEEING);
-         if (user == dude_obj) then
+
+         // EcCo: use up skill slot for HP healing even after cripple healing
+         if ((skill_use_slot_add(skill) != -1) and (user == dude_obj)) then
             call show_skill_use_messages(skill);
+
+         usedCharges += 1;
       end else begin
          // You fail to do any healing.
          display_msg(sprintf(mstr_skill(503), how_much(0)));
+         
+         // Remove components on critical failure.
+         if (is_critical(roll)) then
+            usedCharges += random(1, math_min(ini_crit_fail_max_charges, maxAttempts - usedCharges));
       end
    end
 
@@ -281,7 +315,7 @@ procedure use_healing_skill(variable user, variable target, variable skill, vari
 
    // TODO: not sure if this is needed
    //exec_map_update_scripts
-   return healingAttempts;
+   return usedCharges;
 end
 
 /**
@@ -313,6 +347,7 @@ procedure protinst_use_item_on(variable user, variable target, variable item) be
    variable begin
       depletedMsgId;
       skillBonus := 0;
+      critChanceBonus := 0;
       skill := -1;
       maxAttempts;
       actualAttempts;
@@ -320,7 +355,8 @@ procedure protinst_use_item_on(variable user, variable target, variable item) be
    end
    if (skillItem) then begin
       skill := skillItem[SKILL_ITEM_SKILL];
-      skillBonus := skillItem[SKILL_ITEM_BONUS];
+      skillBonus := skillItem[SKILL_ITEM_SKILL_MOD];
+      critChanceBonus := skillItem[SKILL_ITEM_CRIT_MOD];
       depletedMsgId = skillItem[SKILL_ITEM_DEPLETEMSG];
    end
    if (skill == -1 or (skill != SKILL_FIRST_AID and skill != SKILL_DOCTOR and skill != SKILL_REPAIR)) then
@@ -336,7 +372,7 @@ procedure protinst_use_item_on(variable user, variable target, variable item) be
    maxAttempts := healing_skill_item_charges(item)
       if (depletedMsgId and ini_use_charges)
       else -1;
-   actualAttempts := use_healing_skill(user, target, skill, skillBonus, maxAttempts);
+   actualAttempts := use_healing_skill(user, target, skill, skillBonus, critChanceBonus, maxAttempts);
    if (actualAttempts == 0) then
       return 0;
 
@@ -425,7 +461,7 @@ procedure descriptionobj_hook begin
 
    if (not ini_use_charges or (obj_type(obj) != OBJ_TYPE_ITEM) or (not kit_pid_is_limited_use(objPid))) then return;
 
-   str := string_format(mstr_ecco_combat(310), healing_skill_item_fix_charges(obj));
+   str := string_format(mstr_ecco_combat(310), healing_skill_item_fix_charges(obj), get_proto_data(objPid, PROTO_MI_CHARGES));
    set_sfall_return(proto_data(objPid, it_description) + str);
 end
 
@@ -467,7 +503,7 @@ procedure load_skill_items begin
       if (string_starts_with(k, prefix)) then begin
          variable pid := atoi(substr(k, strlen(prefix), 0));
          arr := array_fixed(string_split_ints(v, ","));
-         resize_array(arr, 3);
+         resize_array(arr, SKILL_ITEM_COUNT);
          ini_skill_items[pid] := arr;
       end
    end
@@ -498,7 +534,10 @@ procedure start begin
 
       load_num_from_ini(kit_remove_freq, 10, 1, 10000);
       load_num_from_ini(skill_uses_per_day, 3, 1, 10);
+      load_num_from_ini(crit_success_chance_mult, 0.1, 0.0, 1.0);
       load_num_from_ini(crit_success_mult, 1.0, 1.0, 1000.0);
+      load_num_from_ini(crit_fail_chance_mult, 0.1, 0.0, 1.0);
+      load_num_from_ini(crit_fail_max_charges, 3, 1, 100);
       load_range_from_ini(first_aid_hp,   1,  5, 0, 10000);
       load_range_from_ini(doctor_hp,      4, 10, 0, 10000);
       load_range_from_ini(healer_perk_hp, 4, 10, 0, 10000);

@@ -21,4 +21,4 @@
 {301}{}{ Restores %d HP.}
 
 # skill booster kits
-{310}{}{ It has supplies for %d more uses.}
+{310}{}{ It has supplies for %d/%d uses.}

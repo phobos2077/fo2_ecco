@@ -9,13 +9,15 @@ v0.9.6:
 
 > Healing:
 - replaced default FirstAid/Doctor/Repair skill usage with fully-featured scripted implementation
-- added critical healing success: restores more HP than normal
-- changed first aid kits, doctor bags, etc. will now have a fixed number of uses instead of a 10% chance to remove on every use
+- added a fixed number of uses to first aid kits, doctor bags, etc. instead of a 10% chance to remove
+- added critical healing success: restores much more HP than normal
+- added critical failure: reduces remaining uses of a kit/bag
+- added ignoring daily limits when using kits/bags
+- increased skill level influence on critical success and failure chances
 - buffed restored HP amount for all 3 skills
-- buffed number of heal actions per day to 4 (from 3)
 - nerfed rest heal interval to 6 hours (from 3)
 - nerfed world travel heal interval to 24 hours (was 1 real-time second; requires future sfall update)
-- fixed numerious bugs and inconsistencies of vanilla system
+- fixed numerious bugs and inconsistencies of vanilla healing system
 
 > Crafting:
 - fixed craft button disappearing when using external HRP
