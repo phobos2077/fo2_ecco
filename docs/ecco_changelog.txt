@@ -21,6 +21,7 @@ v0.9.6:
 
 > Crafting:
 - fixed craft button disappearing when using external HRP
+- fixed bug with disassemble that allowed for infinite item exploit
 
 > Balance:
 - changed monster part quests requirements/rewards ratio to make economic sense

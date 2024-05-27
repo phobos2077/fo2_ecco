@@ -75,12 +75,13 @@
 
 
 > Healing:
-- New healing system replaces the original to make First Aid & Doctor skills useful.
+- New skill healing system replaces the original to make First Aid & Doctor skills useful.
 - First Aid Kits & Doctor Bags have limited uses (instead of random 10% removal).
 - Much more HP is restored per skill use.
 - Critical successes restore even more and crit chance depends heavily on skill level.
 - Using kits & bags now has clear benefit: this ignores daily usage limits.
 - To have more reason for using these skills, all passive healing was considerably nerfed (now it matches in-game Healing Rate description from vanilla).
+- Stimpak/Healing Powder HP gain amount scales with your First Aid skill.
 
 
 > AMMO:

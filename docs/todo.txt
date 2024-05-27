@@ -1,5 +1,4 @@
 for 0.9.6:
-- make sure all healing options are properly balanced
 - playtest
 
 
@@ -9,6 +8,7 @@ for "future":
 
 
 Considering:
+- take another look at incenirator balance
 - switch metal armor to use schematics?
 - Reduce ammo/drug loot in containers similar to critter loot and FNV Famine mod (less reduction for closed containers, etc.)
 - add Cattle Prod to Modoc, VC, Gecko, Broken Hills (check balance)
