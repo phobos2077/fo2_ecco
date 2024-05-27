@@ -21,7 +21,7 @@ procedure delete_button;
 #include "crafting.h"
 
 variable crafting_hotkey, schema_pids;
-variable warning_msg, show_crafting_scheduled, crafting_button_shown;
+variable warning_msg, show_crafting_scheduled, crafting_button_shown, crafting_button_top;
 
 #define WIN_CRAFT_BTN         "helwin"
 #define SFX_BUTTON_DOWN       "butin4"
@@ -132,16 +132,25 @@ end
 
 // Create the button
 procedure create_button begin
-   if crafting_button_shown then return;
+   // Mash's HRP has a bug when clicking on main interface - it goes on top (sfall doesn't have this).
+   // Workaround: delete and recreate button when going to/from these UI's with moveontop flag only when button is actually clickable.
+   variable onTop := not(get_game_mode bwand (BARTER bwor INVENTORY bwor DIALOG));
+   if crafting_button_shown then begin
+      if (crafting_button_top != onTop) then
+         DeleteWin(WIN_CRAFT_BTN);
+      else
+         return;
+   end
    variable
       x := get_interface_x(WINTYPE_IFACEBAR) + get_interface_width(WINTYPE_IFACEBAR) - BUTTON_RIGHT_OFFSET,
       y := (get_screen_height - BUTTON_BOTTOM_OFFSET);
-   create_win_flag(WIN_CRAFT_BTN, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, WIN_FLAG_DONTMOVE bwor WIN_FLAG_MOVEONTOP);
+   create_win_flag(WIN_CRAFT_BTN, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, WIN_FLAG_DONTMOVE bwor (WIN_FLAG_MOVEONTOP if onTop else 0));
    SelectWin(WIN_CRAFT_BTN);
    AddButton("but", 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT);
    AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);
    AddButtonProc("but", do_on, do_off, do_down, do_up);
    ShowWin;
+   crafting_button_top := onTop;
    crafting_button_shown := true;
 end
 

@@ -369,7 +369,7 @@ procedure display_item_options begin
       if (max_batch > 0) then SayOption("1. " + mstr_craft(103), batch_one_item);
       if (max_batch > 1) then SayOption("2. " + mstr_craft(108) + " (" + (max_batch * cur_recipe_batch_size) + ")", batch_all_items);
       if (max_undo > 0) then SayOption("3. " + mstr_craft(104), undo_one_item);
-      if (max_undo > 1) then SayOption("4. " + mstr_craft(109) + mstr_craft(110) + max_undo + mstr_craft(111), undo_all_items);
+      if (max_undo > 1) then SayOption("4. " + mstr_craft(109) + mstr_craft(110) + (max_undo * cur_recipe_batch_size) + mstr_craft(111), undo_all_items);
       SayOption("0: "+mstr_craft(102), items_list_mode);
       if (use_categories) then
          SayOption(mstr_craft(112), item_categories_mode);
@@ -750,7 +750,7 @@ procedure draw_item_properties begin
    if not(hasTools and hasSkills and hasComponents) then max_batch := 0;
 
    // Check if disassembly is possible.
-   max_undo := party_is_carrying_obj_pid(cur_recipe.pid)
+   max_undo := (party_is_carrying_obj_pid(cur_recipe.pid) / cur_recipe.qty)
       if (cur_recipe.undo and hasTools and hasSkills)
       else 0;
 

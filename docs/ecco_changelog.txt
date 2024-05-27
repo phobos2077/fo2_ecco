@@ -22,6 +22,7 @@ v0.9.6:
 
 > Balance:
 - changed monster part quests requirements/rewards ratio to make economic sense
+- reduced drugs in dead NPC's by further 40%
 - minor weapon stat tweaks
 
 > Installer:
