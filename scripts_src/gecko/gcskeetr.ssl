@@ -153,20 +153,15 @@ procedure Node150;
 #define give_skeeter_money(x)         dude_caps_adjust(-x);  \
                                        self_caps_adjust(x)
 
-// Begin Seraph's Fixes: changed each '250' to '25000' and added '/100' to the end
-// Magnum: replaced '2000' with '400'
-#define MCOST                          ((400 * (25000/(160 + (has_skill(dude_obj, SKILL_BARTER)))))/100)
-// Desert Eagle: replaced '3000' with '1500'
-#define DECOST                         ((1500 * (25000/(160 + (has_skill(dude_obj, SKILL_BARTER)))))/100)
-// Hunting Rifle: replaced '4000' with '1750'
-#define HRCOST                         ((1750 * (25000/(160 + (has_skill(dude_obj, SKILL_BARTER)))))/100)
-// Assault Rifle: replaced '6000' with '2000'
-#define ARCOST                         ((2000 * (25000/(160 + (has_skill(dude_obj, SKILL_BARTER)))))/100)
-// FN FAL: replaced '12000' with '4000'
-#define FNCOST                         ((4000 * (25000/(160 + (has_skill(dude_obj, SKILL_BARTER)))))/100)
-// Cattle Prod: replaced '3000' with '1500'
-#define CPCOST                         ((1500 * (25000/(160 + (has_skill(dude_obj, SKILL_BARTER)))))/100)
-// End Seraph's Fixes
+// Seraph's Fixes: changed each '250' to '25000' and added '/100' to the end
+// phobos2077: reduced prices to reasonable levels
+#define calc_upgrade_cost(base)       ((base * (25000/(160 + (has_skill(dude_obj, SKILL_BARTER)))))/100)
+#define MCOST                          calc_upgrade_cost(300)
+#define DECOST                         calc_upgrade_cost(300)
+#define HRCOST                         calc_upgrade_cost(500)
+#define ARCOST                         calc_upgrade_cost(800)
+#define FNCOST                         calc_upgrade_cost(1000)
+#define CPCOST                         calc_upgrade_cost(600)
 
 #include "../_pbs_craft/learn_craft_skeeter.h" // by phobos2077
 

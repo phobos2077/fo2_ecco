@@ -40,6 +40,18 @@
 #define HEAD_VALERIE       (30)
 #define start_dialog_check_head_valerie      start_gdialog_check_talking_head(4, HEAD_VALERIE, BACKGROUND_ADOBE)
 
+// pbs: reduced upgrade prices
+#define UPGRADE_COST_MAGNUM        (400)
+#define UPGRADE_COST_MAGNUM_LOW    (300)
+#define UPGRADE_COST_DE            (400)
+#define UPGRADE_COST_DE_LOW        (300)
+#define UPGRADE_COST_ASSAULT      (1200)
+#define UPGRADE_COST_ASSAULT_LOW   (800)
+#define UPGRADE_COST_FAL          (1500)
+#define UPGRADE_COST_FAL_LOW      (1000)
+#define UPGRADE_COST_PROD          (800)
+#define UPGRADE_COST_PROD_LOW      (600)
+
 /* Standard Script Procedures */
 procedure start;
 procedure critter_p_proc;
@@ -737,20 +749,21 @@ end
 
 procedure Node034 begin
    if( ( dude_item_count( PID_44_MAGNUM_REVOLVER) > 0) and ( dude_item_count( PID_DESERT_EAGLE) > 0) ) then
-      Reply_THAT(7703, mstr(224) + " " + mstr(225) );
+      Reply_THAT(string_format(mstr(7703), UPGRADE_COST_MAGNUM, UPGRADE_COST_DE),
+         sprintf(mstr(224), UPGRADE_COST_MAGNUM) + " " + sprintf(mstr(225), UPGRADE_COST_DE) );
    else if( dude_item_count( PID_44_MAGNUM_REVOLVER) > 0) then
-      Reply(224);
+      Reply(sprintf(mstr(224), UPGRADE_COST_MAGNUM));
    else if( dude_item_count( PID_DESERT_EAGLE) ) then
-      Reply(225);
+      Reply(sprintf(mstr(225), UPGRADE_COST_DE));
 
-   if( (dude_item_count( PID_44_MAGNUM_REVOLVER) > 0) and ( dude_caps >= 800) ) then
+   if( (dude_item_count( PID_44_MAGNUM_REVOLVER) > 0) and ( dude_caps >= UPGRADE_COST_MAGNUM) ) then
       NOption(226, Node034a, 004);
-   if( (dude_item_count( PID_44_MAGNUM_REVOLVER) > 0) and ( dude_caps >= 650) and
+   if( (dude_item_count( PID_44_MAGNUM_REVOLVER) > 0) and ( dude_caps >= UPGRADE_COST_MAGNUM_LOW) and
        ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
-      NOption(227, Node034b, 004);
-   if( (dude_item_count( PID_DESERT_EAGLE) > 0) and ( dude_caps >= 1000) ) then
-      NOption(228, Node034c, 004);
-   if( (dude_item_count( PID_DESERT_EAGLE) > 0) and ( dude_caps >= 850) and
+      NOption(sprintf(mstr(227), UPGRADE_COST_MAGNUM_LOW), Node034b, 004);
+   if( (dude_item_count( PID_DESERT_EAGLE) > 0) and ( dude_caps >= UPGRADE_COST_DE) ) then
+      NOption(sprintf(mstr(228), UPGRADE_COST_DE_LOW), Node034c, 004);
+   if( (dude_item_count( PID_DESERT_EAGLE) > 0) and ( dude_caps >= UPGRADE_COST_DE_LOW) and
        ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
       NOption(229, Node034d, 004);
    NOption(230, Node033, 004);
@@ -762,7 +775,7 @@ end
 procedure Node034a begin
    variable weapon;
 
-   dude_caps_adjust( -800);
+   dude_caps_adjust( -UPGRADE_COST_MAGNUM);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_44_MAGNUM_REVOLVER, PID_44_MAGNUM_SPEEDLOADER);
@@ -774,7 +787,7 @@ procedure Node034b begin
    variable weapon;
 
    Barter_Succeeds := 1;
-   dude_caps_adjust( -650);
+   dude_caps_adjust( -UPGRADE_COST_MAGNUM_LOW);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_44_MAGNUM_REVOLVER, PID_44_MAGNUM_SPEEDLOADER);
@@ -785,7 +798,7 @@ end
 procedure Node034c begin
    variable weapon;
 
-   dude_caps_adjust( -1000);
+   dude_caps_adjust( -UPGRADE_COST_DE);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_DESERT_EAGLE, PID_DESERT_EAGLE_EXT_MAG);
@@ -797,7 +810,7 @@ procedure Node034d begin
    variable weapon;
 
    Barter_Succeeds := 1;
-   dude_caps_adjust( -850);
+   dude_caps_adjust( -UPGRADE_COST_DE_LOW);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_DESERT_EAGLE, PID_DESERT_EAGLE_EXT_MAG);
@@ -807,22 +820,23 @@ end
 
 procedure Node035 begin
    if( ( dude_item_count( PID_ASSAULT_RIFLE) > 0) and ( dude_item_count( PID_FN_FAL) > 0) ) then
-      Reply_THAT(7704, mstr(234) + " " + mstr(235) );
+      Reply_THAT(string_format(mstr(7704), UPGRADE_COST_ASSAULT, UPGRADE_COST_FAL),
+         sprintf(mstr(234), UPGRADE_COST_ASSAULT) + " " + sprintf(mstr(235), UPGRADE_COST_FAL) );
    else if( dude_item_count( PID_ASSAULT_RIFLE) > 0) then
-      Reply(234);
+      Reply(sprintf(mstr(234), UPGRADE_COST_ASSAULT));
    else if( dude_item_count( PID_FN_FAL) ) then
-      Reply(235);
+      Reply(sprintf(mstr(235), UPGRADE_COST_FAL));
 
-   if( (dude_item_count( PID_ASSAULT_RIFLE) > 0) and ( dude_caps >= 1500) ) then
+   if( (dude_item_count( PID_ASSAULT_RIFLE) > 0) and ( dude_caps >= UPGRADE_COST_ASSAULT) ) then
       NOption(236, Node035a, 004);
-   if( (dude_item_count( PID_ASSAULT_RIFLE) > 0) and ( dude_caps >= 1350) and
+   if( (dude_item_count( PID_ASSAULT_RIFLE) > 0) and ( dude_caps >= UPGRADE_COST_ASSAULT_LOW) and
         ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
-      NOption(237, Node035b, 004);
-   if( (dude_item_count( PID_FN_FAL) > 0) and ( dude_caps >= 3500) ) then
+      NOption(sprintf(mstr(237), UPGRADE_COST_ASSAULT_LOW), Node035b, 004);
+   if( (dude_item_count( PID_FN_FAL) > 0) and ( dude_caps >= UPGRADE_COST_FAL) ) then
       NOption(238, Node035c, 004);
-   if( (dude_item_count( PID_FN_FAL) > 0) and ( dude_caps >= 3100) and
+   if( (dude_item_count( PID_FN_FAL) > 0) and ( dude_caps >= UPGRADE_COST_FAL_LOW) and
         ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
-      NOption(239, Node035d, 004);
+      NOption(sprintf(mstr(239), UPGRADE_COST_FAL_LOW), Node035d, 004);
    NOption(240, Node033, 004);
    NOption(241, Node027, 004);
    NOption(242, Node999, 004);
@@ -832,7 +846,7 @@ end
 procedure Node035a begin
    variable weapon;
 
-   dude_caps_adjust( -1500);
+   dude_caps_adjust( -UPGRADE_COST_ASSAULT);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_ASSAULT_RIFLE, PID_ASSAULT_RIFLE_EXT_MAG);
@@ -844,7 +858,7 @@ procedure Node035b begin
    variable weapon;
 
    Barter_Succeeds := 1;
-   dude_caps_adjust( -1350);
+   dude_caps_adjust( -UPGRADE_COST_ASSAULT_LOW);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_ASSAULT_RIFLE, PID_ASSAULT_RIFLE_EXT_MAG);
@@ -855,7 +869,7 @@ end
 procedure Node035c begin
    variable weapon;
 
-   dude_caps_adjust( -3500);
+   dude_caps_adjust( -UPGRADE_COST_FAL);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_FN_FAL, PID_FN_FAL_NIGHT_SCOPE);
@@ -867,7 +881,7 @@ procedure Node035d begin
    variable weapon;
 
    Barter_Succeeds := 1;
-   dude_caps_adjust( -3100);
+   dude_caps_adjust( -UPGRADE_COST_FAL_LOW);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_FN_FAL, PID_FN_FAL_NIGHT_SCOPE);
@@ -876,12 +890,12 @@ procedure Node035d begin
 end
 
 procedure Node036 begin
-   Reply(244);
+   Reply(sprintf(mstr(244), UPGRADE_COST_PROD));
 
-   if( dude_caps >= 750) then
+   if( dude_caps >= UPGRADE_COST_PROD) then
       NOption(245, Node036a, 004);
-   if( ( dude_caps >= 650) and ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
-      NOption(246, Node036b, 004);
+   if( ( dude_caps >= UPGRADE_COST_PROD_LOW) and ( ( dude_charisma > 5 ) or ( has_skill( dude_obj, SKILL_BARTER ) >= 75 ) ) ) then
+      NOption(sprintf(mstr(246), UPGRADE_COST_PROD_LOW), Node036b, 004);
    NOption(247, Node033, 004);
    NOption(248, Node027, 004);
    NOption(249, Node999, 004);
@@ -891,7 +905,7 @@ end
 procedure Node036a begin
    variable weapon;
 
-   dude_caps_adjust( -750);
+   dude_caps_adjust( -UPGRADE_COST_PROD);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_CATTLE_PROD, PID_SUPER_CATTLE_PROD);
@@ -903,7 +917,7 @@ procedure Node036b begin
    variable weapon;
 
    Barter_Succeeds := 1;
-   dude_caps_adjust( -650);
+   dude_caps_adjust( -UPGRADE_COST_PROD_LOW);
 
    // Remove old weapon, add new.
    call upgrade_weapon(PID_CATTLE_PROD, PID_SUPER_CATTLE_PROD);

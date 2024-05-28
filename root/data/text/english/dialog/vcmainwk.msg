@@ -124,29 +124,29 @@
 {221}{}{Show her your general inventory.}
 {222}{}{Never mind. I wanted to know something else...}
 {223}{}{Maybe some other time.}
-{224}{VCVAL33}{I could put a speed loader on that magnum of yours for $800.}
-{225}{VCVAL34}{Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $1000.}
+{224}{VCVAL33}{I could put a speed loader on that magnum of yours for $%d.}
+{225}{VCVAL34}{Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $%d.}
 {226}{}{Upgrade the magnum.}
-{227}{}{How about $650 for the magnum upgrade instead?}
+{227}{}{How about $%d for the magnum upgrade instead?}
 {228}{}{Upgrade the Desert Eagle.}
-{229}{}{How about $850 for the Desert Eagle?}
+{229}{}{How about $%d for the Desert Eagle?}
 {230}{}{Forget the pistols. Can you upgrade any of my other weapons?}
 {231}{}{I wanted to know something else...}
 {232}{}{I'll be back when I have some more cash.}
 {233}{}{Hmmm. Maybe some other time.}
-{234}{VCVAL36}{That assault rifle you got there... I can give it an expanded magazine for $1500.}
-{235}{VCVAL37}{Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $3500.}
+{234}{VCVAL36}{That assault rifle you got there... I can give it an expanded magazine for $%d.}
+{235}{VCVAL37}{Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $%d.}
 {236}{}{Expand the magazine of the AK-112 assault rifle.}
-{237}{}{How about $1350 for upgrading the assault rifle?}
+{237}{}{How about $%d for upgrading the assault rifle?}
 {238}{}{Attach that low-light scope on the FN FAL.}
-{239}{}{How about $3100 for the low-light scope?}
+{239}{}{How about $%d for the low-light scope?}
 {240}{}{Could you upgrade one of my other weapons?}
 {241}{}{Never mind. I wanted something else...}
 {242}{}{Actually, none of them. I have to go.}
 {243}{}{I'll be back when I have more cash to spare.}
-{244}{VCVAL38}{I suppose I could juice up that cattleprod for you. It'll cost you $750.}
+{244}{VCVAL38}{I suppose I could juice up that cattleprod for you. It'll cost you $%d.}
 {245}{}{All right. }
-{246}{}{How about $650 instead?}
+{246}{}{How about $%d instead?}
 {247}{}{Actually, could you upgrade one of my other weapons instead?}
 {248}{}{Nevermind. I wanted something else...}
 {249}{}{Actually, none of them. I have to go.}
@@ -284,7 +284,7 @@
 {7700}{VCVAL1}{Well, if it isn't my Dad's "boss." Did you WANT something, or are you just going to stand there gawking like a moron?}
 {7701}{VCVAL2}{Yes?! Did you WANT something, or are you just going to stand there gawking like a moron?}
 {7702}{VCVAL26}{Heh-heh. You've got a sarcastic edge. I like that. As for ol' "Dad"... well... hmmm. I'll try and be a little more civil. For a while, anyway. Um... make sure he stays out of trouble, all right?}
-{7703}{VCVAL32}{I could put a speed loader on that magnum of yours for $800. Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $1000.}
-{7704}{VCVAL35}{That assault rifle you got there... I can give it an expanded magazine for $1500. Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $3500.}
+{7703}{VCVAL32}{I could put a speed loader on that magnum of yours for $%d. Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $%d.}
+{7704}{VCVAL35}{That assault rifle you got there... I can give it an expanded magazine for $%d. Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $%d.}
 {7705}{VCVAL44}{Hey! Glad you made it back. Last I heard, you were traveling down south, gunning up old tankers and blowing up oil derricks. You come back here for a little peace and quiet, Mr. Big Hero?}
 {7706}{VCVAL45}{Hey! Glad you made it back. Last I heard, you were traveling down south, gunning up old tankers and blowing up oil derricks. You come back here for a little peace and quiet, Ms. Big Heroine?}

@@ -122,29 +122,29 @@
 {221}{}{Показать ей ваше общее снаряжение.}
 {222}{}{Ладно, не стоит. Я хочу еще кое-что спросить...}
 {223}{}{Может быть, в другой раз.}
-{224}{VCVAL33}{Я могу поставить ускоритель перезарядки на ваш Магнум за $800.}
-{225}{VCVAL34}{Хмммм. Этот ваш Дезерт Игл... Если хотите, я могу поставить увеличенный магазин. Это будет стоить $1000.}
+{224}{VCVAL33}{Я могу поставить ускоритель перезарядки на ваш Магнум за $%d.}
+{225}{VCVAL34}{Хмммм. Этот ваш Дезерт Игл... Если хотите, я могу поставить увеличенный магазин. Это будет стоить $%d.}
 {226}{}{Улучшить Магнум.}
-{227}{}{Как насчет $650 за усовершенствование Магнума?}
+{227}{}{Как насчет $%d за усовершенствование Магнума?}
 {228}{}{Улучшить Дезерт Игл.}
-{229}{}{Как насчет $850 за Дезерт Игл?}
+{229}{}{Как насчет $%d за Дезерт Игл?}
 {230}{}{Забудьте о пистолетах. Вы можете улучшить какое-нибудь другое оружие?}
 {231}{}{Мне еще кое-что нужно спросить...}
 {232}{}{Я еще зайду, когда у меня будет побольше денег.}
 {233}{}{Хммм. Может, в другой раз.}
-{234}{VCVAL36}{Эта ваша штурмовая винтовка... Я могу поставить увеличенный магазин за $1500.}
-{235}{VCVAL37}{Хмммм. У меня есть прибор ночного видения, который я могу установить на ваш FN FAL за $3500.}
+{234}{VCVAL36}{Эта ваша штурмовая винтовка... Я могу поставить увеличенный магазин за $%d.}
+{235}{VCVAL37}{Хмммм. У меня есть прибор ночного видения, который я могу установить на ваш FN FAL за $%d.}
 {236}{}{Увеличь магазин штурмовой винтовки AK-112.}
-{237}{}{Как насчет $1350 за улучшение штурмовой винтовки?}
+{237}{}{Как насчет $%d за улучшение штурмовой винтовки?}
 {238}{}{Присобачь прибор ночного видения к FN FAL.}
-{239}{}{Как насчет $3100 за прибор ночного видения?}
+{239}{}{Как насчет $%d за прибор ночного видения?}
 {240}{}{Вы можете усовершенствовать какое-нибудь другое оружие?}
 {241}{}{Ладно, забудем. У меня был еще один вопрос...}
 {242}{}{Вообще-то мне ничего не нужно. Мне пора идти.}
 {243}{}{Я еще вернусь, когда разживусь деньгами.}
-{244}{VCVAL38}{Думаю, я могу отремонтировать для вас пастуший кнут. Это будет стоить вам $750.}
+{244}{VCVAL38}{Думаю, я могу отремонтировать для вас пастуший кнут. Это будет стоить вам $%d.}
 {245}{}{Ясно.}
-{246}{}{Как насчет $650?}
+{246}{}{Как насчет $%d?}
 {247}{}{Вы можете усовершенствовать какое-нибудь другое оружие?}
 {248}{}{Неважно. Мне нужно от тебя кое-что еще...}
 {249}{}{Вообще-то мне ничего не нужно. Мне пора идти.}
@@ -285,8 +285,8 @@
 {7700}{VCVAL1}{Батюшки, да это же "босс" моего папочки. Did you WANT something, or are you just going to stand there gawking like a moron?}
 {7701}{VCVAL2}{Yes?! Did you WANT something, or are you just going to stand there gawking like a moron?}
 {7702}{VCVAL26}{Heh-heh. You've got a sarcastic edge. I like that. As for ol' "Dad"... well... hmmm. I'll try and be a little more civil. For a while, anyway. Um... make sure he stays out of trouble, all right?}
-{7703}{VCVAL32}{I could put a speed loader on that magnum of yours for $800. Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $1000.}
-{7704}{VCVAL35}{That assault rifle you got there... I can give it an expanded magazine for $1500. Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $3500.}
+{7703}{VCVAL32}{I could put a speed loader on that magnum of yours for $%d. Hmmmm. That Desert Eagle you have... I could give it an expanded magazine, if you want. That'll cost $%d.}
+{7704}{VCVAL35}{That assault rifle you got there... I can give it an expanded magazine for $%d. Hmmmm. I've got a low-light scope I can put on that FN FAL you got for $%d.}
 {7705}{VCVAL44}{Hey! Glad you made it back. Last I heard, you were traveling down south, gunning up old tankers and blowing up oil derricks. You come back here for a little peace and quiet, Mr. Big Hero?}
 {7706}{VCVAL45}{Hey! Glad you made it back. Last I heard, you were traveling down south, gunning up old tankers and blowing up oil derricks. You come back here for a little peace and quiet, Ms. Big Heroine?}
 
