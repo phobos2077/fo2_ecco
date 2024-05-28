@@ -53,8 +53,8 @@
 #define teacher_no      (1)
 #define teacher_yes     (2)
 #define teacher_taught  (3)
-#define TEACHER_PRICE   (200)
-#define CRAFT_PRICE     (200)
+#define TEACHER_PRICE   (150)
+#define CRAFT_PRICE     (100)
 
 
 procedure NodeTeach1;
@@ -326,7 +326,7 @@ procedure NodeTeach1 begin
 end
 
 procedure NodeTeach2 begin
-   Reply(505);
+   Reply(sprintf(mstr(505), TEACHER_PRICE));
    
    if (dude_caps > TEACHER_PRICE) then begin
       NOption(506,NodeTeach3,004);
@@ -357,7 +357,7 @@ procedure NodeCraft1 begin
 end
 
 procedure NodeCraft2 begin
-   Reply(533);
+   Reply(sprintf(mstr(533), CRAFT_PRICE));
    
    if (dude_caps >= CRAFT_PRICE) then
       NOption(534,NodeCraft3,004);

@@ -86,7 +86,7 @@
 {501}{}{You look like you know how to handle geckos. Can you teach me something?}
 {502}{}{Me wants skin Gecko. Trapper knows. Trapper teach us.}
 {503}{}{Nothing.}
-{505}{}{Damn right I can. But I see no reason to help you for free. $200 should cover it.}
+{505}{}{Damn right I can. But I see no reason to help you for free. $%d should cover it.}
 {506}{}{Here is your money.}
 {507}{}{I don't have such money.}
 {508}{}{Money, here.}
@@ -104,7 +104,7 @@
 {530}{}{Hey, what do people do with all the gecko skins?}
 {531}{}{They make tough clothing and leather armor, as far as I know. Well, I know they make leather jackets, because I even know how to do it.}
 {532}{}{You know how to make a leather jacket? Could you teach me?}
-{533}{}{Sure, if you give me $200. Don't ask me, how to make Leather armor though, there's more to it than I know. Jackets are simple enough.}
+{533}{}{Sure, if you give me $%d. Don't ask me, how to make Leather armor though, there's more to it than I know. Jackets are simple enough.}
 
 {534}{}{All right, here's your money.}
 {535}{}{I think I'll pass.}

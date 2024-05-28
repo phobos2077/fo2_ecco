@@ -1,0 +1,754 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Doc Jubilee
+        Location: NCR 1 in the hospital
+        Description: She is the docotor
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "scdocjub"
+#include "../headers/define.h"
+#include "../headers/ncr1.h"
+
+#define NAME                    SCRIPT_SCDOCJUB
+#define TOWN_REP_VAR         GVAR_TOWN_REP_NCR
+
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+
+#include "../headers/ncr.h"
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+
+//added by killap - RP
+procedure Node021;
+procedure Node022;
+procedure Node022a;
+procedure Node023;
+procedure Node023a;
+procedure Node023b;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node900;
+//end added
+
+procedure check_pills;
+procedure check_poison;
+procedure checkItems;
+
+#define TIMER_CHECK_ITEMS 1
+#define CAUGHT_STEALING 1
+#define STEALING_SUCCESS 2
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Attacking                  (7)
+#define LVAR_Sold_Paint                 (8)
+#define LVAR_Westin_Pill_Pickup_Counter (9) //added by killap - RP
+#define LVAR_Stealing_Pills             (10) //added by killap - RP
+#define LVAR_Pill_Inquiry               (11) //added by killap - RP
+
+// ecco:
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head           start_gdialog_check_talking_head(4, HEAD_DOCJ, BACKGROUND_ADOBE)
+// ;
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+import variable i_doc_shelf_obj;
+import variable i_doc_shelf_notify;
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable Node8Count := 0;
+
+procedure start begin
+end
+
+procedure combat_p_proc begin
+   if not local_var(LVAR_Attacking) then begin
+      script_overrides;
+   end
+end
+
+procedure timed_event_p_proc begin
+   if (fixed_param == TIMER_CHECK_ITEMS) then begin
+      call checkItems;
+   end
+end
+
+// added by killap
+procedure map_update_p_proc begin
+  variable count;
+  variable tmp;
+  if (i_doc_shelf_obj != -1) then begin
+    count := get_item_count(i_doc_shelf_obj, PID_FAKE_HEART_PILLS);
+    if (count and (local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) <= 0) then begin
+      tmp := get_item(i_doc_shelf_obj, PID_FAKE_HEART_PILLS);
+      rm_obj_from_inven(i_doc_shelf_obj, tmp);
+      destroy_object(tmp);
+      set_westin_flag(WESTIN_DEAD);
+      set_westin_flag(WESTIN_HEART_PILLS_DEATH);
+      if (global_var(GVAR_NCR_ELMBISHOP_QST) == 1) then
+        set_global_var(GVAR_NCR_ELMBISHOP_QST, 3);
+      // fail the brahmin quest if it's active and Westin is killed
+      if (global_var(GVAR_NCR_BRAHMIN_QST) == 1) then begin
+        set_global_var(GVAR_NCR_BRAHMIN_QST, 2);
+        set_felix_seed(FELIX_CRITTERS_DONE);
+      end
+    end
+  end
+end
+// end added
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   variable obj;
+
+   Only_Once:=0;
+
+   set_self_team(TEAM_NCR);
+   set_self_ai(AI_DOCTOR);
+
+/*   if (not self_item(PID_FUZZY_PAINTING) and not local_var(LVAR_Sold_Paint)) then begin
+      add_obj_to_inven(self_obj, obj);
+      wield_obj(obj);
+   end*/
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+   if (i_doc_shelf_notify == 1) then begin
+
+      i_doc_shelf_notify := 0;
+      add_timer_event(self_obj, game_ticks(1), TIMER_CHECK_ITEMS);
+   end
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (obj_in_party(source_obj)) then begin
+      set_local_var(LVAR_Personal_Enemy,1);
+      set_local_var(LVAR_Attacking, 1);
+      set_ncr_flag(NCR_GUARD_ENEMY);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_INTOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION7;
+
+   CheckKarma;
+
+   GetReaction;
+
+   ndebug("LVAR_Sold_Paint: " + local_var(LVAR_Sold_Paint));
+
+   if ((local_var(LVAR_Westin_Pill_Pickup_Counter) != -1) and (local_var(LVAR_Westin_Pill_Pickup_Counter) == 0) or ((local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) <= 0)) then
+      set_local_var(LVAR_Westin_Pill_Pickup_Counter, (GAME_TIME_IN_DAYS + 14));
+
+   //added by killap - expansion
+   check_forced_dialog
+   else if (dude_max_hits != dude_cur_hits) then begin
+       start_dialog_check_head;
+       gSay_Start;
+           call Node001;
+       gSay_End;
+       end_dialogue;
+   end else if (dude_max_hits == dude_cur_hits) then begin
+       start_dialog_check_head;
+       gSay_Start;
+           call Node008;
+       gSay_End;
+       end_dialogue;
+   end
+   Node8Count := 0;
+   set_local_var(LVAR_Herebefore, 1);
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Herebefore) == 0) then
+      display_msg(mstr(100));
+   else
+      display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node24 begin
+   if (dude_max_hits - dude_cur_hits <= 10) then
+      call Node004;
+   else
+      call Node002;
+end
+
+procedure Node001 begin
+   if (dude_is_male) then begin
+      if (local_var(LVAR_Herebefore) == 0) then
+         Reply(103);
+      else
+         Reply(104);
+
+   end else begin
+      if (local_var(LVAR_Herebefore) == 0) then
+         Reply(170);
+      else
+         Reply(171);
+   end
+   NLowOption(105, Node24);
+   NOption(106, Node24, 4);
+end
+
+procedure Node002 begin
+   Reply(109);
+   NOption(110, Node005, 4);
+   NLowOption(111, NOde004);
+end
+
+procedure doHeal begin
+   fadeout(1);
+   critter_heal(dude_obj, dude_max_hits - dude_cur_hits);
+   game_time_advance(ONE_GAME_HOUR);
+   fadein(1);
+end
+
+procedure Node3Heal begin
+   if (dude_caps >= 50) then begin
+      call doHeal;
+      dude_caps_adjust(-50);
+      self_caps_adjust(50);
+      call Node003;
+   end else begin
+      call Node007;
+   end
+end
+
+procedure Node003 begin
+   if (dude_is_male) then
+      Reply(112);
+   else
+      Reply(172);
+
+   if (dude_max_hits > dude_cur_hits) then
+      NOption(113, Node3Heal, 1);
+   NOption(114, Node008, 4);
+   NOption(115, Node999, 1);
+end
+
+procedure Node004 begin
+   if (dude_level <= 5) then
+      Reply(mstr(107) + " " + mstr(116));
+   else
+      Reply(mstr(108) + " " + mstr(116));
+   if (dude_max_hits > dude_cur_hits) then
+      NOption(117, Node3Heal, 4);
+   NOption(118, Node999, 4);
+   if (dude_max_hits > dude_cur_hits) then
+      NLowOption(119, Node3Heal);
+   NLowOption(120, Node999);
+end
+
+procedure Node005 begin
+   Reply(121);
+   NOption(122, Node006, 4);
+   NOption(123, Node999, 4);
+end
+
+procedure Node006 begin
+   Reply(124);
+   MOREOPTION(Node004);
+end
+
+procedure Node007 begin
+   Reply(125);
+   ENDOPTION;
+end
+
+procedure Node008 begin
+   Node8Count += 1;
+
+   // added by killap - RP
+   if (get_westin_flag(WESTIN_HEART_PILLS_DEATH) and local_var(LVAR_Westin_Pill_Pickup_Counter) != -1) then begin
+     set_local_var(LVAR_Westin_Pill_Pickup_Counter, -1);
+     Reply(330);
+   end else if ( (local_var(LVAR_Stealing_Pills) == STEALING_SUCCESS) and (local_var(LVAR_Pill_Inquiry) == 0) ) then begin
+      set_westin_flag(WESTIN_PILLS_KNOW);
+      Reply(324);
+      NOption(325, Node022, 4);
+   end else if (Node8Count == 1) then begin
+      Reply(126);
+   end else begin
+      Reply(127);
+   end
+
+   if (not V13KNOWN) then
+      NLowOption(128, Node011);
+   NOption(129, Node011, 4);
+   if (westinValid) then
+      NOption(130, Node009, 7);
+   if (ncr_global_state(NCR_SALBOB_REF_DOCTOR)) then
+      NOption(131, Node010, 4);
+   NOption(132, Node016, 4);
+
+   // added by killap - RP
+   if not(get_westin_flag(WESTIN_DEAD)) then begin
+     if (local_var(LVAR_Pill_Inquiry) == 1) then
+       NOption(310, Node022, 4);
+     else if (local_var(LVAR_Pill_Inquiry) == 2) then
+       NOption(311, Node036, 4);
+   end
+   // end added
+
+   if (ncr_rangers_known) then
+      NOption(133, Node017, 4);
+
+   NOption(115, Node999, 1); //added by killap
+end
+
+procedure Node009 begin
+   if (dude_is_male) then
+      Reply(134);
+   else
+      Reply(173);
+   NOption(135, Node008, 4);
+   NOption(136, Node999, 4);
+end
+
+procedure Node010 begin
+   Reply(137);
+   if (local_var(LVAR_Sold_Paint) == 0) then begin
+      NOption(138, Node014, 4);
+   end
+   NOption(139, Node008, 4);
+   NOption(140, Node999, 4);
+end
+
+procedure Node011 begin
+   Reply(141);
+   NOption(142, Node013, 1);
+   NOption(143, Node012, 4);
+   NLowOption(144, Node012);
+end
+
+procedure Node012 begin
+   Reply(145);
+   NOption(146, Node015, 1);
+   //NLowOption(147, Node999); //edit by killap - was Node999
+   NOption(148, Node999, 4);
+   NLowOption(120, Node999); //added by killap
+end
+
+procedure Node013 begin
+   Reply(149);
+   NOption(150, Node008, 4);
+   NOption(151, Node999, 4);
+   NLowOption(147, Node008); //added by NovaRain
+   NLowOption(120, Node999); //added by NovaRain
+end
+
+// pbs: reduced painting cost from 10000
+#define VAULT13_PAINTING_COST       (6000)
+
+procedure NodeSell begin
+   dude_caps_adjust(-VAULT13_PAINTING_COST);
+   self_caps_adjust(VAULT13_PAINTING_COST);
+   add_obj_to_inven(dude_obj, create_object_sid(PID_FUZZY_PAINTING,0,0,SCRIPT_SIPAINT));
+   set_local_var(LVAR_Sold_Paint, 1);
+   call Node020;
+end
+
+procedure Node014 begin
+   Reply(mstr(152) + VAULT13_PAINTING_COST + mstr(176));
+   NOption(153, Node008, 4);
+   if (dude_caps >= VAULT13_PAINTING_COST) then
+      NOption(mstr(174) + VAULT13_PAINTING_COST + mstr(176), NodeSell, 4);
+   NOption(154, Node999, 4);
+end
+
+procedure Node015 begin
+   Reply(155);
+
+   NLowOption(147, Node008); //added by killap
+   NLowOption(120, Node999); //added by killap
+   NOption(156, Node008, 4);
+   NOption(157, Node999, 4);
+end
+
+procedure Node016 begin
+   set_global_var(GVAR_NCR_TANDI_WORK, 1);
+   Reply(158);
+   NOption(159, Node008, 4);
+   NOption(160, Node999, 4);
+end
+
+procedure Node017 begin
+   ncr_set_global_state(NCR_DOC_REF_RANGERS);
+   Reply(161);
+   NOption(162, Node008, 4);
+   NOption(163, Node999, 4);
+end
+
+procedure Node018 begin
+   float_msg(self_obj, mstr(164 + Random(0, 2)), FLOAT_MSG_RED);
+end
+
+procedure Node019 begin
+   // added by killap
+   if not(get_westin_flag(WESTIN_DEAD)) then begin
+     if (local_var(LVAR_Stealing_Pills) == 0) then begin
+       set_westin_flag(WESTIN_PILLS_KNOW);
+       set_local_var(LVAR_Stealing_Pills,CAUGHT_STEALING);
+       force_dialog_start(@Node021);
+     end else if (local_var(LVAR_Stealing_Pills) == CAUGHT_STEALING) then begin
+       float_msg(self_obj, mstr(167 + Random(0, 2)), FLOAT_MSG_RED);
+     end
+   end
+end
+
+procedure Node020 begin
+   Reply(175);
+   NOption(159, Node008, 4);
+   NOption(160, Node999, 4);
+end
+
+// added by killap - RP
+procedure Node021 begin
+   Reply(mstr(200) + mstr(201+dude_is_female) + mstr(203));
+   NOption(204, Node022, 4);
+   NOption(205, Node023, 4);
+   NOption(206, Node024, 4);
+   BOption(207, Node998, 4);
+end
+
+procedure Node022 begin
+   set_local_var(LVAR_Stealing_Pills,3);
+   Reply(210);
+   if (MacRae_In_Party) then
+     NOption(211, Node025, 4);
+   NOption(212, Node022a, 4);
+   NOption(213, Node024, 4);
+end
+
+procedure Node022a begin
+   if (has_skill(dude_obj,SKILL_SPEECH) >= 65) then
+      call Node025;
+   else
+      call Node026;
+end
+
+procedure Node023 begin
+   Reply(220);
+   NOption(221, Node900, 4);
+   NOption(222, Node023a, 4);
+   NOption(223, Node023b, 4);
+end
+
+procedure Node023a begin
+   call Node900;
+   call Node008;
+end
+
+procedure Node023b begin
+   call Node900;
+   call Node027;
+end
+
+procedure Node024 begin
+   Reply(230);
+   if (get_westin_flag(WESTIN_DRUGS_KNOWN) or (MacRae_In_Party)) then begin
+     NOption(231, Node025, 4);
+   end else begin
+     NOption(g_mstr(350), Node900, 4);
+   end
+end
+
+procedure Node025 begin
+   Reply(mstr(240) + mstr(241 + dude_is_female) + mstr(243) + (local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) + mstr(244 + ((local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) == 1)) + mstr(246));
+   NOption(247, Node030, 4);
+   NOption(248, Node029, 4);
+end
+
+procedure Node026 begin
+   set_local_var(LVAR_Pill_Inquiry,2);
+   Reply(250);
+   NOption(g_mstr(350), Node999, 4);
+end
+
+procedure Node027 begin
+   Reply(mstr(260) + mstr(261 + dude_is_female) + mstr(263));
+   BOption(264, Node034, 4);
+   NOption(265, Node900, 4);
+end
+
+procedure Node028 begin
+   set_local_var(LVAR_Pill_Inquiry,2);
+   Reply(mstr(270) + (local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) + mstr(271 + ((local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) == 1)) + mstr(273));
+   NOption(274, Node999, 4);
+end
+
+procedure Node029 begin
+   Reply(280);
+   NOption(g_mstr(352), Node030, 4);
+end
+
+procedure Node030 begin
+   Reply(281);
+   NOption(g_mstr(352), Node031, 4);
+end
+
+procedure Node031 begin
+   Reply(282);
+   NOption(g_mstr(352), Node032, 4);
+end
+
+procedure Node032 begin
+   Reply(283);
+   if ((has_skill(dude_obj,SKILL_SCIENCE) >= 80) and get_westin_flag(WESTIN_LENNY_TALKED)) then
+     NOption(284, Node033, 4);
+   else
+     NOption(g_mstr(352), Node033, 4);
+end
+
+procedure Node033 begin
+   set_westin_flag(WESTIN_DOC_JUB_TALKED);
+   set_local_var(LVAR_Pill_Inquiry,2);
+   Reply(285);
+   NOption(286, Node999, 4);
+   NOption(287, Node999, 4);
+end
+
+procedure Node034 begin
+   Reply(mstr(290) + mstr(291 + dude_is_female) + mstr(293));
+   BOption(294, Node035, 4);
+   NOption(295, Node022, 4);
+   NOption(296, Node900, 4);
+end
+
+procedure Node035 begin
+   Reply(mstr(300) + mstr(301 + dude_is_female) + mstr(303));
+   BOption(304, Node998, 4);
+   NOption(305, Node900, 4);
+end
+
+procedure Node036 begin
+   Reply(mstr(320) + (local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) + mstr(321 + ((local_var(LVAR_Westin_Pill_Pickup_Counter) - GAME_TIME_IN_DAYS) == 1)) + mstr(323));
+   NOption(g_mstr(350), Node999, 4); //TODO
+end
+
+procedure Node900 begin
+  set_local_var(LVAR_Pill_Inquiry,1);
+end
+//end added
+
+procedure check_poison begin
+   variable tmp;
+   variable count;
+
+   if (i_doc_shelf_obj != -1) then begin
+      if (not skill_success(dude_obj, SKILL_STEAL, 0)) then begin
+         count := get_item_count(i_doc_shelf_obj, POISON_PID); //edit by killap - was dude_obj
+         if (count == 0) then begin
+            tmp := dude_item(POISON_PID);
+            rm_obj_from_inven(dude_obj, tmp);
+            add_obj_to_inven(i_doc_shelf_obj, tmp);
+            return 0;
+         end
+      end
+   end
+   return 1;
+end
+
+procedure check_pills begin
+   variable tmp;
+   variable count;
+
+   if (i_doc_shelf_obj != -1) then begin
+      count := get_item_count(i_doc_shelf_obj, PILL_PID); //edit by killap - was dude_obj
+      if (not skill_success(dude_obj, SKILL_STEAL, 0)) then begin
+         if (count == 0) then begin
+            tmp := dude_item(PILL_PID);
+            rm_obj_from_inven(dude_obj, tmp);
+            add_obj_to_inven(i_doc_shelf_obj, tmp);
+            return 0;
+         end
+      end else begin
+        if (count == 0) then begin
+          if (local_var(LVAR_Stealing_Pills) < STEALING_SUCCESS) then
+            set_local_var(LVAR_Stealing_Pills,STEALING_SUCCESS);
+        end else begin
+          set_local_var(LVAR_Stealing_Pills,0);
+        end
+      end
+   end
+   return 1;
+end
+
+procedure checkItems begin
+   if (self_can_see_dude) then begin
+      if (not check_poison) then begin
+         call Node018;
+      end
+      if (not check_pills) then begin
+         call Node019;
+      end
+   end
+end
+
+//xxxxxxxxxxxxxxxxxxxx

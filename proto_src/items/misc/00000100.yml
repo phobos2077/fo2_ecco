@@ -13,7 +13,7 @@ type: ITEM_TYPE_MISC
 material: 1
 size: 1
 weight: 6
-cost: 1050
+cost: 700
 inventoryFid: 117440595
 soundId: '0'
 miscData:

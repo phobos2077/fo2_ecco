@@ -470,7 +470,7 @@ procedure Node019 begin
       if (map_var(MVAR_Vault_reward) == 1) then begin
          dude_caps_adjust(10000);
       end else begin
-         dude_caps_adjust(20000);
+         dude_caps_adjust(15000); // pbs: was 20000
       end
       set_map_var(MVAR_Vault_reward, 0);
       give_xp(500); // lowered 2000 => 500 by phobos2077 (you get 2000 reward already when visit V13)

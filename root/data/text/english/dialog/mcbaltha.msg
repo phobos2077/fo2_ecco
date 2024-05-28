@@ -101,7 +101,7 @@
 {1001}{}{Actually I was wondering if you could teach me about tanning?}
 {1002}{}{Not yet, sorry... Maybe you can teach me about tanning, though?}
 {1003}{}{Can you teach me about tanning?}
-{1010}{}{I could teach you... but I'm not sharing no trade secrets for less than 400$.}
+{1010}{}{I could teach you... but I'm not sharing no trade secrets for less than $400.}
 {1011}{}{It's a deal.}
 {1012}{}{Let's cut it to $200.}
 {1014}{}{Not interested.}
