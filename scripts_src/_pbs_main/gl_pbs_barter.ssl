@@ -18,15 +18,22 @@ procedure start;
 #include "../sfall/lib.misc.h"
 #include "../sfall/lib.math.h"
 
+#define SCRIPT_REALNAME			"pbs_barter"
+
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/ecco_log.h"
+
 
 procedure barterprice_handler;
 procedure calc_items_demand_mod(variable obj);
 procedure load_town_demand;
+procedure modify_party_money;
 procedure get_highest_barter_in_party_except_dude;
 
-#define debug_log(msg)		debug_msg("gl_pbs_barter: "+msg)
-
 #define barter_skill(obj)	(has_skill(obj, SKILL_BARTER))
+
+#define SGVAR_MONEY_MULT		"PBS$MULT"
+#define INI_FILE					INI_ECONOMY
 
 /*
    Changelog:
@@ -56,6 +63,8 @@ variable begin
 	Buy_MinPriceCoef;
 	Buy_ArctanCoef;
 
+	PartyMoneyMult;
+
    // map pid => original price
 	price_list := 0;
 	// map TownId => (map pid => modifier)
@@ -84,10 +93,8 @@ end
 	int     ret1 - the modified value of all offered goods
 */
 
-#define INI_FILE_NAME  "ecco\\barter.ini"
-#define load_setting_int(section, setting) get_ini_setting(INI_FILE_NAME + "|" + section + "|" + setting)
-#define load_setting_float(section, setting) atof(get_ini_string(INI_FILE_NAME + "|" + section + "|" + setting))
-
+#define load_setting_int(section, setting) get_ini_setting(INI_FILE + "|" + section + "|" + setting)
+#define load_setting_float(section, setting) atof(get_ini_string(INI_FILE + "|" + section + "|" + setting))
 
 procedure start begin
 	if (not game_loaded) then return;
@@ -112,11 +119,14 @@ procedure start begin
 	Buy_MinPriceCoef := abs(load_setting_float("BUY", "MinPriceCoef"));
 	Buy_ArctanCoef := load_setting_float("BUY", "ArctanCoef");
 
+	PartyMoneyMult := load_setting_float("GENERAL", "PartyMoneyMult") orElse 1.0;
+
 	call load_town_demand;
+	register_hook_proc(HOOK_BARTERPRICE, barterprice_handler);
 
 	debug_log("Initialized. Sell bias: "+Sell_Bias+", buy bias: "+Buy_Bias+", town demands records: "+len_array(town_demand_map));
 
-	register_hook_proc(HOOK_BARTERPRICE, barterprice_handler);
+	call modify_party_money;
 end
 
 /*
@@ -274,7 +284,7 @@ end
 procedure load_town_demand begin
 	variable townId, v, townMap, pairs, pair, sect;
 	town_demand_map := create_array_map;
-	sect := get_ini_section(INI_FILE_NAME, "TOWNDEMAND");
+	sect := get_ini_section(INI_FILE, "TOWNDEMAND");
 	foreach (townId: v in sect) begin
 		if (v != "") then begin
 			pairs := string_split(v, "|");
@@ -304,4 +314,23 @@ procedure get_highest_barter_in_party_except_dude begin
 		end
 	end
 	return max;
+end
+
+procedure modify_party_money begin
+	variable
+		lastMult := get_sfall_global_float(SGVAR_MONEY_MULT) orElse 1.0,
+		multDiff := (PartyMoneyMult / lastMult) - 1.0;
+	if (abs(multDiff) > 0.001) then begin
+		variable obj, amt;
+		debug_log_fmt("MONEY MULTIPLIER CHANGED!! %.2f -> %.2f. Adjusting caps of the whole party by difference.", lastMult, PartyMoneyMult);
+		foreach obj in party_member_list_all begin
+			amt := ceil(item_caps_total(obj) * multDiff);
+			if (amt != 0) then begin
+				item_caps_adjust(obj, amt);
+				debug_log_fmt(" > %s: %d", obj_name(obj), amt);
+			end
+		end
+
+		set_sfall_global(SGVAR_MONEY_MULT, PartyMoneyMult);
+	end
 end
