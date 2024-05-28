@@ -1,0 +1,1378 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Medic Andrew
+        Location: Vault City
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "vcandy"
+#include "../headers/define.h"
+#include "../headers/vctyctyd.h"
+
+#define NAME                    SCRIPT_VCANDY
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_VAULT_CITY)
+
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head       start_gdialog_check_talking_head(4, HEAD_ANDR, BACKGROUND_JUNKTOWN)
+
+// pbs: reduce implant prices for new economy
+#define DERMAL_IMPLANT_COST            (7000)  // from  7000
+#define DERMAL_IMPLANT_COST_LOW        (5000)  // from  5000
+#define DERMAL_ENHANCEMENT_COST       (21000)  // from 40000
+#define DERMAL_ENHANCEMENT_COST_LOW   (15000)  // from 30000
+#define PHEONIX_IMPLANT_COST           (9000)  // from 10000
+#define PHEONIX_IMPLANT_COST_LOW       (7000)  // from  8000
+#define PHEONIX_ENCHANCEMENT_COST     (27000)  // from 50000
+#define PHEONIX_ENCHANCEMENT_COST_LOW (21000)  // from 40000
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node001a;
+procedure Node001b;
+procedure Node002;
+procedure Node002a;
+procedure Node002b;
+procedure Node002c;
+procedure Node003;
+procedure Node003a;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node007a;
+procedure Node007b;
+procedure Node008;
+procedure Node008a;
+procedure Node008b;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node012a;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node015a;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node019a;
+procedure Node019b;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node023a;
+procedure Node023b;
+procedure Node024;
+procedure Node024a;
+procedure Node024b;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node027a;
+procedure Node027b;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node031a;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node034a;
+procedure Node034b;
+procedure Node035;
+procedure get_combat_armor;
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Andrew_Knows_Implants      (7)
+#define LVAR_Used_Autodoc_Twice         (8)
+#define LVAR_Gave_Karma_Bonus           (9)
+#define LVAR_Already_Asked_For_Prices   (10)
+#define LVAR_Had_Toe_Removed            (11)
+
+#define HEALTHY_RATE     (150)
+#define GOOD_RATE        (225)
+#define FAIR_RATE        (300)
+#define POOR_RATE        (400)
+#define HORRIBLE_RATE    (500)
+
+#define heal_party_member(Var_In_party, Var_Ptr) \
+   if (Var_In_party) then begin \
+      if (Is_Injured(Var_Ptr) or Is_Crippled(Var_Ptr)) then begin \
+         critter_heal(Var_Ptr, Injured_How_Much(Var_Ptr)); \
+         critter_uninjure(Var_Ptr, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT)); \
+      end \
+   end
+
+#define dude_has_combat_armor \
+   (  ( dude_item_count(PID_COMBAT_ARMOR) > 0) \
+      or (dude_item_count(PID_COMBAT_ARMOR_MK_II) > 0) \
+      or (dude_item_count(PID_BROTHERHOOD_COMBAT_ARMOR) > 0) \
+   )
+
+/**
+ * Convince Doc Andrew to give discount for implants.
+ */
+#define haggle_check ((dude_charisma > 5) or (has_skill(dude_obj, SKILL_BARTER) >= 75))
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+import variable Andrew_Ptr;
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable Heal_Rate:=0;
+variable Heal_Barter:=0;
+variable Barter_Succeeds:=0;
+variable From_3:=0;
+variable From_4:=0;
+variable From_12:=0;
+variable From_13:=0;
+variable From_19:=0;
+variable From_23:=0;
+variable From_24:=0;
+variable From_27:=0;
+variable Death_Stage:=0;
+
+procedure get_combat_armor begin
+   variable combat_armor = 0;
+   if (dude_item(PID_COMBAT_ARMOR)) then return dude_item(PID_COMBAT_ARMOR);
+   else if (dude_item(PID_COMBAT_ARMOR_MK_II)) then combat_armor = dude_item(PID_COMBAT_ARMOR_MK_II);
+   else if (dude_item(PID_BROTHERHOOD_COMBAT_ARMOR)) then combat_armor = dude_item(PID_BROTHERHOOD_COMBAT_ARMOR);
+   return combat_armor;
+end
+
+procedure start begin
+   Andrew_Ptr := self_obj;
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Andrew_Ptr := self_obj;
+
+   Only_Once:=0;
+   Heal_Rate:=0;
+   Heal_Barter:=0;
+   Barter_Succeeds:=0;
+   From_3:=0;
+   From_4:=0;
+   From_12:=0;
+   From_13:=0;
+   From_19:=0;
+   From_23:=0;
+   From_24:=0;
+   From_27:=0;
+   Death_Stage:=0;
+
+   set_self_team(TEAM_VAULT_CITIZENS);
+   set_self_ai(AI_COWARD);
+end
+
+procedure map_update_p_proc begin
+   Andrew_Ptr := self_obj;
+end
+
+procedure timed_event_p_proc begin
+   // Timed procedure for blowing up the player during dermal implants.
+   if( fixed_param == 1 ) then begin
+      if( Death_Stage == 0 ) then begin
+         // Move player and doctor to new Hexes
+         gfade_out(600);
+         move_to( self_obj, 13093, 0 );
+         critter_attempt_placement( self_obj, 13093, 0 );
+         move_to( dude_obj, 13695, 0 );
+         critter_attempt_placement( dude_obj, 13695, 0 );
+         gfade_in(600);
+         Death_Stage := 1;
+         floater(349);
+         add_timer_event( self_obj, game_ticks(2), 1 );
+      end
+      else if( Death_Stage == 1 ) then begin
+         // Player says "Aieee!"
+         float_msg( dude_obj, mstr(297), FLOAT_COLOR_BAD);
+         Death_Stage := 2;
+         add_timer_event( self_obj, game_ticks(2), 1 );
+      end
+      else if( Death_Stage == 2 ) then begin
+         // Doc says "uh-oh", player explodes.
+         floater(299);
+         game_ui_enable;
+         critter_dmg( dude_obj, 10000, (DMG_explosion BWOR DMG_BYPASS_ARMOR) );
+      end
+   end
+end
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ( ( (local_var(LVAR_Hostile) == 2) or ( global_var( GVAR_ENEMY_VAULT_COURTYARD ) == 1 ) ) and (self_can_see_dude)) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+      set_local_var(LVAR_Personal_Enemy,1);
+      set_global_var( GVAR_ENEMY_VAULT_COURTYARD, 1 );
+      set_global_var( GVAR_ENEMY_VAULT_CITY, 1 );
+      set_global_var( GVAR_VAULT_CITIZEN, CITIZEN_KICKED_OUT );
+      set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_KICKED_OUT ) );
+      set_global_var( GVAR_VAULT_CITIZENSHIP, 0 );
+   end
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_TOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION2;
+
+   CheckKarma;
+
+   GetReaction;
+
+   Heal_Rate:=0;
+   Heal_Barter:=0;
+   Barter_Succeeds:=0;
+   From_3:=0;
+   From_4:=0;
+   From_12:=0;
+   From_13:=0;
+   From_19:=0;
+   From_23:=0;
+   From_24:=0;
+   From_27:=0;
+
+   start_dialog_check_head;
+   gSay_Start;
+      call Node001;
+   gSay_End;
+   end_dialogue;
+
+   set_local_var( LVAR_Herebefore, 1 );
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(100));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   variable currentHP;
+   variable maxHP;
+
+   currentHP := dude_cur_hits;
+   maxHP := dude_max_hits;
+
+   if( currentHP == maxHP ) then begin
+      // These are being set here because we have to have a rate to heal the other
+      // party members even if dude_obj has full HP.
+      Heal_Rate := HEALTHY_RATE;
+      Heal_Barter := HEALTHY_RATE;
+      Reply(107);
+   end
+   else if( currentHP >= (maxHP*3)/4 ) then begin
+      Heal_Barter := GOOD_RATE;
+      Heal_Rate := GOOD_RATE;
+      Reply( mstr(103) + " " + mstr(107) );
+   end
+   else if( currentHP >= maxHP/2 ) then begin
+      Heal_Barter := FAIR_RATE;
+      Heal_Rate := FAIR_RATE;
+      Reply( mstr(104) + " " + mstr(107) );
+   end
+   else if( currentHP >= maxHP/4 ) then begin
+      Heal_Barter := POOR_RATE;
+      Heal_Rate := POOR_RATE;
+      Reply( mstr(105) + " " + mstr(107) );
+   end
+   else begin
+      Heal_Barter := HORRIBLE_RATE;
+      Heal_Rate := HORRIBLE_RATE;
+      Reply( mstr(106) + " " + mstr(107) );
+   end
+
+   if( currentHP < maxHP ) then
+      NLowOption(108, Node002);
+   NLowOption(109, Node999);
+   if( currentHP < maxHP ) then
+      NOption(110, Node002, 004);
+   if( global_var(GVAR_HAVE_MUTATED) == 1 ) then
+      NOption(111, Node033, 004);
+   If_Party_Has_Injured then begin
+      if(party_size == 2) then
+         NOption(112, Node001a, 004);
+      else if(party_size > 2) then
+         NOption(113, Node008, 004);
+   end
+   if( local_var(LVAR_Herebefore) == 0 ) then
+      NOption(114, Node010, 004);
+   else
+      NOption(115, Node010, 004);
+   if (global_var(GVAR_IMPLANTS_KNOWN) == 1) then
+      NOption(116, Node001b, 004);
+   if( currentHP < maxHP ) then
+      NOption(117, Node999, 004);
+   else
+      NOption(118, Node999, 004);
+end
+
+procedure Node001a begin
+   if( Robobrain_Ptr != 0 ) then
+      call Node006;
+   else
+      call Node007;
+end
+
+procedure Node001b begin
+   if( local_var(LVAR_Andrew_Knows_Implants) == 0 ) then
+      call Node015;
+   else
+      call Node018;
+end
+
+procedure Node002 begin
+   Heal_Barter := Heal_Rate - 100;
+
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      Reply( mstr(119) + Heal_Rate + mstr(120) + " " + mstr(121) );
+   else
+      Reply( mstr(119) + Heal_Rate + mstr(120) );
+
+   if( dude_caps >= Heal_Rate) then
+      NLowOption(122, Node002a);
+   if( dude_caps >= Heal_Rate) then
+      NLowOption(123, Node999);
+   if( dude_caps < Heal_Rate) then
+      NLowOption(124, Node999);
+   if( dude_caps >= Heal_Rate) then
+      NOption(125, Node002b, 004);
+   if( (dude_caps >= Heal_Barter) and ( (dude_charisma > 5) or ( has_skill(dude_obj, SKILL_BARTER) >= 75 ) ) ) then
+      NOption( mstr(126) + Heal_Barter + mstr(127), Node002c, 004);
+   If_Party_Has_Injured then begin
+      if(party_size == 2) then
+         NOption(128, Node001a, 004);
+      else if(party_size > 2) then
+         NOption(129, Node008, 004);
+   end
+   NOption(130, Node010, 004);
+   if (global_var(GVAR_IMPLANTS_KNOWN) == 1) then
+      NOption(131, Node001b, 004);
+   if( dude_caps < Heal_Rate) then
+      NOption(132, Node999, 004);
+   else
+      NOption(133, Node999, 004);
+end
+
+procedure Node002a begin
+   dude_caps_adjust( -Heal_Rate);
+   //killap's code
+   if( map_var(MVAR_Auto_Doc_Fixed) == 0 ) then begin
+      if( random(0,1) == 0 ) then
+         call Node031a;
+      else
+         call Node003;
+   end
+   else
+      call Node003;
+   //end killap's code
+   //call Node003;
+end
+
+procedure Node002b begin
+   // Take cash away.  If the AutoDoc is busted, 50% of the
+   // time, the player will not get healed at all.
+   dude_caps_adjust( -Heal_Rate);
+   if( map_var(MVAR_Auto_Doc_Fixed) == 0 ) then begin
+      if( random(0,1) == 0 ) then
+         call Node031;
+      else
+         call Node003;
+   end
+   else
+      call Node003;
+end
+
+procedure Node002c begin
+   // Take cash away.  Set Barter Success. If the AutoDoc is busted, 50% of the
+   // time, the player will not get healed at all.
+   Barter_Succeeds:=1;
+   dude_caps_adjust( -Heal_Barter);
+   if( map_var(MVAR_Auto_Doc_Fixed) == 0 ) then begin
+      if( random(0,1) == 0 ) then
+         call Node031;
+      else
+         call Node003;
+   end
+   else
+      call Node003;
+end
+
+procedure Node003 begin
+   From_3 := 1;
+
+   if( Barter_Succeeds == 1 ) then begin
+      Barter_Succeeds := 0;
+      NMessage( mstr(134) + " " + mstr(135) );
+   end
+   else
+      NMessage(135);
+
+   gfade_out(600);
+   gfade_in(600);
+
+   // Heal the player
+   critter_heal( dude_obj, Injured_How_Much(dude_obj) );
+   critter_uninjure(dude_obj, (DAM_CRIP_LEG_LEFT bwor DAM_CRIP_LEG_RIGHT bwor DAM_CRIP_ARM_LEFT bwor DAM_CRIP_ARM_RIGHT));
+
+   Reply(137);
+
+   NLowOption(138, Node003a);
+   NLowOption(139, Node999);
+      NOption(340, Node014, 004); //added by killap
+   if (global_var(GVAR_IMPLANTS_KNOWN) == 1) then
+      NOption(143, Node001b, 004);
+   NOption(144, Node999, 004);
+end
+
+procedure Node003a begin
+   // If the player has already chosen to "Ride the AutoDoc" twice in
+   // a row, don't shoot them to the node where they can get the positive
+   // HP bonus.
+   if( local_var(LVAR_Used_Autodoc_Twice) == 0 ) then
+      call Node004;
+   else
+      call Node005;
+end
+
+procedure Node004 begin
+   From_4 := 1;
+
+   NMessage(145);
+
+   gfade_out(600);
+   gfade_in(600);
+
+   set_local_var( LVAR_Used_Autodoc_Twice, 1 );
+   if( dude_luck > 9 ) then begin
+      critter_add_trait( dude_obj, TRAIT_PERK, PERK_autodoc_hp_bonus2_perk, 1 );
+      display_msg( mstr(344) );
+   end
+   else begin
+      critter_add_trait( dude_obj, TRAIT_PERK, PERK_autodoc_hp_bonus1_perk, 1 );
+      display_msg( mstr(343) );
+   end
+
+   Reply(147);
+
+   NLowOption(148, Node005);
+   NLowOption(149, Node999);
+end
+
+procedure Node005 begin
+   if( From_3 == 1 ) then begin
+      From_3 := 0;
+      NMessage(346);
+   end
+   else if( From_4 == 1 ) then begin
+      From_4 := 0;
+      NMessage(150);
+   end
+
+   gfade_out(600);
+   gfade_in(600);
+
+
+   if( is_success( dude_luck < 2 ) ) then begin
+      critter_add_trait( dude_obj, TRAIT_PERK, PERK_autodoc_hp_neg2_perk, 1 );
+      display_msg( mstr(350) );
+   end
+   else begin
+      critter_add_trait( dude_obj, TRAIT_PERK, PERK_autodoc_hp_neg1_perk, 1 );
+      display_msg( mstr(345) );
+   end
+
+   Reply(152);
+
+   NLowOption(153, Node999);
+end
+
+procedure Node006 begin
+   Reply(154);
+
+   if( (Is_Injured(dude_obj)) or ( dude_is_crippled ) ) then
+      NOption(155, Node002, 004);
+   NOption(156, Node014, 004);
+   NOption(157, Node999, 004);
+end
+
+procedure Node007 begin
+   Heal_Barter := Heal_Rate - 100;
+
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      Reply( mstr(158) + Heal_Rate + mstr(159) + " " + mstr(160) );
+   else
+      Reply( mstr(158) + Heal_Rate + mstr(159) );
+
+   if( dude_caps >= Heal_Rate) then
+      NOption(161, Node007a, 004);
+   if( (dude_caps >= Heal_Barter) and ( (dude_charisma > 5) or ( has_skill(dude_obj, SKILL_BARTER) >= 75 ) ) ) then
+      NOption( mstr(162) + Heal_Barter + mstr(163), Node007b, 004);
+   if( (Is_Injured(dude_obj)) or ( dude_is_crippled ) ) then
+      NOption(164, Node002, 004);
+   NOption(165, Node010, 004);
+   if (global_var(GVAR_IMPLANTS_KNOWN) == 1) then
+      NOption(166, Node001b, 004);
+   if( dude_caps < Heal_Rate) then
+      NOption(167, Node999, 004);
+   else
+      NOption(168, Node999, 004);
+end
+
+procedure Node007a begin
+   // Take cash away.  If the AutoDoc is busted, 50% of the
+   // time, the player will not get healed at all.
+   dude_caps_adjust( -Heal_Rate);
+   if( map_var(MVAR_Auto_Doc_Fixed) == 0 ) then begin
+      if( random(0,1) == 0 ) then
+         call Node031;
+      else
+         call Node009;
+   end
+   else
+      call Node009;
+end
+
+procedure Node007b begin
+   // Take cash away.  Set Barter Success. If the AutoDoc is busted, 50% of the
+   // time, the player will not get healed at all.
+   Barter_Succeeds:=1;
+   dude_caps_adjust( -Heal_Barter);
+   if( map_var(MVAR_Auto_Doc_Fixed) == 0 ) then begin
+      if( random(0,1) == 0 ) then
+         call Node031;
+      else
+         call Node009;
+   end
+   else
+      call Node009;
+end
+
+procedure Node008 begin
+   variable multRate;
+   variable multBarterRate;
+
+   multRate := Heal_Rate*3;
+   multBarterRate := (Heal_Rate - 100)*3;
+
+   if( Robobrain_Ptr != 0 ) then
+      Reply( mstr(169) + multRate + mstr(347) );
+   else
+      Reply( mstr(169) + multRate + mstr(170) );
+
+   if( dude_caps >= multRate) then
+      NOption(171, Node008a, 004);
+   if( (dude_caps >= multBarterRate) and ( (dude_charisma > 5) or ( has_skill(dude_obj, SKILL_BARTER) >= 75 ) ) ) then
+      NOption( mstr(172) + multBarterRate + mstr(173), Node008b, 004);
+   if( (Is_Injured(dude_obj)) or ( dude_is_crippled ) ) then
+      NOption(174, Node002, 004);
+   NOption(175, Node010, 004);
+   if (global_var(GVAR_IMPLANTS_KNOWN) == 1) then
+      NOption(176, Node001b, 004);
+   if( dude_caps < multRate) then
+      NOption(177, Node999, 004);
+   else
+      NOption(178, Node999, 004);
+end
+
+procedure Node008a begin
+   variable multRate;
+   multRate := Heal_Rate*3;
+
+   // Take cash away.  If the AutoDoc is busted, 50% of the
+   // time, the player will not get healed at all.
+   dude_caps_adjust( -multRate);
+   if( map_var(MVAR_Auto_Doc_Fixed) == 0 ) then begin
+      if( random(0,1) == 0 ) then
+         call Node031;
+      else
+         call Node009;
+   end
+   else
+      call Node009;
+end
+
+procedure Node008b begin
+   variable multBarterRate;
+   multBarterRate := (Heal_Rate - 100)*3;
+
+   // Take cash away.  Set Barter Success. If the AutoDoc is busted, 50% of the
+   // time, the player will not get healed at all.
+   Barter_Succeeds:=1;
+   dude_caps_adjust( -multBarterRate);
+   if( map_var(MVAR_Auto_Doc_Fixed) == 0 ) then begin
+      if( random(0,1) == 0 ) then
+         call Node031;
+      else
+         call Node009;
+   end
+   else
+      call Node009;
+end
+
+procedure Node009 begin
+   if( Barter_Succeeds == 1 ) then begin
+      Barter_Succeeds := 0;
+      NMessage( mstr(179) + " " + mstr(180) );
+   end
+   else
+      NMessage(180);
+
+   gfade_out(600);
+   gfade_in(600);
+
+   heal_party_member(Vic_In_Party, Vic_Ptr)
+   heal_party_member(Myron_In_Party, Myron_Ptr)
+   heal_party_member(Marcus_In_Party, Marcus_Ptr)
+   heal_party_member(MacRae_In_Party, MacRae_Ptr)
+   heal_party_member(Sulik_In_Party, Sulik_Ptr)
+   heal_party_member(Lenny_In_Party, Lenny_Ptr)
+   heal_party_member(Cyberdog_In_Party, Cyberdog_Ptr)
+   heal_party_member(Doc_In_Party, Doc_Ptr)
+   heal_party_member(Goris_In_Party, Goris_Ptr)
+   heal_party_member(Davin_In_Party, Davin_Ptr)
+   heal_party_member(Miria_In_Party, Miria_Ptr)
+   heal_party_member(Dogmeat_In_Party, Dogmeat_Ptr)
+   heal_party_member(K9_In_Party, K9_Ptr)
+   heal_party_member(Kitsune_In_Party, Kitsune_Ptr)
+   heal_party_member(Dex_In_Party, Dex_Ptr)
+   heal_party_member(Cat_Jules_In_Party, Cat_Jules_Ptr)
+
+   Reply(182);
+
+   NOption(183, Node014, 004);
+   NOption(184, Node999, 004);
+end
+
+procedure Node010 begin
+   Reply(185);
+
+   NOption(186, Node011, 004);
+   NOption(187, Node014, 004);
+   NOption(188, Node999, 004);
+end
+
+procedure Node011 begin
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      Reply( mstr(189) + " " + mstr(190) );
+   else
+      Reply( mstr(189) + " " + mstr(191) );
+
+   if(( map_var( MVAR_Auto_Doc_Fixed ) == 1 ) and ( local_var(LVAR_Gave_Karma_Bonus) == 0 )) then
+      NOption(192, Node012, 004);
+   NOption(193, Node014, 004);
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      NOption(194, Node999, 004);
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 1 ) then
+      NOption(195, Node999, 004);
+end
+
+procedure Node012 begin
+   From_12:=1;
+
+   Reply(196);
+
+   NOption(197, Node013, 004);
+   NOption(198, Node013, 004);
+   NOption(199, Node012a, 004);
+end
+
+procedure Node012a begin
+   if( local_var(LVAR_Gave_Karma_Bonus) == 0 ) then begin
+      set_local_var(LVAR_Gave_Karma_Bonus, 1);
+      inc_general_rep( REP_BONUS_FIXED_AUTODOC );
+      set_global_var( GVAR_TOWN_REP_VAULT_CITY, (global_var(GVAR_TOWN_REP_VAULT_CITY) + REP_TOWN_TOLD_ANDREW_NO_REWARD ) );
+   end
+
+   call Node014;
+end
+
+procedure Node013 begin
+   set_local_var(LVAR_Gave_Karma_Bonus,2);
+   From_12:=1;
+
+   Reply(200);
+
+   BOption(201, Node998, 004);
+   NOption(202, Node014, 004);
+end
+
+procedure Node014 begin
+   if( (From_12 == 1) or (From_13 == 1) ) then begin
+      From_12 := 0;
+      From_13 := 0;
+      Reply(203);
+   end
+   else
+      Reply(204);
+
+   if( (Is_Injured(dude_obj)) or ( dude_is_crippled ) ) then
+      NOption(205, Node002, 004);
+   if( global_var(GVAR_HAVE_MUTATED) == 1 ) then
+      NOption(206, Node033, 004);
+   If_Party_Has_Injured then begin
+      if(party_size == 2) then
+         NOption(207, Node001a, 004);
+      else if(party_size > 2) then
+         NOption(208, Node008, 004);
+   end
+   if( local_var(LVAR_Herebefore) == 0 ) then
+      NOption(209, Node010, 004);
+   else
+      NOption(210, Node010, 004);
+   if (global_var(GVAR_IMPLANTS_KNOWN) == 1) then
+      NOption(211, Node001b, 004);
+   NOption(212, Node999, 004);
+end
+
+procedure Node015 begin
+   Reply(213);
+
+   NOption(214, Node015a, 004);
+end
+
+procedure Node015a begin
+   gfade_out(600);
+   gfade_in(600);
+
+   call Node016;
+end
+
+procedure Node016 begin
+   Reply(215);
+
+   set_local_var(LVAR_Andrew_Knows_Implants, 1);
+
+   if not dude_has_combat_armor then
+      NOption(216, Node017, 004);
+   else
+      NOption(217, Node017, 004);
+   NOption(218, Node014, 004);
+   NOption(219, Node999, 004);
+end
+
+procedure Node017 begin
+   Reply(220);
+
+   NOption(221, Node018, 004);
+   NOption(222, Node014, 004);
+   NOption(223, Node999, 004);
+end
+
+procedure Node018 begin
+   if( local_var(LVAR_Already_Asked_For_Prices) == 0 ) then begin
+      set_local_var(LVAR_Already_Asked_For_Prices, 1);
+      Reply(224);
+   end
+   else
+      Reply(225);
+
+   if( (not(dude_perk(PERK_dermal_armor_perk))) and (not(dude_perk(PERK_dermal_enhancement_perk))) ) then
+      NOption(226, Node019, 004);
+   if( not(dude_perk(PERK_dermal_enhancement_perk)) ) then
+      NOption(227, Node020, 004);
+   if( (not(dude_perk(PERK_phoenix_armor_perk))) and (not(dude_perk(PERK_phoenix_enhancement_perk))) ) then
+   NOption(228, Node024, 004);
+   if( not(dude_perk(PERK_phoenix_enhancement_perk)) ) then
+      NOption(229, Node025, 004);
+   NOption(230, Node014, 004);
+   NOption(231, Node999, 004);
+end
+
+procedure Node019 begin
+   Reply(232);
+
+   if dude_has_combat_armor then begin
+      if (dude_caps >= DERMAL_IMPLANT_COST) then NOption(233, Node019a, 004);
+      if (dude_caps >= DERMAL_IMPLANT_COST_LOW) and haggle_check then NOption(234, Node019b, 004);
+   end
+   NOption(235, Node018, 004);
+   NOption(236, Node014, 004);
+   if (dude_caps < DERMAL_IMPLANT_COST) then
+      NOption(237, Node999, 004);
+   else if not dude_has_combat_armor then
+      NOption(238, Node999, 004);
+   NOption(239, Node999, 004);
+end
+
+procedure Node019a begin
+   variable combatArmor;
+
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      call Node028;
+   else begin
+      dude_caps_adjust(-DERMAL_IMPLANT_COST);
+      combatArmor = get_combat_armor();
+      rm_obj_from_inven(dude_obj, combatArmor);
+      destroy_object(combatArmor);
+
+      gfade_out(600);
+      gfade_in(600);
+
+      From_19 := 1;
+      call Node030;
+   end
+end
+
+procedure Node019b begin
+   variable combatArmor;
+
+   Barter_Succeeds := 1;
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      call Node028;
+   else begin
+      dude_caps_adjust(-DERMAL_IMPLANT_COST_LOW);
+      combatArmor = get_combat_armor();
+      rm_obj_from_inven(dude_obj, combatArmor);
+      destroy_object(combatArmor);
+
+      gfade_out(600);
+      gfade_in(600);
+
+      From_19 := 1;
+      call Node030;
+   end
+end
+
+procedure Node020 begin
+   if( not(dude_perk(PERK_dermal_armor_perk)) ) then
+      Reply( mstr(240) + " " + mstr(241) );
+   else
+      Reply(240);
+
+   if( dude_perk(PERK_dermal_armor_perk) ) then
+     NOption(242, Node021, 004);
+   NOption(243, Node018, 004);
+   NOption(244, Node014, 004);
+   NOption(250, Node999, 004);
+end
+
+procedure Node021 begin
+   Reply(246);
+
+   NOption(247, Node022, 004);
+   NOption(248, Node018, 004);
+   NOption(249, Node014, 004);
+   NOption(250, Node999, 004);
+end
+
+procedure Node022 begin
+   Reply(251);
+
+   NOption(252, Node023, 004);
+   NOption(253, Node018, 004);
+   NOption(254, Node014, 004);
+   NOption(255, Node999, 004);
+end
+
+procedure Node023 begin
+   if( dude_is_female ) then
+      Reply( mstr(256) + " " + mstr(258) );
+   else
+      Reply( mstr(257) + " " + mstr(258) );
+
+   if (dude_caps >= DERMAL_ENHANCEMENT_COST) and dude_has_combat_armor then begin
+      if( (dude_iq > 8) ) then
+         NOption(348, Node023a, 004);
+      NOption(259, Node023a, 004);
+   end
+   if (dude_caps >= DERMAL_ENHANCEMENT_COST_LOW) and dude_has_combat_armor and haggle_check then
+      NOption(260, Node023b, 004);
+   NOption(261, Node018, 004);
+   NOption(262, Node014, 004);
+   if (dude_caps < DERMAL_ENHANCEMENT_COST) then
+      NOption(263, Node999, 004);
+   else if not dude_has_combat_armor then
+      NOption(264, Node999, 004);
+   NOption(265, Node999, 004);
+end
+
+procedure Node023a begin
+   variable combatArmor;
+
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      call Node028;
+   else begin
+      dude_caps_adjust(-DERMAL_ENHANCEMENT_COST);
+      combatArmor = get_combat_armor();
+      rm_obj_from_inven(dude_obj, combatArmor);
+      destroy_object(combatArmor);
+
+      gfade_out(600);
+      gfade_in(600);
+
+      From_23 := 1;
+      call Node030;
+   end
+end
+
+procedure Node023b begin
+   variable combatArmor;
+
+   Barter_Succeeds := 1;
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      call Node028;
+   else begin
+      dude_caps_adjust(-DERMAL_ENHANCEMENT_COST_LOW);
+      combatArmor = get_combat_armor();
+      rm_obj_from_inven(dude_obj, combatArmor);
+      destroy_object(combatArmor);
+
+      gfade_out(600);
+      gfade_in(600);
+
+      From_23 := 1;
+      call Node030;
+   end
+end
+
+procedure Node024 begin
+   Reply(266);
+
+   if dude_has_combat_armor then begin
+      if (dude_caps >= PHEONIX_IMPLANT_COST) then NOption(267, Node024a, 004);
+      if (dude_caps >= PHEONIX_IMPLANT_COST_LOW) and haggle_check then NOption(268, Node024b, 004);
+   end
+   NOption(269, Node018, 004);
+   NOption(270, Node014, 004);
+   if(dude_caps < PHEONIX_IMPLANT_COST) then
+      NOption(271, Node999, 004);
+   else if not dude_has_combat_armor then
+      NOption(272, Node999, 004);
+   NOption(273, Node999, 004);
+end
+
+procedure Node024a begin
+   variable combatArmor;
+
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      call Node028;
+   else begin
+      dude_caps_adjust(-PHEONIX_IMPLANT_COST);
+      combatArmor = get_combat_armor();
+      rm_obj_from_inven(dude_obj, combatArmor);
+      destroy_object(combatArmor);
+
+      gfade_out(600);
+      gfade_in(600);
+
+      From_24 := 1;
+      call Node030;
+   end
+end
+
+procedure Node024b begin
+   variable combatArmor;
+
+   Barter_Succeeds := 1;
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      call Node028;
+   else begin
+      dude_caps_adjust(-PHEONIX_IMPLANT_COST_LOW);
+      combatArmor = get_combat_armor();
+      rm_obj_from_inven(dude_obj, combatArmor);
+      destroy_object(combatArmor);
+
+      gfade_out(600);
+      gfade_in(600);
+
+      From_24 := 1;
+      call Node030;
+   end
+end
+
+procedure Node025 begin
+   if(not(dude_perk(PERK_phoenix_armor_perk))) then
+      Reply( mstr(274) + " " + mstr(275) );
+   else
+      Reply( mstr(274) );
+
+   if(dude_perk(PERK_phoenix_armor_perk)) then
+      NOption(276, Node026, 004);
+   NOption(277, Node018, 004);
+   NOption(278, Node014, 004);
+   NOption(279, Node999, 004);
+end
+
+procedure Node026 begin
+   Reply(280);
+
+   NOption(281, Node027, 004);
+   NOption(282, Node018, 004);
+   NOption(283, Node014, 004);
+   NOption(284, Node999, 004);
+end
+
+procedure Node027 begin
+   Reply(285);
+
+   if dude_has_combat_armor then begin
+      if (dude_caps >= PHEONIX_ENCHANCEMENT_COST) then
+         NOption(286, Node027a, 004);
+      if (dude_caps >= PHEONIX_ENCHANCEMENT_COST_LOW) and haggle_check then
+         NOption(287, Node027b, 004);
+   end
+   NOption(288, Node018, 004);
+   NOption(289, Node014, 004);
+   if (dude_caps < PHEONIX_ENCHANCEMENT_COST) then
+      NOption(290, Node999, 004);
+   else if not dude_has_combat_armor then
+      NOption(291, Node999, 004);
+   NOption(292, Node999, 004);
+end
+
+procedure Node027a begin
+   variable combatArmor;
+
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      call Node028;
+   else begin
+      dude_caps_adjust(-PHEONIX_ENCHANCEMENT_COST);
+      combatArmor = get_combat_armor();
+      rm_obj_from_inven(dude_obj, combatArmor);
+      destroy_object(combatArmor);
+
+      gfade_out(600);
+      gfade_in(600);
+
+      From_27 := 1;
+      call Node030;
+   end
+end
+
+procedure Node027b begin
+   variable combatArmor;
+
+   Barter_Succeeds := 1;
+   if( map_var( MVAR_Auto_Doc_Fixed ) == 0 ) then
+      call Node028;
+   else begin
+      dude_caps_adjust(-PHEONIX_ENCHANCEMENT_COST_LOW);
+      combatArmor = get_combat_armor();
+      rm_obj_from_inven(dude_obj, combatArmor);
+      destroy_object(combatArmor);
+
+      gfade_out(600);
+      gfade_in(600);
+
+      From_27 := 1;
+      call Node030;
+   end
+end
+
+procedure Node028 begin
+   if( Barter_Succeeds == 1 ) then begin
+      Barter_Succeeds := 0;
+      Reply( mstr(293) + " " + mstr(294) );
+   end
+   else
+      Reply(294);
+
+   NOption(295, Node029, 004);
+   NOption(296, Node999, 004);
+end
+
+procedure Node029 begin
+   game_ui_disable;
+   add_timer_event( self_obj, game_ticks(1), 1 );
+end
+
+procedure Node030 begin
+   if( Barter_Succeeds == 1 ) then begin
+      Barter_Succeeds := 0;
+      NMessage( mstr(306) + " " + mstr(307) );
+   end
+   else
+      NMessage(307);
+
+   if( From_19 == 1 ) then begin
+      From_19 := 0;
+      gfade_out(600);
+      game_time_advance( 2*ONE_GAME_DAY );
+      critter_add_trait(dude_obj,TRAIT_PERK,PERK_dermal_armor_perk,1);
+      gfade_in(600);
+      Reply(309);
+   end
+   else if( From_23 == 1 ) then begin
+      From_23 := 0;
+      gfade_out(600);
+      game_time_advance( 5*ONE_GAME_DAY );
+      critter_rm_trait(dude_obj,TRAIT_PERK,PERK_dermal_armor_perk,1);
+      critter_add_trait(dude_obj,TRAIT_PERK,PERK_dermal_enhancement_perk,1);
+      gfade_in(600);
+      Reply(310);
+   end
+   else if( From_24 == 1 ) then begin
+      From_24 := 0;
+      gfade_out(600);
+      game_time_advance( 3*ONE_GAME_DAY );
+      critter_add_trait(dude_obj,TRAIT_PERK,PERK_phoenix_armor_perk,1);
+      gfade_in(600);
+      Reply(311);
+   end
+   else if( From_27 == 1 ) then begin
+      From_27 := 0;
+      gfade_out(600);
+      game_time_advance( 6*ONE_GAME_DAY );
+      critter_rm_trait(dude_obj,TRAIT_PERK,PERK_phoenix_armor_perk,1);
+      critter_add_trait(dude_obj,TRAIT_PERK,PERK_phoenix_enhancement_perk,1);
+      gfade_in(600);
+      Reply(312);
+   end
+
+   NOption(313, Node014, 004);
+   NOption(314, Node999, 004);
+end
+
+procedure Node031 begin
+   if( Barter_Succeeds == 1 ) then begin
+      Barter_Succeeds := 0;
+      NMessage( mstr(315) + " " + mstr(316) );
+   end
+   else
+      NMessage(316);
+
+   gfade_out(600);
+   gfade_in(600);
+
+   Reply(318);
+
+   NOption(319, Node032, 004);
+   NOption(320, Node014, 004);
+   NOption(321, Node999, 004);
+end
+
+//killap's code
+procedure Node031a begin
+   NMessage(316);
+
+   gfade_out(600);
+   gfade_in(600);
+
+   Reply(318);
+
+   NLowOption(351, Node999);
+   NLowOption(352, Node999);
+end
+//end killap's code
+
+procedure Node032 begin
+   Reply(322);
+
+   BOption(323, Node998, 004);
+   NOption(324, Node014, 004);
+   NOption(325, Node999, 004);
+end
+
+procedure Node033 begin
+   Reply(326);
+
+   NOption(327, Node034, 004);
+   NOption(328, Node014, 004);
+   NOption(329, Node999, 004);
+end
+
+procedure Node034 begin
+   Reply(330);
+
+   if( dude_caps >= 500) then
+      NOption(331, Node034a, 004);
+   if( (dude_caps >= 300) and ( (dude_charisma > 5) or ( has_skill(dude_obj, SKILL_BARTER) >= 75 ) ) ) then
+      NOption(332, Node034b, 004);
+   NOption(333, Node014, 004);
+   if( dude_caps >= 500) then
+      NOption(334, Node999, 004);
+   else
+      NOption(335, Node999, 004);
+end
+
+procedure Node034a begin
+   // Amputate Toe
+   dude_caps_adjust( -500);
+
+   call Node035;
+end
+
+procedure Node034b begin
+   // Amputate Toe
+   Barter_Succeeds := 1;
+   dude_caps_adjust( -300);
+
+   call Node035;
+end
+
+procedure Node035 begin
+   variable toe;
+
+   if( Barter_Succeeds == 1 ) then begin
+      Barter_Succeeds := 0;
+      NMessage( mstr(336) + " " + mstr(337) );
+   end
+   else
+      NMessage(337);
+
+   gfade_out(600);
+   // Remove mutation
+   if( map_var(MVAR_Auto_Doc_Fixed) == 0 ) then begin
+      set_global_var(GVAR_HAVE_MUTATED, 0);
+      set_global_var(GVAR_MUTATE_STAGE, 1);
+      set_global_var(GVAR_MUTATE_WHEN, GAME_TIME_IN_DAYS);
+   end
+   else begin
+      set_global_var(GVAR_HAVE_MUTATED, 0);
+      set_global_var(GVAR_MUTATE_STAGE, 0);
+   end
+   // Give player a mutated "toe"
+   toe := create_object( PID_MUTATED_TOE, 0, 0);
+   add_obj_to_inven( dude_obj, toe );
+   gfade_in(600);
+
+   Reply(339);
+
+   if( local_var(LVAR_Had_Toe_Removed) == 0 ) then begin
+      set_local_var( LVAR_Had_Toe_Removed, 1 );
+      NOption(340, Node014, 004);
+   end
+   else
+      NOption(341, Node014, 004);
+   NOption(342, Node999, 004);
+end
+
+//xxxxxxxxxxxxxxxxxxxx

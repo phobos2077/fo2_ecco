@@ -1,5 +1,9 @@
 for 0.9.6:
 - playtest
+- settle on money reduction percentage
+- reduce prices of implants and a few other end-game transactions
+- test Skeeter & Eldridge upgrade prices
+- test implant pricing: Dr. John, Dr. Fung, VC Andy
 
 
 for "future":

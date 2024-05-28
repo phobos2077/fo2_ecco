@@ -37,7 +37,7 @@
 
 // pbs: Talking Head compat
 #include "../_pbs_headers/talking_heads_compat.h"
-#define start_dialog_check_head           start_gdialog_check_talking_head(4, HEAD_MARION, BACKGROUND_RAIDERS)
+#define start_dialog_check_head           start_gdialog_check_talking_head(4, HEAD_MARIN, BACKGROUND_RAIDERS)
 
 /* Standard Script Procedures */
 procedure start;

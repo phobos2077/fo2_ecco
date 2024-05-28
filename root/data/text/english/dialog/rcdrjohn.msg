@@ -262,13 +262,13 @@
 {303}{}{You need to have the Dermal Impact Armor installed before I can give you the Assault
  Enhancement. But I'll tell you what it should do. The Assault Enhancement should give you a total of
  10% resistance to normal and explosive damage - over and above any other armor you're wearing. The
- operation takes a few days and it'll cost you $30,000. In addition, you're not going to be too
+ operation takes a few days and it'll cost you $15,000. In addition, you're not going to be too
  Charismatic after I finish. Cramming all those impact plates under your skin is going to make you look
  pretty damn angular, but in a very streamlined way. But who doesn't like the way a new car looks - I'll
  try not to give you tail-fins.}
 {304}{}{The Assault Enhancement of the Dermal Impact Armor should give you a total of 10% resistance to
  normal and explosive damage - over and above any other armor you're wearing. The operation takes a few
- days and it'll cost you $30,000. In addition, you're not going to be too charismatic after I finish.
+ days and it'll cost you $15,000. In addition, you're not going to be too charismatic after I finish.
  Cramming all those impact plates under your skin is going to make you look pretty damn angular, but in
  a very streamlined way. But who doesn't like the way a new car looks - I'll try not to give you tail-fins.
  Ready to begin?}
@@ -280,7 +280,7 @@
 {309}{}{I don't think I want to do this right now after all. Goodbye, Doc.}
 {310}{}{According to the reports, Phoenix Armor Implants give you 5% resistance to thermal damage (fire,
  laser, and plasma) - over and above any other armor you're wearing. The operation takes a few days, one
- suit of Combat Armor (for the thermal-dissipative membranes), and it will cost you $8,000. Not to worry,
+ suit of Combat Armor (for the thermal-dissipative membranes), and it will cost you $7,000. Not to worry,
  though; this operation *should* create only minimal scarring - at least that's what I read.}
 {311}{}{That sounds great, Doc. I sure won't have to worry about extra sunscreen after this.}
 {312}{}{Let me ask you about one of the other operations, Doc.}
@@ -290,12 +290,12 @@
 {316}{}{You need to have the Phoenix Armor Implants before I can give you the Assault Enhancement. But
  I'll tell you what it should do. The Assault Enhancement should give you a total of 10% resistance to
  thermal damage (fire, laser, and plasma) - over and above any other armor you're wearing. The operation
- takes a few days and it'll cost you $48,000. In addition, you're not going to be too charismatic after
+ takes a few days and it'll cost you $21,000. In addition, you're not going to be too charismatic after
  I finish. Layering all those thermal dissipaters under your skin is going to make you look a bit lumpy,
  sort of like an overstuffed burrito.}
 {317}{}{The Assault Enhancement of the Phoenix Armor Implants should give you a total of 10% resistance
  to thermal damage (fire, laser, and plasma) - over and above any other armor you're wearing. The
- operation takes a few days and it'll cost you $48,000. In addition, you're not going to be too
+ operation takes a few days and it'll cost you $21,000. In addition, you're not going to be too
  Charismatic after I finish. Cramming all those impact plates under your skin is going to make you look
  a bit lumpy, sort of like an overstuffed burrito. Ready to begin?}
 {318}{}{That sounds great, Doc. Let's do it.}
