@@ -1,19 +1,16 @@
 for 0.9.6:
 - playtest
-- settle on money reduction percentage
-- reduce prices of implants and a few other end-game transactions
-- test Skeeter, Eldridge, Valerie upgrade prices
-- test implant pricing: Dr. John, Dr. Fung, VC Andy
 
 
 for "future":
+- take a look at 4/5 AP cost for pistols
 - add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 
 
 Considering:
 - take another look at incenirator balance
-- switch metal armor to use schematics?
+- Demolition Expert to reduce AP to arm traps
 - Reduce ammo/drug loot in containers similar to critter loot and FNV Famine mod (less reduction for closed containers, etc.)
 - add Cattle Prod to Modoc, VC, Gecko, Broken Hills (check balance)
 - add crafting components like rocks and junk to human enemy bodies on death with small probability

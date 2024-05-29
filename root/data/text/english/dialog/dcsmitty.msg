@@ -161,7 +161,7 @@
 {730}{}{Ok, I'll knock it down to $125. How's that sound?}
 
 {720}{}{Okay. First thing you need to remember is to not blow yourself up while you're at it...}
-{721}{}{...and then you toss 'em towards the other guys. Should mess 'em right up. Can't say I know more about it than that.}
+{721}{}{...and then you toss 'em towards the other guys. Should mess 'em right up. Can't say I know more about it than that... But I might have some additional schematics I can sell to you.}
 {722}{}{Thanks.}
 {723}{}{Thanks. Can I ask something else?}
 

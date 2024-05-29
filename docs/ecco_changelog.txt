@@ -19,7 +19,9 @@ v0.9.6:
 - nerfed world travel heal interval to 24 hours (was 1 real-time second; requires future sfall update)
 - fixed numerious bugs and inconsistencies of vanilla healing system
 
+
 > Crafting:
+- changed metal armor recipes to require buying schematics
 - fixed craft button disappearing when using external HRP
 - fixed bug with disassemble that allowed for infinite item exploit
 

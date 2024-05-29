@@ -70,6 +70,7 @@ procedure NodeCraft4 begin
   display_msg(mstr_pbs_craft(82));
   gfade_in(400);
   Reply(1041);
+  NOption(1043, Node996, 004);
   NOption(1042, Node999, 004);
 end
 

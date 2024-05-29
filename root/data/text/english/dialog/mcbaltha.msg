@@ -110,8 +110,9 @@
 {1031}{}{Yes.}
 {1032}{}{Maybe later.}
 {1040}{}{OK, so first you need to understand that this involves a ton of rope...}
-{1041}{}{... and if you've stitched it all right you got yourself a fine piece of armor. Oh, and if you can get your hands on some metal junk - you could probably attach that for extra protection.}
-{1042}{}{This will definitely come in handy!}
+{1041}{}{... and if you've stitched it all right you got yourself a fine piece of armor. If you think you need a harder armor, like with metal plates and everything... I've got this Metal Armor schematic I bought from this ghoul. Figured I don't have the tools to make it, so I can just sell it to you.}
+{1042}{}{I think leather would have to do for now, thanks.}
+{1043}{}{How much for the schematic?}
 
 # phobos2077 bring hides quest
 {1101}{}{How's the tanning bussines? Need any help?}

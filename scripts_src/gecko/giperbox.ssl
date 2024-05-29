@@ -28,6 +28,7 @@
 /* Defines and Macros */
 
 #include "../_pbs_headers/ecco_ids.h"
+#include "../_pbs_craft/craft_schematics.h"
 
 #define LVAR_Restock_Time                 (0)
 #define LVAR_Restock_Time_Fix             (1)  //added by killap
@@ -79,6 +80,8 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_PBS_40MM_HE, 0, 5, 100)
          check_restock_item(PID_PBS_FLAMER_LT, 1, 1, 50)
          check_restock_item(PID_FLAMETHROWER_FUEL, 1, 4, 75)
+         call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA, PID_METAL_ARMOR, 100); // pbs
+         call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA, PID_METAL_ARMOR_MK_II, 100); // pbs
          // ;
          call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (3 * ONE_GAME_DAY) + game_time);

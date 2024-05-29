@@ -11,6 +11,7 @@ procedure NodeCraft2a;
 procedure NodeCraft2b;
 procedure NodeCraft3;
 procedure NodeCraft4;
+procedure NodeCraft5;
 
 #define dudeHasCar		(global_var(18))
 
@@ -70,9 +71,19 @@ procedure NodeCraft4 begin
   display_msg(mstr_pbs_craft(81));
   gfade_in(400);
   Reply(721);
+  NOption(712, NodeCraft5, 004);
   NOption(722, Node999, 004);
   if not(dudeHasCar) then begin
 	BackOption(723, 004)
+  end
+end
+
+procedure NodeCraft5 begin
+  gdialog_mod_barter(0);
+  if (dudeHasCar) then begin
+    call Node999;
+  end else begin
+    call Node003;
   end
 end
 
