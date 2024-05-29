@@ -41,7 +41,7 @@ procedure check_restock_craft_schematic(variable schematicPid, variable craftedI
 
    if (isKnown or random(1, 100) > probability) then return;
 
-   display_msg("spawning " + schematicPid);
+   ndebug("spawning crafting schematic " + schematicPid + " for item " + craftedItemPid);
    item := create_object(schematicPid, 0, 0);
    set_weapon_ammo_count(item, craftedItemPid); // set count before adding to prevent stacking
    add_obj_to_inven(self_obj, item);
