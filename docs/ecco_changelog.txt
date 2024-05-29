@@ -5,6 +5,7 @@ v0.9.6:
 - increased called (aimed) shot frequency of all enemies
 - added weapon drop effects to certain levels of critical hits
 - reduced minimum INT requirements for AI called shots to include many Gun-weilding NPC's in FO2
+- tweaked damage and burst cones of some guns to better fit their tiers
 - fixed bugged death animations for molotovs and 40mm IC grenades
 
 > Healing:

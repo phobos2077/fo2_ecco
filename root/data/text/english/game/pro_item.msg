@@ -1229,7 +1229,7 @@
 {64500}{}{Bear Trap}
 {64501}{}{This trap can hold down a large animal, like a bear. But there are no bears around here...}
 {64600}{}{Incinerator}
-{64601}{}{Typically used to burn garbage. Requires specialized fuel to work properly. Min ST: 6.}
+{64601}{}{Typically used to burn garbage. Requires specialized fuel to work properly. Min ST: 5.}
 {64700}{}{Makeshift Laser Pistol}
 {64701}{}{A crude directed energy weapon crafted from parts of various devices. Limited in range but burns right through armor. Min ST: 3.}
 {64800}{}{Plasma Lance}

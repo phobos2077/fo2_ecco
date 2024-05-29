@@ -2,7 +2,7 @@ pid: 646
 messageId: 64600
 name: Incinerator
 description: 'Typically used to burn garbage. Requires specialized fuel to work properly.
-  Min ST: 6.'
+  Min ST: 5.'
 fid: 24
 lightDistance: 0
 lightIntensity: 0
@@ -24,8 +24,8 @@ weaponData:
   maxRange1: 3
   maxRange2: 0
   projectilePid: -1
-  minStrength: 6
-  actionPointCost1: 5
+  minStrength: 5
+  actionPointCost1: 6
   actionPointCost2: 0
   criticalFailureType: 6
   perk: NONE

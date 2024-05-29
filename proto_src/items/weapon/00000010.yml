@@ -14,12 +14,12 @@ type: ITEM_TYPE_WEAPON
 material: 1
 size: 6
 weight: 18
-cost: 2000
+cost: 2500
 inventoryFid: 117440522
 soundId: '0'
 weaponData:
   animationCode: 8
-  minDamage: 45
+  minDamage: 50
   maxDamage: 90
   damageType: DAMAGE_TYPE_FIRE
   maxRange1: 5

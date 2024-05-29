@@ -19,8 +19,8 @@ inventoryFid: 117440741
 soundId: '0'
 weaponData:
   animationCode: 7
-  minDamage: 22
-  maxDamage: 30
+  minDamage: 18
+  maxDamage: 26
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 35
   maxRange2: 30

@@ -20,7 +20,6 @@ Considering:
 
 
 IDEAS:
-- deflation: increase value of money buy reducing buying and selling price bias by the same % (will make monetary rewards more meaningful)
 - don't allow to craft "factory-level" items like Metal armor, but allow upgrades to Mk2
 - crafting some advanced leather armor
 - crafting robes?
