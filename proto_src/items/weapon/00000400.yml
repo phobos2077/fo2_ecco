@@ -19,7 +19,7 @@ inventoryFid: 117440776
 soundId: '0'
 weaponData:
   animationCode: 8
-  minDamage: 55
+  minDamage: 60
   maxDamage: 90
   damageType: DAMAGE_TYPE_FIRE
   maxRange1: 7

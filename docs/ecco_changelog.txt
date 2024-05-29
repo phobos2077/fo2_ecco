@@ -13,12 +13,21 @@ v0.9.6:
 - added critical healing success: restores much more HP than normal
 - added critical failure: reduces remaining uses of a kit/bag
 - added ignoring daily limits when using kits/bags
-- increased skill level influence on critical success and failure chances
+- buffed skill level influence on critical success and failure chances
 - buffed restored HP amount for all 3 skills
 - nerfed rest heal interval to 6 hours (from 3)
 - nerfed world travel heal interval to 24 hours (was 1 real-time second; requires future sfall update)
+- nerfed Stimpak scaling from 0.9.5 and removed Super Stimpak from scaling
 - fixed numerious bugs and inconsistencies of vanilla healing system
 
+> Economy:
+- reduced all barter prices by ~40% (makes money more valuable)
+- reduced buy/sell price gap by ~10-15% (heavily depends on skill)
+- reduced party money in existing saves by 20%
+- reduced prices of some subdermal implants and weapon upgrades
+- reduced a few late-game large monetary transactions
+- reduced prices of learning stuff from a Klamath Trapper
+- tweaked a few item prices
 
 > Crafting:
 - changed metal armor recipes to require buying schematics

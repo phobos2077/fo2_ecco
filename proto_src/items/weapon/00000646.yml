@@ -25,12 +25,12 @@ weaponData:
   maxRange2: 0
   projectilePid: -1
   minStrength: 6
-  actionPointCost1: 6
+  actionPointCost1: 5
   actionPointCost2: 0
   criticalFailureType: 6
   perk: NONE
   rounds: 1
   caliber: 2
   ammoTypePid: 32
-  ammoCapacity: 5
+  ammoCapacity: 10
   soundCode: I

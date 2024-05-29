@@ -31,9 +31,11 @@
 - New book for Traps skill added.
 
 
-> BARTER:
-- Selling prices are affected by skill. (at lower levels prices may drop as low as 25% from their normal margin). This way, if you want to get rich by selling weapons, invest into Barter, or you'll need to sell many times more than before.
-- Buying prices are comparable to base game, but have a steeper curve (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
+> BARTER & ECONOMY:
+- Selling prices are affected by skill and generally are much lower until you get Barter skill high enough. This way, if you want to get rich by selling weapons, invest into Barter, or you'll need to sell many times more than before.
+- Prices are ~40% lower than base game. This makes money more valuable and quest-related money transactions more meaningful.
+- Buying prices have a steeper curve to increase the importance of Barter skill (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
+- Prices of some end-game transactions were reduced to accomodate deflated economy.
 - Some misc items prices were adjusted, so you can still make profit selling them, especially in early game (gecko pelts and scorpion tails in Klamath, etc.).
 - Some items have their prices differ between towns to simulate supply/demand differences.
 - New book for Barter skill added.
@@ -74,7 +76,7 @@
 - Critical hits to arms will sometimes make target drop their weapon.
 
 
-> Healing:
+> HEALING:
 - New skill healing system replaces the original to make First Aid & Doctor skills useful.
 - First Aid Kits & Doctor Bags have limited uses (instead of random 10% removal).
 - Much more HP is restored per skill use.
@@ -137,6 +139,7 @@
 
 > MELEE & UNARMED:
 - New weapons added (two "spear" type, one "knife", one "sledge") to fill the gaps in weapon progression for most weapon animation types.
+- Fatal attacks with melee/unarmed will now trigger gory death animations, similar to ranged weapons.
 - Thrust attacks now do better against armored enemies, but will cost 1 AP more than swings.
 - The cost of unarmed special attacks has been lowered to 4 for punches and 5 for kicks (taken from Weapons Redone mod).
 - Increased melee damage bonus for high ST characters

@@ -897,7 +897,7 @@ type_01=ratio:10%, pid:16777470, Item:388(wielded), Item:(0-50)41, Script:486   
 type_02=ratio:15%, pid:16777257, Item:(1-3)26(wielded), Item:(0-50)41, Script:486                          ; Tough Guard female w/ Plasma Grenades
 type_03=ratio:20%, pid:16777471, Item:116(wielded), Item:(0-50)41, Script:486                              ; Merceneary female w/ Ripper
 type_04=ratio:15%, pid:16777471, Item:639(wielded), Item:(0-50)41, Script:486                              ; Merceneary female w/ Piston Spear
-type_05=ratio:15%, pid:16777399, Item:634(wielded), Item:(1-3)631, Item:(0-50)41, Script:486               ; B. Hunter Lead female w/ MGL
+type_05=ratio:15%, pid:16777264, Item:634(wielded), Item:(1-3)631, Item:(0-50)41, Script:486               ; Big Gun Guard male w/ MGL
 position=double_line, spacing:2
 
 [Encounter: FRAN_Elronologists]
