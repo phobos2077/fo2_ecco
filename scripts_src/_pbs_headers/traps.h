@@ -42,7 +42,6 @@
 #define TRAP_FRIENDFOE_DUDE		(1)
 #define TRAP_FRIENDFOE_PARTY		(2)
 
-#define TRAP_SET_APCOST          (4)
 
 #define traps_mstr(msg)      message_str(SCRIPT_PBS_TRAPS, msg)
 

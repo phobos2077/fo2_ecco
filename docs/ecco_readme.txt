@@ -28,6 +28,7 @@
 - Bear Trap can immobilize the enemy for several turns. He can still shoot you though!
 - When using explosives, explosion damage is approximately equal to damage when using those items normally; damage type is also derived from item (EMP for Pulse grenade, Fire for Molotov, etc.).
 - Some traps require the enemy to step on the exact tile of the trap, while others can trigger in a small radius.
+- Demolition Expert perk affects explosive traps damage and also reduces AP for arming traps in combat.
 - New book for Traps skill added.
 
 

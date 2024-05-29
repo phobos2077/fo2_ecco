@@ -34,6 +34,10 @@ v0.9.6:
 - fixed craft button disappearing when using external HRP
 - fixed bug with disassemble that allowed for infinite item exploit
 
+> Traps:
+- added Demolition Expert to reduce arming AP cost by half
+- fixed inconsistent AP cost between different methods of arming traps
+
 > Balance:
 - changed monster part quests requirements/rewards ratio to make economic sense
 - reduced drugs in dead NPC's by further 40%

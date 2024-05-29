@@ -30,7 +30,7 @@ procedure use_obj_on_p_proc;
 procedure use_skill_on_p_proc;
 procedure identify_me;
 procedure dude_disarm_and_pickup_trap;
-procedure dude_try_to_arm_trap(variable armamentObj);
+procedure dude_try_to_arm_trap(variable armamentObj, variable autoArmament := false);
 procedure arm_trap(variable pid, variable isCrit);
 procedure setoff_trap(variable victim, variable armPid);
 procedure trap_setoff_effect(variable pid, variable critter);
@@ -232,6 +232,18 @@ procedure use_obj_on_p_proc begin
    end
 end
 
+procedure check_ap_cost_in_combat(variable apCost) begin
+   if (combat_is_initialized) then begin
+      if (get_critter_current_ap(dude_obj) >= apCost) then begin
+         set_critter_current_ap(dude_obj, get_critter_current_ap(dude_obj) - apCost);
+      end else begin
+         display_msg(sprintf(mstr_combat(100), apCost)); // You need %d action points.
+         return false;
+      end
+   end
+   return true;
+end
+
 procedure use_skill_on_p_proc begin
    variable item;
    //call identify_me;
@@ -246,7 +258,7 @@ procedure use_skill_on_p_proc begin
                // try to automatically find suited armament for trap
                item := get_suitable_armament_in_inventory(source_obj, my_trap_type);
                if (item) then begin
-                  call dude_try_to_arm_trap(item);
+                  call dude_try_to_arm_trap(item, true);
                end else begin
                   display_mstr(421);
                end
@@ -284,7 +296,7 @@ procedure dude_disarm_and_pickup_trap begin
    call destroy_self_trap_object;
 end
 
-procedure dude_try_to_arm_trap(variable armamentObj) begin
+procedure dude_try_to_arm_trap(variable armamentObj, variable autoArmament) begin
    variable begin
       rollMod;
       trapTypeMod;
@@ -297,6 +309,7 @@ procedure dude_try_to_arm_trap(variable armamentObj) begin
       armamentPid := 0;
       armamentCfg;
       groundFid;
+      apCost;
    end
 
    // check combat
@@ -305,13 +318,11 @@ procedure dude_try_to_arm_trap(variable armamentObj) begin
          display_mstr(462);
          return;
       end
-      if (get_critter_current_ap(dude_obj) >= TRAP_SET_APCOST) then begin
-         set_critter_current_ap(dude_obj, get_critter_current_ap(dude_obj) - TRAP_SET_APCOST);
-      end else begin
-         display_msg(sprintf(mstr_combat(100), TRAP_SET_APCOST)); // You need %d action points.
-         return;
-      end
    end
+   // +2 AP cost for when armanent was auto selected, to match what happens when using item from inventory.
+   apCost := (2 if (not armamentObj or autoArmament) else 0) + (2 if not dude_perk(PERK_demolition_expert_perk) else 0);
+   if (not check_ap_cost_in_combat(apCost)) then
+      return;
 
    // install trap
    groundFid := get_tile_ground_fid(self_tile, self_elevation);
