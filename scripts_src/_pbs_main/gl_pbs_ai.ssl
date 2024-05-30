@@ -77,6 +77,7 @@ procedure ai_choose_bodypart(variable attacker, variable attackType, variable hi
 
    // Roll against called_freq.
    variable calledFreq := ceil(get_object_ai_data(attacker, AI_CAP_CALLED_FREQ) * ini_called_freq_mult);
+   //debug_log_fmt("Called freq for packet %d = %d", get_ai(attacker), calledFreq);
    if (random(1, calledFreq) != 1) then return BODY_UNCALLED;
 
    // Minimum INT check.
@@ -147,7 +148,7 @@ procedure tohit_handler begin
 
    /*debug_log(string_format("tohit %s = %d (same_tile: %d, use_dist: %d, part: %d)",
       obj_name(attacker), hitChance, sameTile, useDist, bodyPart)
-      /*+ string_format("; ctd: (crit: %s, part: %d, flags: %d)",
+      + string_format("; ctd: (crit: %s, part: %d, flags: %d)",
       obj_name(ctdAttacker), ctdBodyPart, ctdFlags) );*/
    
    // A crazy hack based on understanding exactly when HOOK_TOHIT is called and how main_ctd is used by engine:

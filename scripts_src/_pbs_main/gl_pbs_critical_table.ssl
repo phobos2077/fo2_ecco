@@ -85,7 +85,7 @@ procedure combatdamage_handler begin
       targetFlags := get_sfall_arg_at(4),
       attackerFlags := get_sfall_arg_at(5);
 
-   debug_log_fmt("combatdmg Attacker (%s): %x, Target: %x", obj_name_safe(attacker), attackerFlags, targetFlags);
+   //debug_log_fmt("combatdmg Attacker (%s): %x, Target: %x", obj_name_safe(attacker), attackerFlags, targetFlags);
    if (target and attacker and (attackerFlags bwand DAM_HIT) and (targetFlags bwand DAM_DROP)) then begin
       variable targetWeapon := get_active_weapon(target);
       if (targetWeapon) then begin

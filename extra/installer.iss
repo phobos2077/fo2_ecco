@@ -17,7 +17,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-WIP
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-6
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no
@@ -64,7 +64,8 @@ en.InstallCustom=Custom install
 en.InstallNull=Uncheck all
 
 en.CMain=EcCo Gameplay Overhaul mod
-en.CAICalledShots=More frequent called shots by NPC's
+en.CAICalledShots=Improved AI aimed attack selection algorithm
+en.CAICalledShotsMore=More frequent aimed attacks
 en.CCriticals=Critical hit table improvements
 en.CCarryUnspentAP=Carry up to 2 unspent AP to next round
 en.CRemoveBonusRoF=Removal of Bonus Rate of Fire perk
@@ -89,7 +90,8 @@ ru.InstallCustom=Выборочная установка
 ru.InstallNull=Ничего не выбирать
 
 ru.CMain=EcCo - переработка геймплея
-ru.CAICalledShots=Более частые прицельные атаки ИИ
+ru.CAICalledShots=Улучшенный алгоритм выбора прицельных атак ИИ
+ru.CAICalledShotsMore=Более частые прицельные атаки
 ru.CCriticals=Улучшения таблицы критических повреждений
 ru.CCarryUnspentAP=Перенос части непотраченных ОД на следующих ход
 ru.CRemoveBonusRoF=Удаление перка "Бонус скорострельности"
@@ -118,6 +120,7 @@ Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
 Name: "main"; Description: "{cm:CMain}"; Types: full custom; Flags: fixed
 ;Name: "option"; Description: "{cm:COptions}"; Types: full
 Name: "ai_called_shots"; Description: "{cm:CAICalledShots}"; Types: full
+Name: "ai_called_shots\more"; Description: "{cm:CAICalledShotsMore}"; Types: full
 Name: "criticals"; Description: "{cm:CCriticals}"; Types: full
 Name: "carry_unspent_ap"; Description: "{cm:CCarryUnspentAP}"; Types: full
 Name: "remove_bonus_rof"; Description: "{cm:CRemoveBonusRoF}"; Types: full
@@ -170,6 +173,7 @@ Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer4"; String
 ;Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "CheckWeaponAmmoCost"; String: "1"; Components: combat
 
 Filename: "{app}\mods\ecco\combat.ini"; Section: "AI"; Key: "called_tweaks"; String: "0"; Components: not ai_called_shots
+Filename: "{app}\mods\ecco\combat.ini"; Section: "AI"; Key: "called_freq_mult"; String: "1.0"; Components: not ai_called_shots\more
 Filename: "{app}\mods\ecco\combat.ini"; Section: "CRITICALS"; Key: "enable_tweaks"; String: "0"; Components: not criticals
 Filename: "{app}\mods\ecco\combat.ini"; Section: "CRITICALS"; Key: "drop_flag_fix"; String: "0"; Components: not criticals
 Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "carry_unspent_ap"; String: "0"; Components: not carry_unspent_ap

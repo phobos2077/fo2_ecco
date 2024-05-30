@@ -193,6 +193,26 @@
 
 
 
+-=== MANUAL INSTALLATION (ZIP) ===-
+1. Follow normal installation steps from the github releases page up until using the installer.
+2. Unpack zip contents into the game root folder, overwriting files.
+3. Open ddraw.ini and find/change the following options in the [Misc] section:
+
+DamageFormula=0
+ObjCanHearObjFix=1
+DerivedStats=sfall\stats.ini
+SkillsFile=sfall\skills.ini
+PerksFile=sfall\perks.ini
+BooksFile=sfall\books.ini
+MovieTimer_artimer1=120
+MovieTimer_artimer2=235
+MovieTimer_artimer3=350
+MovieTimer_artimer4=470
+
+4. Follow the rest of the installation steps from github.
+
+
+
 -=== COMPATIBILITY ===-
 Talking Heads Addon & Talking Heads Actually Talk (THAT):
 - Full built-in support, no patches needed (if you previously used compatibility patches, DELETE them)

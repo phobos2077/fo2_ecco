@@ -11,6 +11,11 @@ if not exist "%output%" mkdir %output%
 cd /d "%output%"
 SET output=%cd%
 
+if "%1"=="-r" (
+    echo Deleting all compiled scripts...
+    del /Q *.int
+)
+
 rem SET compile=%root%\extra\bin\compile.exe
 
 cd /d "%root%/scripts_src"

@@ -6,6 +6,14 @@
 
 #define ARR_SCHEMAS             "pbs_craft_schemas"
 
+#ifndef debug_log
+   #ifdef ndebug
+      #define debug_log(msg, ...)       ndebug(msg)
+   #else
+      #define debug_log(msg, ...)       debug_msg("craft_schematics.h: " + msg)
+   #endif
+#endif
+
 variable
    craft_schemas_map;
 
@@ -41,7 +49,7 @@ procedure check_restock_craft_schematic(variable schematicPid, variable craftedI
 
    if (isKnown or random(1, 100) > probability) then return;
 
-   ndebug("spawning crafting schematic " + schematicPid + " for item " + craftedItemPid);
+   debug_log("spawning crafting schematic " + schematicPid + " for item " + craftedItemPid);
    item := create_object(schematicPid, 0, 0);
    set_weapon_ammo_count(item, craftedItemPid); // set count before adding to prevent stacking
    add_obj_to_inven(self_obj, item);

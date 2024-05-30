@@ -184,7 +184,7 @@
 #define HEAD_MOR            (194)
 #define HEAD_CERI           (195)
 #define HEAD_RHEA           (196)
-#define HEAD_JONES          (197)
+//#define HEAD_JONES          (197)
 #define HEAD_HANGM          (198)
 #define HEAD_BADG           (199)
 #define HEAD_ELD            (200)

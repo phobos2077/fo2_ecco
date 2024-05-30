@@ -37,7 +37,7 @@
 // <0 - time when next available
 #define LVAR_BRING_X    (8)
 
-#define _BRING_REWARD    (6000)
+#define _BRING_REWARD    (4000)
 #define _BRING_COUNT        (8)
 
 #define is_first_bring     (local_var(LVAR_BRING_X) == 0)
@@ -107,7 +107,7 @@ end
 // <0 - quest was completed, time when next available
 #define LVAR_BRING_X    (8)
 
-#define _BRING_REWARD    (1200)
+#define _BRING_REWARD     (900)
 #define _BRING_COUNT       (10)
 
 #define is_first_bring     (local_var(LVAR_BRING_X) == 0 or local_var(LVAR_BRING_X) == 1)

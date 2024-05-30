@@ -7,7 +7,10 @@ cd /d "%~dp0..\"
 SET root=%cd%
 SET mainDat=rpu_y_ecco.dat
 
-if exist %mainDat% del %mainDat%
+if exist %mainDat% (
+   echo Deleting existing %mainDat%...
+   del %mainDat%
+)
 
 cd /d "%root%\root\data"
 %root%\extra\bin\dat2.exe a -r %mainDat% art\* config\* data\* maps\* pcx\* proto\* scripts\* sound\* text\*
