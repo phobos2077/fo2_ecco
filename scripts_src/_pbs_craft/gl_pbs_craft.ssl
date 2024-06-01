@@ -20,8 +20,20 @@ procedure delete_button;
 
 #include "crafting.h"
 
-variable crafting_hotkey, schema_pids;
-variable warning_msg, show_crafting_scheduled, crafting_button_shown, crafting_button_top;
+variable begin
+   crafting_hotkey;
+   schema_pids;
+   warning_msg;
+   show_crafting_scheduled;
+   crafting_button_shown;
+   crafting_button_top;
+
+   button_x;
+   button_y;
+   button_global_x;
+   button_global_y;
+   //iface_window_id;
+end
 
 #define WIN_CRAFT_BTN         "helwin"
 #define SFX_BUTTON_DOWN       "butin4"
@@ -34,6 +46,7 @@ variable warning_msg, show_crafting_scheduled, crafting_button_shown, crafting_b
 #define BUTTON_BOTTOM_OFFSET  62
 #define BUTTON_RIGHT_OFFSET   399
 
+#define can_enter_crafting    (not(get_game_mode) and craft_ui_mode <= MODE_EXIT)
 
 procedure warning_combat begin
    if (warning_msg == false) then begin
@@ -58,7 +71,7 @@ procedure keypress_handler begin
       if (hotkey_pressed_now(crafting_hotkey, key)) then begin
          if combat_is_initialized then
             call warning_combat;
-         else if (not(get_game_mode) and craft_ui_mode <= MODE_EXIT) then begin
+         else if (can_enter_crafting) then begin
             call schedule_show_crafting;
       	end
       end else if (craft_ui_mode > MODE_EXIT) then begin
@@ -130,15 +143,16 @@ procedure do_up begin
    end
 end
 
-// Create the button
+// DEPRECATED Create the button
+/*
 procedure create_button begin
    // Mash's HRP has a bug when clicking on main interface - it goes on top (sfall doesn't have this).
    // Workaround: delete and recreate button when going to/from these UI's with moveontop flag only when button is actually clickable.
-   variable onTop := not(get_game_mode bwand (BARTER bwor INVENTORY bwor DIALOG));
+   variable onTop := true;// not(get_game_mode bwand (BARTER bwor INVENTORY bwor DIALOG));
    if crafting_button_shown then begin
-      if (crafting_button_top != onTop) then
-         DeleteWin(WIN_CRAFT_BTN);
-      else
+      //if (crafting_button_top != onTop) then
+      //   DeleteWin(WIN_CRAFT_BTN);
+      //else
          return;
    end
    variable
@@ -150,8 +164,41 @@ procedure create_button begin
    AddButtonGFX("but", PCX_BUTTON_DOWN, PCX_BUTTON_UP, PCX_BUTTON_UP);
    AddButtonProc("but", do_on, do_off, do_down, do_up);
    ShowWin;
-   crafting_button_top := onTop;
+   //crafting_button_top := onTop;
    crafting_button_shown := true;
+end*/
+
+procedure draw_button(variable pressed) begin
+   interface_art_draw(WINTYPE_IFACEBAR, PCX_BUTTON_DOWN if pressed else PCX_BUTTON_UP, button_x, button_y);
+end
+
+// Create the button
+procedure init_button begin
+   button_x := get_interface_width(WINTYPE_IFACEBAR) - BUTTON_RIGHT_OFFSET;
+   button_y := get_interface_height(WINTYPE_IFACEBAR) - BUTTON_BOTTOM_OFFSET;
+   button_global_x := get_interface_x(WINTYPE_IFACEBAR) + button_x;
+   button_global_y := get_interface_y(WINTYPE_IFACEBAR) + button_y;
+   // TODO: after sfall update
+   // iface_window_id := get_interface_id(WINTYPE_IFACEBAR);
+   call draw_button(false);
+end
+
+procedure mouse_over_button begin
+   // TODO: after sfall update
+   // if (get_window_under_mouse != iface_window_id) then return false;
+   variable x := get_mouse_x, y := get_mouse_y;
+   return x >= button_global_x
+      and x < button_global_x + BUTTON_WIDTH
+      and y >= button_global_y
+      and y < button_global_y + BUTTON_HEIGHT;
+end
+
+procedure check_mouse_off_button begin
+   if (mouse_over_button) then return;
+
+   call draw_button(false);
+   call do_off;
+   set_global_script_repeat(0);
 end
 
 procedure delete_button begin
@@ -161,15 +208,40 @@ procedure delete_button begin
    DeleteWin(WIN_CRAFT_BTN);
 end
 
+procedure mouseclick_handler begin
+   variable
+      pressed := get_sfall_arg,
+      btn := get_sfall_arg;
+      //window := get_window_under_mouse;
+
+   display_msg(string_format("mouseclick (%d, %d) mode %x", get_mouse_x, get_mouse_y, get_game_mode));
+   if (btn == 0 and mouse_over_button and can_enter_crafting) then begin
+      if (pressed) then begin
+         call draw_button(true);
+         call do_down;
+         set_global_script_repeat(1);
+      end
+      else begin 
+         call draw_button(false);
+         call do_up;
+      end
+   end
+end
+
+// OLD button code
+/*
+#define OVERLAPPING_MODES        (LOADGAME bwor LOCALMAP bwor WORLDMAP bwor OPTIONS bwor CHARSCREEN bwor PIPBOY bwor AUTOMAP bwor BARTER bwor DIALOG bwor SPECIAL bwor INVENTORY bwor INTFACEUSE bwor INTFACELOOT)
+
 procedure gamemodechange_handler begin
    variable gameExit := get_sfall_arg;
-   if (not (get_game_mode bwand (LOADGAME bwor LOCALMAP bwor WORLDMAP)) and not gameExit) then begin
+   //display_msg(sprintf("gamemode= %x", get_game_mode));
+   if (not (get_game_mode bwand OVERLAPPING_MODES) and not gameExit) then begin
       call create_button;
    end
    else begin
       call delete_button;
    end
-end
+end*/
 
 procedure useobj_handler begin
    variable
@@ -203,11 +275,12 @@ procedure start begin
 		crafting_hotkey := parse_hotkey(craft_raw_cfg.Main.hotkey);
       schema_pids := array_fixed(string_split_ints(craft_raw_cfg.Main.schematic_pids, ","));
 		register_hook_proc(HOOK_KEYPRESS, keypress_handler);
-      register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
+      register_hook_proc(HOOK_MOUSECLICK, mouseclick_handler);
+      //register_hook_proc(HOOK_GAMEMODECHANGE, gamemodechange_handler);
       register_hook_proc(HOOK_DESCRIPTIONOBJ, descriptionobj_handler);
       register_hook_proc(HOOK_USEOBJ, useobj_handler);
 
-      call create_button;
+      call init_button;
 
       set_global_script_type(1);
 	end else begin
@@ -215,7 +288,9 @@ procedure start begin
       if (show_crafting_scheduled) then begin
          show_crafting_scheduled := false;
          call show_crafting_window;
+         set_global_script_repeat(0);
       end
-      set_global_script_repeat(0);
+      if (button_pressed) then
+         call check_mouse_off_button;
    end
 end
