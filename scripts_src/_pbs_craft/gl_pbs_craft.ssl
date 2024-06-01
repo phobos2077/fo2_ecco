@@ -214,7 +214,7 @@ procedure mouseclick_handler begin
       btn := get_sfall_arg;
       //window := get_window_under_mouse;
 
-   display_msg(string_format("mouseclick (%d, %d) mode %x", get_mouse_x, get_mouse_y, get_game_mode));
+   //display_msg(string_format("mouseclick (%d, %d) mode %x", get_mouse_x, get_mouse_y, get_game_mode));
    if (btn == 0 and mouse_over_button and can_enter_crafting) then begin
       if (pressed) then begin
          call draw_button(true);

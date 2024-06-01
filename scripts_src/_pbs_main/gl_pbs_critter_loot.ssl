@@ -23,14 +23,15 @@ procedure start;
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/ecco_msg.h"
 
+#include "../_pbs_headers/loot_utils.h"
+
 variable
    ini_destroy_weapon_percent,
    ini_destroy_weapon_list,
    ini_weapon_drop_chance,
    ini_weapon_drop_dist,
    ini_weapon_drop_dir,
-   ini_reduce_ammo_percent_min,
-   ini_reduce_ammo_percent_max,
+   ini_reduce_ammo_percent,
    ini_reduce_drugs_percent,
    ini_reduce_drugs_pids;
 
@@ -40,7 +41,6 @@ variable destroyed_stats;
 procedure destroy_critter_weapon(variable critter);
 procedure drop_weapons(variable critter);
 procedure reduce_loot(variable critter);
-procedure reduce_item_count(variable invenobj, variable item, variable newCount);
 
 #define INI_FILE        INI_COMBAT
 #define INI_SECTION     "CRITTER_LOOT"
@@ -64,7 +64,7 @@ procedure ondeath_handler begin
       return;
 
    if (critter and obj_type(critter) == OBJ_TYPE_CRITTER) then begin
-      if (ini_reduce_ammo_percent_min > 0 or ini_reduce_drugs_percent > 0 or ini_destroy_weapon_percent > 0) then begin
+      if (ini_reduce_ammo_percent[1] > 0 or ini_reduce_drugs_percent > 0 or ini_destroy_weapon_percent > 0) then begin
          call reduce_loot(critter);
       end
       if (ini_weapon_drop_chance > 0 and random(1, 100) <= ini_weapon_drop_chance) then begin
@@ -82,8 +82,7 @@ procedure start begin
       load_num_from_ini(weapon_drop_dist, 0, 0, 10);
       load_num_from_ini(weapon_drop_dir, 0, 0, 5);
 
-      load_num_from_ini(reduce_ammo_percent_min, 0, 0, 100);
-      load_num_from_ini(reduce_ammo_percent_max, ini_reduce_ammo_percent_min, ini_reduce_ammo_percent_min, 100);
+      load_range_from_ini(reduce_ammo_percent, 0, 0, 0, 100);
       load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
       load_int_list_from_ini(reduce_drugs_pids);
 
@@ -172,67 +171,30 @@ procedure reduce_loot(variable critter) begin
    variable
       item,
       list,
-      count,
-      newCount,
-      packSize,
-      pid,
-      removeStats,
-      weaponStats;
+      removeStats;
 
    list := inven_as_array(critter);
    removeStats := "";
    foreach item in list begin
       if (item == 0) then
          continue;
-      pid := obj_pid(item);
       if (obj_item_subtype(item) == item_type_ammo) then begin
-         if (ini_reduce_ammo_percent_min > 0) then begin
-            // reduce ammo in measures of individual rounds, not packs
-            packSize := get_proto_data(pid, PROTO_AM_PACK_SIZE);
-            count := (obj_is_carrying_obj(critter, item) - 1) * packSize + get_weapon_ammo_count(item);
-            newCount := round(count * (100 - random(ini_reduce_ammo_percent_min, ini_reduce_ammo_percent_max)) / 100.0);
-            //display_msg("count: "+count+", pack: "+packSize+", new: "+newCount+" ("+ceil(1.0*newCount / packSize)+")");
-            call reduce_item_count(critter, item, ceil(1.0*newCount / packSize));
-            // if number of items reduced, object reference will be different
-            item := obj_carrying_pid_obj(critter, pid);
-            if (item and newCount % packSize > 0) then
-               set_weapon_ammo_count(item, newCount % packSize);
-
-            removeStats += obj_name(item)+" ("+count+" -> "+newCount+"), ";
-         end
+         removeStats += reduce_ammo_in_stack(critter, item, ini_reduce_ammo_percent);
       end
       else if (obj_item_subtype(item) == item_type_drug) then begin
-         if (ini_reduce_drugs_percent > 0 and is_in_array(pid, ini_reduce_drugs_pids)) then begin
-            // reduce with probability formula
-            count := obj_is_carrying_obj(critter, item);
-            newCount := count * (100 - ini_reduce_drugs_percent) / 100.0;
-            newCount := floor(newCount) + (random(0, 99) < (newCount - floor(newCount))*100);
-            call reduce_item_count(critter, item, newCount);
-            removeStats += obj_name(item)+" ("+count+" -> "+newCount+"), ";
-         end
+         removeStats += reduce_item_in_stack(critter, item, ini_reduce_drugs_pids, ini_reduce_drugs_percent);
       end
       else if (obj_item_subtype(item) == item_type_weapon) then begin
-         if (ini_destroy_weapon_percent > 0 and is_in_array(pid, ini_destroy_weapon_list)) then
-            if (try_destroy_weapon(critter, item)) then
+         if (ini_destroy_weapon_percent > 0
+            and is_in_array(obj_pid(item), ini_destroy_weapon_list)
+            and try_destroy_weapon(critter, item)) then
                removeStats += obj_name(item)+", ";
+         else
+            removeStats += reduce_ammo_in_weapon(item, ini_reduce_ammo_percent);
       end
    end
    if (removeStats != "") then
-      debug_log("removed loot for "+obj_name(critter)+": "+removeStats);
+      debug_log("Removed loot for "+obj_name(critter)+": "+removeStats);
 end
-
-
-procedure reduce_item_count(variable invenobj, variable item, variable newCount) begin
-   variable count := obj_is_carrying_obj(invenobj, item);
-   if (newCount >= count) then return;
-
-   count := rm_mult_objs_from_inven(invenobj, item, count - newCount);
-   destroy_object(item);
-end
-
-
-
-
-
 
 

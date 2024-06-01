@@ -1,0 +1,121 @@
+/*
+   Map loot mod:
+
+   - Removes a portion of ammo and drugs from containers/ground on first map enter.
+*/
+
+#define SCRIPT_REALNAME     "pbs_map_loot"
+
+#include "../sfall/define_lite.h"
+//#include "../sfall/command_lite.h"
+#include "../sfall/lib.strings.h"
+#include "../sfall/lib.arrays.h"
+#include "../sfall/lib.inven.h"
+#include "../sfall/lib.math.h"
+
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/ecco_msg.h"
+
+#include "../_pbs_headers/loot_utils.h"
+
+variable
+   ini_reduce_ammo_percent,
+   ini_reduce_drugs_percent,
+   ini_reduce_drugs_pids;
+
+procedure reduce_container_loot(variable container) begin
+   variable item, list, subType, stats, totalStats := "";
+   list := inven_as_array(container);
+   foreach item in list begin
+      if (item == 0) then
+         continue;
+      subType := obj_item_subtype(item);
+      //debug_log_fmt("processing stack %s (%d)...", obj_name(item), subType);
+
+      switch (subType) begin
+         case item_type_ammo:
+            stats := reduce_ammo_in_stack(container, item, ini_reduce_ammo_percent);
+         case item_type_weapon:
+            stats := reduce_ammo_in_weapon(item, ini_reduce_ammo_percent);
+         case item_type_drug:
+            stats := reduce_item_in_stack(container, item, ini_reduce_drugs_pids, ini_reduce_drugs_percent);
+         case item_type_container:
+            stats := reduce_container_loot(item);
+         default:
+            stats := "";
+      end
+      if (stats != "") then begin
+         if (totalStats != "") then
+            totalStats += ", ";
+         totalStats += stats;
+      end
+   end
+   if (totalStats != "") then
+      totalStats := obj_name(container) + ": " + totalStats;
+   return totalStats;
+end
+
+procedure reduce_ground_item_loot(variable item) begin
+   variable subType := obj_item_subtype(item), stats;
+   //debug_log_fmt("processing %s (%d)...", obj_name(item), subType);
+   switch (subType) begin
+      case item_type_ammo:
+         return reduce_ammo_on_ground(item, ini_reduce_ammo_percent);
+      case item_type_weapon:
+         return reduce_ammo_in_weapon(item, ini_reduce_ammo_percent);
+      case item_type_drug:
+         return reduce_item_on_ground(item, ini_reduce_drugs_pids, ini_reduce_drugs_percent);
+      case item_type_container: begin
+         return reduce_container_loot(item);
+      end
+      default:
+         return "";
+   end
+end
+
+procedure reduce_loot_on_map begin
+   variable obj, stats;
+   foreach obj in list_as_array(LIST_GROUNDITEMS) begin
+      if (obj and not obj_in_party(obj)) then begin
+         stats := reduce_ground_item_loot(obj);
+         if (stats != "") then
+            debug_log_fmt("Reduce loot [%d-%d] %s", elevation(obj), tile_num(obj), stats);
+      end
+   end
+end
+
+/*
+procedure useobj_hook begin
+   display_msg("useobj "+obj_name(get_sfall_arg_at(1)));
+end
+procedure useskillon_hook begin
+   display_msg("useskill "+obj_name(get_sfall_arg_at(1)));
+end*/
+
+#define INI_FILE        INI_MISC
+#define INI_SECTION     "MAP_LOOT"
+
+procedure start begin
+   if (game_loaded) then begin
+      if (not get_ini_value_def(INI_FILE, INI_SECTION, "enable_tweaks", false)) then return;
+
+      load_range_from_ini(reduce_ammo_percent, 0, 0, 0, 100);
+      load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
+      load_int_list_from_ini(reduce_drugs_pids);
+
+      //register_hook_proc(HOOK_USEANIMOBJ, useobj_hook);
+      //register_hook_proc(HOOK_USESKILLON, useskillon_hook);
+
+      debug_log("Map loot reduction enabled.");
+
+      // DEBUGGING!!!!
+      //call reduce_loot_on_map;
+   end
+end
+
+procedure map_enter_p_proc begin
+   //debug_log("cur_town = "+cur_town+", is_loading = "+is_loading_game+", map_first_run = "+map_first_run);
+   if (cur_town == -1 or is_loading_game or not map_first_run) then return;
+
+   call reduce_loot_on_map;
+end
