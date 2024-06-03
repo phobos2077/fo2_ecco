@@ -2,6 +2,7 @@
 #include "../sfall/lib.obj.h"
 #include "../sfall/define_lite.h"
 
+#define PID_CAR_TRUNK                       (455)
 #define PID_DRIVABLE_CAR                    (33555441)
 #define PID_SMALL_ENERGY_CELL               (38)
 #define PID_MICRO_FUSION_CELL               (39)
@@ -15,7 +16,7 @@ procedure useobjon_hook begin
 
    //display_msg(string_format("useobjon: %s uses %s on %s", obj_name_safe(user), obj_name_safe(item), obj_name_safe(target)));
    if (target and item and
-      obj_pid(target) == PID_DRIVABLE_CAR and
+      (obj_pid(target) == PID_DRIVABLE_CAR or obj_pid(target) == PID_CAR_TRUNK) and
       user == dude_obj and (obj_pid(item) == PID_MICRO_FUSION_CELL or obj_pid(item) == PID_SMALL_ENERGY_CELL) and
       car_gas_amount < GAS_TANK_CAPACITY) then
    begin

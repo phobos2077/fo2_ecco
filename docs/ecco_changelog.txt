@@ -6,6 +6,7 @@ v0.9.7:
 
 > Misc:
 - added option for additional car trunk capacity upgrade with Repair skill
+- fixed incorrect car charging amount when using Cells on trunk
 
 
 v0.9.6:
