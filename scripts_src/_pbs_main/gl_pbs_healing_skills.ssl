@@ -408,6 +408,9 @@ procedure useobjon_hook begin
       item := get_sfall_arg,
       useItemResult;
 
+   // In vanilla, you can try to "heal" non-critters. Just skip that case.
+   if (obj_type(target) != OBJ_TYPE_CRITTER) then return;
+
    useItemResult := protinst_use_item_on(user, target, item);
    intface_redraw;
    if (useItemResult != -1) then
