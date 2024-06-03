@@ -1,0 +1,176 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Car Trunk
+        Location: Arroyo
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: December 04, 1997
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "zicrtrnk"
+#include "../headers/define.h"
+#include "../headers/updatmap.h"
+
+#define NAME                    SCRIPT_ZICRTRNK
+
+#include "../headers/command.h"
+#include "../headers/newreno.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure map_enter_p_proc;
+procedure map_exit_p_proc;
+procedure map_update_p_proc;
+procedure use_p_proc;
+
+#define LVAR_In_Party           (0)
+
+// phobos2077: trunk upgrade
+#include "../sfall/lib.inven.h"
+
+#define SGVAR_TRUNK_UPGRADE          "PBSTRNKU"
+#define EXP_MANUAL_TRUNK_UPGRADE          (200)
+#define UPGRADE_CARRY_PERCENT_BONUS        (10)
+#define UPGRADE_SKILL_MOD                 (-50)
+
+#define space_upgraded                    (get_sfall_global_int(SGVAR_TRUNK_UPGRADE) != 0)
+#define set_space_upgraded                set_sfall_global(SGVAR_TRUNK_UPGRADE, 1)
+
+#define upgrade_is_available              (not space_upgraded)
+
+
+procedure start begin
+end
+
+procedure use_p_proc begin
+   ndebug("Using Car Trunk");
+end
+
+procedure map_enter_p_proc begin
+   ndebug("trunk: map_enter_p_proc");
+   if (global_var(GVAR_CAR_PLACED_TILE) == -1) then begin
+      set_global_var(GVAR_CAR_PLACED_TILE, 0);
+   end
+   if (dude_has_car != 0) then begin
+      if (Trunk_Ptr != 0) then begin
+         ndebug("   Trunk_In_Party: start");
+         ndebug("   GVAR_CAR_PLACED_TILE == " + global_var(GVAR_CAR_PLACED_TILE));
+         if (global_var(GVAR_CAR_PLACED_TILE) > 0) then begin
+            if (tile_contains_pid_obj(global_var(GVAR_CAR_PLACED_TILE), self_elevation, PID_DRIVABLE_CAR) != 0) then begin
+               ndebug("   Car_On_Elev(self_elevation)");
+               Create_Trunk(global_var(GVAR_CAR_PLACED_TILE), self_elevation)
+               check_set_obj_visiblility(self_obj, false);
+            end else begin
+               ndebug("  trying to hide trunk");
+               check_set_obj_visiblility(self_obj, true);
+            end
+         end else if (global_var(GVAR_CAR_PLACED_TILE) != -1) then begin
+            ndebug("  trying to hide trunk");
+            check_set_obj_visiblility(self_obj, true);
+         end
+         ndebug("   Trunk_In_Party: end");
+      end else begin
+         ndebug("   global_var(GVAR_PLAYER_GOT_CAR) == " + global_var(GVAR_PLAYER_GOT_CAR));
+         party_add(self_obj);
+      end
+   end else begin
+      ndebug("   player hasn't gotten trunk");
+   end
+end
+
+procedure map_exit_p_proc begin
+end
+
+procedure map_update_p_proc begin
+   ndebug("trunk: map_update_p_proc");
+   if (dude_has_car != 0) then begin
+      if (Trunk_Ptr != 0) then begin
+         ndebug("   Trunk_In_Party: start");
+         ndebug("   GVAR_CAR_PLACED_TILE == " + global_var(GVAR_CAR_PLACED_TILE));
+         if (global_var(GVAR_CAR_PLACED_TILE) > 0) then begin
+            if (tile_contains_pid_obj(global_var(GVAR_CAR_PLACED_TILE), self_elevation, PID_DRIVABLE_CAR) != 0) then begin
+               ndebug("   Car_On_Elev(self_elevation)");
+               Create_Trunk(global_var(GVAR_CAR_PLACED_TILE), self_elevation)
+               check_set_obj_visiblility(self_obj, false);
+            end else begin
+               ndebug("  trying to hide trunk");
+               check_set_obj_visiblility(self_obj, true);
+            end
+         end else if (global_var(GVAR_CAR_PLACED_TILE) != -1) then begin
+            ndebug("  trying to hide trunk");
+            check_set_obj_visiblility(self_obj, true);
+         end
+         ndebug("   Trunk_In_Party: end");
+      end else begin
+         ndebug("   global_var(GVAR_PLAYER_GOT_CAR) == " + global_var(GVAR_PLAYER_GOT_CAR));
+         party_add(self_obj);
+      end
+   end else begin
+      ndebug("   player hasn't gotten trunk");
+   end
+end
+
+
+// phobos2077: Trunk upgrade:
+
+procedure total_size(variable cont) begin
+   variable obj, size := 0;
+   foreach (obj in (inven_as_array(cont))) begin
+      size += obj_is_carrying_obj(cont, obj) * proto_data(obj_pid(obj), it_size);
+      if (obj_item_subtype(obj) == item_type_container) then
+         size += total_size(obj);
+   end
+   return size;
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   variable msg := mstr(101);
+   if (upgrade_is_available and is_success(do_check(source_obj, STAT_pe, -3))) then
+      msg += mstr(200);
+   display_msg(string_format(msg, total_size(self_obj), car_carry_amount));
+end
+
+procedure use_obj_on_p_proc begin
+   if (upgrade_is_available) then begin
+      variable pid := obj_pid(obj_being_used_with);
+      if (pid == PID_WRENCH or pid == PID_CROWBAR or pid == PID_MULTI_TOOL or pid == PID_SUPER_TOOL_KIT) then begin
+         script_overrides;
+         gfade_out(ONE_GAME_SECOND);
+         //game_time_advance(ONE_GAME_HOUR * 1);
+         gfade_in(ONE_GAME_SECOND); 
+         if (is_success(roll_vs_skill(source_obj, SKILL_REPAIR, UPGRADE_SKILL_MOD))) then begin
+            display_mstr(202);
+            set_space_upgraded;
+            set_car_carry_amount(car_carry_amount * (100 + UPGRADE_CARRY_PERCENT_BONUS) / 100);
+            give_xp(EXP_MANUAL_TRUNK_UPGRADE);
+         end else begin
+            display_mstr(203);
+         end
+      end
+   end
+end
+
+procedure use_skill_on_p_proc begin
+   if (upgrade_is_available and action_being_used == SKILL_REPAIR) then begin
+      script_overrides;
+      display_mstr(201);
+   end  
+end

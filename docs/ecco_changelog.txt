@@ -1,5 +1,13 @@
 -=== CHANGELOG ===-
 
+v0.9.7:
+> Crafting:
+- fixed inconsistent craft button visibility (hiding or visible on top of other windows)
+
+> Misc:
+- added option for additional car trunk capacity upgrade with Repair skill
+
+
 v0.9.6:
 > Combat & AI:
 - increased called (aimed) shot frequency of all enemies
