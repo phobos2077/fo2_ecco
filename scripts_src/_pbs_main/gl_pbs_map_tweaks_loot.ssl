@@ -13,15 +13,21 @@
 #include "../sfall/lib.inven.h"
 #include "../sfall/lib.math.h"
 
+#include "../_pbs_headers/ecco_ids.h"
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/ecco_msg.h"
 
 #include "../_pbs_headers/loot_utils.h"
 
-variable
-   ini_reduce_ammo_percent,
-   ini_reduce_drugs_percent,
+variable begin
+   ini_enable_tweaks;
+   ini_reduce_weapons_percent;
+   ini_reduce_weapons_pids;
+   ini_reduce_ammo_percent;
+   ini_reduce_drugs_percent;
    ini_reduce_drugs_pids;
+   //processed_containers_map;
+end
 
 procedure reduce_container_loot(variable container) begin
    variable item, list, subType, stats, totalStats := "";
@@ -33,10 +39,10 @@ procedure reduce_container_loot(variable container) begin
       //debug_log_fmt("processing stack %s (%d)...", obj_name(item), subType);
 
       switch (subType) begin
-         case item_type_ammo:
-            stats := reduce_ammo_in_stack(container, item, ini_reduce_ammo_percent);
          case item_type_weapon:
-            stats := reduce_ammo_in_weapon(item, ini_reduce_ammo_percent);
+            stats := reduce_item_in_stack(container, item, ini_reduce_weapons_pids, ini_reduce_weapons_percent);
+         case item_type_ammo:
+            stats := reduce_item_in_stack(container, item, 0, ini_reduce_ammo_percent);
          case item_type_drug:
             stats := reduce_item_in_stack(container, item, ini_reduce_drugs_pids, ini_reduce_drugs_percent);
          case item_type_container:
@@ -59,10 +65,10 @@ procedure reduce_ground_item_loot(variable item) begin
    variable subType := obj_item_subtype(item), stats;
    //debug_log_fmt("processing %s (%d)...", obj_name(item), subType);
    switch (subType) begin
-      case item_type_ammo:
-         return reduce_ammo_on_ground(item, ini_reduce_ammo_percent);
       case item_type_weapon:
-         return reduce_ammo_in_weapon(item, ini_reduce_ammo_percent);
+         return reduce_item_on_ground(item, ini_reduce_weapons_pids, ini_reduce_weapons_percent);
+      case item_type_ammo:
+         return reduce_item_on_ground(item, 0, ini_reduce_ammo_percent);
       case item_type_drug:
          return reduce_item_on_ground(item, ini_reduce_drugs_pids, ini_reduce_drugs_percent);
       case item_type_container: begin
@@ -85,25 +91,53 @@ procedure reduce_loot_on_map begin
 end
 
 /*
-procedure useobj_hook begin
-   display_msg("useobj "+obj_name(get_sfall_arg_at(1)));
+procedure get_processed_containers_map begin
+   if (not processed_containers_map) then
+      processed_containers_map := load_create_array_map(ARR_LOOTED_CONTAINERS);
+   return processed_containers_map;
 end
+
+#define processed_map_key(obj)         ((cur_map_index * 0x100000) bwor get_object_data(obj, OBJ_DATA_ID))
+
+procedure useanimobj_hook begin
+   variable user := get_sfall_arg, obj := get_sfall_arg;
+   if (user != dude_obj or obj_type(obj) != OBJ_TYPE_ITEM or obj_item_subtype(obj) != item_type_container) then return;
+
+   variable stats,
+      processed := get_processed_containers_map,
+      key := processed_map_key(obj);
+
+   display_msg_fmt("useobj %s key %x processed: %d", obj_name(obj), key, processed[key]);
+
+   if (processed[key]) then return;
+
+   stats := reduce_container_loot(obj);
+   if (stats != "") then
+      debug_log_fmt("Reduce loot [%d-%d] %s", elevation(obj), tile_num(obj), stats);
+
+   processed[key] := 1;
+end
+
 procedure useskillon_hook begin
    display_msg("useskill "+obj_name(get_sfall_arg_at(1)));
-end*/
+end
+*/
 
 #define INI_FILE        INI_MISC
 #define INI_SECTION     "MAP_LOOT"
 
 procedure start begin
    if (game_loaded) then begin
-      if (not get_ini_value_def(INI_FILE, INI_SECTION, "enable_tweaks", false)) then return;
+      load_bool_from_ini(enable_tweaks, false);
+      if (not ini_enable_tweaks) then return;
 
-      load_range_from_ini(reduce_ammo_percent, 0, 0, 0, 100);
+      load_num_from_ini(reduce_ammo_percent, 0, 0, 100);
       load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
+      load_num_from_ini(reduce_weapons_percent, 0, 0, 100);
       load_int_list_from_ini(reduce_drugs_pids);
+      load_int_list_from_ini(reduce_weapons_pids);
 
-      //register_hook_proc(HOOK_USEANIMOBJ, useobj_hook);
+      //register_hook_proc(HOOK_USEANIMOBJ, useanimobj_hook);
       //register_hook_proc(HOOK_USESKILLON, useskillon_hook);
 
       debug_log("Map loot reduction enabled.");
@@ -115,7 +149,7 @@ end
 
 procedure map_enter_p_proc begin
    //debug_log("cur_town = "+cur_town+", is_loading = "+is_loading_game+", map_first_run = "+map_first_run);
-   if (cur_town == -1 or is_loading_game or not map_first_run) then return;
+   if (not ini_enable_tweaks or cur_town == -1 or is_loading_game or not map_first_run) then return;
 
    call reduce_loot_on_map;
 end

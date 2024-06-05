@@ -1,5 +1,5 @@
 /**
- * Unlocks gory death animations for melee weapons.
+ * Unlocks gory death animations for melee weapons and non-"explosion" thrown weapons.
  */
 
 #define SCRIPT_REALNAME  "melee_gore_unlock"

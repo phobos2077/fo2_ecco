@@ -93,38 +93,39 @@ end
  * Reduces number of drug/misc items in stack by a percentage.
  * @arg {ObjectPtr} invenObj - Container or critter
  * @arg {ObjectPtr} item - item stack object
- * @arg {list} pidList - list of pids allowed to be removed
+ * @arg {list} pidList - list of pids allowed to be removed (0 to remove regardless of PID)
  * @arg {int} percent - % to remove
  * @ret {string}
  */
 procedure reduce_item_in_stack(variable invenObj, variable item, variable pidList, variable percent) begin
-   if (percent <= 0) then return "";
-
-   variable pid := obj_pid(item);
-   if (not is_in_array(pid, pidList)) then return "";
+   if (percent <= 0
+      or (pidList and not is_in_array(obj_pid(item), pidList))) then
+      return "";
 
    // reduce with probability formula
    variable
       count := obj_is_carrying_obj(invenObj, item),
       newCount := count * (100 - percent) / 100.0;
 
-   //debug_log_fmt("reducing %d -> %d", count, newCount);
+   //debug_log_fmt("reducing %d -> %04f", count, newCount);
    newCount := floor(newCount) + (random(0, 99) < (newCount - floor(newCount))*100);
-   call reduce_item_count(invenObj, item, newCount);
+   if (newCount == count) then return "";
 
+   call reduce_item_count(invenObj, item, newCount);
    return obj_name(item)+" ("+count+" -> "+newCount+")";
 end
 
 /**
  * Removes item on the ground with a given percentage chance.
  * @arg {ObjectPtr} item - item stack object
- * @arg {list} pidList - list of pids allowed to be removed
+ * @arg {list} pidList - list of pids allowed to be removed (0 to remove regardless of PID)
  * @arg {int} percent - % chance to remove
  */
 procedure reduce_item_on_ground(variable item, variable pidList, variable percent) begin
    if (percent <= 0
-      or not is_in_array(obj_pid(item), pidList)
-      or random(0, 99) >= percent) then return "";
+      or (pidList and not is_in_array(obj_pid(item), pidList))
+      or random(0, 99) >= percent) then
+      return "";
 
    destroy_object(item);
    return obj_name(item) + " (removed)";

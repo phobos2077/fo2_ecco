@@ -28,6 +28,7 @@
 #define ARR_CRITTERS_SEE_DUDE    "pbs_see_dude"
 #define ARR_KILL_EXP             "pbs_kill_exp"
 #define ARR_DESTROYED_WEAPONS    "pbs_destr_wpns"
+//#define ARR_LOOTED_CONTAINERS    "pbs_lootd_contnrs"
 
 // normal global variables
 #define GVAR_BOUNTY_REDDING         (644)

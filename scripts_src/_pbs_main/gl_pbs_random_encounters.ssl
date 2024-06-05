@@ -63,7 +63,7 @@ procedure encounter_hook begin
       mapId := get_sfall_arg,
       isSpecial := get_sfall_arg;
 
-   //display_msg("encounter hook: type "+eventType+", mapId: "+mapId+", isSpecial: "+isSpecial);
+   //display_msg_fmt("encounter hook: type %d, mapId: %d, isSpecial: %d, enc table: %d, enc: %d", eventType, mapId, isSpecial, get_sfall_arg, get_sfall_arg);
    if (eventType == 0 and not isSpecial) then
       encounter_map_id := mapId;
 end
