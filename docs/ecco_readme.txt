@@ -223,6 +223,8 @@ Inventory Filter (2.0.3+ from github):
 FO2Tweaks:
 - Don't use with default settings! Some of them has conflicts with EcCo features
 - Disable the following (EcCo already includes similar changes):
+max_knockback=-1
+healing_revision=0
 molotov_fire=0
 damage_mod=0
 

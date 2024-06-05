@@ -45,6 +45,7 @@ end
 #define BUTTON_HEIGHT         24
 #define BUTTON_BOTTOM_OFFSET  62
 #define BUTTON_RIGHT_OFFSET   399
+#define BUTTON_CLICK_LEFT_OFFSET  2
 
 #define can_enter_crafting    (not(get_game_mode) and craft_ui_mode <= MODE_EXIT)
 
@@ -187,8 +188,8 @@ procedure mouse_over_button begin
    // TODO: after sfall update
    // if (get_window_under_mouse != iface_window_id) then return false;
    variable x := get_mouse_x, y := get_mouse_y;
-   return x >= button_global_x
-      and x < button_global_x + BUTTON_WIDTH
+   return x >= button_global_x + BUTTON_CLICK_LEFT_OFFSET
+      and x < button_global_x + BUTTON_WIDTH - BUTTON_CLICK_LEFT_OFFSET
       and y >= button_global_y
       and y < button_global_y + BUTTON_HEIGHT;
 end

@@ -117,7 +117,7 @@ procedure CreateZone1 begin
    check_restock_item(PID_SPEAR, 1, 1, 5)
    check_restock_item(PID_ROCK, 1, 10, 40) // pbs: prob was 20
    check_restock_item(PID_HEALING_POWDER, 1, 1, 5)
-   check_restock_item(PID_MUTATED_FRUIT, 1, 2, 10)
+   check_restock_item(PID_MUTATED_FRUIT, 1, 2, 20) // pbs: prob was 10
    // added by phobos2077:
    check_restock_item(PID_ROPE, 1, 1, 10)
 end
@@ -144,6 +144,7 @@ procedure CreateZone2 begin
    check_restock_item(PID_9MM_BALL, 1, 1, 2)
    check_restock_item(PID_PBS_FOOD_1, 1, 1, 2)
    check_restock_item(PID_PBS_FOOD_2, 1, 1, 2)
+   check_restock_item(PID_MUTATED_FRUIT, 1, 3, 20)
 end
 
 procedure CreateZone3 begin
@@ -153,7 +154,7 @@ procedure CreateZone3 begin
    check_restock_item(PID_5MM_AP, 1, 1, 1)
    check_restock_item(PID_5MM_JHP, 1, 1, 1)
    check_restock_item(PID_FRAG_GRENADE, 1, 2, 2)
-   check_restock_item(PID_MUTATED_FRUIT, 1, 5, 10)
+   check_restock_item(PID_MUTATED_FRUIT, 1, 5, 20) // pbs: prob was 10
    check_restock_item(PID_IGUANA_ON_A_STICK, 1, 5, 10)
    check_restock_item(PID_JET, 1, 2, 10)
    check_restock_item(PID_BEER, 1, 2, 10)
@@ -178,7 +179,7 @@ procedure CreateZone4 begin
    check_restock_item(PID_5MM_AP, 1, 1, 1)
    check_restock_item(PID_SMALL_ENERGY_CELL, 1, 1, 3)
    check_restock_item(PID_MICRO_FUSION_CELL, 1, 1, 3)
-   check_restock_item(PID_MUTATED_FRUIT, 1, 3, 8)
+   check_restock_item(PID_MUTATED_FRUIT, 1, 3, 16) // pbs: prob was 8
    check_restock_item(PID_IGUANA_ON_A_STICK, 1, 3, 8)
    check_restock_item(PID_BOOZE, 1, 2, 7)
    check_restock_item(PID_JET, 1, 2, 20)
