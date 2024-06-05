@@ -65,11 +65,12 @@ procedure cartravel_hook begin
    set_sfall_return(fuel);
 end
 
-/* FOR TESTING, disable encounters:
-procedure enc_hook begin
+// FOR TESTING, disable encounters:
+/*procedure enc_hook begin
    if (get_sfall_arg == 0) then
       set_sfall_return(-1);
-end*/
+end
+*/
 
 procedure start begin
    if (game_loaded) then begin
@@ -81,6 +82,6 @@ procedure start begin
       int_from_ini_file_clamped(fuel_cell_regulator_percent, INI_FILE, INI_SECTION, 0, 100);
 
       register_hook_proc(HOOK_CARTRAVEL, cartravel_hook);
-      //register_hook_proc(HOOK_ENCOUNTER, cartravel_hook);
+      //register_hook_proc(HOOK_ENCOUNTER, enc_hook);
    end
 end

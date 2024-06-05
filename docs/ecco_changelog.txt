@@ -5,7 +5,8 @@ v0.9.7:
 - fixed inconsistent craft button visibility (hiding or visible on top of other windows)
 
 > Misc:
-- added option for additional car trunk capacity upgrade with Repair skill
+- added option for additional car trunk capacity upgrade by using Repair skill
+- added more MFC to stores for car refueling
 - fixed incorrect car charging amount when using Cells on trunk
 
 
