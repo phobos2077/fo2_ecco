@@ -30,8 +30,8 @@ weaponData:
   actionPointCost2: 0
   criticalFailureType: 6
   perk: NONE
-  rounds: 1
+  rounds: 2
   caliber: 2
   ammoTypePid: 32
-  ammoCapacity: 5
+  ammoCapacity: 10
   soundCode: I

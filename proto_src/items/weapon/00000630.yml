@@ -21,7 +21,7 @@ weaponData:
   minDamage: 20
   maxDamage: 40
   damageType: DAMAGE_TYPE_EXPLOSION
-  maxRange1: 25
+  maxRange1: 30
   maxRange2: 0
   projectilePid: 83886106
   minStrength: 4

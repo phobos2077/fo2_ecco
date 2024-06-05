@@ -4,6 +4,9 @@ v0.9.7:
 > Crafting:
 - fixed inconsistent craft button visibility (hiding or visible on top of other windows)
 
+> Balance:
+- flamethrower fuel weight & price halfed, but Flamer consumption increased to 2 per burst
+
 > Misc:
 - added option for additional car trunk capacity upgrade by using Repair skill
 - added more MFC to stores for car refueling
