@@ -351,9 +351,9 @@ position=wedge, spacing:2
 
 [Encounter: ARRO_Outcasts]
 type_00=ratio:60%, pid:16777420, Script:620                     ; Male Cannibal
-type_01=ratio:20%, pid:16777421, Script:620                     ; Female Cannibal
+type_01=ratio:20%, pid:16777421, Script:620, If(enctr(num_critters) > 2)    ; Female Cannibal
 type_02=ratio:10%, pid:16777420, Item:4(wielded), Item:618, Script:620    ; Male Cannibal w/ Knife & Spike Trap
-type_03=ratio:10%, pid:16777421, Item:4(wielded), Script:620    ; Female Cannibal w/ Knife
+type_03=ratio:10%, pid:16777421, Item:4(wielded), Script:620, If(enctr(num_critters) > 3)    ; Female Cannibal w/ Knife
 position=huddle, spacing:3
 
 
@@ -365,7 +365,7 @@ position=huddle, spacing:2
 
 [Encounter: ARRO_Nomads]
 type_00=ratio:10%, pid:16777424, Item:273, Item:4, Item:(0-10)41, Script:765               ; Nomad Chief
-type_01=ratio:10%, pid:16777424, Item:273, Item:4, Item:(0-10)41, Script:770               ; Nomad Shaman
+type_01=ratio:10%, pid:16777424, Item:273, Item:4, Item:(0-10)41, Script:770, If(enctr(num_critters) > 3)               ; Nomad Shaman
 type_02=ratio:40%, pid:16777424, Item:49, Item:284, Item:7, Item:(0-10)41, Script:622      ; Male Nomad w/ Antidote, Meat Jerky, and Spear
 type_03=ratio:40%, pid:16777426, Item:273, Item:4, Item:(0-10)41, Script:622               ; Female Nomad w/ Healing Powder and  Knife
 type_04=pid:16777268, If (Rand(10%)), Script:1129                           ; Male Orphan
@@ -395,15 +395,15 @@ position=huddle, spacing:3
 [Encounter: KLA_Trappers]
 type_00=ratio:33%, pid:16777311, Item:7(wielded), Item:(0-10)41, Script:509    ; Male Trapper w/ Club
 type_01=ratio:33%, pid:16777311, Item:280(wielded), Item:(0-10)41, Script:509  ; Male Trapper w/ Sharpened Spear
-type_02=ratio:17%, pid:16777312, Item:7(wielded), Item:(0-10)41, Script:509    ; Female Trapper w/ Spear
-type_03=ratio:17%, pid:16777312, Item:4(wielded), Item:(0-10)41, Script:509    ; Female Trapper w/ Knife
+type_02=ratio:17%, pid:16777312, Item:7(wielded), Item:(0-10)41, Script:509, If(enctr(num_critters) > 2)    ; Female Trapper w/ Spear
+type_03=ratio:17%, pid:16777312, Item:4(wielded), Item:(0-10)41, Script:509, If(enctr(num_critters) > 3)    ; Female Trapper w/ Knife
 position=huddle, spacing:5
 
 [Encounter: KLA_Bandits]
 ;type_00=pid:16777248, Item:4(wielded), Item:40, Item:(1-3)273, Script:624        ; Melee Thug (Bandit Leader) w/ Sledgehammer, Stim, Healing Powder
 type_00=ratio:25%, pid:16777285, Item:7(wielded), Item:(0-10)41, Script:624               ; Weak Melee Guard (male) w/ Crowbar
 type_01=ratio:25%, pid:16777428, Item:4(wielded), Item:(0-10)41, Script:624               ; Bandit (male) w/ Knife
-type_02=ratio:25%, pid:16777429, Item:280(wielded), Item:(0-10)41, Script:624             ; Bandit (female) w/ Sharp Spear
+type_02=ratio:25%, pid:16777429, Item:280(wielded), Item:(0-10)41, Script:624, If(enctr(num_critters) > 3)   ; Bandit (female) w/ Sharp Spear
 type_03=ratio:25%, pid:16777252, Item:300(wielded), Item:(0-1)29, Item:(0-10)41, Script:624  ; Gun Thug (male) w/ Zip Gun
 ;type_04=ratio:25%, pid:16777429, Item:7(wielded), Item:(0-10)41, Script:624               ;Bandit (female) w/ Spear
 type_05=Dead, pid:16777272, Distance:7 ; Dead Bad Merchant
@@ -412,9 +412,9 @@ type_07=Dead, pid:16777288, Distance:9 ; Dead Female Weak Gun Guard
 position=double_line, spacing:2
 
 [Encounter: KLA_Homeless]
-type_00=ratio:20%, pid:16777284, Item:4(wielded), Script:623    ; Strong Peasant Female w/ Club
+type_00=ratio:20%, pid:16777284, Item:4(wielded), Script:623, If(enctr(num_critters) > 2)    ; Strong Peasant Female w/ Club
 type_01=ratio:30%, pid:16777283, Item:21(wielded), Script:623   ; Strong Peasant Male w/ Brass Knuckles
-type_02=ratio:15%, pid:16777279, Item:320, Script:623           ; Weak Peasant Male w/ Sharpened Pole
+type_02=ratio:15%, pid:16777279, Item:320, Script:623, If(enctr(num_critters) > 3) ; Weak Peasant Male w/ Sharpened Pole
 type_03=ratio:30%, pid:16777280, Item:300(wielded), Item:4, Script:623             ; Weak Peasant Female w/ Zip Gun & Knife
 type_04=ratio:5%, pid:16777270, Script:623                      ; Male Loser - killap - adult male proto, so why child script?
 type_05=pid:16777269, Script:1129                               ; Female Child
@@ -426,8 +426,8 @@ team_num=131   ; TEAM_RND_HOMELESS
 [Encounter: KLA_Farmers]
 type_00=ratio:67%, pid:16777281, Item:629, Item:(0-3)71, Item:(0-10)41, Script:493  ; Average Peasant Male w/ 9mm SMG and Fruit
 type_01=ratio:25%, pid:16777282, Item:299, Item:29, Item:(1-2)71, Item:(0-10)41, Script:493  ; Average Peasant Female w/ Pipe Rifle and Fruit
-type_02=ratio:4%, pid:16777269, Item:71, Script:785             ; Female Child w/ Fruit
-type_03=ratio:4%, pid:16777268, Script:785                      ; Male Child	-killap - no longer uses adult proto with child script
+type_02=ratio:4%, pid:16777269, Item:71, Script:785, If(enctr(num_critters) > 2)             ; Female Child w/ Fruit
+type_03=ratio:4%, pid:16777268, Script:785, If(enctr(num_critters) > 3)                      ; Male Child	-killap - no longer uses adult proto with child script
 type_04=Dead, pid:16777298                                      ; Dead Dog
 team_num=183   ; TEAM_RND_FARMER
 position=huddle, spacing:1
@@ -475,9 +475,9 @@ type_04=pid:16777225, If (Rand(10%))                                            
 position=huddle, spacing:2
 
 [Encounter: DMRV_Robbers]
-type_00=pid:16777247, Item:10(wielded), Item:40, Item:(0-15)41, Item:259, Script:625           ; Tough Female Thug w/ Hunting Rifle, Stimpak, Jet
+type_00=pid:16777247, Item:10(wielded), Item:40, Item:(0-15)41, Item:259, Script:625, If(enctr(num_critters) > 2)   ; Tough Female Thug w/ Hunting Rifle, Stimpak, Jet
 type_01=ratio:40%, pid:16777248, Item:234(wielded), Item:(0-10)41, Item:40, Script:625         ; Melee Male Thug w/ Spiked Knuckles and Stimpak
-type_02=ratio:30%, pid:16777249, Item:236(wielded), Item:(0-10)41, Script:625                  ; Melee Female Thug w/ Combat Knife
+type_02=ratio:30%, pid:16777249, Item:236(wielded), Item:(0-10)41, Script:625, If(enctr(num_critters) > 3)          ; Melee Female Thug w/ Combat Knife
 type_03=ratio:10%, pid:16777252, Item:8(wielded), Item:(0-10)41, Script:625                    ; Male Gun Thug w/ 10mm pistol
 type_04=ratio:10%, pid:16777253, Item:8(wielded), Item:(0-10)41, Script:625, If(Player(Level) > 8)   ; Female Gun Thug w/ 10mm pistol
 type_05=ratio:10%, pid:16777253, Item:629(wielded), Item:(0-10)41, Script:625, If(Player(Level) > 8)   ; Female Gun Thug w/ 9mm SMG
@@ -486,8 +486,8 @@ position=wedge, spacing:2
 [Encounter: DMRV_Highwaymen]
 type_00=pid:16777246, Item:10(wielded), Item:40, Item:(0-15)41, Item:259, Script:626, If(Player(Level) > 8)            ; Tough Male Thug w/ Hunting Rifle, Stimpak, Jet
 type_01=ratio:25%, pid:16777250, Item:236(wielded), Item:(0-10)41, Item:40, Script:626           ; Agile Male Thug w/ Combat Knife and Stimpak
-type_02=ratio:25%, pid:16777251, Item:280(wielded), Item:(0-10)41, Item:40, Script:626           ; Agile Female Thug w/ sharp spear and Stimpak
-type_03=ratio:15%, pid:16777252, Item:8(wielded), Item:(0-10)41, Item:259, Script:626        ; Male Gun Thug w/ 10mm Pistol and Jet
+type_02=ratio:25%, pid:16777251, Item:280(wielded), Item:(0-10)41, Item:40, Script:626, If(enctr(num_critters) > 2)    ; Agile Female Thug w/ sharp spear and Stimpak
+type_03=ratio:15%, pid:16777252, Item:8(wielded), Item:(0-10)41, Item:259, Script:626, If(enctr(num_critters) > 3)     ; Male Gun Thug w/ 10mm Pistol and Jet
 type_04=ratio:15%, pid:16777253, Item:8(wielded), Item:(0-10)41, Item:259, Script:626         ; Female Gun Thug w/ 10mm Pistol and Jet
 type_05=ratio:20%, pid:16777253, Item:(2-3)613(wielded), Item:(0-10)41, Script:626, If(Player(Level) > 10)            ; Female Gun Thug w/ Home Grenade
 position=wedge, spacing:2
@@ -537,10 +537,10 @@ position=huddle, spacing:3
 
 [Encounter: MOD_Moonshiners]
 type_00=pid:16777246, Item:94(wielded), Item:(0-15)41, Item:95, Script:1294          ; Tough Male Thug w/ Shotgun and Shells
-type_01=ratio:40%, pid:16777246, Item:94(wielded), Item:(0-15)41, Item:95, Script:505          ; Tough Male Thug w/ Shotgun and Shells
+type_01=ratio:40%, pid:16777246, Item:94(wielded), Item:(0-15)41, Item:95, Script:505, If(enctr(num_critters) > 3) ; Tough Male Thug w/ Shotgun and Shells
 type_02=ratio:40%, pid:16777247, Item:18(wielded), Item:(0-15)41, Script:505                   ; Tough Female Thug w/ Desert Eagle
 type_03=ratio:10%, pid:16777239, Item:8(wielded), Item:(0-15)41, Script:505                  ; Female Combat Slave w/ 10mm Pistol
-type_04=ratio:10%, pid:16777240, Item:319(wielded), Item:(0-15)41, Script:505                  ; Male Combat Slave w/ Switchblade
+type_04=ratio:10%, pid:16777240, Item:319(wielded), Item:(0-15)41, Script:505, If(enctr(num_critters) > 4)  ; Male Combat Slave w/ Switchblade
 type_05=pid:33555432, Distance:14, If (Rand(20%))                               ; Still
 position=Surrounding, Spacing:7
 
@@ -563,12 +563,12 @@ type_02=Dead, pid:16777222, If (Rand(15%))                                      
 position=huddle, spacing:3
 
 [Encounter: DVMV_Robbers]
-type_00=ratio:10%, pid:16777246, Item:94(wielded), Item:(0-15)41, Item:95, Script:625                  ; Tough Male Thug w/ Shotgun and shells
-type_01=ratio:30%, pid:16777247, Item:18(wielded), Item:(0-15)41, Item:40, Script:625                  ; Tough Female Thug w/ Desert Eagle, Stimpak
-type_02=ratio:20%, pid:16777253, Item:(2-4)45(wielded), Item:236, Item:(0-15)41, Item:259, Script:625      ; Gun Female Thug w/ Throwing Knives, combat knife and Jet
+type_00=ratio:10%, pid:16777246, Item:94(wielded), Item:(0-15)41, Item:95, Script:625, If(enctr(num_critters) > 3)     ; Tough Male Thug w/ Shotgun and shells
+type_01=ratio:30%, pid:16777247, Item:18(wielded), Item:(0-15)41, Item:40, Script:625, If(enctr(num_critters) > 2)     ; Tough Female Thug w/ Desert Eagle, Stimpak
+type_02=ratio:20%, pid:16777253, Item:(2-4)45(wielded), Item:236, Item:(0-15)41, Item:259, Script:625, If(enctr(num_critters) > 4) ; Gun Female Thug w/ Throwing Knives, combat knife and Jet
 type_03=ratio:10%, pid:16777251, Item:280(wielded), Item:(0-15)41, Item:259, Script:625                ; Agile Female Thug w/ Sharp Spear and Jet
 type_04=ratio:10%, pid:16777250, Item:629(wielded), Item:(0-15)41, Item:259, Script:625                ; Agile Male Thug w/ 9mm SMG and Jet
-type_05=ratio:10%, pid:16777253, Item:647(wielded), Item:38, Item:(0-15)41, Item:40, Script:625        ;  Gun Female Thug w/ Laser Pistol LT, SEC and Stimpak
+type_05=ratio:10%, pid:16777253, Item:647(wielded), Item:38, Item:(0-15)41, Item:40, Script:625, If(enctr(num_critters) > 5)       ;  Gun Female Thug w/ Laser Pistol LT, SEC and Stimpak
 position=cone, spacing:2
 
 [Encounter: DVMV_Highwaymen]
@@ -576,7 +576,7 @@ type_00=ratio:10%, pid:16777246, Item:313(wielded), Item:(0-15)41, Item:40, Scri
 type_01=ratio:15%, pid:16777247, Item:10(wielded), Item:(0-15)41, Item:40, Script:626, If(Player(Level) < 16)          ; Tough Female Thug w/ Hunting rifle, and Stimpak
 type_02=ratio:15%, pid:16777247, Item:23(wielded), Item:(0-15)41, Item:40, Item:35, Script:626, If(Player(Level) > 15) ; Tough Female Thug w/ Assault Rifle, 5mm, and Stimpak
 type_03=ratio:25%, pid:16777246, Item:236(wielded), Item:(0-15)41, Script:626                                          ; Tough Male Thug w/ Combat Knife
-type_04=ratio:20%, pid:16777247, Item:94(wielded), Item:(0-15)41, Item:95, Item:273, Script:626                        ; Tough Female Thug w/ Shotgun, shells, and Healing Powder
+type_04=ratio:20%, pid:16777247, Item:94(wielded), Item:(0-15)41, Item:95, Item:273, Script:626, If(enctr(num_critters) > 3)  ; Tough Female Thug w/ Shotgun, shells, and Healing Powder
 type_05=ratio:15%, pid:16777251, Item:(1-3)25(wielded), Item:(0-20)41, Item:236, Script:626, If(Player(Level) > 15)    ; Agile Thug female w/ Frag Grenade, Combat Knife
 type_06=ratio:15%, pid:16777251, Item:(1-3)613(wielded), Item:(0-20)41, Item:236, Script:626, If(Player(Level) < 16)   ; Agile Thug female w/ Home Made Grenades, Combat Knife
 type_07=ratio:15%, pid:16777253, Item:647(wielded), Item:(0-15)41, Item:40, Item:38, Script:626, If(Player(Level) > 5) ; Gun Thug female w/ Laser Pistol LT, SEC and stimpak
@@ -631,18 +631,18 @@ position=huddle, spacing:2, Distance:3
 [Encounter: VPAT_Patrol]
 type_00=ratio:20%, pid:16777438, Item:23(wielded), Item:(0-20)41, Item:40, Script:491                      ; Vault City Male Patrol w/ Assault Rifle and Stimpak
 type_01=ratio:10%, pid:16777438, Item:630(wielded), Item:(1-2)631, Item:(0-20)41, Item:40, Script:491      ; Vault City Male Patrol w/ Grenade Launcher, 20mm HE and Stimpak
-type_02=ratio:20%, pid:16777439, Item:23(wielded), Item:(0-20)41, Item:40, Script:491                      ; Vault City Female Patrol w/ Assault Rifle and Stimpak
+type_02=ratio:20%, pid:16777439, Item:23(wielded), Item:(0-20)41, Item:40, Script:491, If(enctr(num_critters) > 3)   ; Vault City Female Patrol w/ Assault Rifle and Stimpak
 type_03=ratio:25%, pid:16777438, Item:18(wielded), Item:(0-20)41, Item:40, Script:491                      ; Vault City Male Patrol w/ Desert Eagle and Stimpak
-type_04=ratio:25%, pid:16777439, Item:617(wielded), Item:38, Item:(0-20)41, Item:40, Script:491            ; Vault City Female Patrol w/ Taser, SEC and Stimpak
+type_04=ratio:25%, pid:16777439, Item:617(wielded), Item:38, Item:(0-20)41, Item:40, Script:491, If(enctr(num_critters) > 4)  ; Vault City Female Patrol w/ Taser, SEC and Stimpak
 position=wedge, spacing:2
 
 [Encounter: VPAT_Strong_Slavers]
 type_00=ratio:20%, pid:16777440, Item:159(wielded), Item:(0-20)41, Item:9, Script:508                           ; Strong Male Slaver w/ Molotov Cocktail and 10mm SMG
-type_01=ratio:15%, pid:16777441, Item:280(wielded), Item:(0-20)41, Script:508                                   ; Strong Female Slaver w/ Sharpened Spear
-type_02=ratio:10%, pid:16777440, Item:313(wielded), Item:(0-20)41, Item:(0-2)259, Script:508                    ; Strong Male Slaver w/ .44 Magnum Revolver
+type_01=ratio:15%, pid:16777441, Item:280(wielded), Item:(0-20)41, Script:508, If(enctr(num_critters) > 4)      ; Strong Female Slaver w/ Sharpened Spear
+type_02=ratio:10%, pid:16777440, Item:313(wielded), Item:(0-20)41, Item:(0-2)259, Script:508, If(enctr(num_critters) > 5)  ; Strong Male Slaver w/ .44 Magnum Revolver
 type_03=ratio:30%, pid:16777441, Item:236(wielded), Item:(0-20)41, Item:(0-1)259, Script:508                    ; Strong Female Slaver w/ Combat Knife and Jet
 type_04=ratio:15%, pid:16777440, Item:(1-3)45(wielded), Item:234, Item:(0-20)41, Item:(0-1)259, Script:508      ; Strong Male Slaver w/ Throwing Knives, Spiked Knuckles and Jet
-type_05=ratio:10%, pid:16777255, Item:646(wielded), Item:32, Item:(0-20)41, Item:(0-1)259, Script:508           ; Big Gun Thug Female w/ Flamer LT, Fuel, Jet
+type_05=ratio:10%, pid:16777255, Item:646(wielded), Item:32, Item:(0-20)41, Item:(0-1)259, Script:508, If(enctr(num_critters) > 3) ; Big Gun Thug Female w/ Flamer LT, Fuel, Jet
 ;position=Surrounding
 ;position=straight_line, spacing:1
 ;position=straight_line, spacing:2
@@ -654,23 +654,23 @@ position=wedge, spacing:2
 [Encounter: GECK_Ghoul_Crazies]
 type_00=ratio:25%, pid:16777442, Item:385(wielded), Item:(0-20)41, Item:280, Script:767                    ; Crazy w/ Sawed off shotgun and Sharpened spear
 type_01=ratio:20%, pid:16777442, Item:10(wielded), Item:(0-20)41, Script:767                               ; Crazy w/ Hunting Rifle
-type_02=ratio:15%, pid:16777442, Item:23(wielded), Item:(0-20)41, Script:767                               ; Crazy w/ Assault Rifle
+type_02=ratio:15%, pid:16777442, Item:23(wielded), Item:(0-20)41, Script:767, If(enctr(num_critters) > 4)  ; Crazy w/ Assault Rifle
 type_03=ratio:25%, pid:16777442, Item:(1-3)613(wielded), Item:234, Item:(0-20)41, Script:767               ; Crazy w/ Home-Made Grenade, Spiked Knuckles
-type_04=ratio:15%, pid:16777442, Item:630(wielded), Item:631, Item:(0-20)41, Script:767                    ; Crazy w/ Grenade Launcher, 20mm HE
+type_04=ratio:15%, pid:16777442, Item:630(wielded), Item:631, Item:(0-20)41, Script:767, If(enctr(num_critters) > 3)  ; Crazy w/ Grenade Launcher, 20mm HE
 position=Surrounding, spacing:3, distance:1
 
 [Encounter: GECK_Crazies]
 type_00=ratio:20%, pid:16777442, Item:94(wielded), Item:(0-20)41, Script:767                               ; Crazy w/  Shotgun
 type_01=ratio:15%, pid:16777442, Item:10(wielded), Item:(0-20)41, Script:767                               ; Crazy w/ Hunting Rifle
 type_02=ratio:50%, pid:16777444, Item:(0-20)41, Script:767                                                 ; Glowing Crazy
-type_03=ratio:15%, pid:16777442, Item:643(wielded), Item:(0-20)41, Script:767                              ; Crazy w/ Cowboy Repeater
+type_03=ratio:15%, pid:16777442, Item:643(wielded), Item:(0-20)41, Script:767, If(enctr(num_critters) > 3) ; Crazy w/ Cowboy Repeater
 position=Surrounding, spacing:3, distance:2
 
 [Encounter: GECK_Ghoul_Scavs]
 type_00=ratio:25%, pid:16777443, Item:8(wielded), Item:(0-20)41, Script:742                     ; Scavenger w/ 10mmm Pistol
 type_01=ratio:33%, pid:16777443, Item:(5-8)19(wielded), Item:(0-20)41, Script:742                              ; Scavenger w/ rocks
 type_02=ratio:32%, pid:16777443, Item:21(wielded), Item:(0-20)41, Script:742                              ; Scavenger w/ Brass Knuckles
-type_03=ratio:10%, pid:16777443, Item:159(wielded), Item:(0-20)41, Script:742                              ; Scavenger w/ Molotov Cocktail
+type_03=ratio:10%, pid:16777443, Item:159(wielded), Item:(0-20)41, Script:742, If(enctr(num_critters) > 3) ; Scavenger w/ Molotov Cocktail
 position=Surrounding, spacing:3, distance:3
 
 [Encounter: GECK_Scavs]
@@ -693,9 +693,9 @@ position=huddle, spacing:3
 
 [Encounter: FISH_Fisherman]
 type_00=ratio:30%, pid:16777446, Item:280(wielded), Item:(0-10)41, Script:507                              ; Male Fisherman w/ Sharp Spear
-type_01=ratio:30%, pid:16777447, Item:280(wielded), Item:(0-10)41, Script:507                              ; Female Fisherman w/ Sharp Spear
+type_01=ratio:30%, pid:16777447, Item:280(wielded), Item:(0-10)41, Item:(0-3)535, Script:507               ; Female Fisherman w/ Sharp Spear, Scaly Fish
 type_02=ratio:20%, pid:16777446, Item:4(wielded), Item:(0-10)41, Script:507                                ; Male Fisherman w/ Knife
-type_03=ratio:20%, pid:16777447, Item:4(wielded), Item:(0-10)41, Script:507                                ; Female Fisherman w/ Knife
+type_03=ratio:20%, pid:16777447, Item:4(wielded), Item:(0-10)41, Item:(0-4)536, Script:507                 ; Female Fisherman w/ Knife, Fish
 ;position=Surrounding
 ;position=straight_line, spacing:1
 position=straight_line, spacing:2
@@ -706,7 +706,7 @@ position=straight_line, spacing:2
 
 [Encounter: FISH_Wilder]
 type_00=ratio:70%, pid:16777448, Item:7(wielded), Script:735                                ; Male Wilder w/ spear
-type_01=ratio:30%, pid:16777449, Item:637(wielded), Script:735                              ; Female Wilder w/ boomerang
+type_01=ratio:30%, pid:16777449, Item:637(wielded), Item:(0-3)536, Script:735               ; Female Wilder w/ boomerang, fish
 position=huddle, spacing:2
 
 [Encounter: DNRV_Den_Caravan]
@@ -720,41 +720,41 @@ position=huddle, spacing:2
 [Encounter: DNRV_Vault_Caravan]
 type_00=pid:16777274, Item:(0-30)41, Script:789                                                            ; Average Merchant Male
 type_01=ratio:20%,pid:16777256, Item:10(wielded), Item:(0-20)41, Script:259                                ; Tough Male Guard w/ Hunting Rifle
-type_02=ratio:15%,pid:16777257, Item:8(wielded), Item:(0-20)41, Script:259                                 ; Tough Female Guard w/ 10mm pistol
+type_02=ratio:15%,pid:16777257, Item:8(wielded), Item:(0-20)41, Script:259, If(enctr(num_critters) > 4)    ; Tough Female Guard w/ 10mm pistol
 type_03=ratio:15%,pid:16777256, Item:9(wielded), Item:(0-20)41, Script:259                                 ; Tough Male Guard w/ 10mm SMG
 type_04=ratio:15%,pid:16777257, Item:18(wielded), Item:(0-20)41, Script:259                                ; Tough Female Guard w/ Desert Eagle
-type_05=ratio:15%,pid:16777264, Item:646(wielded), Item:(0-20)41, Script:259                               ; Big Gun Male Guard w/ Flamer LT
-type_06=ratio:20%,pid:16777263, Item:647(wielded), Item:(0-20)41, Script:259                               ; Gun Female Guard w/ Laser Pistol LT
+type_05=ratio:15%,pid:16777264, Item:646(wielded), Item:(0-20)41, Script:259, If(enctr(num_critters) > 5)  ; Big Gun Male Guard w/ Flamer LT
+type_06=ratio:20%,pid:16777263, Item:647(wielded), Item:(0-20)41, Script:259, If(enctr(num_critters) > 6)  ; Gun Female Guard w/ Laser Pistol LT
 position=huddle, spacing:2
 
 [Encounter: DNRV_Reno_Caravan]
 type_00=pid:16777275, Item:122(wielded), Item:(0-40)41, Item:40, Script:777                                ; Average Merchant Female w/ 9mm Mauser
 type_01=ratio:25%, pid:16777262, Item:242(wielded), Item:(0-20)41, Item:40, Script:259                              ; Gun guard male w/ Combat Shotgun
-type_02=ratio:20%, pid:16777263, Item:23(wielded), Item:(0-20)41, Item:40, Script:259                               ; Gun Guard female w/ Assault Rifle
+type_02=ratio:20%, pid:16777263, Item:23(wielded), Item:(0-20)41, Item:40, Script:259, If(enctr(num_critters) > 4)  ; Gun Guard female w/ Assault Rifle
 type_03=ratio:25%, pid:16777258, Item:6(wielded), Item:(0-20)41, Item:40, Script:259                              ; Male Melee guard w/ Sledge
 type_04=ratio:15%, pid:16777261, Item:(2-3)637(wielded), Item:236, Item:(0-20)41, Item:40, Script:259      ; Female Agile guard w/ Boomerangs, Combat Knife and Shells
-type_05=ratio:15%, pid:16777264, Item:646(wielded), Item:(0-20)41, Item:40, Script:259                              ; Big Gun Male Guard w/ Flamer LT
+type_05=ratio:15%, pid:16777264, Item:646(wielded), Item:(0-20)41, Item:40, Script:259, If(enctr(num_critters) > 5) ; Big Gun Male Guard w/ Flamer LT
 position=huddle, spacing:2
 
 [Encounter: DNRV_Redding_Caravan]
 type_00=pid:16777277, Item:(0-30)41, Script:778                                                            ; Master Merchant Female
 type_01=ratio:25%, pid:16777262, Item:23(wielded), Item:(0-20)41, Script:259                               ; Male Gun Guard w/ Assault Rifle
 type_02=ratio:25%, pid:16777264, Item:646(wielded), Item:(0-20)41, Script:259                              ; Male Big Gun Guard w/ Flamer LT
-type_03=ratio:25%, pid:16777263, Item:16(wielded), Item:(0-20)41, Script:259                               ; Female Gun Guard w/ Laser Pistol
+type_03=ratio:25%, pid:16777263, Item:16(wielded), Item:(0-20)41, Script:259, If(enctr(num_critters) > 4)  ; Female Gun Guard w/ Laser Pistol
 type_04=ratio:25%, pid:16777263, Item:332(wielded), Item:(0-20)41, Script:259                              ; Female Gun Guard w/ Grease Gun
 position=huddle, spacing:2
 
 [Encounter: RED_Bootlegger]
 type_00=pid:16777450, Item:638(wielded), Item:(0-20)41, Script:1116                                      ; Bootlegger male w/ Spiked Sledge
-type_01=ratio:25%, pid:16777450, Item:6(wielded), Item:(0-20)41, Script:505                              ; Bootlegger male w/ Sledgehammer
-type_02=ratio:25%, pid:16777450, Item:234(wielded), Item:(0-20)41, Script:505                            ; Bootlegger male w/ Spiked Knuckles
-type_03=ratio:25%, pid:16777451, Item:242(wielded), Item:(0-20)41, Script:505                            ; Bootlegger female w/ Combat Shotgun
+type_01=ratio:25%, pid:16777450, Item:6(wielded), Item:(0-20)41, Script:505, If(enctr(num_critters) > 3) ; Bootlegger male w/ Sledgehammer
+type_02=ratio:25%, pid:16777450, Item:234(wielded), Item:(0-20)41, Script:505, If(enctr(num_critters) > 4) ; Bootlegger male w/ Spiked Knuckles
+type_03=ratio:25%, pid:16777451, Item:242(wielded), Item:(0-20)41, Script:505, If(enctr(num_critters) > 2) ; Bootlegger female w/ Combat Shotgun
 type_04=ratio:25%, pid:16777451, Item:313(wielded), Item:(1-2)111, Item:(0-20)41, Script:505             ; Bootlegger female w/ .44 Revolver, .44 FMJ ammo
 type_05=pid:33555432, Distance:14, If (Rand(10%))                               ; Still
 position=huddle, spacing:2
 
 [Encounter: RED_Trappers]
-type_00=ratio:15%, pid:16777248, Item:9(wielded), Item:(0-20)41, Script:509                                ; Melee Thug male w/ 10mm SMG
+type_00=ratio:15%, pid:16777248, Item:9(wielded), Item:(0-20)41, Script:509, If(enctr(num_critters) > 4)   ; Melee Thug male w/ 10mm SMG
 type_01=ratio:25%, pid:16777248, Item:629(wielded), Item:(0-20)41, Script:509                              ; Melee Thug male w/ 9mm SMG
 type_02=ratio:20%, pid:16777250, Item:(2-3)611(wielded), Item:(0-20)41, Script:509                         ; Melee Thug male w/ Throwing Axes
 type_03=ratio:20%, pid:16777249, Item:236(wielded), Item:(0-20)41, Script:509                              ; Melee Thug female w/ Combat Knife
@@ -764,18 +764,18 @@ position=Surrounding, spacing:5, distance:5
 [Encounter: RED_Prospector]
 type_00=pid:16777452, Item:638(wielded), Item:(0-20)41, Item:51, Script:1115                               ; Prospector male w/ Spiked Sledge, Dynamite
 type_01=ratio:20%, pid:16777452, Item:6(wielded), Item:(0-20)41, Script:763                                ; Prospector male w/ Sledge
-type_02=ratio:15%, pid:16777452, Item:242(wielded), Item:(0-20)41, Script:763                              ; Prospector male w/ Combat Shotgun
-type_03=ratio:20%, pid:16777453, Item:236(wielded), Item:(0-20)41, Script:763                              ; Prospector female w/ combat knife
-type_04=ratio:15%, pid:16777453, Item:9(wielded), Item:(0-20)41, Script:763                                ; Prospector female w/ 10mm SMG
+type_02=ratio:15%, pid:16777452, Item:242(wielded), Item:(0-20)41, Script:763, If(enctr(num_critters) > 3) ; Prospector male w/ Combat Shotgun
+type_03=ratio:20%, pid:16777453, Item:236(wielded), Item:(0-20)41, Script:763, If(enctr(num_critters) > 5) ; Prospector female w/ combat knife
+type_04=ratio:15%, pid:16777453, Item:9(wielded), Item:(0-20)41, Script:763, If(enctr(num_critters) > 4)   ; Prospector female w/ 10mm SMG
 type_05=ratio:20%, pid:16777452, Item:643(wielded), Item:(0-20)41, Script:763                              ; Prospector male w/ Cowboy Repeater
-type_06=ratio:10%, pid:16777452, Item:630(wielded), Item:631, Item:(0-20)41, Script:763                    ; Prospector male w/ Grenade Launcher, 40mm HE
+type_06=ratio:10%, pid:16777452, Item:630(wielded), Item:631, Item:(0-20)41, Script:763, If(enctr(num_critters) > 6)  ; Prospector male w/ Grenade Launcher, 40mm HE
 position=Surrounding, Spacing:4, distance:4
 
 [Encounter: RED_Claim_Jumper]
 type_00=ratio:20%, pid:16777252, Item:242(wielded), Item:(0-20)41, Script:768                             ; Gun Thug male w/ Combat Shotgun
-type_01=ratio:20%, pid:16777252, Item:638(wielded), Item:(0-20)41, Script:768                             ; Gun Thug male w/ Spiked Sledge
+type_01=ratio:20%, pid:16777252, Item:638(wielded), Item:(0-20)41, Script:768, If(enctr(num_critters) > 3) ; Gun Thug male w/ Spiked Sledge
 type_02=ratio:10%, pid:16777252, Item:355(wielded), Item:(0-20)41, Script:768, If(Player(Level) > 15)     ; Gun Thug male w/ Light Support Weapon
-type_03=ratio:20%, pid:16777253, Item:388(wielded), Item:(0-20)41, Script:768                             ; Gun Thug female w/ Needler Pistol
+type_03=ratio:20%, pid:16777253, Item:388(wielded), Item:(0-20)41, Script:768, If(enctr(num_critters) > 2) ; Gun Thug female w/ Needler Pistol
 type_04=ratio:20%, pid:16777253, Item:613(wielded), Item:(0-20)41, Script:768, If(Player(Level) < 16)     ; Gun Thug female w/ Home-made Grenade
 type_05=ratio:20%, pid:16777253, Item:25(wielded), Item:(0-20)41, Script:768, If(Player(Level) > 15)      ; Gun Thug female w/ Frag Grenade
 type_06=ratio:15%, pid:16777253, Item:(1-3)637(wielded), Item:(0-20)41, Script:768, If(Player(Level) < 21)     ; Gun Thug female w/ Boomerangs
@@ -794,9 +794,9 @@ type_00=ratio:100%, pid:16777298, Script:632                                    
 position=Surrounding
 
 [Encounter: RED_Homesteaders]
-type_00=ratio:25%, pid:16777436, Item:8(wielded), Item:(0-20)41, Script:786                                ; Homesteader male w/ 10MM Pistol
+type_00=ratio:25%, pid:16777436, Item:8(wielded), Item:(0-20)41, Script:786, If(enctr(num_critters) > 2)   ; Homesteader male w/ 10MM Pistol
 type_01=ratio:25%, pid:16777436, Item:160(wielded), Item:(0-20)41, Script:786                              ; Homesteader male w/ Cattle Prod
-type_02=ratio:25%, pid:16777437, Item:9(wielded), Item:(0-20)41, Script:787                                ; Homesteader female w/ 10mm SMG
+type_02=ratio:25%, pid:16777437, Item:9(wielded), Item:(0-20)41, Script:787, If(enctr(num_critters) > 2)   ; Homesteader female w/ 10mm SMG
 type_03=ratio:25%, pid:16777437, Item:629(wielded), Item:(0-20)41, Script:787                              ; Homesteader female w/ 9mm SMG
 type_04=pid:16777269, Script:788                                                                           ; Homesteader child - female
 type_05=pid:16777268, Script:788                                                                           ; Homesteader child - male
@@ -818,11 +818,11 @@ position=huddle, spacing:2
 [Encounter: RDRC_Raiders]
 type_00=ratio:20%, pid:16777454, Item:23(wielded), Item:(0-30)41, Script:256                               ; Raider male w/ Assault Rifle
 type_01=ratio:15%, pid:16777454, Item:242(wielded), Item:(0-30)41, Script:256                              ; Raider male w/ Combat Shotgun
-type_02=ratio:15%, pid:16777455, Item:332(wielded), Item:(0-30)41, Script:256                              ; Raider female w/ Grease Gun
+type_02=ratio:15%, pid:16777455, Item:332(wielded), Item:(0-30)41, Script:256, If(enctr(num_critters) > 3) ; Raider female w/ Grease Gun
 type_03=ratio:10%, pid:16777455, Item:9(wielded), Item:(0-30)41, Script:256                                ; Raider female w/ 10mm SMG
-type_04=ratio:10%, pid:16777264, Item:630(wielded), Item:(2-3)631, Item:(0-30)41, Script:256               ; Big Gun Guard male w/ Grenade Launcher
+type_04=ratio:10%, pid:16777264, Item:630(wielded), Item:(2-3)631, Item:(0-30)41, Script:256, If(enctr(num_critters) > 4)  ; Big Gun Guard male w/ Grenade Launcher
 type_05=ratio:15%, pid:16777455, Item:639(wielded), Item:(0-30)41, Script:256, If(Player(Level) > 12)      ; Raider female w/ Piston Spear
-type_06=ratio:15%, pid:16777258, Item:638(wielded), Item:(0-30)41, Script:256                              ; Melee Guard male w/ Spiked Sledge
+type_06=ratio:15%, pid:16777258, Item:638(wielded), Item:(0-30)41, Script:256, If(enctr(num_critters) > 5) ; Melee Guard male w/ Spiked Sledge
 type_07=ratio:15%, pid:16777260, Item:637(wielded), Item:(0-30)41, Script:256, If(Player(Level) < 13)      ; Agile Guard male w/ Boomerang
 position=cone, spacing:2
 
@@ -894,10 +894,10 @@ position=double_line, spacing:3
 [Encounter: FRAN_Mercenaries]
 type_00=ratio:25%, pid:16777470, Item:24(wielded), Item:(0-50)41, Script:486                               ; Mercenary male w/ Plasma Pistol
 type_01=ratio:10%, pid:16777470, Item:388(wielded), Item:(0-50)41, Script:486                              ; Mercenary male w/ Needler Pistol
-type_02=ratio:15%, pid:16777257, Item:(1-3)26(wielded), Item:(0-50)41, Script:486                          ; Tough Guard female w/ Plasma Grenades
+type_02=ratio:15%, pid:16777257, Item:(1-3)26(wielded), Item:(0-50)41, Script:486, If(Rand(50%))           ; Tough Guard female w/ Plasma Grenades
 type_03=ratio:20%, pid:16777471, Item:116(wielded), Item:(0-50)41, Script:486                              ; Merceneary female w/ Ripper
-type_04=ratio:15%, pid:16777471, Item:639(wielded), Item:(0-50)41, Script:486                              ; Merceneary female w/ Piston Spear
-type_05=ratio:15%, pid:16777264, Item:634(wielded), Item:(1-3)631, Item:(0-50)41, Script:486               ; Big Gun Guard male w/ MGL
+type_04=ratio:15%, pid:16777471, Item:639(wielded), Item:(0-50)41, Script:486, If(Rand(50%))               ; Merceneary female w/ Piston Spear
+type_05=ratio:15%, pid:16777264, Item:634(wielded), Item:(1-3)631, Item:(0-50)41, Script:486, If(Rand(50%)) ; Big Gun Guard male w/ MGL
 position=double_line, spacing:2
 
 [Encounter: FRAN_Elronologists]
@@ -920,14 +920,14 @@ position=Surrounding, Spacing:2, distance:5
 type_00=pid:16777358, Item:388(wielded), Item:(0-70)41, Script:781                                         ; Grand Master Trader male w/ Sniper Rifle
 type_01=ratio:25%, pid:16777438, Item:118(wielded), Item:(0-50)41, Script:259                              ; Vault City patrol male w/ Laser Rifle
 type_02=ratio:15%, pid:16777438, Item:389(wielded), Item:236, Item:(0-50)41, Script:259                    ; Vault City patrol male w/ Avenger Minigun
-type_03=ratio:20%, pid:16777439, Item:355(wielded), Item:(0-50)41, Script:259                              ; Vault City patrol female w/ Light Support Weapon
-type_04=ratio:25%, pid:16777439, Item:296(wielded), Item:(0-50)41, Script:259                              ; Vault City patrol female w/ H&K P90c
-type_05=ratio:15%, pid:16777438, Item:634(wielded), Item:(0-50)41, Script:259                              ; Vault City patrol male w/ MGL
+type_03=ratio:20%, pid:16777439, Item:355(wielded), Item:(0-50)41, Script:259, If(Rand(50%))               ; Vault City patrol female w/ Light Support Weapon
+type_04=ratio:25%, pid:16777439, Item:296(wielded), Item:(0-50)41, Script:259, If(Rand(50%))               ; Vault City patrol female w/ H&K P90c
+type_05=ratio:15%, pid:16777438, Item:634(wielded), Item:(0-50)41, Script:259, If(Rand(50%))               ; Vault City patrol male w/ MGL
 position=huddle, spacing:2
 
 [Encounter: BROK_Unity_Patrol]
 type_00=ratio:20%, pid:16777472, Item:12(wielded), Item:(0-30)41, Script:738                               ; Nightkin w/ Minigun
-type_01=ratio:25%, pid:16777473, Item:13(wielded), Item:(0-30)41, Item:(3-5)37, Script:738                      ; Tough Nightkin w/ Rocket Launcher and AP Rockets
+type_01=ratio:25%, pid:16777473, Item:13(wielded), Item:(0-30)41, Item:(3-5)37, Script:738, If(enctr(num_critters) > 5)  ; Tough Nightkin w/ Rocket Launcher and AP Rockets
 type_02=ratio:15%, pid:16777474, Item:242(wielded), Item:(0-30)41, Script:738                              ; Tough Ghoul w/ Combat Shotgun
 type_03=ratio:15%, pid:16777474, Item:23(wielded), Item:(0-30)41, Script:738                               ; Tough Ghoul w/ Assault Rifle
 type_04=ratio:12%, pid:16777264, Item:12(wielded), Item:(0-30)41, Script:738                               ; Big Gun Guard male w/ Minigun
@@ -943,8 +943,8 @@ position=cone, spacing:2
 [Encounter: BROK_Rogues]
 type_00=ratio:25%, pid:16777252, Item:94(wielded), Item:95, Item:(0-30)41, Script:772                      ; Gun Thug male w/ Shotgun & Shells
 type_01=ratio:20%, pid:16777253, Item:242(wielded), Item:95, Item:(0-30)41, Script:772                     ; Gun Thug female w/ Combat shotgun & Shells
-type_02=ratio:15%, pid:16777254, Item:646(wielded), Item:(0-30)41, Script:772                              ; Big Gun Thug male w/ Flamer LT
-type_03=ratio:20%, pid:16777254, Item:287(wielded), Item:34, Item:(0-30)41, Script:772                     ; Big Gun Thug male w/ Scoped Hunting Rifle
+type_02=ratio:15%, pid:16777254, Item:646(wielded), Item:(0-30)41, Script:772, If(enctr(num_critters) > 3) ; Big Gun Thug male w/ Flamer LT
+type_03=ratio:20%, pid:16777254, Item:287(wielded), Item:34, Item:(0-30)41, Script:772, If(enctr(num_critters) > 4) ; Big Gun Thug male w/ Scoped Hunting Rifle
 type_04=ratio:20%, pid:16777249, Item:639(wielded), Item:(0-30)41, Script:772                              ; Melee Thug female w/ Piston Spear
 position=wedge, spacing:2
 
@@ -952,7 +952,7 @@ position=wedge, spacing:2
 type_00=pid:16777475, Item:283(wielded), Item:(0-40)41, Script:482                                         ; Mobster w/ Tommy Gun
 type_01=ratio:25%, pid:16777253, Item:283(wielded), Item:(0-40)41, Script:482                              ; Gun Thug female w/ Tommy Gun
 type_02=ratio:25%, pid:16777253, Item:332(wielded), Item:(0-40)41, Script:482                              ; Gun Thug female w/ Grease Gun
-type_03=Ratio:25%, pid:16777252, Item:143(wielded), Item:(0-40)41, Script:482                              ; Gun Thug male w/ Sniper Rifle
+type_03=Ratio:25%, pid:16777252, Item:143(wielded), Item:(0-40)41, Script:482, If(enctr(num_critters) > 4) ; Gun Thug male w/ Sniper Rifle
 type_04=Ratio:25%, pid:16777252, Item:242(wielded), Item:(0-40)41, Script:482                              ; Gun Thug male w/ Combat Shotgun
 position=cone, spacing:2
 
@@ -965,9 +965,9 @@ position=wedge, spacing:2
 [Encounter: NEW_Gang]
 type_00=ratio:25%, pid:16777252, Item:242(wielded), Item:(0-30)41, Script:774, If(Rand(20%))               ; Gun Thug male w/ Combat Shotgun
 type_01=ratio:25%, pid:16777253, Item:22(wielded), Item:(0-30)41, Script:774                               ; Gun Thug female w/ 14mm Pistol
-type_02=ratio:15%, pid:16777255, Item:646(wielded), Item:(0-30)41, Script:774                              ; Big Gun Thug female w/ Flamer LT
+type_02=ratio:15%, pid:16777255, Item:646(wielded), Item:(0-30)41, Script:774, If(enctr(num_critters) > 4) ; Big Gun Thug female w/ Flamer LT
 type_03=ratio:25%, pid:16777246, Item:332(wielded), Item:(0-30)41, Script:774                              ; Tough Thug Male w/ Grease Gun
-type_04=ratio:10%, pid:16777254, Item:630(wielded), Item:(0-30)41, Script:774                              ; Big Gun Thug male w/ Grenade Launcher
+type_04=ratio:10%, pid:16777254, Item:630(wielded), Item:(0-30)41, Script:774, If(enctr(num_critters) > 4) ; Big Gun Thug male w/ Grenade Launcher
 position=huddle, spacing:3
 
 [Encounter: NEW_Traveller]
@@ -983,19 +983,19 @@ type_03=ratio:25%, pid:16777478, Item:332(wielded), Item:(0-40)41, Script:485   
 
 [Encounter: NCR_Marauders]
 type_00=ratio:25%, pid:16777479, Item:611(wielded), Item:332, Item:(0-30)41, Script:771                    ; Maurader male w/ Throwing Axe & Greese Gun
-type_01=ratio:25%, pid:16777479, Item:296(wielded), Item:(0-30)41, Script:771                              ; Maurader male w/ H&K P90c
+type_01=ratio:25%, pid:16777479, Item:296(wielded), Item:(0-30)41, Script:771, If(enctr(num_critters) > 3) ; Maurader male w/ H&K P90c
 type_02=ratio:25%, pid:16777480, Item:639(wielded), Item:(0-30)41, Script:771                              ; Maurader female w/ Piston Spear
 type_03=ratio:25%, pid:16777480, Item:(1-4)45(wielded), Item:236, Item:(0-30)41, Script:771                ; Maurader female w/ Throwing Knives & Combat Knife
 position=wedge, spacing:2
 
 [Encounter: NCR_Masters_Army]
 type_00=ratio:10%, pid:16777473, Item:118(wielded), Script:762                              ; Tough Nightkin w/ Laser Rifle
-type_01=ratio:10%, pid:16777473, Item:235(wielded), Item:38, Script:762                     ; Tough Nightkin w/ Power Fist, SEC
+type_01=ratio:10%, pid:16777473, Item:235(wielded), Item:38, Script:762, If(enctr(num_critters) > 4)  ; Tough Nightkin w/ Power Fist, SEC
 type_02=ratio:10%, pid:16777472, Item:13(wielded), Item:(2-5)14, Script:762                 ; Nightkin w/ Rocket Launcher and Explosive Rocket
 type_03=ratio:10%, pid:16777472, Item:11(wielded), Item:(1-2)32, Script:762                 ; Nightkin w/ Flamer and Fuel
 type_04=ratio:10%, pid:16777472, Item:12(wielded), Item:(2-3)35, Script:762                 ; Nightkin w/ Minigun and 5mm
-type_05=ratio:28%, pid:16777464, Script:793                                                 ; Centaur
-type_06=ratio:22%, pid:16777462, Script:792                                                 ; Floater
+type_05=ratio:28%, pid:16777464, Script:793, If(enctr(num_critters) > 5)                    ; Centaur
+type_06=ratio:22%, pid:16777462, Script:792, If(enctr(num_critters) > 6)                    ; Floater
 ;position=Surrounding
 ;position=straight_line, spacing:1
 ;position=straight_line, spacing:2
@@ -1016,7 +1016,7 @@ position=huddle, spacing:2
 type_00=pid:16777277, Item:332(wielded), Item:(0-50)41, Script:783                                         ; Master Trader female w/ Grease Gun
 type_01=ratio:25%, pid:16777477, Item:242(wielded), Item:(0-30)41, Script:259                              ; NCR Ranger male w/ Combat Shotgun
 type_02=ratio:25%, pid:16777477, Item:11(wielded), Item:(0-30)41, Script:259                               ; NCR Ranger male w/ Flamer
-type_03=ratio:25%, pid:16777478, Item:268(wielded), Item:(0-30)41, Script:259                              ; NCR Ranger female w/ H&K CAWS
+type_03=ratio:25%, pid:16777478, Item:268(wielded), Item:(0-30)41, Script:259, If(enctr(num_critters) > 4) ; NCR Ranger female w/ H&K CAWS
 type_04=ratio:25%, pid:16777478, Item:332(wielded), Item:(0-30)41, Script:259                              ; NCR Ranger female w/ Grease Gun
 position=huddle, spacing:2
 
@@ -1066,7 +1066,7 @@ type_00=pid:16777454, Item:16(wielded), Script:1026, If(Global(386) == 1)       
 type_01=pid:16777397, Item:355(wielded), Script:1026, If(Global(386) == 3)      ; Newt Morton (Bounty Hunter Leader 1-6) /w LSW - edit by killap
 type_02=pid:16777403, Item:25(wielded), Item:352, Script:1026, If(Global(386) == 5)          ; Newt Morton (Bounty Hunter 13-18) w/ Frag and H&K G11
 type_03=ratio:25%, pid:16777252, Item:242(wielded), Item:(0-30)41, Script:774                              ; Gun Thug male w/ Combat Shotgun
-type_04=ratio:25%, pid:16777253, Item:22(wielded), Item:(0-30)41, Script:774                               ; Gun Thug female w/ 14mm Pistol
+type_04=ratio:25%, pid:16777253, Item:22(wielded), Item:(0-30)41, Script:774, If(enctr(num_critters) > 4)  ; Gun Thug female w/ 14mm Pistol
 type_05=ratio:25%, pid:16777255, Item:646(wielded), Item:(0-30)41, Script:774                              ; Big Gun Thug female w/ Flamer LT
 type_06=ratio:25%, pid:16777246, Item:332(wielded), Item:(0-30)41, Script:774                              ; Tough Thug Male w/ Grease Gun
 position=Surrounding, Spacing:2, distance:4
@@ -1107,20 +1107,20 @@ position=Surrounding
 
 ; phobos2077 - bounty hunter quests:
 [Encounter: BOUNTY_Robbers]
-type_00=ratio:30%, pid:16777246, Item:94(wielded), Item:(0-15)41, Item:95, Item:621, Script:625                 ; Tough Male Thug w/ Shotgun and shells
+type_00=ratio:30%, pid:16777246, Item:94(wielded), Item:(0-15)41, Item:95, Item:621, Script:625, If(enctr(num_critters) > 3)   ; Tough Male Thug w/ Shotgun and shells
 type_01=ratio:30%, pid:16777247, Item:18(wielded), Item:(0-15)41, Item:621, Script:625                           ; Tough Female Thug w/ Desert Eagle
 type_02=ratio:20%, pid:16777247, Item:629(wielded), Item:(0-15)41, Item:621, Script:625                           ; Tough Female Thug w/ 9mm SMG
 type_03=ratio:10%, pid:16777250, Item:236(wielded), Item:(0-15)41, Item:40, Item:621, Item:259, Script:625       ; Agile Male Thug w/ Combat knife, Stimpak and Jet
-type_04=ratio:10%, pid:16777251, Item:9(wielded), Item:(0-15)41, Item:259, Item:621, Script:625                  ; Agile Female Thug w/ 10mm SMG and Jet
+type_04=ratio:10%, pid:16777251, Item:9(wielded), Item:(0-15)41, Item:259, Item:621, Script:625, If(enctr(num_critters) > 4) ; Agile Female Thug w/ 10mm SMG and Jet
 position=cone, spacing:2
 
 [Encounter: BOUNTY_Robbers_High]
 type_00=ratio:20%, pid:16777428, Item:313(wielded), Item:(0-55)41, Item:(1-2)111, Item:621, Script:625           ; Bandit Male w/ Revolver
 type_01=ratio:20%, pid:16777575, Item:643(wielded), Item:(0-55)41, Item:(1-2)111, Item:621, Script:625           ; Mercenary w/ Cowboy Repeater
-type_02=ratio:20%, pid:16777429, Item:22(wielded), Item:(0-55)41, Item:(1-2)33, Item:621, Script:625             ; Bandit Female w/ 14mm Pistol
+type_02=ratio:20%, pid:16777429, Item:22(wielded), Item:(0-55)41, Item:(1-2)33, Item:621, Script:625, If(enctr(num_critters) > 3)             ; Bandit Female w/ 14mm Pistol
 type_03=ratio:20%, pid:16777575, Item:160(wielded), Item:(0-55)41, Item:40, Item:259, Item:621, Script:625       ; Mercenary w/ Cattle prod, Stimpak and Jet
-type_04=ratio:10%, pid:16777574, Item:351(wielded), Item:(1-3)40, Item:(1-2)363, Item:621, Script:625            ; Mercenary Captain w/ FN FAL, stims and ammo
-type_05=ratio:10%, pid:16777574, Item:630(wielded), Item:(1-2)631, Item:(1-3)40, Item:621, Script:625            ; Mercenary Captain w/ Grenade Launcher, stims and ammo
+type_04=ratio:10%, pid:16777574, Item:351(wielded), Item:(1-3)40, Item:(1-2)363, Item:621, Script:625, If(enctr(num_critters) > 4)            ; Mercenary Captain w/ FN FAL, stims and ammo
+type_05=ratio:10%, pid:16777574, Item:630(wielded), Item:(1-2)631, Item:(1-3)40, Item:621, Script:625, If(enctr(num_critters) > 5)            ; Mercenary Captain w/ Grenade Launcher, stims and ammo
 position=cone, spacing:2
 
 ; put around Modoc - Mod_M
@@ -1130,16 +1130,16 @@ type_00=pid:16777399, Item:626, Item:287(wielded), Item:615, Item:236, Item:(1-4
 type_01=ratio:25%, pid:16777420, Item:6(wielded), Item:273, Script:772                                          ; Cannibal Male w/ Sledge
 type_02=ratio:25%, pid:16777421, Item:(2-6)45(wielded), Item:7, Item:273, Script:772                            ; Cannibal Female w/ Throwing Knives and Sharp Spear
 type_03=ratio:25%, pid:16777440, Item:9(wielded), Item:(1-2)29, Item:4, Script:772                              ; Strong Slaver (blue pants) w/ 10mm SMG and knife
-type_04=ratio:25%, pid:16777246, Item:94(wielded), Item:95, Item:4, Script:772                                  ; Tough Thug male w/ Shotgun and knife
+type_04=ratio:25%, pid:16777246, Item:94(wielded), Item:95, Item:4, Script:772, If(enctr(num_critters) > 4)     ; Tough Thug male w/ Shotgun and knife
 position=huddle, spacing:2
 
 ; put to the east of Broken Hills - Brok_M
 [Encounter: BOUNTY_Outlaws_Mid]
 type_00=pid:16777403, Item:626, Item:22, Item:25(wielded), Item:615, Item:234, Item:259, Item:(2-5)40, Item:(0-300)41, Script:772   ; Bounty Hunter Male (13-18) w/ Frag, 14mm Pistol and stuff
-type_01=ratio:15%, pid:16777264, Item:355(wielded), Item:(1-3)34, Item:(0-2)40, Script:772                      ; Big gun guard w/ Light Support Weapon
+type_01=ratio:15%, pid:16777264, Item:355(wielded), Item:(1-3)34, Item:(0-2)40, Script:772, If(enctr(num_critters) > 5)             ; Big gun guard w/ Light Support Weapon
 type_02=ratio:15%, pid:16777264, Item:630(wielded), Item:(1-2)631, Item:(0-2)40, Item:259, Script:772           ; Big gun guard w/ Grenade Launcher
 type_03=ratio:20%, pid:16777474, Item:23(wielded), Item:(1-2)36, Item:(0-2)40, Item:259, Script:772             ; Tough Ghoul w/ Assault Rifle
-type_04=ratio:20%, pid:16777475, Item:283(wielded), Item:357, Script:772                                        ; Mobster w/ Tommy Gun
+type_04=ratio:20%, pid:16777475, Item:283(wielded), Item:357, Script:772, If(enctr(num_critters) > 4)           ; Mobster w/ Tommy Gun
 type_05=ratio:20%, pid:16777366, Item:332(wielded), Item:357, Item:(0-2)125, Script:772                         ; Shop Owner (halfling) w/ Grease Gun
 type_06=ratio:10%, pid:16777298, Script:772                                                                     ; Wild Dog
 position=cone, spacing:2
@@ -1152,9 +1152,9 @@ type_01=ratio:20%, pid:16777478, Item:392, Item:358, Item:26(wielded), Script:77
 type_02=ratio:20%, pid:16777336, Item:235(wielded), Item:(0-2)40, Script:772                                    ; Powerfull mutant w/ Power fist
 type_03=ratio:10%, pid:16777406, Item:15(wielded), Item:(1-2)39, Item:(1-4)40, Script:772                       ; Bounty Hunter (Pwr. armor) w/ Plasma Rifle
 type_04=ratio:10%, pid:16777406, Item:644(wielded), Item:(1-2)633, Item:(1-4)40, Script:772                     ; Bounty Hunter (Pwr. armor) w/ 14mm SMG
-type_05=ratio:20%, pid:16777224, Script:772                                                                     ; Deathclaw
-type_06=ratio:10%, pid:16777291, Item:268(wielded), Script:772                                                  ; Robobrain w/ H&K CAWS
-type_07=ratio:10%, pid:16777692, Script:772                                                                     ; Generic Cyberdog
+type_05=ratio:20%, pid:16777224, Script:772, If(enctr(num_critters) > 6)                                        ; Deathclaw
+type_06=ratio:10%, pid:16777291, Item:268(wielded), Script:772, If(enctr(num_critters) > 5)                     ; Robobrain w/ H&K CAWS
+type_07=ratio:10%, pid:16777692, Script:772, If(enctr(num_critters) > 7)                                        ; Generic Cyberdog
 position=cone, spacing:2
 
 [Encounter: BOUNTY_Ghouls]
@@ -1671,7 +1671,7 @@ maps=Mountain Encounter 6, Mountain Encounter 5, Mountain Encounter 3, Cavern En
 enc_00=Chance:7%,Enc:(3-5) DMRV_Highwaymen AMBUSH Player
 enc_01=Chance:7%,Enc:(3-6) DMRV_Robbers AMBUSH Player
 enc_02=Chance:7%,Enc:(5-8) KLA_Homeless AMBUSH Player
-enc_03=Chance:2%,Enc:(4-7) DMRV_Golden_Geckos AND (6-12) MOD_Mantis AMBUSH Player
+enc_03=Chance:2%,Enc:(4-6) DMRV_Golden_Geckos AND (6-10) MOD_Mantis AMBUSH Player
 enc_04=Chance:15%,Enc:(2-5) Bounty_Hunter_Low AMBUSH Player, If(Global(1) > 1) And If(Player(Level) < 7)
 enc_05=Chance:15%,Enc:(2-5) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 6) And If(Player(Level) < 13)
 enc_06=Chance:15%,Enc:(2-5) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 12) And If(Player(Level) < 19)
@@ -2433,14 +2433,14 @@ enc_09=Chance:15%,Enc:(2-4) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(0) < 
 enc_10=Chance:15%,Enc:(2-4) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(0) < -500) And If(Player(Level) > 12) And If(Player(Level) < 19)
 enc_11=Chance:15%,Enc:(2-5) Bounty_Hunter_High AMBUSH Player, If(Global(0) < -500) And If(Player(Level) > 18)
 enc_12=Chance:10%,Enc:(4-7) Morton_Brother, If(Global(386) > 0) And If(Global(386) < 6)
-enc_13=Chance:12%,Enc:(6-8) EPA_Floater_Centaurs AMBUSH Player
-enc_14=Chance:12%,Enc:(5-7) EPA_Tough_Fire_Geckos AMBUSH Player
-enc_15=Chance:12%,Enc:(5-8) EPA_Tough_Alien AMBUSH Player
-enc_16=Chance:12%,Enc:(4-6) EPA_Deathclaws AMBUSH Player
-enc_17=Chance:12%,Enc:(6-9) EPA_Fire_Geckos AMBUSH Player
-enc_18=Chance:12%,Enc:(6-9) EPA_Alien AMBUSH Player
-enc_19=Chance:12%,Enc:(6-8) EPA_Centaurs AMBUSH Player
-enc_20=Chance:12%,Enc:(6-10) EPA_Floaters AMBUSH Player
+enc_13=Chance:12%,Enc:(4-6) EPA_Floater_Centaurs AMBUSH Player
+enc_14=Chance:12%,Enc:(5-6) EPA_Tough_Fire_Geckos AMBUSH Player
+enc_15=Chance:12%,Enc:(4-7) EPA_Tough_Alien AMBUSH Player
+enc_16=Chance:12%,Enc:(3-5) EPA_Deathclaws AMBUSH Player
+enc_17=Chance:12%,Enc:(6-8) EPA_Fire_Geckos AMBUSH Player
+enc_18=Chance:12%,Enc:(5-8) EPA_Alien AMBUSH Player
+enc_19=Chance:12%,Enc:(4-6) EPA_Centaurs AMBUSH Player
+enc_20=Chance:12%,Enc:(5-8) EPA_Floaters AMBUSH Player
 enc_21=Chance:1%,Counter:1,Special,Map:Special Whale Encounter,Enc:Special1, If(Player(Level) > 5) And If(Global(610) < 1)
 enc_22=Chance:1%,Counter:1,Special,Map:Special Head Encounter,Enc:Special1, If(Player(Level) > 9) And If(Global(611) < 1)
 enc_23=Chance:1%,Counter:1,Special,Map:Special Shuttle Encounter,Enc:Special1, If(Player(Level) > 5) And If(Global(612) < 1)
@@ -2454,9 +2454,9 @@ enc_28=Chance:1%,Counter:1,Special,Map:Special Cafe Encounter,Enc:Special1, If(P
 lookup_name=EPA_M                                                               ; Area around the EPA
 maps=Mountain Encounter 1, Mountain Encounter 2, Cavern Encounter 0, Cavern Encounter 2, Cavern Encounter 4
 enc_00=Chance:4%,Enc:(3-6) EPA_Tough_Alien AND (2-4) EPA_Deathclaws AMBUSH Player
-enc_01=Chance:12%,Enc:(6-8) EPA_Floater_Centaurs AMBUSH Player
-enc_02=Chance:12%,Enc:(5-7) EPA_Tough_Fire_Geckos AMBUSH Player
-enc_03=Chance:12%,Enc:(5-8) EPA_Tough_Alien AMBUSH Player
+enc_01=Chance:12%,Enc:(5-7) EPA_Floater_Centaurs AMBUSH Player
+enc_02=Chance:12%,Enc:(4-6) EPA_Tough_Fire_Geckos AMBUSH Player
+enc_03=Chance:12%,Enc:(4-6) EPA_Tough_Alien AMBUSH Player
 enc_04=Chance:15%,Enc:(2-5) Bounty_Hunter_Low AMBUSH Player, If(Global(1) > 1) And If(Player(Level) < 7)
 enc_05=Chance:15%,Enc:(2-5) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 6) And If(Player(Level) < 13)
 enc_06=Chance:15%,Enc:(2-5) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 12) And If(Player(Level) < 19)
@@ -2467,10 +2467,10 @@ enc_10=Chance:15%,Enc:(2-4) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(0) <
 enc_11=Chance:15%,Enc:(2-5) Bounty_Hunter_High AMBUSH Player, If(Global(0) < -500) And If(Player(Level) > 18)
 enc_12=Chance:10%,Enc:(4-7) Morton_Brother, If(Global(386) > 0) And If(Global(386) < 6)
 enc_13=Chance:12%,Enc:(4-6) EPA_Deathclaws AMBUSH Player
-enc_14=Chance:12%,Enc:(6-9) EPA_Fire_Geckos AMBUSH Player
-enc_15=Chance:12%,Enc:(6-9) EPA_Alien AMBUSH Player
-enc_16=Chance:12%,Enc:(6-8) EPA_Centaurs AMBUSH Player
-enc_17=Chance:12%,Enc:(6-10) EPA_Floaters AMBUSH Player
+enc_14=Chance:12%,Enc:(6-8) EPA_Fire_Geckos AMBUSH Player
+enc_15=Chance:12%,Enc:(6-8) EPA_Alien AMBUSH Player
+enc_16=Chance:12%,Enc:(4-6) EPA_Centaurs AMBUSH Player
+enc_17=Chance:12%,Enc:(5-8) EPA_Floaters AMBUSH Player
 enc_18=Chance:5%,Counter:1,Special,Map:Special Bridge Encounter,Enc:Special1, If(Player(Level) > 9) And If(Global(605) < 1)
 enc_19=Chance:3%,Counter:1,Special,Map:Special Holy Encounter 2,Enc:Special1, If(Global(614) > 0) And If(Global(606) < 1)
 
@@ -2479,8 +2479,8 @@ lookup_name=EPA_C                                                               
 maps=City Encounter 1, City Encounter 2, City Encounter 3, City Encounter 4, City Encounter 5, City Encounter 6, City Encounter 7,City Encounter 8
 enc_00=Chance:4%,Enc:(3-6) EPA_Tough_Alien AND (3-5) EPA_Deathclaws AMBUSH Player
 enc_01=Chance:12%,Enc:(6-8) EPA_Floater_Centaurs AMBUSH Player
-enc_02=Chance:12%,Enc:(5-7) EPA_Tough_Fire_Geckos AMBUSH Player
-enc_03=Chance:12%,Enc:(5-8) EPA_Tough_Alien AMBUSH Player
+enc_02=Chance:12%,Enc:(5-6) EPA_Tough_Fire_Geckos AMBUSH Player
+enc_03=Chance:12%,Enc:(4-7) EPA_Tough_Alien AMBUSH Player
 enc_04=Chance:15%,Enc:(2-5) Bounty_Hunter_Low AMBUSH Player, If(Global(1) > 1) And If(Player(Level) < 7)
 enc_05=Chance:15%,Enc:(2-5) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 6) And If(Player(Level) < 13)
 enc_06=Chance:15%,Enc:(2-5) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 12) And If(Player(Level) < 19)
@@ -2493,8 +2493,8 @@ enc_12=Chance:10%,Enc:(4-7) Morton_Brother, If(Global(386) > 0) And If(Global(38
 enc_13=Chance:12%,Enc:(4-6) EPA_Deathclaws AMBUSH Player
 enc_14=Chance:12%,Enc:(6-9) EPA_Fire_Geckos AMBUSH Player
 enc_15=Chance:12%,Enc:(6-9) EPA_Alien AMBUSH Player
-enc_16=Chance:12%,Enc:(6-8) EPA_Centaurs AMBUSH Player
-enc_17=Chance:12%,Enc:(6-10) EPA_Floaters AMBUSH Player
+enc_16=Chance:12%,Enc:(4-7) EPA_Centaurs AMBUSH Player
+enc_17=Chance:12%,Enc:(4-8) EPA_Floaters AMBUSH Player
 
 [Encounter Table 48]
 lookup_name=Wild4_D                                                             ; Area Between EPA and Coast
@@ -2502,7 +2502,7 @@ maps=Desert Encounter 9, Desert Encounter 8, Desert Encounter 11
 enc_00=Chance:2%,Counter:1,Special,Map:Special Toxic Encounter,Enc:Special1, If(Player(Level) > 5) And If(Global(607) < 1)
 enc_01=Chance:2%,Counter:1,Special,Map:Special Pariahs Encounter,Enc:Special1, If(Player(Level) > 5) And If(Global(608) < 1)
 enc_02=Chance:2%,Counter:1,Special,Map:Special Mad Brahmin Encounter,Enc:Special1, If(Player(Level) > 5) And If(Global(609) < 1)
-enc_03=Chance:40%,Enc:(6-10) EPA_Tough_Fire_Geckos AMBUSH Player
+enc_03=Chance:40%,Enc:(5-8) EPA_Tough_Fire_Geckos AMBUSH Player
 enc_04=Chance:15%,Enc:(2-5) Bounty_Hunter_Low AMBUSH Player, If(Global(1) > 1) And If(Player(Level) < 7)
 enc_05=Chance:15%,Enc:(2-5) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 6) And If(Player(Level) < 13)
 enc_06=Chance:15%,Enc:(2-5) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 12) And If(Player(Level) < 19)
@@ -2512,8 +2512,8 @@ enc_09=Chance:15%,Enc:(2-4) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(0) < 
 enc_10=Chance:15%,Enc:(2-4) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(0) < -500) And If(Player(Level) > 12) And If(Player(Level) < 19)
 enc_11=Chance:15%,Enc:(2-5) Bounty_Hunter_High AMBUSH Player, If(Global(0) < -500) And If(Player(Level) > 18)
 enc_12=Chance:10%,Enc:(4-7) Morton_Brother, If(Global(386) > 0) And If(Global(386) < 6)
-enc_13=Chance:40%,Enc:(6-9) EPA_Fire_Geckos AMBUSH Player
-enc_14=Chance:20%,Enc:(6-12) DMRV_Golden_Geckos AMBUSH Player
+enc_13=Chance:40%,Enc:(6-8) EPA_Fire_Geckos AMBUSH Player
+enc_14=Chance:20%,Enc:(5-10) DMRV_Golden_Geckos AMBUSH Player
 enc_15=Chance:1%,Counter:1,Special,Map:Special Whale Encounter,Enc:Special1, If(Player(Level) > 5) And If(Global(610) < 1)
 enc_16=Chance:1%,Counter:1,Special,Map:Special Head Encounter,Enc:Special1, If(Player(Level) > 9) And If(Global(611) < 1)
 enc_17=Chance:1%,Counter:1,Special,Map:Special Shuttle Encounter,Enc:Special1, If(Player(Level) > 5) And If(Global(612) < 1)
@@ -2526,9 +2526,9 @@ enc_22=Chance:1%,Counter:1,Special,Map:Special Cafe Encounter,Enc:Special1, If(P
 [Encounter Table 49]
 lookup_name=Wild4_M                                                             ; Area Between EPA and Coast
 maps=Mountain Encounter 4, Mountain Encounter 5, Cavern Encounter 0, Cavern Encounter 2, Cavern Encounter 4
-enc_00=Chance:40%,Enc:(8-10) EPA_Tough_Fire_Geckos AMBUSH Player
-enc_01=Chance:40%,Enc:(6-9) EPA_Fire_Geckos AMBUSH Player
-enc_02=Chance:20%,Enc:(6-12) DMRV_Golden_Geckos AMBUSH Player
+enc_00=Chance:40%,Enc:(6-8) EPA_Tough_Fire_Geckos AMBUSH Player
+enc_01=Chance:40%,Enc:(6-8) EPA_Fire_Geckos AMBUSH Player
+enc_02=Chance:20%,Enc:(6-10) DMRV_Golden_Geckos AMBUSH Player
 enc_03=Chance:15%,Enc:(2-5) Bounty_Hunter_Low AMBUSH Player, If(Global(1) > 1) And If(Player(Level) < 7)
 enc_04=Chance:15%,Enc:(2-5) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 6) And If(Player(Level) < 13)
 enc_05=Chance:15%,Enc:(2-5) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 12) And If(Player(Level) < 19)
@@ -2544,9 +2544,9 @@ enc_13=Chance:3%,Counter:1,Special,Map:Special Holy Encounter 2,Enc:Special1, If
 [Encounter Table 50]
 lookup_name=Wild4_O                                                             ; Area between EPA and Coast
 maps=Coast Encounter 1, Coast Encounter 2
-enc_00=Chance:40%,Enc:(8-10) EPA_Tough_Fire_Geckos AMBUSH Player
-enc_01=Chance:40%,Enc:(6-9) EPA_Fire_Geckos AMBUSH Player
-enc_02=Chance:20%,Enc:(6-12) DMRV_Golden_Geckos AMBUSH Player
+enc_00=Chance:40%,Enc:(6-8) EPA_Tough_Fire_Geckos AMBUSH Player
+enc_01=Chance:40%,Enc:(6-8) EPA_Fire_Geckos AMBUSH Player
+enc_02=Chance:20%,Enc:(6-10) DMRV_Golden_Geckos AMBUSH Player
 enc_03=Chance:15%,Enc:(2-5) Bounty_Hunter_Low AMBUSH Player, If(Global(1) > 1) And If(Player(Level) < 7)
 enc_04=Chance:15%,Enc:(2-5) Bounty_Hunter_Low_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 6) And If(Player(Level) < 13)
 enc_05=Chance:15%,Enc:(2-5) Bounty_Hunter_High_Mid AMBUSH Player, If(Global(1) > 1) And If(Player(Level) > 12) And If(Player(Level) < 19)
