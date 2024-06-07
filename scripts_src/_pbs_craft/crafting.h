@@ -142,6 +142,9 @@ procedure cur_recipe_batch_size begin
    return cur_recipe.qty * item_pid_pack_size(cur_recipe.pid);
 end
 
+#define dude_swift_learner_rank        has_trait(TRAIT_PERK, dude_obj, PERK_swift_learner)
+#define exp_gained_after_perks(exp)    (exp + (dude_swift_learner_rank * exp * 5 / 100))
+
 procedure gain_exp_for_crafting begin
    variable
       skillMult := craft_cfg.exp_skill_mult,
@@ -154,7 +157,7 @@ procedure gain_exp_for_crafting begin
       exp := ceil(skillMaxAvg * skillMult * 1.0 / roundTo) * roundTo;
 
    give_exp_points(exp);
-   display_msg(sprintf(mstr_craft(420), exp));
+   display_msg(sprintf(mstr_craft(420), exp_gained_after_perks(exp)));
    craft_exp_map[pid] := 1;
 end
 
