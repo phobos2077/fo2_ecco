@@ -1,0 +1,1790 @@
+; Map datafile for worldmap.c, etc.
+; Fallout 2
+; 4:12 PM 8/4/98
+;
+
+
+; Note: This is a numerically ordered list.  There can be *NO GAPS*
+;   in the sequence.
+
+; Note: Random encounter maps *do* map back to a 'city'.
+
+; Note: Elevation names (for automap/saves) are in a separate
+;   message file, and are indexed based on (map #) * (MAX_ELEV)
+
+
+
+[Map 000]
+lookup_name=Desert Encounter 1
+map_name=desert1
+music=07desert
+ambient_sfx=gustwind:20, gustwin1:20, rattle:15, rattle1:15, vulture:15, vulture1:15
+saved=No  ; Random encounter maps aren't saved normally (only in savegames)
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19086
+random_start_point_1=elev:0, tile_num:17302
+random_start_point_2=elev:0, tile_num:21315
+random_start_point_3=elev:0, tile_num:22699
+random_start_point_4=elev:0, tile_num:20526
+random_start_point_5=elev:0, tile_num:21485 ; pbs
+;random_start_point_0=elev:0, tile_num:24777
+   ; These are for random encounters
+; WIP!
+
+
+[Map 001]
+lookup_name=Desert Encounter 2
+map_name=desert2
+music=07desert
+;ambient_sfx=hmxxxxbg:100
+ambient_sfx=gustwind:20, gustwin1:20, rattle:15, rattle1:15, vulture:15, vulture1:15
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19086
+random_start_point_1=elev:0, tile_num:17302
+random_start_point_2=elev:0, tile_num:21315
+random_start_point_3=elev:0, tile_num:22699
+random_start_point_4=elev:0, tile_num:20526
+random_start_point_5=elev:0, tile_num:21485 ; pbs
+
+
+[Map 002]
+lookup_name=Desert Encounter 3
+map_name=desert3
+music=07desert
+;ambient_sfx=hmxxxxbg:100
+ambient_sfx=gustwind:20, gustwin1:20, rattle:15, rattle1:15, vulture:15, vulture1:15
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19086
+random_start_point_1=elev:0, tile_num:17302
+random_start_point_2=elev:0, tile_num:21315
+random_start_point_3=elev:0, tile_num:22699
+random_start_point_4=elev:0, tile_num:20526
+random_start_point_5=elev:0, tile_num:21485 ; pbs
+
+
+[Map 003]
+lookup_name=Arroyo Caves
+map_name=arcaves
+music=13CARVRN
+ambient_sfx=water:40, water1:25, animal:15 animal:10, pebble:5, pebble1:5
+pipboy_active=No
+saved=Yes
+can_rest_here=No,No,No  ; All 3 elevations
+
+
+[Map 004]
+lookup_name=Arroyo Village
+map_name=arvillag
+music=17arroyo
+;ambient_sfx=gntlwin1:20, gntlwind:20, dogbark:20, dogbark1:20, gustwind:10, gustwin1:10
+ambient_sfx=gntlwin1:25, gntlwind:25, dogbark:20, dogbark1:20, gustwind:5, gustwin1:5
+saved=Yes
+
+
+[Map 005]
+lookup_name=Arroyo Bridge
+map_name=arbridge
+music=17arroyo
+;ambient_sfx=hmxxxxbg:100
+;ambient_sfx=gntlwin1:20, gntlwind:20, dogbark:20, dogbark1:20, gustwind:10, gustwin1:10
+ambient_sfx=gntlwin1:25, gntlwind:25, dogbark:20, dogbark1:20, gustwind:5, gustwin1:5
+saved=Yes
+;destroyed_maps_as=22     ; Which map does this map re-map as when destroyed?
+;destroyed_maps_on_var=0  ; Which global script variable determines
+                          ;    that an area is destroyed?
+
+
+[Map 006]
+lookup_name=Den Business 1
+map_name=denbus1
+music=05RAIDER
+ambient_sfx=dogbark:10, dogbark1:10, gntlwind:20, gntlwin1:20, blank:40
+saved=Yes
+
+
+[Map 007]
+lookup_name=Den Business 2
+map_name=denbus2
+music=05RAIDER
+ambient_sfx=dogbark:10, dogbark1:10, gntlwind:20, gntlwin1:20, blank:40
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 008]
+lookup_name=Den Residential 1
+map_name=denres1
+music=05RAIDER
+;ambient_sfx=hmxxxxbg:100
+ambient_sfx=dogbark:10, dogbark1:10, gntlwind:20, gntlwin1:20, blank:40
+saved=Yes
+
+
+[Map 009]
+lookup_name=Klamath Downtown
+map_name=kladwtwn
+music=03wrldmp
+ambient_sfx=laughter:10, laughte1:10, gntlwind:30, gntlwin1:20, brdchir1:10, brdchirp:20
+saved=Yes
+
+
+[Map 010]
+lookup_name=Klamath Mall
+map_name=klamall
+music=03wrldmp
+ambient_sfx=animal:20, gntlwind:30, gntlwin1:20, brdchir1:10, brdchirp:20
+saved=Yes
+
+
+[Map 011]
+lookup_name=Klamath Rat Caves
+map_name=klaratcv
+music=03wrldmp
+ambient_sfx=squeak:10, water:20, water1:20, animal:20, pebble:20, squeak1:10
+saved=Yes
+can_rest_here=No,No,No  ; All 3 elevations
+
+
+[Map 012]
+lookup_name=Klamath Toxic Caves
+map_name=klatoxcv
+music=13carvrn
+;ambient_sfx=hmxxxxbg:100
+ambient_sfx=puddle1:30, puddle:30, water:5, water1:5, pebble:5, pebble1:5
+saved=Yes
+can_rest_here=No,No,No  ; All 3 elevations
+
+
+[Map 013]
+lookup_name=Klamath Trapping Caves
+map_name=klatrap
+music=03wrldmp
+ambient_sfx=gntlwin1:20, gntlwind:20, rattle:15, rattle1:15, vulture:15, vulture1:15
+saved=Yes
+state=On
+
+
+[Map 014]
+lookup_name=Klamath Grazing Area
+map_name=klagraz
+music=03wrldmp
+ambient_sfx=gntlwin1:20, gntlwind:20, rattle:15, rattle1:15, vulture:15, vulture1:15
+saved=Yes
+
+
+[Map 015]
+lookup_name=Vault City Courtyard
+map_name=vctyctyd
+music=22vcity
+ambient_sfx=blank:40, brdchirp:25, brdchir1:25, potspans:5, potspan1:5
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 016]
+lookup_name=Vault City Downtown
+map_name=vctydwtn
+music=22vcity
+ambient_sfx=blank:40, brdchirp:25, brdchir1:25, potspans:5, potspan1:5
+can_rest_here=No,No,No  ; All 3 elevations
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 017]
+lookup_name=Vault City Council
+map_name=vctycocl
+music=22vcity
+ambient_sfx=blank:60, brdchirp:20, brdchir1:20
+can_rest_here=No,No,No  ; All 3 elevations
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 018]
+lookup_name=Modoc Main Street
+map_name=modmain
+music=18modoc
+ambient_sfx=brdchir1:25, brdchirp:25, chimes:15, chimes1:15, dogbark:10, dogbark1:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 019]
+lookup_name=Modoc Bed And Breakfast
+map_name=modinn
+music=18modoc
+ambient_sfx=brdchir1:25, brdchirp:25, chimes:15, chimes1:15, dogbark:10, dogbark1:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 020]
+lookup_name=Modoc: Grisham's Brahmin Pastures
+map_name=modbrah
+music=18modoc
+ambient_sfx=brdchir1:15, brdchirp:15, mabromaa:25, dogbark:10, dogbark1:10, gntlwind:25
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 021]
+lookup_name=Modoc: Farrel's Garden
+map_name=modgard
+music=18modoc
+ambient_sfx=brdchir1:25, brdchirp:25, chimes:15, chimes1:15, dogbark:10, dogbark1:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 022]
+lookup_name=Modoc: Down the Shitter
+map_name=modshit
+music=13carvrn
+ambient_sfx=pebble:15, pebble1:15, water1:25, water:25, blank:20
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 023]
+lookup_name=Modoc: Town Hall
+map_name=modwell
+music=18modoc
+ambient_sfx=brdchir1:25, brdchirp:25, chimes:15, chimes1:15, dogbark:10, dogbark1:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 024]
+lookup_name=Ghost Town: The Ghost Farm
+map_name=gstfarm
+music=10labone
+ambient_sfx=gntlwind:30, gntlwin1:30, gustwind:10, gustwin1:10, vulture:10, vulture1:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 025]
+lookup_name=Ghost Town: Main Cavern
+map_name=gstcav1
+music=10labone
+ambient_sfx=animal:20, animal1:20, water:20, water1:20, pebble1:20
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 026]
+lookup_name=Ghost Town: Underground Lake
+map_name=gstcav2
+music=10labone
+ambient_sfx=animal:20, water:20, water1:20, pebble1:20, pebble:20
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 027]
+lookup_name=Sierra Army Depot: The Battlefield
+map_name=depolv1
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+music=08vats
+ambient_sfx=gntlwind:30, gntlwin1:30, gustwind:10, gustwin1:10, vulture:10, vulture1:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 028]
+lookup_name=Sierra Army Depot: Levels 1-3
+map_name=depolva
+can_rest_here=No,No,No  ; All 3 elevations
+music=08vats
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 029]
+lookup_name=Sierra Army Depot: Level 4
+map_name=depolvb
+can_rest_here=No,No,No  ; All 3 elevations
+music=08vats
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 030]
+lookup_name=Vault City Vault
+map_name=vctyvlt
+music=22vcity
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 031]
+lookup_name=Gecko Settlement
+map_name=gecksetl
+music=12junktn
+ambient_sfx=electri1:20, electric:20, gntlwind:20, gntlwin1:20, steam:20, steam1:20
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 032]
+lookup_name=Gecko Power Plant
+map_name=geckpwpl
+music=12junktn
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 033]
+lookup_name=Gecko Junkyard
+map_name=geckjunk
+music=12junktn
+ambient_sfx=gntlwind:20, gntlwin1:20, winddoor:20, winddoo1:20, animal:20, animal1:20
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+
+[Map 034]
+lookup_name=Gecko Access Tunnels
+map_name=gecktunl
+music=12junktn
+ambient_sfx=clank1:15, clank:15, steam:20, steam:20, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 035]
+lookup_name=Arroyo Wilderness
+map_name=argarden
+music=17arroyo
+ambient_sfx=gntlwin1:25, gntlwind:25, dogbark:20, dogbark1:20, gustwind:5, gustwin1:5
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 036]
+lookup_name=Vault 15
+map_name=vault15
+music=14necro
+ambient_sfx=animal:20, pebble:15, pebble1:15, water1:20, water:20, blank:15
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 037]
+lookup_name=The Squat A
+map_name=v15ent
+music=14necro
+ambient_sfx=gntlwin1:25, gntlwind:25, dogbark:20, dogbark1:20, gustwind:5, gustwin1:5
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 038]
+lookup_name=The Squat B
+map_name=v15entb
+music=14necro
+ambient_sfx=gntlwin1:25, gntlwind:25, dogbark:20, dogbark1:20, gustwind:5, gustwin1:5
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 039]
+lookup_name=Vault 15 East Entrance
+map_name=v15sent
+music=14necro
+ambient_sfx=animal:20, pebble:15, pebble1:15, water1:20, water:20, blank:15
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 040]
+lookup_name=Vault 13
+map_name=vault13
+music=08vats
+ambient_sfx=electri1:20, elevato1:15, elevator:15, mechpum1:10, mechpump:10, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 041]
+lookup_name=Vault 13 Entrance
+map_name=v13ent
+music=08vats
+ambient_sfx=electri1:20, elevato1:15, elevator:15, mechpum1:10, mechpump:10, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 042]
+lookup_name=NCR: Downtown
+map_name=ncr1
+music=01hub
+ambient_sfx=gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 043]
+lookup_name=NCR: Council 1
+map_name=ncr2
+music=01hub
+ambient_sfx=gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 044]
+lookup_name=NCR: Westin Ranch
+map_name=ncr3
+music=01hub
+ambient_sfx=gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 045]
+lookup_name=NCR: Grazing Lands
+map_name=ncr4
+music=01hub
+ambient_sfx=gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 046]
+lookup_name=NCR: Bazaar
+map_name=ncrent
+music=01hub
+ambient_sfx=gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 047]
+lookup_name=NCR: Council 2
+map_name=ncrex
+music=01hub
+ambient_sfx=gntlwin1:25, gntlwind:25, brdchir1:10, brdchirp:10, blank:30
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 048]
+lookup_name=Klamath Canyon
+map_name=klacanyn
+music=03wrldmp
+ambient_sfx=gntlwin1:30, gntlwind:30, gustwin1:10, gustwind:10, vulture:10, vulture1:10
+;ambient_sfx=hmxxxxbg:100
+dead_bodies_age=No
+saved=Yes
+
+[Map 049]
+lookup_name=Military Base Levels 1-2
+map_name=mbase12
+music=13carvrn
+ambient_sfx=elevato1:25, elevator:25, electri1:15, electric:15, clank:10, clank1:10
+saved=Yes
+
+[Map 050]
+lookup_name=Military Base Levels 3-4
+map_name=mbase34
+music=13carvrn
+ambient_sfx=elevato1:25, elevator:25, electri1:15, electric:15, clank:10, clank1:10
+saved=Yes
+
+[Map 051]
+lookup_name=Military Base Entrance
+map_name=mbclose
+music=07desert
+ambient_sfx=gntlwin1:20, gntlwind:20, dogbark:20, dogbark:20, gustwin1:10, gustwind:10
+saved=Yes
+
+[Map 052]
+lookup_name=Den Slave Run
+map_name=dnslvrun
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+saved=No
+
+[Map 053]
+lookup_name=Car: Desert
+map_name=cardesrt
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+saved=Yes
+random_start_point_0=elev:0, tile_num:19086
+random_start_point_1=elev:0, tile_num:17302
+random_start_point_2=elev:0, tile_num:21315
+random_start_point_3=elev:0, tile_num:22699
+random_start_point_4=elev:0, tile_num:20526
+random_start_point_5=elev:0, tile_num:21485 ; pbs
+
+[Map 054]
+lookup_name=New Reno 1
+map_name=newr1
+music=19reno
+ambient_sfx=drunkla1:20, drunklaf:20, laughter:15, laughte1:15, shots1:15, shots:10
+saved=Yes
+
+[Map 055]
+lookup_name=New Reno 2
+map_name=newr2
+music=19reno
+ambient_sfx=drunkla1:20, drunklaf:20, laughter:15, laughte1:15, shots1:15, shots:10
+saved=Yes
+
+[Map 056]
+lookup_name=New Reno 3
+map_name=newr3
+music=19reno
+ambient_sfx=drunkla1:20, drunklaf:20, laughter:15, laughte1:15, shots1:15, shots:10
+saved=Yes
+
+[Map 057]
+lookup_name=New Reno 4
+map_name=newr4
+music=19reno
+ambient_sfx=drunkla1:20, drunklaf:20, laughter:15, laughte1:15, shots1:15, shots:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 058]
+lookup_name=New Reno Chop Shop
+map_name=newrcs
+music=19reno
+ambient_sfx=clank:20, clank1:20, laughter:15, laughte1:15, shots1:15, shots:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 059]
+lookup_name=New Reno Golgatha
+map_name=newrgo
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 060]
+lookup_name=New Reno Stables
+map_name=newrst
+music=05raider
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, blank:40
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 061]
+lookup_name=New Reno Boxing Arena
+map_name=newrba
+music=19reno
+ambient_sfx=drunkla1:20, drunklaf:20, laughter:15, laughte1:15, shots1:15, shots:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 062]
+lookup_name=Wanamingo Mine Entrance
+map_name=redwame
+music=24redd
+can_rest_here=No,No,No  ; All 3 elevations
+ambient_sfx=animal1:20, animal:20, elevator:15, ore:15, mechpump:20, ore1:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 063]
+lookup_name=Wanamingo Mine Level 12
+map_name=redwan1
+music=13carvrn
+ambient_sfx=animal1:20, animal:20, bats1:10, pebble1:20, bats:10, blank:20
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 064]
+lookup_name=Redding Downtown
+map_name=reddown
+music=24redd
+ambient_sfx=saloon:25, saloon1:25, gustwind:10, laughter:20, footste1:10, footstep:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 065]
+lookup_name=Redding Mine Entrance
+map_name=redment
+music=24redd
+ambient_sfx=animal1:20, animal:20, elevator:15, ore:15, mechpump:20, ore1:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 066]
+lookup_name=Redding Downtown Tunnels
+map_name=reddtun
+music=13carvrn
+ambient_sfx=animal1:20, animal:20, bats1:10, pebble1:20, bats:10, squeak:20
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 067]
+lookup_name=Redding Mine Tunnels
+map_name=redmtun
+music=13carvrn
+ambient_sfx=animal1:20, animal:20, bats1:10, pebble1:20, bats:10, squeak1:20
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 068]
+lookup_name=City Encounter 1
+map_name=city1
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:12293
+random_start_point_1=elev:0, tile_num:14106 ; pbs
+random_start_point_2=elev:0, tile_num:17895 ; pbs
+random_start_point_3=elev:0, tile_num:14479
+
+[Map 069]
+lookup_name=Cavern Encounter 0
+map_name=cave0
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, animal1:15, animal:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:20480
+random_start_point_1=elev:0, tile_num:18075
+random_start_point_2=elev:0, tile_num:18702
+random_start_point_3=elev:0, tile_num:22696 ; pbs
+
+[Map 070]
+lookup_name=Cavern Encounter 1
+map_name=cave1
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, animal1:15, animal:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:24291
+random_start_point_1=elev:0, tile_num:26697
+random_start_point_2=elev:0, tile_num:24916
+random_start_point_3=elev:0, tile_num:26308
+
+[Map 071]
+lookup_name=Cavern Encounter 2
+map_name=cave2
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, animal1:15, animal:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:21893
+random_start_point_1=elev:0, tile_num:24304
+random_start_point_2=elev:0, tile_num:23115
+
+[Map 072]
+lookup_name=Cavern Encounter 3
+map_name=cave3
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, animal1:15, animal:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:22698
+random_start_point_1=elev:0, tile_num:25111
+random_start_point_2=elev:0, tile_num:24325
+
+[Map 073]
+lookup_name=Cavern Encounter 4
+map_name=cave4
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, animal1:15, animal:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:24696
+random_start_point_1=elev:0, tile_num:26909
+random_start_point_2=elev:0, tile_num:26122
+random_start_point_3=elev:0, tile_num:26335
+
+[Map 074]
+lookup_name=Mountain Encounter 1
+map_name=mountn1
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, pebble1:15, pebble:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19881
+random_start_point_1=elev:0, tile_num:17475
+random_start_point_2=elev:0, tile_num:18498
+random_start_point_3=elev:0, tile_num:20495 ; pbs
+
+[Map 075]
+lookup_name=Mountain Encounter 2
+map_name=mountn2
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, pebble1:15, pebble:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19881
+random_start_point_1=elev:0, tile_num:17475
+random_start_point_2=elev:0, tile_num:18498
+random_start_point_3=elev:0, tile_num:20495 ; pbs
+
+
+[Map 076]
+lookup_name=Coast Encounter 1
+map_name=coast1
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:18310
+random_start_point_1=elev:0, tile_num:17094
+random_start_point_2=elev:0, tile_num:19685
+random_start_point_3=elev:0, tile_num:23099
+random_start_point_4=elev:0, tile_num:22112
+
+[Map 077]
+lookup_name=Coast Encounter 2
+map_name=coast2
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:17500
+random_start_point_1=elev:0, tile_num:17488
+random_start_point_2=elev:0, tile_num:20486
+random_start_point_3=elev:0, tile_num:22695
+random_start_point_4=elev:0, tile_num:22707
+
+[Map 078]
+lookup_name=Broken Hills 1
+map_name=broken1
+music=08vats
+ambient_sfx=brdchir1:20, brdchirp:20, gntlwind:20, gntlwin1:20, gustwind:10, blank:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 079]
+lookup_name=Broken Hills 2
+map_name=broken2
+music=08vats
+ambient_sfx=gntlwind:20, gntlwin1:20, gustwind:10, blank:50
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+dead_bodies_age=No
+
+[Map 080]
+lookup_name=Cavern Encounter 5
+map_name=cave5
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, animal1:15, animal:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:24492
+random_start_point_1=elev:0, tile_num:26508
+random_start_point_2=elev:0, tile_num:25115
+
+
+[Map 081]
+lookup_name=Desert Encounter 4
+map_name=desert4
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19504 ; pbs
+random_start_point_1=elev:0, tile_num:21509
+random_start_point_2=elev:0, tile_num:17701 ; pbs
+random_start_point_3=elev:0, tile_num:17517
+random_start_point_4=elev:0, tile_num:20526
+
+[Map 082]
+lookup_name=Desert Encounter 5
+map_name=desert5
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19091
+random_start_point_1=elev:0, tile_num:23291
+random_start_point_2=elev:0, tile_num:25104
+random_start_point_3=elev:0, tile_num:22910
+random_start_point_4=elev:0, tile_num:19113
+
+[Map 083]
+lookup_name=Desert Encounter 6
+map_name=desert6
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:20491 ; pbs
+random_start_point_1=elev:0, tile_num:16897
+random_start_point_2=elev:0, tile_num:18509
+random_start_point_3=elev:0, tile_num:21116
+
+
+[Map 084]
+lookup_name=Desert Encounter 7
+map_name=desert7
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 085]
+lookup_name=Coast Encounter 3
+map_name=coast3
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:18474
+random_start_point_1=elev:0, tile_num:22091
+random_start_point_2=elev:0, tile_num:21701
+random_start_point_3=elev:0, tile_num:19906
+
+[Map 086]
+lookup_name=Coast Encounter 4
+map_name=coast4
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:18476
+random_start_point_1=elev:0, tile_num:21889
+random_start_point_2=elev:0, tile_num:21702
+random_start_point_3=elev:0, tile_num:19102
+
+[Map 087]
+lookup_name=Coast Encounter 5
+map_name=coast5
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:22695
+random_start_point_1=elev:0, tile_num:24507
+random_start_point_2=elev:0, tile_num:22916
+
+[Map 088]
+lookup_name=Coast Encounter 6
+map_name=coast6
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:17687
+random_start_point_1=elev:0, tile_num:20887
+random_start_point_2=elev:0, tile_num:23103
+random_start_point_3=elev:0, tile_num:21913
+random_start_point_4=elev:0, tile_num:18106 ; pbs
+random_start_point_5=elev:0, tile_num:25307 ; pbs
+
+[Map 089]
+lookup_name=Coast Encounter 7
+map_name=coast7
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:15501
+random_start_point_1=elev:0, tile_num:16314
+random_start_point_2=elev:0, tile_num:20518
+random_start_point_3=elev:0, tile_num:21911 ; pbs
+
+[Map 090]
+lookup_name=Coast Encounter 8
+map_name=coast8
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19115 ; pbs
+random_start_point_1=elev:0, tile_num:19298 ; pbs
+random_start_point_2=elev:0, tile_num:24916 ; pbs
+random_start_point_3=elev:0, tile_num:21502 ; pbs
+
+[Map 091]
+lookup_name=Coast Encounter 9
+map_name=coast9
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:18906
+random_start_point_1=elev:0, tile_num:22705
+random_start_point_2=elev:0, tile_num:21292
+random_start_point_3=elev:0, tile_num:16697 ; pbs
+
+[Map 092]
+lookup_name=Raiders Camp 1
+map_name=raiders1
+music=05raider
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, blank:40
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 093]
+lookup_name=Raiders Camp 2
+map_name=raiders2
+music=05raider
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, blank:40
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 094]
+lookup_name=Broken Hills Desert 1
+map_name=bhrnddst
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 095]
+lookup_name=Broken Hills Mountain 1
+map_name=bhrndmnt
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, pebble1:15, pebble:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 096]
+lookup_name=Special Whale Encounter
+map_name=rndwhale
+music=07desert
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 097]
+lookup_name=Special Woodsman Encounter
+map_name=rndtinwd
+music=07desert
+;ambient_sfx=hmxxxxbg:100
+saved=No		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 098]
+lookup_name=Special Head Encounter
+map_name=rndbhead
+music=07desert
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 099]
+lookup_name=Special Shuttle Encounter
+map_name=rndshutl
+music=07desert
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 100]
+lookup_name=Special Unwashed Encounter
+map_name=rnduvilg
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 101]
+lookup_name=Special Bridge Encounter
+map_name=rndbridg
+music=07desert
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 102]
+lookup_name=Special Cafe Encounter
+map_name=rndcafe
+music=01hub
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 103]
+lookup_name=Special Holy Encounter 1
+map_name=rndholy1
+music=14necro
+;ambient_sfx=hmxxxxbg:100
+saved=No		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 104]
+lookup_name=Special Holy Encounter 2
+map_name=rndholy2
+music=14necro
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 105]
+lookup_name=Special Guardian Encounter
+map_name=rndforvr
+music=16follow
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verifed 8/18 -rwh2; modified by killap (was No)
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 106]
+lookup_name=Special Toxic Encounter
+map_name=rndtoxic
+music=08vats
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18	-rwh2; modified by killap (was No)
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 107]
+lookup_name=Special Pariahs Encounter
+map_name=rndparih
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18 -rwh2
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 108]
+lookup_name=Special Mad Brahmin Encounter
+map_name=rndexcow
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes		; Verified 8/18 -rwh2; modified by killap (was No)
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 109]
+lookup_name=Navarro Entrance
+map_name=navarro
+music=14necro
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, blank:40
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+can_rest_here=Yes,Yes,No  ; All 3 elevations
+
+[Map 110]
+lookup_name=Coast Encounter 10
+map_name=coast10
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:15313
+random_start_point_1=elev:0, tile_num:22914
+random_start_point_2=elev:0, tile_num:19709
+random_start_point_3=elev:0, tile_num:25113 ; pbs
+
+[Map 111]
+lookup_name=Coast Encounter 11
+map_name=coast11
+music=07desert
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:20510
+random_start_point_1=elev:0, tile_num:23112
+random_start_point_2=elev:0, tile_num:24301
+random_start_point_3=elev:0, tile_num:21288
+random_start_point_4=elev:0, tile_num:19083 ; pbs
+
+[Map 112]
+lookup_name=Coast Encounter 12
+map_name=coast12
+music=08vats
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:25912
+random_start_point_1=elev:0, tile_num:20895
+random_start_point_2=elev:0, tile_num:18713
+
+[Map 113]
+lookup_name=Desert Encounter 8
+map_name=desert8
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:22096
+random_start_point_1=elev:0, tile_num:18083
+random_start_point_2=elev:0, tile_num:15688
+random_start_point_3=elev:0, tile_num:18107
+random_start_point_4=elev:0, tile_num:23906 ; pbs
+random_start_point_5=elev:0, tile_num:17914 ; pbs
+
+[Map 114]
+lookup_name=Desert Encounter 9
+map_name=desert9
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:23086
+random_start_point_1=elev:0, tile_num:24506
+random_start_point_2=elev:0, tile_num:19498 ; pbs
+random_start_point_3=elev:0, tile_num:17683 ; pbs
+
+[Map 115]
+lookup_name=Desert Encounter 10
+map_name=desrt10
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:22885
+random_start_point_1=elev:0, tile_num:24308
+random_start_point_2=elev:0, tile_num:23896
+random_start_point_3=elev:0, tile_num:19699 ; pbs
+random_start_point_4=elev:0, tile_num:17683 ; pbs
+
+[Map 116]
+lookup_name=Desert Encounter 11
+map_name=desrt11
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:21094
+random_start_point_1=elev:0, tile_num:16670
+random_start_point_2=elev:0, tile_num:18104
+random_start_point_3=elev:0, tile_num:14491 ; pbs
+
+[Map 117]
+lookup_name=Desert Encounter 12
+map_name=desrt12
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:18914 ; pbs
+random_start_point_1=elev:0, tile_num:22915
+random_start_point_2=elev:0, tile_num:24103
+random_start_point_3=elev:0, tile_num:21889
+random_start_point_4=elev:0, tile_num:14114 ; pbs
+
+[Map 118]
+lookup_name=Desert Encounter 13
+;map_name=dsrt13
+map_name=desrt13
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:24777
+
+[Map 119]
+lookup_name=Cavern Encounter 6
+map_name=cave6
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, animal1:15, animal:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:17872
+;random_start_point_1=elev:0, tile_num:20882
+;random_start_point_2=elev:0, tile_num:18500
+
+[Map 120]
+lookup_name=Cavern Encounter 7
+map_name=cave7
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, animal1:15, animal:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+;random_start_point_0=elev:0, tile_num:18474
+;random_start_point_1=elev:0, tile_num:21290
+;random_start_point_2=elev:0, tile_num:18906
+;random_start_point_3=elev:0, tile_num:21302
+
+[Map 121]
+lookup_name=Mountain Encounter 3
+map_name=mountn3
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, pebble1:15, pebble:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:18277
+random_start_point_1=elev:0, tile_num:18300
+random_start_point_2=elev:0, tile_num:20892 ; pbs
+
+[Map 122]
+lookup_name=Mountain Encounter 4
+map_name=mountn4
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, pebble1:15, pebble:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:18298
+random_start_point_1=elev:0, tile_num:19884
+random_start_point_2=elev:0, tile_num:17684 ; pbs
+random_start_point_3=elev:0, tile_num:21693 ; pbs
+
+[Map 123]
+lookup_name=Mountain Encounter 5
+map_name=Mountn5
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, pebble1:15, pebble:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19474 ; pbs
+random_start_point_1=elev:0, tile_num:21887 ; pbs
+random_start_point_2=elev:0, tile_num:20893 ; pbs
+random_start_point_3=elev:0, tile_num:19094
+random_start_point_4=elev:0, tile_num:19505
+random_start_point_5=elev:0, tile_num:21093 ; pbs
+
+[Map 124]
+lookup_name=Mountain Encounter 6
+map_name=mountn6
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, pebble1:15, pebble:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19274
+random_start_point_1=elev:0, tile_num:21282
+random_start_point_2=elev:0, tile_num:20890
+random_start_point_3=elev:0, tile_num:19694 ; pbs
+random_start_point_4=elev:0, tile_num:20094 ; pbs
+
+[Map 125]
+lookup_name=City Encounter 2
+map_name=city2
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:11290
+random_start_point_1=elev:0, tile_num:9903
+random_start_point_2=elev:0, tile_num:11914
+random_start_point_3=elev:0, tile_num:14702
+random_start_point_4=elev:0, tile_num:18095 ; pbs
+random_start_point_5=elev:0, tile_num:18114 ; pbs
+
+[Map 126]
+lookup_name=Arroyo Temple
+map_name=artemple
+music=17arroyo
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 127]
+lookup_name=Destroyed Arroyo Bridge
+map_name=ardead
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, pebble1:15, pebble:10
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+
+[Map 128]
+lookup_name=Enclave Detention
+map_name=encdet
+music=16follow
+ambient_sfx=clang1:10, clang:10, zapper1:25, zapper:25, electri1:15, electric:15
+saved=Yes
+
+[Map 129]
+lookup_name=Enclave Dock
+map_name=encdock
+music=16follow
+ambient_sfx=seawind1:25, seawind:25, waves1:10, seagull:15, seagull1:15, waves:10
+saved=Yes
+
+[Map 130]
+lookup_name=Enclave End Fight
+map_name=encfite
+music=16follow
+ambient_sfx=electri1:15, electric:15, blank:70
+saved=Yes
+
+[Map 131]
+lookup_name=Enclave Guard Barracks
+map_name=encgd
+music=16follow
+ambient_sfx=electri1:15, electric:15, blank:70
+saved=Yes
+
+[Map 132]
+lookup_name=Enclave Presidential
+map_name=encpres
+music=16follow
+ambient_sfx=electri1:15, electric:15, chemical:5, chemica1:5, blank:60
+saved=Yes
+
+[Map 133]
+lookup_name=Enclave Reactor
+map_name=encrctr
+music=16follow
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+saved=Yes
+
+[Map 134]
+lookup_name=Enclave Trap Room
+map_name=enctrp
+music=16follow
+ambient_sfx=electri1:15, electric:15, blank:70
+saved=Yes
+
+[Map 135]
+lookup_name=San Fran Tanker
+map_name=sftanker
+music=21sf
+ambient_sfx=seawind1:25, clang:10, waves1:15, clangl:15, waves:15, seawind:20
+saved=Yes
+
+[Map 136]
+lookup_name=San Fran Dock
+map_name=sfdock
+music=21sf
+ambient_sfx=seawind1:25, seawind:25, waves1:10, seagull:15, seagull1:15, waves:10
+saved=Yes
+
+[Map 137]
+lookup_name=San Fran China
+map_name=sfchina
+music=21sf
+ambient_sfx=seawind1:25, seawind:25, chimes1:15, chimes:15, blank:20
+saved=Yes
+
+[Map 138]
+lookup_name=Shuttle Outside
+map_name=SFSHUTL1
+music=21sf
+ambient_sfx=seawind1:25, seawind:25, blank:50
+saved=Yes
+
+[Map 139]
+lookup_name=Shuttle Interior
+map_name=SFSHUTL2
+music=07desert
+ambient_sfx=electri1:15, electric:15, blank:70
+saved=Yes
+
+[Map 140]
+lookup_name=Elronologist Base
+map_name=sfelronb
+music=21sf
+ambient_sfx=electri1:15, electric:15, blank:70
+saved=Yes
+
+[Map 141]
+lookup_name=City Encounter 3
+map_name=city3
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:19936
+random_start_point_1=elev:0, tile_num:21946
+random_start_point_2=elev:0, tile_num:24337
+random_start_point_3=elev:0, tile_num:22125
+random_start_point_4=elev:0, tile_num:18318 ; pbs
+random_start_point_5=elev:0, tile_num:25122 ; pbs
+
+[Map 142]
+lookup_name=City Encounter 4
+map_name=city4
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:22890
+random_start_point_1=elev:0, tile_num:26501
+random_start_point_2=elev:0, tile_num:28494
+random_start_point_3=elev:0, tile_num:22879
+random_start_point_4=elev:0, tile_num:27708 ; pbs
+random_start_point_5=elev:0, tile_num:25507 ; pbs
+random_start_point_6=elev:0, tile_num:22301 ; pbs
+
+[Map 143]
+lookup_name=City Encounter 5
+map_name=city5
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:15684
+random_start_point_1=elev:0, tile_num:19260
+random_start_point_2=elev:0, tile_num:21072
+random_start_point_3=elev:0, tile_num:18877
+random_start_point_4=elev:0, tile_num:16065 ; pbs
+random_start_point_5=elev:0, tile_num:17493 ; pbs
+random_start_point_6=elev:0, tile_num:21493 ; pbs
+
+[Map 144]
+lookup_name=City Encounter 6
+map_name=city6
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:28899
+random_start_point_1=elev:0, tile_num:27311
+random_start_point_2=elev:0, tile_num:25686
+random_start_point_3=elev:0, tile_num:23300
+random_start_point_4=elev:0, tile_num:24916 ; pbs
+random_start_point_5=elev:0, tile_num:21088 ; pbs
+
+[Map 145]
+lookup_name=City Encounter 7
+map_name=city7
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:17729
+random_start_point_1=elev:0, tile_num:20133
+random_start_point_2=elev:0, tile_num:20714
+random_start_point_3=elev:0, tile_num:16106
+
+[Map 146]
+lookup_name=City Encounter 8
+map_name=city8
+music=10labone
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:10, rattle:15, rattle1:15, vulture:10
+;ambient_sfx=hmxxxxbg:100
+saved=No
+dead_bodies_age=No
+can_rest_here=No,No,No  ; All 3 elevations
+random_start_point_0=elev:0, tile_num:17692
+random_start_point_1=elev:0, tile_num:22105
+random_start_point_2=elev:0, tile_num:20510
+random_start_point_3=elev:0, tile_num:20890
+random_start_point_4=elev:0, tile_num:23503
+random_start_point_5=elev:0, tile_num:22518 ; pbs
+random_start_point_6=elev:0, tile_num:20526 ; pbs
+
+[Map 147]
+lookup_name=New Reno VB
+map_name=newrvb
+music=07desert
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+;can_rest_here=No,No,No  ; All 3 elevations
+
+[Map 148]
+lookup_name=Shi Temple
+map_name=sfchina2
+music=21sf
+saved=Yes
+
+[Map 149]
+lookup_name=In Game Movie Map 1
+map_name=gammovie
+music=07desert
+saved=No
+
+[Map 150]
+lookup_name=Bess Dead
+map_name=rndbess
+music=07desert
+saved=No
+
+[Map 151]
+lookup_name=Abbey Entrance
+map_name=abbey
+music=abbey1
+;ambient_sfx=gntlwin1:20, gntlwind:20, dogbark:20, dogbark1:20, gustwind:10, gustwin1:10
+ambient_sfx=gntlwin1:25, gntlwind:25, dogbark:20, dogbark1:20, gustwind:5, gustwin1:5
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 152]
+lookup_name=Abbey Basement
+map_name=abbasem
+music=abbey1
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 153]
+lookup_name=Abbey Cave
+map_name=abundgr
+music=13carvrn
+saved=yes
+dead_bodies_age=No
+
+[Map 154]
+lookup_name=Village
+map_name=vill
+music=13carvrn
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+;ambient_sfx=hmxxxxbg:100
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 155]
+lookup_name=Umbra Tribe
+map_name=tribe01
+music=prmtribe
+ambient_sfx=gntlwin1:25, gntlwind:25, gustwind:5, gustwin1:5, gustwind:10, gustwin1:10
+saved=Yes
+dead_bodies_age=No
+can_rest_here=Yes,Yes,Yes
+
+[Map 156]
+lookup_name=Umbra Tribe Waterside
+map_name=tribe02
+music=prmtribe
+ambient_sfx=seawind1:25, seawind:25, gustwind:10, seagull:15, seagull1:15, gustwin1:10
+saved=Yes
+dead_bodies_age=No
+can_rest_here=Yes,Yes,Yes
+
+[Map 157]
+lookup_name=EPA
+map_name=epax
+music=07desert
+ambient_sfx=rattle:15, rattle1:15
+saved=Yes
+dead_bodies_age=No
+can_rest_here=Yes,Yes,Yes
+
+[Map 158]
+lookup_name=EPA Sub Levels
+map_name=EPAMain
+music=08vats
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+;music=22vcity
+;ambient_sfx=gustwind:20, gustwin1:20, rattle:15, rattle1:15, vulture:15, vulture1:15
+saved=Yes
+dead_bodies_age=No
+can_rest_here=Yes,Yes,Yes
+
+[Map 159]
+lookup_name=Secret Level
+map_name=epasl
+music=08vats
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+saved=Yes
+dead_bodies_age=No
+can_rest_here=Yes,Yes,Yes
+
+[Map 160]
+lookup_name=Slaver Camp
+map_name=slvcamp
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 161]
+lookup_name=Gecko Enclave Patrol
+map_name=gcenclen
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+saved=No
+can_rest_here=Yes,Yes,Yes
+
+[Map 162]
+lookup_name=Hubologist Stash
+map_name=hubstash
+music=07desert
+;ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+ambient_sfx=rattle:15, rattle1:15
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 163]
+lookup_name=Ranger Safe House 1
+map_name=safehs1
+music=07desert
+ambient_sfx=rattle:15, rattle1:15
+;ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 164]
+lookup_name=Ranger Safe House 2
+map_name=safehs2
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 165]
+lookup_name=Ranger Safe House 3
+map_name=safehs3
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 166]
+lookup_name=Easter Egg
+map_name=easter
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 167]
+lookup_name=Merchant
+map_name=merchant
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 168]
+lookup_name=Vault Village Merchant
+map_name=vilmerch
+music=07desert
+ambient_sfx=gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5
+saved=Yes
+can_rest_here=Yes,Yes,Yes
+
+[Map 169]
+lookup_name=Shi Sub
+map_name=sfsub
+music=08vats
+ambient_sfx=seawind1:25, seawind:25, waves1:10, seagull:15, seagull1:15, waves:10
+saved=Yes
+can_rest_here=No,No,No
+
+[Map 170]
+lookup_name=EPA SubLevels 1
+map_name=EPAMain1
+music=08vats
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+;music=22vcity
+;ambient_sfx=gustwind:20, gustwin1:20, rattle:15, rattle1:15, vulture:15, vulture1:15
+saved=Yes
+dead_bodies_age=No
+can_rest_here=Yes,Yes,Yes
+
+[Map 171]
+lookup_name=EPA SubLevels 2
+map_name=EPAMain2
+music=08vats
+ambient_sfx=electri1:15, electric:15, elevator:20, elevato1:15, steam:20, steam:15
+;music=22vcity
+;ambient_sfx=gustwind:20, gustwin1:20, rattle:15, rattle1:15, vulture:15, vulture1:15
+saved=Yes
+dead_bodies_age=No
+can_rest_here=Yes,Yes,Yes
+
+[Map 172]
+lookup_name=San Fran Dr. Sheng
+map_name=SFSHENG
+music=07desert
+ambient_sfx=gustwind:20, gustwin1:20, rattle:15, rattle1:15
+saved=Yes
+can_rest_here=Yes,Yes,Yes

@@ -2745,7 +2745,7 @@ enc_19=Chance:100%,Enc:(3-4) BOUNTY_Outlaws_Mid AMBUSH Player, If(Global(645) ==
 
 [Encounter Table 58]
 lookup_name=Fran_O                                                                   ; Areas around San Francisco
-maps=Coast Encounter 7, Coast Encounter 8, Coast Encounter 10, Coast Encounter 5, Coast Encounter 11
+maps=Coast Encounter 7, Coast Encounter 8, Coast Encounter 10, Coast Encounter 5, Coast Encounter 11, Coast Encounter 12
 enc_00=Chance:15%,Enc:(4-9) FRAN_Mercenaries AMBUSH Player
 enc_01=Chance:15%,Enc:(7-10) FRAN_Press_Gang AMBUSH Player
 enc_02=Chance:7%,Enc:(4-7) EPA_Deathclaws AMBUSH Player

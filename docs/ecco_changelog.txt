@@ -11,6 +11,7 @@ v0.9.7:
 - added option for additional car trunk capacity upgrade by using Repair skill
 - added more MFC to stores for car refueling
 - fixed incorrect car charging amount when using Cells on trunk
+- fixed displayed exp point gain amount for crafting with Swift Learner perk
 
 
 v0.9.6:

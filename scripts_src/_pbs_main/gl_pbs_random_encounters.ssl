@@ -5,6 +5,7 @@
 #define SCRIPT_REALNAME             "pbs_random_encounters"
 
 #include "../sfall/sfall.h"
+#include "../sfall/lib.arrays.h"
 #include "../sfall/lib.inven.h"
 #include "../sfall/lib.obj.h"
 #include "../sfall/define_lite.h"
@@ -12,10 +13,14 @@
 
 #include "../_pbs_headers/ecco_ids.h"
 #include "../_pbs_headers/ecco_log.h"
+#include "../_pbs_headers/maps_utils.h"
 
 variable begin
    encounter_map_id;
+   was_using_sneak;
 end
+
+export variable pbs_random_encounter_placement;
 
 #define weapon_pid_can_burst(pid)      (weapon_attack_mode1(pid) == ATTACK_MODE_BURST or weapon_attack_mode2(pid) == ATTACK_MODE_BURST)
 
@@ -47,6 +52,29 @@ procedure ensure_npcs_ammo begin
    end
 end
 
+procedure relocate_party_to_random_start_point begin
+   variable
+      points := load_map_start_points, elev, tile, obj, i;
+
+   if (not points) then return;
+
+   tile := array_random_value(points);
+   elev := start_point_elev(tile);
+   tile := start_point_tile(0xFFFF);
+
+   display_msg_fmt("moving party to %d - %d", elev, tile);
+
+   i := 0;
+   foreach (obj in party_member_list(false)) begin
+      critter_attempt_placement(obj, tile, elev);
+      tile := tile_num_in_direction(tile, 1, 1);
+      //tile := points[i];
+      //elev := tile / 0x10000;
+      //tile := tile bwand 0xFFFF;
+      i := (i + 1) % len_array(points);
+   end
+end
+
 /*
 Runs whenever a random encounter occurs (except the Horrigan meeting and scripted encounters), or when the player enters a local map from the world map. You can override the map for loading or the encounter.
 
@@ -69,10 +97,21 @@ procedure encounter_hook begin
 end
 
 procedure map_enter_p_proc begin
+   //display_msg("gl map_enter_proc");
+   if (was_using_sneak) then begin
+      show_iface_tag(0);
+      was_using_sneak := false;
+   end
    if (encounter_map_id >= 0 and cur_map_index == encounter_map_id) then begin
       call ensure_npcs_ammo;
+      //call relocate_party_to_random_start_point;
    end
    encounter_map_id := -1;
+end
+
+procedure map_exit_p_proc begin
+   was_using_sneak := is_iface_tag_active(0);
+   //display_msg("gl map_exit_proc " + is_iface_tag_active(0));
 end
 
 procedure start begin
