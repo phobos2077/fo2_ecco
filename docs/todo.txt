@@ -1,14 +1,19 @@
+for 1.0.0:
+- finish Big Guns run
+- add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
+
 for 0.9.7:
 - playtest
 
 
 for "future":
+- cavern encounters need rebalance!!
 - take a look at 4/5 AP cost for pistols
-- add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 
 
 Considering:
+- random encounter: more interesting enemy formations?
 - add Cattle Prod to Modoc, VC, Gecko, Broken Hills (check balance)
 - add crafting components like rocks and junk to human enemy bodies on death with small probability
 - Hunting Rifle -> Scoped for Slags rewards

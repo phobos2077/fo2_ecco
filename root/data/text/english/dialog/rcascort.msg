@@ -259,9 +259,10 @@
  the reward is yours. Stop by from time to time, maybe there will be more work.}
 {436}{}{Glad I helped. Goodbye.}
 {437}{}{I will.}
+{438}{}{Looks like these were the last of them. Time to go back to Ascorti for a reward.}
 {440}{}{That gang is still out there. You have to deal with them.}
 {445}{}{Everything is quite right now. Come back later.}
 {450}{}{Looks like the robbers are out in force again, and our caravans are getting hit. Will you help us out again?}
-{455}{}{You know, I don't think you're ready for this job. Come back when you get a bit more experienced.}
+{455}{}{You know, I don't think you're ready for this job. Come back when you have a bit more experience.}
 {456}{}{Let me ask you something else, then.}
 {457}{}{If you say so.}

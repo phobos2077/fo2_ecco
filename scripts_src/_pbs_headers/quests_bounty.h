@@ -45,21 +45,73 @@
 #define _is_bounty_outlaw(obj)    (_team(obj) == TEAM_RND_ROGUE and obj_is_carrying_obj_pid(obj, PID_PBS_BONE_AMULET))
 #define _TIMER
 
-/*procedure bounty_hook_deathanim2(variable crit, variable animID) begin
-    variable item;
-    item := obj_carrying_pid_obj(crit, PID_PBS_SEVERED_ARM);
-    if (item and _is_possible_bounty(crit)) then begin
-        // if wrong animation - mark arm for removal
-        if () then
-        begin
-            set_weapon_ammo_count(item, _AMMO_COUNT_DELETED);
-            debug_msg("MARK ARM for removal - wrong animation");
-        end
-    end
-end*/
-
-
 #ifdef _BOUNTY_ECROBBER
+
+#include "..\sfall\lib.arrays.h"
+#include "..\_pbs_headers\ecco_log.h"
+#define is_bounty_robber(crit)         (obj_is_carrying_obj_pid(crit, PID_PBS_SEVERED_ARM) > 0)
+
+import variable pbs_random_encounter_placement;
+
+procedure get_placement_by_map begin
+   switch (cur_map_index) begin
+      case MAP_RND_MOUNTAIN_4:   
+         return {
+            17078: 1+5, // inside tent
+            17476: 1+0,
+            17879: 1+2,
+            17485: 1+2, // outside near campfire
+            17885: 1+5,
+            17686: 1+0,
+            16890: 1+5, // brewing beer
+            18681: 1+0  // near boxes
+         };
+      case MAP_RND_MOUNTAIN_5:
+         return {
+            17274: 1+2, // 1st tent (top-right)
+            18279: 1+0,
+            17075: 1+2,
+            17891: 1+0, // middle tent
+            17493: 1+4,
+            17289: 1+4,
+            18103: 1+0, // 3rd tent (bottom-left)
+            18501: 1+3,
+            18306: 1+5,
+            19689: 1+3, // campfires
+            20089: 1+4,
+            20491: 1+5,
+            20093: 1+0,
+            19693: 1+0,
+            17683: 1+5, // outside, near trunk
+            17886: 1+2,
+            18080: 1+0
+         };
+      default:
+         return -1;
+   end
+end
+
+procedure camp_placement begin
+   variable
+      placement := pbs_random_encounter_placement;
+
+   if (placement == 0) then begin
+      placement := get_placement_by_map;
+      pbs_random_encounter_placement := placement;
+   end
+   //debug_log(debug_array_str(placement) if placement > 0 else "nope, map "+cur_map_index);
+   if (placement > 0 and len_array(placement) > 0) then begin
+      variable
+         idx := random(0, len_array(placement) - 1),
+         tile := array_key(placement, idx),
+         dir := placement[tile] - 1;
+
+      debug_log_fmt("Placing %s at %d facing %d", self_name, tile, dir);
+      move_to(self_obj, tile, 0);
+      obj_rotate(self_obj, dir);
+      unset_array(placement, tile);
+   end
+end
 
 procedure bounty_hook_destroy begin
     variable item;
@@ -90,8 +142,10 @@ procedure bounty_hook_destroy begin
         end
         // reduce counter
         if (_bounty_redding_counter > 0) then begin set_sfall_global(SGVAR_BOUNTY_NUM_ROBBERS, _bounty_redding_counter - 1);
-            if (_bounty_redding_counter == 0) then
+            if (_bounty_redding_counter == 0) then begin
                set_global_var(GVAR_BOUNTY_REDDING, BOUNTY_REDDING_KILLED);
+               display_msg(message_str(SCRIPT_RCASCORT, 438));
+            end
         end
         debug_msg("Bounty: "+_bounty_redding_counter);
     end
@@ -230,7 +284,7 @@ end
 procedure NodeBountyAccept begin
     variable firstTime;
     firstTime := is_first_bounty;
-    set_sfall_global(SGVAR_BOUNTY_NUM_ROBBERS, random(15,25));
+    set_sfall_global(SGVAR_BOUNTY_NUM_ROBBERS, random(15,20));
     set_global_var(GVAR_BOUNTY_REDDING, BOUNTY_REDDING_TAKEN);
     if (firstTime) then begin
         set_local_var(LVAR_BOUNTY, 1);
@@ -265,7 +319,7 @@ procedure NodeBountyReward begin
         display_msg(g_mstr(100) + 500 + g_mstr(101));
     end
     item_caps_adjust(dude_obj, _QUEST_REWARD_BASE*(1 + (dude_level > 15)));
-    set_local_var(LVAR_BOUNTY, -(game_time + ONE_GAME_DAY*random(14,30)));
+    set_local_var(LVAR_BOUNTY, -(game_time + ONE_GAME_DAY * random(30, 60)));
     set_global_var(GVAR_BOUNTY_REDDING, BOUNTY_REDDING_REWARD);
     Reply(435);
     INJECT_GIVE_PROOF

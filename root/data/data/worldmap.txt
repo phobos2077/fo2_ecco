@@ -2217,12 +2217,12 @@ enc_19=Chance:7%,Enc:(4-6) RED_Trappers
 enc_20=Chance:7%,Enc:(3-6) RED_Prospector
 enc_21=Chance:5%,Counter:1,Special,Map:Special Bridge Encounter,Enc:Special1, If(Player(Level) > 9) And If(Global(605) < 1)
 enc_22=Chance:3%,Counter:1,Special,Map:Special Holy Encounter 2,Enc:Special1, If(Global(614) > 0) And If(Global(606) < 1)
-enc_23=Chance:50%,Map:Mountain Encounter 5,Enc:(4-6) BOUNTY_Robbers, If(Player(Level) < 16) And If(Global(644) == 1)
-enc_24=Chance:50%,Map:Mountain Encounter 4,Enc:(4-7) BOUNTY_Robbers, If(Player(Level) < 16) And If(Global(644) == 1)
-enc_25=Chance:100%,Enc:(2-4) BOUNTY_Robbers, If(Player(Level) < 16) And If(Global(644) == 1)
-enc_26=Chance:50%,Map:Mountain Encounter 5,Enc:(4-7) BOUNTY_Robbers_High, If(Player(Level) > 15) And If(Global(644) == 1)
-enc_27=Chance:50%,Map:Mountain Encounter 4,Enc:(4-6) BOUNTY_Robbers_High, If(Player(Level) > 15) And If(Global(644) == 1)
-enc_28=Chance:100%,Enc:(2-4) BOUNTY_Robbers_High, If(Player(Level) > 15) And If(Global(644) == 1)
+enc_23=Chance:25%,Map:Mountain Encounter 4,Enc:(3-4) BOUNTY_Robbers, If(Player(Level) < 16) And If(Global(644) == 1)
+enc_24=Chance:25%,Map:Mountain Encounter 5,Enc:(4-6) BOUNTY_Robbers, If(Player(Level) < 16) And If(Global(644) == 1)
+enc_25=Chance:100%,Map:Mountain Encounter 2,Enc:(2-3) BOUNTY_Robbers, If(Player(Level) < 16) And If(Global(644) == 1)
+enc_26=Chance:25%,Map:Mountain Encounter 4,Enc:(3-4) BOUNTY_Robbers_High, If(Player(Level) > 15) And If(Global(644) == 1)
+enc_27=Chance:25%,Map:Mountain Encounter 5,Enc:(4-6) BOUNTY_Robbers_High, If(Player(Level) > 15) And If(Global(644) == 1)
+enc_28=Chance:100%,Map:Mountain Encounter 3,Enc:(2-3) BOUNTY_Robbers_High, If(Player(Level) > 15) And If(Global(644) == 1)
 
 
 [Encounter Table 37]

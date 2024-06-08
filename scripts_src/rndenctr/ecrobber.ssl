@@ -63,10 +63,14 @@ procedure timed_event_p_proc begin
 end
 
 procedure map_enter_p_proc begin
+   call camp_placement;
+
    set_self_team(TEAM_RND_ROBBER);
    set_self_ai(AI_TOUGH_GUARD);
 
    starttile := self_tile;
+
+   if (is_bounty_robber(self_obj)) then return;
 
    if ((self_elevation != 0) and (not(is_loading_game))) then begin
       self_caps_adjust(Random(5, 15) * dude_luck);
@@ -222,7 +226,7 @@ procedure critter_p_proc begin
    end
 
    if (not anim_busy(self_obj)) then begin
-      val := Random(1, 10);
+      val := Random(1, 100 if is_bounty_robber(self_obj) else 10);
       if (val == 10) then begin
          reg_anim_clear(self_obj);
          reg_anim_begin();
