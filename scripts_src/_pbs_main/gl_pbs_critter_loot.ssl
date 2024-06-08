@@ -64,7 +64,8 @@ procedure ondeath_handler begin
       return;
 
    if (critter and obj_type(critter) == OBJ_TYPE_CRITTER) then begin
-      if (ini_reduce_ammo_percent[1] > 0 or ini_reduce_drugs_percent > 0 or ini_destroy_weapon_percent > 0) then begin
+      if (not obj_in_party(critter)
+         and (ini_reduce_ammo_percent[1] > 0 or ini_reduce_drugs_percent > 0 or ini_destroy_weapon_percent > 0)) then begin
          call reduce_loot(critter);
       end
       if (ini_weapon_drop_chance > 0 and random(1, 100) <= ini_weapon_drop_chance) then begin

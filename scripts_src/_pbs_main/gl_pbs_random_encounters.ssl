@@ -12,10 +12,13 @@
 #include "../sfall/define_extra.h"
 
 #include "../_pbs_headers/ecco_ids.h"
+#include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/ecco_log.h"
 #include "../_pbs_headers/maps_utils.h"
 
 variable begin
+   ini_remember_sneak;
+   ini_ensure_npcs_ammo;
    encounter_map_id;
    was_using_sneak;
 end
@@ -98,24 +101,31 @@ end
 
 procedure map_enter_p_proc begin
    //display_msg("gl map_enter_proc");
-   if (was_using_sneak) then begin
+   if (ini_remember_sneak and was_using_sneak) then begin
       show_iface_tag(0);
       was_using_sneak := false;
    end
    if (encounter_map_id >= 0 and cur_map_index == encounter_map_id) then begin
-      call ensure_npcs_ammo;
+      if (ini_ensure_npcs_ammo) then
+         call ensure_npcs_ammo;
+
       //call relocate_party_to_random_start_point;
    end
    encounter_map_id := -1;
 end
 
 procedure map_exit_p_proc begin
-   was_using_sneak := is_iface_tag_active(0);
+   was_using_sneak := ini_remember_sneak and is_iface_tag_active(0);
    //display_msg("gl map_exit_proc " + is_iface_tag_active(0));
 end
 
+#define INI_FILE        INI_MISC
+#define INI_SECTION     "ENCOUNTERS"
+
 procedure start begin
    if (game_loaded) then begin
+      load_bool_from_ini(remember_sneak, false);
+      load_bool_from_ini(ensure_npcs_ammo, false);
       encounter_map_id := -1;
       register_hook_proc(HOOK_ENCOUNTER, encounter_hook);
    end
