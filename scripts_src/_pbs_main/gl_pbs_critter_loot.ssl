@@ -28,6 +28,8 @@ procedure start;
 variable
    ini_destroy_weapon_percent,
    ini_destroy_weapon_list,
+   ini_destroy_weapon_spawn_junk_pid,
+   ini_destroy_weapon_spawn_junk_chance_mult,
    ini_weapon_drop_chance,
    ini_weapon_drop_dist,
    ini_weapon_drop_dir,
@@ -79,6 +81,8 @@ procedure start begin
    
       load_num_from_ini(destroy_weapon_percent, 0, 0, 100);
       load_int_list_from_ini(destroy_weapon_list);
+      load_num_from_ini_unclamped(destroy_weapon_spawn_junk_pid, 0);
+      load_num_from_ini(destroy_weapon_spawn_junk_chance_mult, 0.0, 0.0, 100.0);
       load_num_from_ini(weapon_drop_chance, 0, 0, 100);
       load_num_from_ini(weapon_drop_dist, 0, 0, 10);
       load_num_from_ini(weapon_drop_dir, 0, 0, 5);
@@ -96,11 +100,28 @@ end
 #define stats_pack(destroyed, dropped)    (((destroyed bwand 0xFFFF) * 0x10000) + (dropped bwand 0xFFFF))
 
 
+procedure spawn_junk_from_weapon(variable critter, variable weapon) begin
+   variable chance := ini_destroy_weapon_spawn_junk_chance_mult, pid := ini_destroy_weapon_spawn_junk_pid;
+   if (chance <= 0 or pid == 0) then return;
+
+   chance *= proto_data(obj_pid(weapon), it_weight);
+   if (random(0, 99) < chance) then begin
+      call add_item_pid(critter, pid);
+      debug_log("Spawning junk.");
+   end
+end
+
 // Destroy % of dropped weapons deterministically by counting how many was destroyed and dropped.
 procedure try_destroy_weapon(variable critter, variable weapon) begin
    if (destroyed_stats == 0) then
       destroyed_stats := load_create_array_map(ARR_DESTROYED_WEAPONS);
 
+   // Reset stats if percent setting was changed.
+   if (destroyed_stats[-1] != ini_destroy_weapon_percent) then begin
+      debug_log("destroy_weapon_percent was changed, resetting stats.");
+      clear_array(destroyed_stats);
+      destroyed_stats[-1] := ini_destroy_weapon_percent;
+   end
    variable
       pid := obj_pid(weapon),
       count := obj_is_carrying_obj(critter, weapon),
@@ -118,6 +139,7 @@ procedure try_destroy_weapon(variable critter, variable weapon) begin
          display_msg(string_format(mstr_ecco_combat(200 + is_female(critter)*10 + random(0, 2)), obj_name(critter), obj_name(weapon)));
       variable toRemove := count / 2 if count > 1 else 1;
       removed := rm_mult_objs_from_inven(critter, weapon, toRemove);
+      call spawn_junk_from_weapon(critter, weapon);
       destroy_object(weapon);
       destroyedSoFar += toRemove;
       removed := true;
