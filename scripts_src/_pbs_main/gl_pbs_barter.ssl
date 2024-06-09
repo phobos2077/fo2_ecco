@@ -1,10 +1,15 @@
-/**
- * Barter price mod.
- * 
- * - Changes buying prices based on configurable formula.
- * - Also changes item selling prices (originally always sold at 100%).
- * - Implements town demands (price variations based on current town).
- * - Fixes issue with party members overriding player barter skill (was making skill investment somewhat pointless).
+/*
+	Barter price mod.
+
+	- Buying prices based on configurable formula.
+	- Selling prices based on formula (originally always sold at 100%).
+	- Selling price multipliers based on item type.
+	- Town demands (price variations based on current town).
+	- Replaces engine item cost calculation with fully scripted one.
+	- Fixes issue with party members overriding player barter skill (was making skill investment somewhat pointless).
+
+	TODO:
+	- Remove redundant formulas and params.
  */
 
 procedure start;
@@ -28,12 +33,14 @@ procedure barterprice_init;
 procedure barterprice_handler;
 procedure calc_items_demand_mod(variable obj);
 procedure load_town_demand;
-procedure container_total_cost(variable invenObj, variable isSell);
-procedure item_cost(variable item, variable isSell);
+procedure container_total_cost(variable invenObj, variable typeMultList := 0);
+procedure item_cost(variable item, variable typeMultList := 0);
 procedure modify_party_money;
 procedure get_highest_barter_in_party_except_dude;
 
 #define barter_skill(obj)		(has_skill(obj, SKILL_BARTER))
+
+#define item_type_count			(item_type_key_item + 1)
 
 #define SGVAR_MONEY_MULT		"PBS$MULT"
 #define INI_FILE					INI_ECONOMY
@@ -78,7 +85,8 @@ variable begin
 	town_demand_map := 0;
 
 	// map Item Subtype => sell price mult
-	item_type_price_mult_map;
+	item_type_price_mult_list;
+	item_type_price_mult_list_cur;
 
 	// map Item Pid => charges cost fraction
 	misc_item_charges_cost_fraction_map;
@@ -147,16 +155,18 @@ procedure barterprice_init begin
 
 	call load_town_demand;
 
-	item_type_price_mult_map := array_fixed(array_transform_kv(
-		get_ini_section(INI_FILE, "PRICE_PER_TYPE"),
-		@string_to_int, @string_to_fraction));
+	item_type_price_mult_list := create_array_list(item_type_count);
+	for (variable t := item_type_armor; t <= item_type_key_item; t++) begin
+		item_type_price_mult_list[t] := get_ini_value_def(INI_FILE, "PRICE_PER_TYPE", ""+t, 1.0);
+	end
+	//debug_log(debug_array_str(item_type_price_mult_list));
 
 	misc_item_charges_cost_fraction_map := array_fixed(array_transform_kv(
 		get_ini_section(INI_FILE, "MISC_ITEM_CHARGES_COST_FRACTION"),
 		@string_to_int, @string_to_fraction));
 
-	debug_log_fmt("Pricing initialized. Sell bias: %.2f, buy bias: %.2f, town demands: %d, prices per type: %d, misc item charge fractions: %d",
-		Sell_Bias, Buy_Bias, len_array(town_demand_map), len_array(item_type_price_mult_map), len_array(misc_item_charges_cost_fraction_map));
+	debug_log_fmt("Pricing initialized. Sell bias: %.2f, buy bias: %.2f, town demands: %d, misc item charge fractions: %d",
+		Sell_Bias, Buy_Bias, len_array(town_demand_map), len_array(misc_item_charges_cost_fraction_map));
 
 	barterprice_initialized := true;
 end
@@ -182,34 +192,25 @@ int     ret0 - the modified value of all of the goods (pass -1 if you just want 
 int     ret1 - the modified value of all offered goods
 */
 procedure barterprice_handler begin
-	variable
-		merchant := get_sfall_arg_at(1),
-		vanillaPrice := get_sfall_arg_at(2),
-		itemTable := get_sfall_arg_at(3),
-		itemCaps := get_sfall_arg_at(4),
-		offeredTable := get_sfall_arg_at(6);
-		
+	variable	merchant := get_sfall_arg_at(1);
 	if party_member_obj(obj_pid(merchant)) then return;
 
 	call barterprice_init;
 
 	variable
-		vanillaPriceGoods,
-		offeredPrice := container_total_cost(offeredTable, true), //get_sfall_arg_at(7)
-		offeredCaps := obj_is_carrying_obj_pid(offeredTable, PID_BOTTLE_CAPS),
-		offeredPriceGoods := offeredPrice - offeredCaps,
-		basePrice := container_total_cost(itemTable, false), //get_sfall_arg_at(5),
-		basePriceGoods := basePrice - itemCaps,
+		vanillaPrice := get_sfall_arg_at(2),
+		itemTable := get_sfall_arg_at(3),
+		itemCaps := get_sfall_arg_at(4),
+		offeredTable := get_sfall_arg_at(6),
+		offeredPrice := get_sfall_arg_at(7),
+		basePrice := get_sfall_arg_at(5),
 		dudeBarter := math_clamp(barter_skill(dude_obj), 0, 300),
 		dudeCharisma := get_critter_stat(dude_obj, STAT_ch),
 		masterTrader := has_trait(TRAIT_PERK, dude_obj, PERK_master_trader),
 		merchantBarter := math_clamp(barter_skill(merchant), 0, 300),
 		dialogBarterMod := gdialog_get_barter_mod,
 		partyBarter,
-		sellPriceMult,
-		buyPriceMult,
 		dudeBarterMult,
-		finalPriceGoods,
 		stats;
 	
 	/*debug_log("dudeBarter: " + dudeBarter + "; merchantBarter: " + merchantBarter + "; perk: " + masterTrader
@@ -218,15 +219,20 @@ procedure barterprice_handler begin
 	// modify buy prices
 	stats := "";
 	if (basePrice != 0) then begin
+		basePrice := container_total_cost(itemTable);
+		variable
+			finalPriceGoods,
+			basePriceGoods := basePrice - itemCaps;
+
 		if (Buy_Formula == 0 or Buy_Formula == 1 or Buy_Formula == 2) then begin
 			// VANILLA-based FORMULA (1 was deprecated and merged into 0)
 			// Calc multiplier
-			buyPriceMult := Buy_Bias;
+			variable buyPriceMult := Buy_Bias;
 			if (Buy_Formula == 2) then begin
 				buyPriceMult *= (1 + arctan(Buy_ArctanCoef*dudeBarter, 1.0)*Buy_DudeSkillCoef);
 			end
 			// Vanilla price without caps
-			vanillaPriceGoods := vanillaPrice - itemCaps;
+			variable vanillaPriceGoods := vanillaPrice - itemCaps;
 			// Adjust demand and compensate for vanilla price multiplier
 			vanillaPriceGoods += round(calc_items_demand_mod(itemTable) * vanillaPriceGoods / basePriceGoods);
 			// Final price
@@ -260,7 +266,7 @@ procedure barterprice_handler begin
 			end
 			// Final price
 			finalPriceGoods := basePriceGoods * buyPriceMult;
-			stats += sprintf("buy mult: %.2f", buyPriceMult);
+			stats += sprintf("buy mult: %.3f", buyPriceMult);
 		end
 		set_sfall_return(round(finalPriceGoods) + itemCaps); 
 	end else begin
@@ -276,19 +282,28 @@ procedure barterprice_handler begin
 			or Sell_PerkCoef != 0
 			or Sell_BarterModCoef != 0)) then begin
 
-		sellPriceMult := Sell_Bias
-			* (1 + dudeBarter * Sell_DudeSkillCoef)
-			* (1 + merchantBarter * Sell_MerchantSkillCoef)
-			* (1 + dudeCharisma * Sell_DudeCharismaCoef)
-			* (1 + masterTrader * Sell_PerkCoef)
-			* (1 + dialogBarterMod * Sell_BarterModCoef);
+		variable
+			offeredCaps := obj_is_carrying_obj_pid(offeredTable, PID_BOTTLE_CAPS),
+			offeredPriceGoods,
+			sellPriceMult := Sell_Bias
+				* (1 + dudeBarter * Sell_DudeSkillCoef)
+				* (1 + merchantBarter * Sell_MerchantSkillCoef)
+				* (1 + dudeCharisma * Sell_DudeCharismaCoef)
+				* (1 + masterTrader * Sell_PerkCoef)
+				* (1 + dialogBarterMod * Sell_BarterModCoef);
 
-		// cap multiplier
-		if (sellPriceMult > Sell_MaxPriceCoef) then sellPriceMult := Sell_MaxPriceCoef;
-		else if (sellPriceMult < 0) then sellPriceMult := 0;
+		if (not item_type_price_mult_list_cur) then
+			item_type_price_mult_list_cur := create_array_list(item_type_count);
+		
+		// Calculate multipliers per type. MaxPriceCoef is applied after type multiplier.
+		for (variable t := item_type_armor; t < item_type_count; t++) begin
+			item_type_price_mult_list_cur[t] := math_clamp(item_type_price_mult_list[t] * sellPriceMult, 0, Sell_MaxPriceCoef);
+		end
 
-		stats += sprintf("; sell mult: %.2f", sellPriceMult);
-		set_sfall_return(round(offeredPriceGoods * sellPriceMult) + offeredCaps);
+		//debug_log(debug_array_str(item_type_price_mult_list_cur));
+		offeredPriceGoods := container_total_cost(offeredTable, item_type_price_mult_list_cur) - offeredCaps;
+		stats += sprintf("; sell mult: %.3f", sellPriceMult);
+		set_sfall_return(round(offeredPriceGoods) + offeredCaps);
 	end else begin
 		set_sfall_return(0);
 	end
@@ -351,32 +366,35 @@ end
 #define ammo_proto_qty(ammoPid)		get_proto_data(ammoPid, PROTO_AM_PACK_SIZE)
 #define misc_proto_charges(ammoPid)	get_proto_data(ammoPid, PROTO_MI_CHARGES)
 
-procedure item_proto_cost_adjusted(variable itemPid, variable itemType, variable isSell) begin
+procedure item_proto_cost_adjusted(variable itemPid, variable itemType, variable typeMultList) begin
+	if (itemPid == PID_BOTTLE_CAPS) then
+		return item_proto_cost(itemPid);
+
 	variable
-		typeMult := (item_type_price_mult_map[itemType] or 1.0) if isSell else 1.0,
+		typeMult := typeMultList[itemType] if typeMultList else 1.0,
 		townDemand := town_demand_map[cur_town],
 		demandMult := (townDemand[itemPid] or 1.0) if townDemand else 1.0;
 	
-	//debug_log_fmt("item %d (t: %d, sell: %d) cost = %d, mult = %.2f * %.2f, type mult = %.2f", itemPid, itemType, isSell, item_proto_cost(itemPid), typeMult, demandMult, item_type_price_mult_map[itemType]);
+	//debug_log_fmt("item %d (t: %d) cost = %d, mult = %.2f * %.2f, type mult = %.2f", itemPid, itemType, item_proto_cost(itemPid), typeMult, demandMult, typeMultList[itemType]);
 	return 1.0 * item_proto_cost(itemPid) * typeMult * demandMult;
 end
 
 /**
  * Calculate total base price of a container.
  * @arg {ObjectPtr} invenObj
- * @arg {bool} isSell
+ * @arg {list} typeMultList
  * @ret {float}
  */
-procedure container_total_cost(variable invenObj, variable isSell) begin
+procedure container_total_cost(variable invenObj, variable typeMultList) begin
 	variable cost := 0, i := 0, item, qty;
    while (true) do begin
 		item := inven_ptr(invenObj, i);
 		if (not item) then break;
 		qty := obj_is_carrying_obj(invenObj, item);
 		if (obj_item_subtype(item) == item_type_ammo) then
-			cost += item_proto_cost_adjusted(obj_pid(item), item_type_ammo, isSell) * (qty - 1) + item_cost(item, isSell);
+			cost += item_proto_cost_adjusted(obj_pid(item), item_type_ammo, typeMultList) * (qty - 1) + item_cost(item, typeMultList);
 		else
-			cost += item_cost(item, isSell) * qty;
+			cost += item_cost(item, typeMultList) * qty;
 		i++;
 	end
 	return cost;
@@ -385,23 +403,26 @@ end
 /**
  * Calculate total base price of item or container.
  * @arg {ObjectPtr} item - item
+ * @arg {list} typeMultList
  * @ret {float}
  */
-procedure item_cost(variable item, variable isSell) begin
+procedure item_cost(variable item, variable typeMultList) begin
 	variable
 		pid := obj_pid(item),
 		itemType := obj_item_subtype(item),
-	 	cost := item_proto_cost_adjusted(pid, itemType, isSell);
+	 	cost := item_proto_cost_adjusted(pid, itemType, typeMultList);
 
 	switch (itemType) begin
 		case item_type_container:
-			cost += container_total_cost(item, isSell);
+			cost += container_total_cost(item);
 		case item_type_weapon: begin
 			variable
 				ammo := get_weapon_ammo_count(item),
 				ammoPid := get_weapon_ammo_pid(item);
-			if (ammo > 0 and ammoPid != -1) then
-				cost += ammo * item_proto_cost_adjusted(ammoPid, item_type_ammo, isSell) / ammo_proto_qty(ammoPid);
+
+			if (ammo > 0 and ammoPid != -1) then begin
+				cost += ammo * item_proto_cost_adjusted(ammoPid, item_type_ammo, typeMultList) / ammo_proto_qty(ammoPid);
+			end
 		end
 		case item_type_ammo:
 			cost := cost * get_weapon_ammo_count(item) / ammo_proto_qty(pid);
