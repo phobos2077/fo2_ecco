@@ -13,6 +13,7 @@ procedure start;
 #include "../headers/global.h"
 #include "../headers/maps.h"
 
+#include "../sfall/define_extra.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.misc.h"
@@ -23,17 +24,23 @@ procedure start;
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/ecco_log.h"
 
-
+procedure barterprice_init;
 procedure barterprice_handler;
 procedure calc_items_demand_mod(variable obj);
 procedure load_town_demand;
+procedure container_total_cost(variable invenObj, variable isSell);
+procedure item_cost(variable item, variable isSell);
 procedure modify_party_money;
 procedure get_highest_barter_in_party_except_dude;
 
-#define barter_skill(obj)	(has_skill(obj, SKILL_BARTER))
+#define barter_skill(obj)		(has_skill(obj, SKILL_BARTER))
 
 #define SGVAR_MONEY_MULT		"PBS$MULT"
 #define INI_FILE					INI_ECONOMY
+
+#define INI_SECT_GENERAL      "GENERAL"
+#define INI_SECT_BUY		      "BUY"
+#define INI_SECT_SELL         "SELL"
 
 /*
    Changelog:
@@ -43,6 +50,8 @@ procedure get_highest_barter_in_party_except_dude;
 */
 
 variable begin
+	barterprice_initialized;
+
 	Sell_Bias;
 	Sell_DudeSkillCoef;
 	Sell_MerchantSkillCoef;
@@ -65,14 +74,14 @@ variable begin
 
 	PartyMoneyMult;
 
-   // map pid => original price
-	price_list := 0;
 	// map TownId => (map pid => modifier)
 	town_demand_map := 0;
-	// array
-	npc_pid_list := 0;
-	selling_prices_last_modified := 0;
-	last_sell_mult := 1.0;
+
+	// map Item Subtype => sell price mult
+	item_type_price_mult_map;
+
+	// map Item Pid => charges cost fraction
+	misc_item_charges_cost_fraction_map;
 end
 
 /*
@@ -93,40 +102,63 @@ end
 	int     ret1 - the modified value of all offered goods
 */
 
-#define load_setting_int(section, setting) get_ini_setting(INI_FILE + "|" + section + "|" + setting)
-#define load_setting_float(section, setting) atof(get_ini_string(INI_FILE + "|" + section + "|" + setting))
+#define load_setting_int(section, setting) 				get_ini_value_def(INI_FILE, section, setting, 0)
+#define load_setting_float(section, setting) 			get_ini_value_def(INI_FILE, section, setting, 0.0)
+
+//#define load_num_from_ini(name, def, min, max)                  ini_##name := math_clamp(, min, max)
+
+procedure string_to_fraction(variable str) begin
+	return math_clamp(atof(str), 0.0, 1.0);
+end
 
 procedure start begin
 	if (not game_loaded) then return;
+	if (not load_setting_int(INI_SECT_GENERAL, "Enabled")) then return;
 
-	Sell_Bias := load_setting_float("SELL", "Bias");
-	Sell_DudeSkillCoef := load_setting_float("SELL", "DudeSkillCoef");
-	Sell_MerchantSkillCoef := load_setting_float("SELL", "MerchantSkillCoef");
-	Sell_DudeCharismaCoef := load_setting_float("SELL", "DudeCharismaCoef");
-	Sell_PerkCoef := load_setting_float("SELL", "PerkCoef");
-	Sell_BarterModCoef := load_setting_float("SELL", "BarterModCoef");
-	Sell_MaxPriceCoef := abs(load_setting_float("SELL", "MaxPriceCoef"));
-	
-	Buy_Formula := load_setting_int("BUY", "Formula");
-	Buy_Bias := load_setting_float("BUY", "Bias");
-	Buy_DudeSkillCoef := load_setting_float("BUY", "DudeSkillCoef");
-	Buy_MerchantSkillCoef := load_setting_float("BUY", "MerchantSkillCoef");
-	Buy_DudeCharismaCoef := load_setting_float("BUY", "DudeCharismaCoef");
-	Buy_PerkCoef := load_setting_float("BUY", "PerkCoef");
-	Buy_BarterModCoef := load_setting_float("BUY", "BarterModCoef");
-	Buy_PartySkillThreshold := load_setting_float("BUY", "PartySkillThreshold");
-	Buy_PartySkillCoef := load_setting_float("BUY", "PartySkillCoef");
-	Buy_MinPriceCoef := abs(load_setting_float("BUY", "MinPriceCoef"));
-	Buy_ArctanCoef := load_setting_float("BUY", "ArctanCoef");
+	PartyMoneyMult := load_setting_float(INI_SECT_GENERAL, "PartyMoneyMult") orElse 1.0;
+	call modify_party_money;
 
-	PartyMoneyMult := load_setting_float("GENERAL", "PartyMoneyMult") orElse 1.0;
+	register_hook_proc(HOOK_BARTERPRICE, barterprice_handler);
+	debug_log("Hook registered.");
+end
+
+procedure barterprice_init begin
+	if (barterprice_initialized) then return;
+
+	Sell_Bias              := load_setting_float(INI_SECT_SELL, "Bias");
+	Sell_DudeSkillCoef     := load_setting_float(INI_SECT_SELL, "DudeSkillCoef");
+	Sell_MerchantSkillCoef := load_setting_float(INI_SECT_SELL, "MerchantSkillCoef");
+	Sell_DudeCharismaCoef  := load_setting_float(INI_SECT_SELL, "DudeCharismaCoef");
+	Sell_PerkCoef          := load_setting_float(INI_SECT_SELL, "PerkCoef");
+	Sell_BarterModCoef     := load_setting_float(INI_SECT_SELL, "BarterModCoef");
+	Sell_MaxPriceCoef  := abs(load_setting_float(INI_SECT_SELL, "MaxPriceCoef"));
+
+	Buy_Formula             := load_setting_int  (INI_SECT_BUY, "Formula");
+	Buy_Bias                := load_setting_float(INI_SECT_BUY, "Bias");
+	Buy_DudeSkillCoef       := load_setting_float(INI_SECT_BUY, "DudeSkillCoef");
+	Buy_MerchantSkillCoef   := load_setting_float(INI_SECT_BUY, "MerchantSkillCoef");
+	Buy_DudeCharismaCoef    := load_setting_float(INI_SECT_BUY, "DudeCharismaCoef");
+	Buy_PerkCoef            := load_setting_float(INI_SECT_BUY, "PerkCoef");
+	Buy_BarterModCoef       := load_setting_float(INI_SECT_BUY, "BarterModCoef");
+	Buy_PartySkillThreshold := load_setting_float(INI_SECT_BUY, "PartySkillThreshold");
+	Buy_PartySkillCoef      := load_setting_float(INI_SECT_BUY, "PartySkillCoef");
+	Buy_MinPriceCoef    := abs(load_setting_float(INI_SECT_BUY, "MinPriceCoef"));
+	Buy_ArctanCoef          := load_setting_float(INI_SECT_BUY, "ArctanCoef");
 
 	call load_town_demand;
-	register_hook_proc(HOOK_BARTERPRICE, barterprice_handler);
 
-	debug_log("Initialized. Sell bias: "+Sell_Bias+", buy bias: "+Buy_Bias+", town demands records: "+len_array(town_demand_map));
+	item_type_price_mult_map := array_fixed(array_transform_kv(
+		get_ini_section(INI_FILE, "PRICE_PER_TYPE"),
+		@string_to_int, @string_to_fraction));
 
-	call modify_party_money;
+	misc_item_charges_cost_fraction_map := array_fixed(array_transform_kv(
+		get_ini_section(INI_FILE, "MISC_ITEM_CHARGES_COST_FRACTION"),
+		@string_to_int, @string_to_fraction));
+
+	debug_log_fmt("Pricing initialized. Sell bias: %.2f, buy bias: %.2f, town demands: %d, prices per type: %d, misc item charge fractions: %d",
+		Sell_Bias, Buy_Bias, len_array(town_demand_map), len_array(item_type_price_mult_map), len_array(misc_item_charges_cost_fraction_map));
+
+	barterprice_initialized := true;
 end
 
 /*
@@ -155,16 +187,18 @@ procedure barterprice_handler begin
 		vanillaPrice := get_sfall_arg_at(2),
 		itemTable := get_sfall_arg_at(3),
 		itemCaps := get_sfall_arg_at(4),
-		basePrice := get_sfall_arg_at(5),
-		offeredTable := get_sfall_arg_at(6),
-		offeredPrice := get_sfall_arg_at(7);
+		offeredTable := get_sfall_arg_at(6);
 		
 	if party_member_obj(obj_pid(merchant)) then return;
 
+	call barterprice_init;
+
 	variable
 		vanillaPriceGoods,
+		offeredPrice := container_total_cost(offeredTable, true), //get_sfall_arg_at(7)
 		offeredCaps := obj_is_carrying_obj_pid(offeredTable, PID_BOTTLE_CAPS),
 		offeredPriceGoods := offeredPrice - offeredCaps,
+		basePrice := container_total_cost(itemTable, false), //get_sfall_arg_at(5),
 		basePriceGoods := basePrice - itemCaps,
 		dudeBarter := math_clamp(barter_skill(dude_obj), 0, 300),
 		dudeCharisma := get_critter_stat(dude_obj, STAT_ch),
@@ -224,11 +258,9 @@ procedure barterprice_handler begin
 			if (buyPriceMult < Buy_MinPriceCoef) then begin
 				buyPriceMult := Buy_MinPriceCoef;
 			end
-			// adjust demand for buy prices
-			basePriceGoods += calc_items_demand_mod(itemTable);
 			// Final price
 			finalPriceGoods := basePriceGoods * buyPriceMult;
-			stats += sprintf("buy price mult: %.2f", buyPriceMult);
+			stats += sprintf("buy mult: %.2f", buyPriceMult);
 		end
 		set_sfall_return(round(finalPriceGoods) + itemCaps); 
 	end else begin
@@ -255,21 +287,20 @@ procedure barterprice_handler begin
 		if (sellPriceMult > Sell_MaxPriceCoef) then sellPriceMult := Sell_MaxPriceCoef;
 		else if (sellPriceMult < 0) then sellPriceMult := 0;
 
-		stats += sprintf("; sell price mult: %.2f", sellPriceMult);
-		offeredPriceGoods += calc_items_demand_mod(offeredTable);
+		stats += sprintf("; sell mult: %.2f", sellPriceMult);
 		set_sfall_return(round(offeredPriceGoods * sellPriceMult) + offeredCaps);
 	end else begin
 		set_sfall_return(0);
 	end
 
-	if stats != "" then debug_log(stats+", dude barter: "+dudeBarter+", merchant barter: "+merchantBarter+", barter_mod: "+dialogBarterMod);
+	if stats != "" then debug_log_fmt("%s, skill: %d/%d, barter_mod: %d", stats, dudeBarter, merchantBarter, dialogBarterMod);
 end
 
 procedure calc_items_demand_mod(variable containerObj) begin
-	variable total, pid, mod, numItems, demand, baseCost, demandMod;
+	variable total, numItems, demand, baseCost, demandMod;
 	total := 0;
 	demand := town_demand_map[cur_town];
-	foreach (pid: mod in demand) if mod > 0 and mod != 1 then begin
+	foreach (variable pid: mod in demand) if mod > 0 and mod != 1 then begin
 		numItems := obj_is_carrying_obj_pid(containerObj, pid);
 		if (numItems > 0) then begin
 			baseCost := numItems * proto_data(pid, it_cost);
@@ -314,6 +345,77 @@ procedure get_highest_barter_in_party_except_dude begin
 		end
 	end
 	return max;
+end
+
+#define item_proto_cost(itemPid) 	proto_data(itemPid, it_cost)
+#define ammo_proto_qty(ammoPid)		get_proto_data(ammoPid, PROTO_AM_PACK_SIZE)
+#define misc_proto_charges(ammoPid)	get_proto_data(ammoPid, PROTO_MI_CHARGES)
+
+procedure item_proto_cost_adjusted(variable itemPid, variable itemType, variable isSell) begin
+	variable
+		typeMult := (item_type_price_mult_map[itemType] or 1.0) if isSell else 1.0,
+		townDemand := town_demand_map[cur_town],
+		demandMult := (townDemand[itemPid] or 1.0) if townDemand else 1.0;
+	
+	//debug_log_fmt("item %d (t: %d, sell: %d) cost = %d, mult = %.2f * %.2f, type mult = %.2f", itemPid, itemType, isSell, item_proto_cost(itemPid), typeMult, demandMult, item_type_price_mult_map[itemType]);
+	return 1.0 * item_proto_cost(itemPid) * typeMult * demandMult;
+end
+
+/**
+ * Calculate total base price of a container.
+ * @arg {ObjectPtr} invenObj
+ * @arg {bool} isSell
+ * @ret {float}
+ */
+procedure container_total_cost(variable invenObj, variable isSell) begin
+	variable cost := 0, i := 0, item, qty;
+   while (true) do begin
+		item := inven_ptr(invenObj, i);
+		if (not item) then break;
+		qty := obj_is_carrying_obj(invenObj, item);
+		if (obj_item_subtype(item) == item_type_ammo) then
+			cost += item_proto_cost_adjusted(obj_pid(item), item_type_ammo, isSell) * (qty - 1) + item_cost(item, isSell);
+		else
+			cost += item_cost(item, isSell) * qty;
+		i++;
+	end
+	return cost;
+end
+
+/**
+ * Calculate total base price of item or container.
+ * @arg {ObjectPtr} item - item
+ * @ret {float}
+ */
+procedure item_cost(variable item, variable isSell) begin
+	variable
+		pid := obj_pid(item),
+		itemType := obj_item_subtype(item),
+	 	cost := item_proto_cost_adjusted(pid, itemType, isSell);
+
+	switch (itemType) begin
+		case item_type_container:
+			cost += container_total_cost(item, isSell);
+		case item_type_weapon: begin
+			variable
+				ammo := get_weapon_ammo_count(item),
+				ammoPid := get_weapon_ammo_pid(item);
+			if (ammo > 0 and ammoPid != -1) then
+				cost += ammo * item_proto_cost_adjusted(ammoPid, item_type_ammo, isSell) / ammo_proto_qty(ammoPid);
+		end
+		case item_type_ammo:
+			cost := cost * get_weapon_ammo_count(item) / ammo_proto_qty(pid);
+		case item_type_misc_item: begin
+			// Healing item charges support.
+			variable chargesFraction := misc_item_charges_cost_fraction_map[pid];
+			if (chargesFraction > 0) then begin
+				variable charges := get_weapon_ammo_count(item), maxCharges := misc_proto_charges(pid);
+				if (charges > 0 and maxCharges > 0) then
+					cost := cost * (1.0 - chargesFraction) + cost * chargesFraction * charges / maxCharges;
+			end
+		end
+	end
+	return cost;
 end
 
 procedure modify_party_money begin

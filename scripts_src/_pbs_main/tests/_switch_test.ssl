@@ -15,7 +15,10 @@ procedure start begin
    variable x;
    variable y := -10;
    switch x begin
-      case 100 * 200: display_msg("100");
+      case 100 * 200:
+      case 101:
+      case 103:
+         display_msg("100");
       case (-200): display_msg("200");
       default: display_msg("default");
    end
@@ -26,18 +29,18 @@ end
 procedure FirstAid_Code(variable skill, variable use_critter, variable skill_bonus) begin
 
 variable perk_bonus, heal_hp, bonus;
-   
+
    heal_hp += bonus;
-   
+
    return heal_hp;
 end
 
 
 procedure Doctor_Code(variable skill, variable use_critter, variable skill_bonus) begin
    variable perk_bonus, heal_hp, bonus;
-   
+
    heal_hp += bonus;
-   
+
    return use_critter * bonus;
 end
 

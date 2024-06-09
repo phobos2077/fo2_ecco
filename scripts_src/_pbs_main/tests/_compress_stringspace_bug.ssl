@@ -1,0 +1,21 @@
+procedure procedure1;
+procedure procedure2;
+
+variable procName;
+
+procedure procedure1 begin
+   display_msg("proc1!");
+end
+
+procedure procedure2 begin
+   display_msg("proc2!");
+end
+
+procedure start begin
+   variable localempty := "";// @procedure1;
+   variable localNotEmpty := "noooot";
+   //variable localNotEmpty2 := "hhello?";
+   display_msg("Hello string space!");
+   display_msg("PRICE_PER_TYPE" + @procedure1 + @procedure2);
+   display_msg("MISC_ITEM_CHARGES_COST_FRACTION" + @procedure1 + @procedure2);
+end

@@ -21,62 +21,65 @@ procedure elsetest begin
       i := 22;
    end
    i  := 30;
-   
+
    if (1) then i := 1;
    else if (2) then i := 1;
    else if (3) then i := 1;
-   
+
    switch (2142 * 5) begin
       case "123": display_msg("asfaf");
       case 5: return FALSE;
       default:
          i ++;
    end
-   
+
 end
 
 procedure proctest(variable wtf := 23) begin
-   
+
+end
+
+procedure returns_array begin
+   return [1, 2, 3];
 end
 
 
+procedure loops begin
+   variable ar[4,5], i, k := returns_array, v := k[1];
 
-procedure stuff begin
-   variable ar, i, k, v;
-   
    call elsetest;
    call inittest;
-   
+
    // break/continue test
    while (i < 555) do begin
       i := 10;
       break;
       i := 20;
    end
-   
+
    while (777) do begin
       i := 60;
       continue;
       i := 120;
    end
-   for (i:=0 ; i<45; i++ ) begin
+   for (variable i2 := i * i; i2 < 45; i2++ ) begin
       k := 1;
       break;
       continue;
-      i := 34;
+      i2 := 34;
    end
   // {"asdasdsa" : 'A', 2: 'B'}
-   foreach (k: v in ar) begin
+   foreach (k: v in returns_array) begin
       k := 100 ;
       continue;
       v := 200 ;
    end
-   
-   foreach (k: v in [1,2,3] while (i < 0)) begin
-      k := 100 ;
+
+   foreach (variable kk: vv in [1,2,3] while (i < 0)) begin
+      kk := 100 ;
       if (i == -1) then continue;
-      v := 200 ;
-      
+      vv := 200 ;
+
    end
 end
 
@@ -85,21 +88,21 @@ variable trapv;
 procedure start begin
    variable a,b,c,d[5],f,trap[25];
    variable k,v,i;
-   
-   
+
+
    a[1] := get_ini_setting("asdasdsa"); // get_array(a, 1)   set_array(a, 1, get_sfall_arg)
-   
-    
+
+
    //a := b[23][525][25];
    a := b[4545].asasd565;
-   
-   if (cur_map_index != trap[1]) then 
-   
+
+   if (cur_map_index != trap[1]) then
+
    // a[1][2]  - get_array(get_array(a, 1), 2)
    a[1][5].some[5].very.long.combination += 5;     // set_array(get_array(a, 1), 2, get_array(get_array(a, 1), 2) + 5);
                      // tmp := get_array(a, 1); set_array(tmp, 2, get_array(tmp, 2) + 5)
-   
-   call stuff;
+
+   call loops;
    trap := {};
    trap.id := 3434 % 23;
    trap.key := 232;
@@ -108,14 +111,14 @@ procedure start begin
 
    a := {"fdf": 2, 6: -1};
    f := [1,2];
-   
+
    f := (a.fwf == 0);
-   
+
    d := [(1 and 2), -3.14*2,["W", "T", "F"]];
-   
+
    c[0] := f["sfs"];
-      
-   //a := b.key;   
+
+   //a := b.key;
    for (i:=0; i<5; i++) begin
       a:=1;
       i++;

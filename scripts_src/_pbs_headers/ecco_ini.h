@@ -71,6 +71,7 @@ end
 //#define load_int_from_ini(name, def)                    ini_##name := get_int_from_ini_def(INI_FILE, INI_SECTION, #name, def)
 #define load_bool_from_ini(name, def)                           ini_##name := (get_ini_value_def(INI_FILE, INI_SECTION, #name, def) != 0)
 #define load_num_from_ini(name, def, min, max)                  ini_##name := math_clamp(get_ini_value_def(INI_FILE, INI_SECTION, #name, def), min, max)
+#define load_num_from_ini_unclamped(name, def)                  ini_##name := get_ini_value_def(INI_FILE, INI_SECTION, #name, def)
 #define load_int_list_from_ini(name)                            ini_##name := array_fixed(get_int_list_from_ini(INI_FILE, INI_SECTION, #name))
 #define load_range_from_ini(name, defMin, defMax, min, max)     ini_##name := array_fixed(ini_parse_range_clamped(get_str_from_ini(INI_FILE, INI_SECTION, #name), defMin, defMax, min, max))
 
