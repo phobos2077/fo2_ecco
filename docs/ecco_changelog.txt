@@ -6,9 +6,10 @@ v0.9.7:
 
 > Balance:
 - flamethrower fuel weight & price halfed, but Flamer consumption increased to 2 per burst
-- increased money offered for selling ammo and misc items
-- reduced money offered for selling weapons, armor and drugs to NPC's
-- reduced money offered for selling limited-use items based on uses left
+- replaced barter price formula with vanilla-inspired one, for simpler configuration
+- added item price multipliers per item category, when selling to NPC's (higher buy/sell ratio for weapons & armor, lower for ammo & misc)
+- added value scaling of limited-use items based on uses left
+- recalibrated barter formula parameters for better balance across item categories and skill levels
 - lowered % of NPC weapons destroyed on death and added chance to drop Junk in their place
 
 > Encounters:
