@@ -27,6 +27,7 @@
 #include "../headers/command.h"
 #include "../headers/sanfran.h"
 
+#include "../_pbs_craft/craft_schematics.h"
 #include "../_pbs_headers/ecco_ids.h"
 
 /* Standard Script Procedures */
@@ -162,6 +163,7 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_LASER_RIFLE_EXT_CAP, 1, 1, 40)
             check_restock_item(PID_MAGNETO_LASER_PISTOL, 1, 1, 40)
             check_restock_item(PID_PBS_PLASMA_LANCE, 1, 1, 25)
+            call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA_T2, PID_PBS_50_AMMO, 100);
 
 //Used to be table 3
 
@@ -186,13 +188,13 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_SHIV, 1, 2, 80)
             check_restock_item(PID_WRENCH, 1, 2, 50)
             check_restock_item(PID_STIMPAK, 3, 7, 100)
-            check_restock_item(PID_FIRST_AID_KIT, 1, 2, 60)
+            check_restock_item(PID_FIRST_AID_KIT, 2, 4, 100) // pbs: more, high prob
             check_restock_item(PID_ANTIDOTE, 2, 4, 80)
             check_restock_item(PID_RADAWAY, 3, 7, 60)
             check_restock_item(PID_MENTATS, 4, 8, 50)
             check_restock_item(PID_MUTATED_FRUIT, 4, 8, 60)
             check_restock_item(PID_BUFFOUT, 4, 8, 50)
-            check_restock_item(PID_DOCTORS_BAG, 1, 3, 40)
+            check_restock_item(PID_DOCTORS_BAG, 1, 3, 80) // pbs: high prob
             check_restock_item(PID_RAD_X, 2, 7, 60)
             check_restock_item(PID_PSYCHO, 4, 8, 50)
             check_restock_item(PID_SUPER_STIMPAK, 6, 7, 30)
@@ -201,7 +203,8 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_XANDER_ROOT, 3, 7, 30)
             check_restock_item(PID_HEALING_POWDER, 3, 7, 35)
             check_restock_item(PID_MEAT_JERKY, 4, 5, 45)
-            check_restock_item(PID_FIELD_MEDIC_KIT, 1, 2, 30)
+            check_restock_item(PID_FIELD_MEDIC_KIT, 1, 2, 80) // pbs: high prob
+            check_restock_item(PID_PARAMEDICS_BAG, 1, 2, 50) // pbs
 //used to be table 4
 
 //Used to be table 5
@@ -233,7 +236,7 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_FLAMETHROWER_FUEL_MK_II, 1, 3, 50)
             check_restock_item(PID_MICRO_FUSION_CELL, 2, 4, 50)
             check_restock_item(PID_ROCKET_AP, 1, 4, 50)
-            check_restock_item(PID_14MM_AP, 2, 3, 100)
+            check_restock_item(PID_14MM_AP, 4, 6, 100) // pbs: 2x amount
             check_restock_item(PID_PBS_14MM_JHP, 1, 2, 50) // pbs
             check_restock_item(PID_FLAMETHROWER_FUEL, 2, 4, 50)
             check_restock_item(PID_45_CALIBER_AMMO, 3, 5, 50)

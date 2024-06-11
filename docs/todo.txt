@@ -7,6 +7,7 @@ for 0.9.7:
 
 
 for "future":
+- custom craft schematic art
 - cavern encounters need rebalance!!
 - take a look at 4/5 AP cost for pistols
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
@@ -24,6 +25,9 @@ Considering:
 
 
 IDEAS:
+- more powerful crafted grenade (3 home-made grenades bundled together?)
+- NEW PERK: +1 to carry over AP
+- NEW PERK: subsequent shots to the same target cost less AP (except bursts)
 - map loot reduction based on removal statistics, with no random rolls?
 - don't allow to craft "factory-level" items like Metal armor, but allow upgrades to Mk2
 - crafting some advanced leather armor
@@ -37,12 +41,8 @@ IDEAS:
 - smoke grenade? (an immediate cloud of smoke in all directions that blocks LOS)
 - add more drug types (Med-X?)
 - add machete (above Combat Knife, non-thrown alternative to Axe)
-- add late-game super spear, above Piston Spear (Plasma?)
 - add "metal sheets" crafting item and distribute along with "Junk"
 - make robots drop "robot parts" and use them in crafting
-- subsequent shots to the same target cost less AP (except bursts) - but can make guns even more powerful compared to melee/unarmed
-- guaranteed damage bonus for head/eye shots? (will need to be countered by changing hit chance formula to require higher skill for 95%)
-- barter: the more you sell to the same trader, the less is selling price
 - some new trap-related perk (arm traps in combat?)
 - add simple ready-to-go traps (maybe to vendors), without having to install explosive
 

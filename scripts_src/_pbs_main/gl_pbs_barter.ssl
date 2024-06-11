@@ -26,6 +26,7 @@ procedure start;
 
 #define SCRIPT_REALNAME			"pbs_barter"
 
+#include "../_pbs_headers/arrays_ext.h"
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/ecco_log.h"
 
@@ -280,7 +281,7 @@ procedure barterprice_handler begin
 
 		//debug_log(debug_array_str(item_type_price_mult_list_cur));
 		offeredPriceGoods := container_total_cost(offeredTable, item_type_price_mult_list_cur) - offeredCaps;
-		stats += sprintf("; sell mult: %.3f", sellPriceMult);
+		stats += "; sell mults: " + float_list_to_string(item_type_price_mult_list_cur);
 		set_sfall_return(round(offeredPriceGoods) + offeredCaps);
 	end else begin
 		set_sfall_return(0);

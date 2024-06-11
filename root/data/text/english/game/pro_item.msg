@@ -1156,7 +1156,7 @@
 {59600}{}{Fake Heart Pills}
 {59601}{}{These pills would normally be used by people with heart problems, except in this case death would ensue. These pills have been mixed with other chemicals, resulting in a guaranteed heart-exploding experience.}
 {61000}{}{.50 BMG}
-{61001}{}{Large caliber ammunition 12.7x99 armour piercing. This bullets can penetrate a tank.}
+{61001}{}{Large caliber ammunition 12.7x99 armour piercing. These bullets can penetrate pretty much anything.}
 {61100}{}{Hatchet}
 {61101}{}{Ideal tool for chopping wood and skulls. Balanced for throwing. Min ST: 5.}
 {52901}{}{}

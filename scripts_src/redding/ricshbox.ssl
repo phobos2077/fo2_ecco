@@ -60,10 +60,10 @@ procedure map_enter_p_proc begin
       set_local_var(LVAR_Restock_Time, (game_time + (2*ONE_GAME_WEEK)));
       // by phobos2077:
       lvl := dude_level;
-      if (lvl<=5) then money:=2000; else
-      if ((lvl>=6) and (lvl<=10)) then money:=3500; else
-      if ((lvl>=11) and (lvl<=19)) then money:=5000; else
-      if (lvl>=20) then money:=7000;
+      if (lvl<=5) then money:=1500; else
+      if ((lvl>=6) and (lvl<=10)) then money:=2000; else
+      if ((lvl>=11) and (lvl<=19)) then money:=3000; else
+      if (lvl>=20) then money:=5000;
       // end;
       check_restock_item(PID_BOTTLE_CAPS, money - 300, money + 300, 100)
       call restore_critical_items(tmp_box);

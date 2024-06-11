@@ -214,6 +214,8 @@ procedure map_enter_p_proc begin
       ndebug("Should have restocked");
       check_restock_item(PID_STIMPAK, 4, 5, 100)
       check_restock_item(PID_ANTIDOTE, 1, 1, 80)
+      check_restock_item(PID_FIRST_AID_KIT, 1, 2, 100) // pbs
+      check_restock_item(PID_DOCTORS_BAG, 1, 1, 70) // pbs
       check_restock_item(PID_BOTTLE_CAPS, 123, 200, 50)
       set_local_var(LVAR_Restock_Time, (random(2,6) * ONE_GAME_DAY) + game_time);
       // by phobos2077:

@@ -70,11 +70,11 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_44_FMJ_MAGNUM, 1, 3, 100)
          check_restock_item(PID_45_CALIBER_AMMO, 2, 5, 100) // min 1 -> 2
          check_restock_item(PID_223_FMJ, 1, 5, 75)
-         check_restock_item(PID_14MM_AP, 1, 3, 100)
+         check_restock_item(PID_14MM_AP, 2, 6, 100) // pbs: 2x count
          check_restock_item(PID_PBS_14MM_JHP, 1, 1, 40) // new
          check_restock_item(PID_SHOTGUN_SHELLS, 1, 5, 100)
          check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 5, 100) // new
-         check_restock_item(PID_PBS_DRAGON_BREATH, 1, 2, 50) // new
+         check_restock_item(PID_PBS_DRAGON_BREATH, 1, 2, 25) // new
          check_restock_item(PID_DYNAMITE, 1, 1, 50)
          check_restock_item(PID_PLASTIC_EXPLOSIVES, 1,1 , 50)
          check_restock_item(PID_GUNS_AND_BULLETS, 1, 1, 25)
@@ -92,7 +92,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_PBS_BOOMERANG, 1, 3, 75)
          check_restock_item(PID_PBS_M79, 1, 1, 75)
          check_restock_item(PID_PBS_40MM_HE, 1, 5, 75)
-         check_restock_item(PID_PBS_50_AMMO, 1, 4, 25) // new
+         check_restock_item(PID_PBS_50_AMMO, 1, 4, 40) // new
          check_restock_item(PID_FLAMETHROWER_FUEL, 1, 5, 75)
          // ;
          call restore_critical_items(tmp_box);

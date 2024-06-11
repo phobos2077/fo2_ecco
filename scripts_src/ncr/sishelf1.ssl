@@ -19,14 +19,12 @@
 ******************************************************************************************/
 
 /* Include Files */
-#define SCRIPT_REALNAME "sishelf3"
+#define SCRIPT_REALNAME "sishelf1"
 #include "../headers/define.h"
 
-#define NAME                    SCRIPT_SISHELF3
+#define NAME                    SCRIPT_SISHELF1
 
 #include "../headers/command.h"
-
-#include "../_pbs_headers/ecco_ids.h"
 
 /* Sets whether the door is locked or trapped */
 #define LOCKED_STATUS                   STATE_ACTIVE
@@ -54,13 +52,13 @@
 #define ANNOYTHRESH 2
 
 import variable buster_obj;
-import variable book_obj3;
+import variable book_obj1;
 import variable book_obj_look;
 
 variable Book_Annoy_Count;
 
 procedure start begin
-   book_obj3 := self_obj;
+   book_obj1 := self_obj;
 end
 
 /********************************************************************
@@ -71,9 +69,9 @@ end
 procedure use_p_proc begin
 /* Trap_Roll is a global variable to this script, defined at the beginning
    of the script. */
-   if (buster_obj) then begin
+   if (buster_obj and buster_obj != -1) then begin
       script_overrides;
-      book_obj_look := 3;
+      book_obj_look := 1;
    end
  end
 
@@ -125,7 +123,7 @@ procedure use_skill_on_p_proc begin
        end
    end                                                          // End of Skill_Traps
    else begin
-      if (buster_obj) then begin
+      if (buster_obj and buster_obj != -1) then begin
          if (not skill_success(dude_obj, Skill_Used, -35)) then begin
             script_overrides;
             if (Book_Annoy_Count < ANNOYTHRESH) then begin
@@ -155,12 +153,12 @@ procedure use_obj_on_p_proc begin
 
    if ((Tool == PID_DYNAMITE) or (Tool == PID_PLASTIC_EXPLOSIVES)) then begin
       script_overrides; //added by killap
-      if (buster_obj) then begin
+      if (buster_obj and buster_obj != -1) then begin
          float_msg(buster_obj, mstr(206), FLOAT_MSG_RED);
          book_obj_look := 4;
       end
    end else begin
-      if (buster_obj) then begin
+      if (buster_obj and buster_obj != -1) then begin
          script_overrides;
          if (Book_Annoy_Count < ANNOYTHRESH) then begin
             if (Book_Annoy_Count == ANNOYTHRESH - 1) then begin
@@ -193,33 +191,37 @@ end
 ***************************************************************************************/
 
 procedure map_enter_p_proc begin
-   if (buster_obj and buster_obj != -1) then begin
+   if (buster_obj != -1 and buster_obj) then begin
+
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
+         ndebug("first restock shelf 1");
          variable tmp_box := move_critical_items();
-         check_restock_item(PID_LEATHER_JACKET, 1, 3, 100)
-         check_restock_item(PID_LEATHER_ARMOR, 1, 3, 100)
-         check_restock_item(PID_METAL_ARMOR, 1, 1, 100)
-         check_restock_item(PID_LOCKPICKS, 1, 1, 100)
-         check_restock_item(PID_ROPE, 1, 5, 100)
-         check_restock_item(PID_DYNAMITE, 1, 1, 40)
-         check_restock_item(PID_METAL_ARMOR_MK_II, 3, 5, 30) //edit by killap - was PID_METAL_ARMOR; dup didn't make sense
-         check_restock_item(PID_GUNS_AND_BULLETS, 1, 1, 30)
-         check_restock_item(PID_EXP_LOCKPICK_SET, 1, 4, 20)
-         check_restock_item(PID_DECK_OF_TRAGIC_CARDS, 1, 1, 20)
-         check_restock_item(PID_CURED_LEATHER_ARMOR, 1, 1, 10)
-         check_restock_item(PID_223_FMJ, 2, 5, 100)
-         check_restock_item(PID_7_62MM_AMMO, 3, 8, 100)
-         check_restock_item(PID_PBS_7_62MM_AP, 1, 2, 50) // pbs
-         check_restock_item(PID_2MM_EC_AMMO, 1, 5, 25)
-         check_restock_item(PID_HN_AP_NEEDLER_CARTRIDGE, 2, 5, 100)
-
-         check_restock_item(PID_PBS_50_AMMO, 2, 6, 50) // pbs 
-         check_restock_item(PID_FRAG_GRENADE, 2, 3, 50) // pbs
-         check_restock_item(PID_PBS_40MM_HE, 2, 3, 50) // pbs
-
+         check_restock_item(PID_44_MAGNUM_JHP, 7, 10, 40)
+         check_restock_item(PID_BBS, 30, 50, 10)
+         check_restock_item(PID_AVENGER_MINIGUN, 0, 1, 100)
+         check_restock_item(PID_HK_G11, 0, 2, 100)
+         check_restock_item(PID_PANCOR_JACKHAMMER, 0, 1, 100)
+         check_restock_item(PID_LIGHT_SUPPORT_WEAPON, 0, 1, 100)
+         check_restock_item(PID_4_7MM_CASELESS, 1, 4, 25)
+         check_restock_item(PID_5MM_JHP, 2, 5, 50)
+         check_restock_item(PID_5MM_AP, 1, 3, 50)
+         check_restock_item(PID_MICRO_FUSION_CELL, 2, 4, 100) // pbs: high prob
+         check_restock_item(PID_SMALL_ENERGY_CELL, 3, 5, 50)
+         check_restock_item(PID_10MM_PISTOL, 2, 4, 50)
+         check_restock_item(PID_10MM_SMG, 1, 3, 35)
+         check_restock_item(PID_HUNTING_RIFLE, 1, 3, 65)
+         check_restock_item(PID_SHOTGUN, 1, 1, 60)
+         check_restock_item(PID_RED_RYDER_BB_GUN, 1, 1, 30)
+         if (dude_luck > 9) then
+            check_restock_item(PID_RED_RYDER_LE_BB_GUN, 1, 1, 20) //5 percent chance
+         check_restock_item(PID_DESERT_EAGLE, 2, 4, 35)
+         check_restock_item(PID_10MM_AP, 7, 10, 40)
+         check_restock_item(PID_10MM_JHP, 7, 10, 60)
+         check_restock_item(PID_223_FMJ, 7, 10, 60)
+         check_restock_item(PID_SHOTGUN_SHELLS, 7, 10, 55)
          call restore_critical_items(tmp_box);
-         set_local_var(LVAR_Restock_Time, (random(1,4) * ONE_GAME_DAY) + game_time);
+         set_local_var(LVAR_Restock_Time, (random(2,4) * ONE_GAME_DAY) + game_time);
       end
    end
 end
