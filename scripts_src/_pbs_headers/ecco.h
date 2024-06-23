@@ -47,7 +47,8 @@
 #define critter_max_hp(crit)                  (get_critter_stat(crit, STAT_max_hp))
 #define exp_for_kill_critter_pid(pid)         (get_proto_data(pid, PROTO_CR_KILL_EXP))
 #define critter_flags_by_pid(pid)             (get_proto_data(pid, PROTO_CR_FLAGS))
-#define can_steal_from_critter_pid(pid)       ((critter_flags_by_pid(pid) bwand CFLG_NOSTEAL) == 0)
+#define critter_proto_has_flag(pid, flg)      ((get_proto_data(pid, PROTO_CR_FLAGS) bwand flg) != 0)
+#define can_steal_from_critter_pid(pid)       (not critter_proto_has_flag(pid, CFLG_NOSTEAL))
 #define critter_facing_dir(crit)              (has_trait(TRAIT_OBJECT,crit,OBJECT_CUR_ROT))
 
 #define is_critter(obj)      (obj_type(obj) == OBJ_TYPE_CRITTER)

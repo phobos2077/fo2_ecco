@@ -214,7 +214,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_2MM_EC_AMMO, 1, 5, 25)
          check_restock_item(PID_HN_AP_NEEDLER_CARTRIDGE, 2, 5, 100)
 
-         check_restock_item(PID_PBS_50_AMMO, 2, 6, 50) // pbs 
+         check_restock_item(PID_PBS_50_AMMO, 2, 5, 50) // pbs 
          check_restock_item(PID_FRAG_GRENADE, 2, 3, 50) // pbs
          check_restock_item(PID_PBS_40MM_HE, 2, 3, 50) // pbs
 

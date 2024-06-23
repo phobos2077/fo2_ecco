@@ -4,6 +4,8 @@
 
 procedure start;
 
+#define SCRIPT_REALNAME       "pbs_monster_parts"
+
 #include "../sfall/define_lite.h"
 #include "../sfall/command_lite.h"
 #include "../sfall/lib.inven.h"
@@ -41,18 +43,28 @@ procedure start begin
    end
 end
 
-procedure drop_monster_parts(variable critter) begin
-   if (can_steal_from_critter_pid(obj_pid(critter))) then begin
-      if (is_deathclaw(critter))       then begin
-         call add_item_pid(critter, PID_PBS_DEATH_CLAW);
-         if (get_sfall_global_int(SGVAR_CRAFT_DEATHCLAW) == false) then
-            if (is_success(roll_vs_skill(dude_obj, SKILL_REPAIR, 0))) then begin
-               display_msg(mstr_pbs_craft(90));
-               set_sfall_global(SGVAR_CRAFT_DEATHCLAW, true);
-            end
-      end
-      else if (is_molerat(critter))    then call add_item_pid(critter, PID_PBS_MOLERAT_HIDE);
-      else if (is_floater(critter) or is_centaur(critter))    then call add_item_pid(critter, PID_PBS_TENTACLE);
-      else if (is_alien(critter))    then call add_item_pid(critter, PID_PBS_ALIEN_HAND);
+procedure drop_with_prob(variable critter, variable pid, variable prob) begin
+   variable success := random(0, 99) < prob;
+   debug_log_fmt("%s part %d drop prob: %d, success: %d", obj_name(critter), pid, prob, success);
+   if (success) then begin
+      call add_item_pid(critter, pid);
+      return true;
    end
+   return false;
+end
+
+procedure drop_monster_parts(variable critter) begin
+   if (not can_steal_from_critter_pid(obj_pid(critter))) then return;
+
+   if (is_deathclaw(critter))       then begin
+      if (drop_with_prob(critter, PID_PBS_DEATH_CLAW, 90)
+         and get_sfall_global_int(SGVAR_CRAFT_DEATHCLAW) == false) then
+         if (is_success(roll_vs_skill(dude_obj, SKILL_REPAIR, 0))) then begin
+            display_msg(mstr_pbs_craft(90));
+            set_sfall_global(SGVAR_CRAFT_DEATHCLAW, true);
+         end
+   end
+   else if (is_molerat(critter))  then call drop_with_prob(critter, PID_PBS_MOLERAT_HIDE, 70);
+   else if (is_floater(critter) or is_centaur(critter))  then call drop_with_prob(critter, PID_PBS_TENTACLE, 90);
+   else if (is_alien(critter))    then call drop_with_prob(critter, PID_PBS_ALIEN_HAND, 70);
 end
