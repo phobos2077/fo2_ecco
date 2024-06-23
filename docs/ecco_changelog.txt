@@ -2,6 +2,7 @@
 
 v0.9.7:
 > Crafting:
+- added recipes for crafting .50 cal, 40mm HE ammo
 - fixed inconsistent craft button visibility (hiding or visible on top of other windows)
 
 > Balance:
@@ -22,7 +23,7 @@ v0.9.7:
 
 > Misc:
 - added option for additional car trunk capacity upgrade by using Repair skill
-- added more MFC to stores for car refueling
+- added more MFC to stores for car refueling, as well as more healing kits and certain types of ammo
 - fixed incorrect car charging amount when using Cells on trunk
 - fixed displayed exp point gain amount for crafting with Swift Learner perk
 

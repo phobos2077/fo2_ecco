@@ -14,10 +14,11 @@ for "future":
 
 
 Considering:
+- hard to choose specific craft component when several are available: don't auto-search trunk? or provide UI to select component?
 - installer switch to disable barter formula
 - random encounter: more interesting enemy formations?
 - add Cattle Prod to Modoc, VC, Gecko, Broken Hills (check balance)
-- add crafting components like rocks and junk to human enemy bodies on death with small probability
+- add crafting components like rocks and junk to human enemy bodies on death with small probability (broken weapons already spawn junk)
 - Hunting Rifle -> Scoped for Slags rewards
 - Marcus Scoped Rifle  to something better as reward
 - port "grenades anywhere" script from FO2Tweaks?
