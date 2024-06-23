@@ -158,6 +158,11 @@ procedure map_enter_p_proc begin
       check_restock_item(PID_FIRST_AID_KIT, 1, 3, 60)
       check_restock_item(PID_RADAWAY, 1, 3, 60)
       check_restock_item(PID_SUPER_STIMPAK, 1, 7, 50)
+      // pbs: added healing boosters
+      check_restock_item(PID_FIRST_AID_KIT, 1, 3, 50)
+      check_restock_item(PID_DOCTORS_BAG, 1, 2, 50)
+      check_restock_item(PID_FIELD_MEDIC_KIT, 1, 1, 25)
+      check_restock_item(PID_PARAMEDICS_BAG, 1, 1, 25)
       call restore_critical_items(tmp_box);
       set_local_var(LVAR_Restock_Time, game_time + (ONE_GAME_DAY * Random(1, 7)));
    end

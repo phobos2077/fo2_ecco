@@ -46,6 +46,7 @@ procedure use_p_proc;
 #include "../sfall/lib.inven.h"
 
 #define SGVAR_TRUNK_UPGRADE          "PBSTRNKU"
+//#define TRUNK_SIZE_BASE                   (350)
 #define EXP_MANUAL_TRUNK_UPGRADE          (200)
 #define UPGRADE_CARRY_PERCENT_BONUS        (20)
 #define UPGRADE_SKILL_MOD                 (-60)
@@ -55,12 +56,28 @@ procedure use_p_proc;
 
 #define upgrade_is_available              (not space_upgraded)
 
+/*
+procedure recalculate_trunk_size begin
+   variable carryAmt := TRUNK_SIZE_BASE;
+   if (space_upgraded) then
+      carryAmt := carryAmt * (100 + UPGRADE_CARRY_PERCENT_BONUS) / 100;
+
+   if (global_var(GVAR_NEW_RENO_CAR_UPGRADE) != 0) then
+      carryAmt := carryAmt * 110 / 100;
+
+   if (global_var(GVAR_NEW_RENO_SUPER_CAR) != 0) then
+      carryAmt := carryAmt * 190 / 100;
+
+   set_car_carry_amount(carryAmt);
+end
+*/
 
 procedure start begin
 end
 
 procedure use_p_proc begin
    ndebug("Using Car Trunk");
+   //call recalculate_trunk_size;
 end
 
 procedure map_enter_p_proc begin
@@ -142,6 +159,7 @@ end
 
 procedure description_p_proc begin
    script_overrides;
+   //call recalculate_trunk_size;
    variable msg := mstr(101);
    if (upgrade_is_available and is_success(do_check(source_obj, STAT_pe, -3))) then
       msg += mstr(200);

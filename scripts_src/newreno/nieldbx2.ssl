@@ -64,7 +64,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_HK_CAWS, 1, 1, 25)
          check_restock_item(PID_SUPER_SLEDGE, 1, 1, 25)
          check_restock_item(PID_BOZAR, 1, 1, 25)
-         check_restock_item(PID_INDEPENDENT, 1, 1, 20) // new
+         check_restock_item(PID_INDEPENDENT, 1, 1, 25) // new
          check_restock_item(PID_PBS_MGL, 1, 1, 25)
          call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA_T2, PID_IMPROVED_FLAMETHROWER, 100);
          call restore_critical_items(tmp_box);

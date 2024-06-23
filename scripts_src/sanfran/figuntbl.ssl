@@ -174,7 +174,7 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_COMBAT_KNIFE, 1, 3, 90)
             // check_restock_item(PID_223_PISTOL, 1, 2, 35) // phobos2077: removed on purpose
             check_restock_item(PID_INDEPENDENT, 1, 2, 35) // pbs
-            check_restock_item(PID_PBS_MGL, 1, 2, 30) // pbs
+            check_restock_item(PID_PBS_MGL, 1, 2, 65) // pbs
             //Used to be on Table 3
 
             check_restock_item(PID_COMBAT_ARMOR, 1, 2, 50)
