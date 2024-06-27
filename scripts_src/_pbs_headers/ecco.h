@@ -10,13 +10,12 @@
 #include "../sfall/command_lite.h"
 #include "../sfall/define_extra.h"
 
+#include "ecco_define.h"
 #include "ecco_ids.h"
 #include "ecco_ini.h"
 #include "ecco_log.h"
 #include "ecco_msg.h"
 
-
-#define dude_skill(x)               (has_skill(dude_obj, x))
 
 #define last_deathanim_critter      (get_sfall_global_int(SGVAR_LAST_DEATHANIM_CRITTER))
 #define last_deathanim              (get_sfall_global_int(SGVAR_LAST_DEATHANIM))
@@ -39,15 +38,8 @@
 #define get_proto_dmg_min(pid)       (get_proto_data(pid, PROTO_WP_DMG_MIN))
 #define get_proto_dmg_max(pid)       (get_proto_data(pid, PROTO_WP_DMG_MAX))
 
-#define is_unarmed_weapon_pid(pid)            (weapon_attack_mode1(pid) == ATTACK_MODE_PUNCH)
-#define is_hidden_item(pid)                   ((get_proto_data(pid, PROTO_FLAG_EXT) bwand HIDDEN_ITEM) != 0)
-
-#define critter_dt_by_dmg_type(crit, type)    (get_critter_stat(crit, STAT_dmg_thresh + type))
-#define critter_dr_by_dmg_type(crit, type)    (get_critter_stat(crit, STAT_dmg_resist + type))
-#define critter_max_hp(crit)                  (get_critter_stat(crit, STAT_max_hp))
 #define exp_for_kill_critter_pid(pid)         (get_proto_data(pid, PROTO_CR_KILL_EXP))
 #define critter_flags_by_pid(pid)             (get_proto_data(pid, PROTO_CR_FLAGS))
-#define critter_proto_has_flag(pid, flg)      ((get_proto_data(pid, PROTO_CR_FLAGS) bwand flg) != 0)
 #define can_steal_from_critter_pid(pid)       (not critter_proto_has_flag(pid, CFLG_NOSTEAL))
 #define critter_facing_dir(crit)              (has_trait(TRAIT_OBJECT,crit,OBJECT_CUR_ROT))
 
@@ -136,8 +128,6 @@
 
 #define is_humanoid(crit)    (proto_data(obj_pid(crit), cr_body_type) == CR_BODY_BIPED)
 #define is_weapon_pid(pid)   (proto_data(pid, it_type) == item_type_weapon)
-
-#define obj_team(obj)   (has_trait(TRAIT_OBJECT, obj, OBJECT_TEAM_NUM))
 
 #define actual_ammo_count(crit, obj)   ((obj_is_carrying_obj(crit, obj) - 1)*get_proto_data(obj_pid(obj), PROTO_AM_PACK_SIZE) + get_weapon_ammo_count(obj))
 

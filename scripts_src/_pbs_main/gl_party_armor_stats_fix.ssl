@@ -11,15 +11,15 @@
 #include "..\sfall\command_lite.h"
 #include "..\sfall\lib.arrays.h"
 
+#define SCRIPT_REALNAME       "party_armor_stats_fix"
+#include "..\_pbs_headers\ecco_log.h"
+
 #define MAX_PID            (1000)
 #define STATS_ARR_NAME(pid) ("armor_stats_"+pid)
 #define STATS_AC           (0)
 #define STATS_DR           (1)
 #define STATS_DT           (1 + 7)
 #define STATS_SIZE         (1 + 7*2)
-
-#define debug_log(msg)     debug_msg("pc_armor_stats_fix: "+msg)
-#define debug_error(msg)   debug_msg("! ERROR ! pc_armor_stats_fix: "+msg)
 
 
 procedure save_armor_stats(variable armorPid) begin
@@ -46,40 +46,45 @@ procedure save_all_armor_stats begin
    debug_log("Saved armor stats for "+pids);
 end
 
-procedure apply_armor_stats_difference begin
-   variable stats, armorPid, diff, i;
-   armorPid := obj_pid(dude_armor) if dude_armor else 0;
-   if (not armorPid) then return;
+#define armor_pid_str(pid)         (proto_data(pid, it_name) + "[" + pid + "]")
 
+procedure apply_armor_stats_difference(variable critter) begin
+   variable stats, armor, armorPid, diff, i;
+   armor := get_armor(critter);
+   if (not armor) then return;
+
+   armorPid := obj_pid(armor);
    stats := load_array(STATS_ARR_NAME(armorPid));
    if (not stats) then begin
-      debug_error("Dude has armor but no saved armor stats! (possibly loaded an old save)");
+      debug_err(obj_name(critter)+" has armor but no saved armor stats! (possibly loaded an old save)");
       return;
    end
 
    diff := get_proto_data(armorPid, PROTO_AR_AC) - stats[STATS_AC];
    if (diff != 0) then begin
-      set_critter_extra_stat(dude_obj, STAT_ac, get_critter_extra_stat(dude_obj, STAT_ac) + diff);
-      debug_log("Armor "+armorPid+" AC changed by "+diff+", applying difference.");
+      set_critter_extra_stat(critter, STAT_ac, get_critter_extra_stat(critter, STAT_ac) + diff);
+      debug_log(armor_pid_str(armorPid)+" AC changed by "+diff+", applying difference for "+obj_name(critter));
       intface_redraw;
    end
    for (i := 0; i < 7; i++) begin
       diff := get_proto_data(armorPid, PROTO_AR_DR_NORMAL + i*4) - stats[STATS_DR + i];
       if (diff != 0) then begin
-         set_critter_extra_stat(dude_obj, STAT_dmg_resist + i, get_critter_extra_stat(dude_obj, STAT_dmg_resist + i) + diff);
-         debug_log("Armor "+armorPid+" DR ("+i+") changed by "+diff+", applying difference.");
+         set_critter_extra_stat(critter, STAT_dmg_resist + i, get_critter_extra_stat(critter, STAT_dmg_resist + i) + diff);
+         debug_log(armor_pid_str(armorPid)+" DR ("+i+") changed by "+diff+", applying difference for "+obj_name(critter));
       end
       diff := get_proto_data(armorPid, PROTO_AR_DT_NORMAL + i*4) - stats[STATS_DT + i];
       if (diff != 0) then begin
-         set_critter_extra_stat(dude_obj, STAT_dmg_thresh + i, get_critter_extra_stat(dude_obj, STAT_dmg_thresh + i) + diff);
-         debug_log("Armor "+armorPid+" DT ("+i+") changed by "+diff+", applying difference.");
+         set_critter_extra_stat(critter, STAT_dmg_thresh + i, get_critter_extra_stat(critter, STAT_dmg_thresh + i) + diff);
+         debug_log(armor_pid_str(armorPid)+" DT ("+i+") changed by "+diff+", applying difference for "+obj_name(critter));
       end
    end
 end
 
 procedure start begin
    if (game_loaded) then begin
-      call apply_armor_stats_difference;
+      foreach (variable crit in party_member_list_critters) begin
+         call apply_armor_stats_difference(crit);
+      end
       call save_all_armor_stats;
    end
 end

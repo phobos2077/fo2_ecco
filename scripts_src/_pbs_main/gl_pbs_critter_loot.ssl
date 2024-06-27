@@ -150,6 +150,8 @@ procedure try_destroy_weapon(variable critter, variable weapon) begin
    return removed;
 end
 
+#define is_unarmed_weapon_pid(pid)            (weapon_attack_mode1(pid) == ATTACK_MODE_PUNCH)
+
 procedure drop_weapons(variable critter) begin
    variable
       dist,
@@ -165,7 +167,7 @@ procedure drop_weapons(variable critter) begin
       weapon := critter_inven_obj(critter, i);
       if (weapon and obj_item_subtype(weapon) == item_type_weapon
          and not is_unarmed_weapon_pid(obj_pid(weapon))
-         and not is_hidden_item(obj_pid(weapon))) then 
+         and not item_proto_is_hidden(obj_pid(weapon))) then 
          break;
       else
          weapon := 0;
@@ -201,7 +203,7 @@ procedure reduce_loot(variable critter) begin
    list := inven_as_array(critter);
    removeStats := "";
    foreach item in list begin
-      if (item == 0 or is_hidden_item(obj_pid(item))) then
+      if (item == 0 or item_proto_is_hidden(obj_pid(item))) then
          continue;
 
       if (obj_item_subtype(item) == item_type_ammo) then begin

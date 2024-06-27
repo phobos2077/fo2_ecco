@@ -34,6 +34,7 @@ v0.9.7:
 - added more MFC to stores for car refueling, as well as more healing kits and certain types of ammo
 - added bonus damage for fire-based traps with Pyromaniac perk
 - fixed incorrect car charging amount when using Cells on trunk
+- tweaked AI weapon selection logic to avoid some illogical choices
 
 
 v0.9.6:
