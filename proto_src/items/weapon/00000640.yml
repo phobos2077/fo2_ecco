@@ -13,19 +13,19 @@ type: ITEM_TYPE_WEAPON
 material: 7
 size: 4
 weight: 5
-cost: 3500
+cost: 3200
 inventoryFid: 117440945
 soundId: '0'
 weaponData:
   animationCode: 0
   minDamage: 18
-  maxDamage: 30
+  maxDamage: 36
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 1
   maxRange2: 0
   projectilePid: -1
   minStrength: 3
-  actionPointCost1: 4
+  actionPointCost1: 3
   actionPointCost2: 0
   criticalFailureType: 0
   perk: PERK_WEAPON_PENETRATE

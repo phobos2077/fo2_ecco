@@ -18,19 +18,19 @@ inventoryFid: 117440953
 soundId: '0'
 weaponData:
   animationCode: 4
-  minDamage: 32
-  maxDamage: 64
+  minDamage: 30
+  maxDamage: 50
   damageType: DAMAGE_TYPE_PLASMA
   maxRange1: 3
   maxRange2: 8
   projectilePid: 83886087
   minStrength: 5
-  actionPointCost1: 5
+  actionPointCost1: 4
   actionPointCost2: 5
   criticalFailureType: 1
   perk: PERK_WEAPON_PENETRATE
   rounds: 0
   caliber: 4
   ammoTypePid: 39
-  ammoCapacity: 12
+  ammoCapacity: 24
   soundCode: F

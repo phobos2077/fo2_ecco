@@ -32,5 +32,5 @@ weaponData:
   rounds: 2
   caliber: 4
   ammoTypePid: 39
-  ammoCapacity: 10
+  ammoCapacity: 12
   soundCode: J

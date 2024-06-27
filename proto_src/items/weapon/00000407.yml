@@ -14,7 +14,7 @@ type: ITEM_TYPE_WEAPON
 material: 1
 size: 2
 weight: 7
-cost: 2200
+cost: 3000
 inventoryFid: 117440781
 soundId: '0'
 weaponData:

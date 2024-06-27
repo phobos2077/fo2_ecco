@@ -14,7 +14,7 @@ type: ITEM_TYPE_ARMOR
 material: 1
 size: 10
 weight: 35
-cost: 6500
+cost: 8000
 inventoryFid: 117440657
 soundId: '0'
 armorData:

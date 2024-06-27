@@ -15,7 +15,7 @@ material: 1
 size: 15
 weight: 70
 cost: 15000
-inventoryFid: 117440739
+inventoryFid: 117440747
 soundId: '0'
 armorData:
   armorClass: 15

@@ -13,11 +13,11 @@ type: ITEM_TYPE_ARMOR
 material: 1
 size: 11
 weight: 25
-cost: 10000
+cost: 8500
 inventoryFid: 117440656
 soundId: '0'
 armorData:
-  armorClass: 15
+  armorClass: 25
   damageResistance:
     normal: 45
     laser: 65

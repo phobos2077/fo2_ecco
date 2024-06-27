@@ -12,9 +12,13 @@ v0.9.7:
 - replaced barter price formula with vanilla-inspired one, for simpler configuration
 - added item price multipliers per item category, when selling to NPC's (higher buy/sell ratio for weapons & armor, lower for ammo & misc)
 - added value scaling of limited-use items based on uses left
-- recalibrated barter formula parameters for better balance across item categories and skill levels
-- lowered % of NPC weapons destroyed on death and added chance to drop Junk in their place
 - added probability for new monster parts not to drop
+- recalibrated barter formula parameters for better balance across item categories and skill levels
+- tweaked laser vs plasma rifle stats for more clear distinction (closer to vanilla)
+- tweaked some late game melee weapon stats for balance
+- tweaked late game armor prices for balance
+- nerfed NPC weapon destruction percentage and added chance to drop Junk instead
+- nerfed Bear Trap durability
 
 > Encounters:
 - reverted undocumented change of enemy start points from original RP, resulting in point-blank encounters
@@ -28,6 +32,7 @@ v0.9.7:
 > Misc:
 - added option for additional car trunk capacity upgrade by using Repair skill
 - added more MFC to stores for car refueling, as well as more healing kits and certain types of ammo
+- added bonus damage for fire-based traps with Pyromaniac perk
 - fixed incorrect car charging amount when using Cells on trunk
 
 

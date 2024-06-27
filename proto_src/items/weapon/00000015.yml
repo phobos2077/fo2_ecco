@@ -19,10 +19,10 @@ inventoryFid: 117440526
 soundId: '0'
 weaponData:
   animationCode: 8
-  minDamage: 40
-  maxDamage: 70
+  minDamage: 35
+  maxDamage: 65
   damageType: DAMAGE_TYPE_PLASMA
-  maxRange1: 35
+  maxRange1: 25
   maxRange2: 0
   projectilePid: 83886082
   minStrength: 6
