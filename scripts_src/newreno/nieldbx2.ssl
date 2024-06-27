@@ -67,6 +67,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_INDEPENDENT, 1, 1, 25) // new
          check_restock_item(PID_PBS_MGL, 1, 1, 25)
          call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA_T2, PID_IMPROVED_FLAMETHROWER, 100);
+         call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA_T2, PID_FLAMETHROWER_FUEL_MK_II, 100);
          call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (random(2,4) * ONE_GAME_DAY) + game_time);
       end

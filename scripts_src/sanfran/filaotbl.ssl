@@ -164,6 +164,7 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_MAGNETO_LASER_PISTOL, 1, 1, 40)
             check_restock_item(PID_PBS_PLASMA_LANCE, 1, 1, 25)
             call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA_T2, PID_PBS_50_AMMO, 100);
+            call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA_T2, PID_FLAMETHROWER_FUEL_MK_II, 100);
 
 //Used to be table 3
 

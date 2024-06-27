@@ -26,6 +26,8 @@ Considering:
 
 
 IDEAS:
+- leather hides from dead brahmin?
+- weapon destruction chance/% to depend on attack type/damage (bursts vs single, explosion vs punch, etc)
 - Demolition Expert to buff all "explosion" attacks, not just traps?
 - more powerful crafted grenade (3 home-made grenades bundled together?)
 - NEW PERK: +1 to carry over AP
