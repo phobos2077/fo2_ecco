@@ -26,6 +26,7 @@ Considering:
 
 
 IDEAS:
+- Demolition Expert to buff all "explosion" attacks, not just traps?
 - more powerful crafted grenade (3 home-made grenades bundled together?)
 - NEW PERK: +1 to carry over AP
 - NEW PERK: subsequent shots to the same target cost less AP (except bursts)

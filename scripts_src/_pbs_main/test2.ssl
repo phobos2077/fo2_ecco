@@ -456,6 +456,10 @@ procedure trap_setoff_effect(variable armPid, variable critter) begin\
             dmgMin += 10;
             dmgMax += 10;
          end
+         if (dude_perk(PERK_pyromaniac_perk) and dmgType == DMG_fire) then begin
+            dmgMin += 10;
+            dmgMax += 10;
+         end
          if (radius < 0) then radius := 2; // vanilla grenade radius
          if (audioSfx == 0) then begin
             variable soundCode := get_proto_data(armPid, PROTO_WP_SOUND);
