@@ -154,7 +154,7 @@
 {1120}{}{Take down a tribal traveling around Modoc and bring proof to Deputy Karl.}
 {1121}{}{Take down a group of villains somewhere east of Broken Hills. Bring proof to Karl.}
 {1122}{}{Eliminate an armed gang last seen to the east of San Francisco. Bring proof to Karl.}
-{1123}{}{Bring 10 mutant tentacles to Dr. Henry.}
+{1123}{}{Bring 8 mutant tentacles to Dr. Henry.}
 
 #
 # Vault 13 Quests
