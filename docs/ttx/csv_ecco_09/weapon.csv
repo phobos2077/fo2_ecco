@@ -6,10 +6,10 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000004.pro;10mm Pistol;8;Normal;5;10;Single;None;18;0;4;0;10;0;10mm [8];10mm JHP [29];3;250;3;
 ;00000002.pro;10mm SMG;9;Normal;7;12;Single;Burst;25;15;5;6;30;6;10mm [8];10mm JHP [29];4;1000;5;
 ;00000011.pro;Hunting Rifle;10;Normal;12;20;Single;None;40;0;5;0;10;0;.223 [5];.223 FMJ [34];5;1000;8;Weapon Accurate [59]
-;00000010.pro;Flamer;11;Fire;50;90;Flame;None;5;0;6;0;5;1;Flamethrower Fuel [2];Flamethrower Fuel [32];6;2500;18;
+;00000010.pro;Flamer;11;Fire;50;90;Flame;None;5;0;6;0;10;2;Flamethrower Fuel [2];Flamethrower Fuel [32];6;2500;18;
 ;00000006.pro;Minigun;12;Normal;9;14;Burst;None;35;0;6;0;120;30;5mm [6];5mm JHP [35];7;3800;28;Weapon Long Range [58]
 ;00000007.pro;Rocket Launcher;13;Explode;45;90;Single;None;40;0;6;0;1;0;Rocket [1];Explosive Rocket [14];6;2500;15;Weapon Long Range [58]
-;00000015.pro;Plasma Rifle;15;Plasma;40;70;Single;None;35;0;5;0;24;0;D Energy Cell [4];Micro Fusion Cell [39];6;4500;12;Weapon Long Range [58]
+;00000015.pro;Plasma Rifle;15;Plasma;35;65;Single;None;25;0;5;0;24;0;D Energy Cell [4];Micro Fusion Cell [39];6;4500;12;Weapon Long Range [58]
 ;00000016.pro;Laser Pistol;16;Laser;16;26;Single;None;30;0;4;0;12;0;C Energy Cell [3];Small Energy Cell [38];3;1400;4;Weapon Accurate [59]
 ;00000018.pro;Desert Eagle .44;18;Normal;10;18;Single;None;22;0;5;0;8;0;.44 cal [9];.44 Magnum JHP [31];4;750;4;
 ;00000019.pro;Rock;19;Normal;1;3;Throw;Punch;15;1;4;3;0;0;None [0];;1;0;1;
@@ -25,9 +25,9 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000045.pro;Throwing Knife;45;Normal;6;10;Throw;None;22;0;5;0;0;0;None [0];;3;75;1;
 ;00000079.pro;Flare;79;Normal;1;1;Throw;None;15;0;1;0;0;0;None [0];;0;35;1;Weapon Accurate [59]
 ;00000094.pro;Shotgun;94;Normal;14;28;Single;None;16;7;5;6;2;2;12-gauge [11];12 ga. Buckshot [95];4;750;5;
-;00000115.pro;Super Sledge;115;Normal;18;36;Swing;Thrust;2;2;4;5;0;0;None [0];;5;3750;12;Weapon Knockback [61]
+;00000115.pro;Super Sledge;115;Normal;22;54;Swing;Thrust;2;2;4;5;0;0;None [0];;5;3750;12;Weapon Knockback [61]
 ;00000116.pro;Ripper;116;Normal;15;32;Swing;Thrust;1;1;4;4;10;0;C Energy Cell [3];Small Energy Cell [38];4;1400;2;Weapon Penetrate [60]
-;00000118.pro;Laser Rifle;118;Laser;35;50;Single;None;45;20;5;6;10;2;D Energy Cell [4];Micro Fusion Cell [39];5;4500;12;Weapon Long Range [58]
+;00000118.pro;Laser Rifle;118;Laser;35;50;Single;None;45;20;5;6;12;2;D Energy Cell [4];Micro Fusion Cell [39];5;4500;12;Weapon Long Range [58]
 #;00000120.pro;Alien Blaster;120;Electrical;30;90;Single;None;10;0;4;0;30;0;C Energy Cell [3];Small Energy Cell [38];2;10000;2;Weapon Accurate [59]
 ;00000122.pro;9mm Mauser;122;Normal;10;16;Single;None;25;0;4;0;10;0;9mm [12];9mm AP [360];3;650;3;Weapon Accurate [59]
 ;00000143.pro;Sniper Rifle;143;Normal;28;38;Single;None;50;0;6;0;6;0;7.62mm [18];7.62mm FMJ [363];5;2700;8;Weapon Scope Range [64]
@@ -36,7 +36,7 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000161.pro;Red Ryder BB Gun;161;Normal;1;3;Single;None;22;0;5;0;100;0;None [0];BB's [163];3;200;5;
 ;00000162.pro;Red Ryder LE BB Gun;162;Normal;18;25;Single;None;32;0;5;0;100;0;None [0];BB's [163];3;3500;5;Weapon Long Range [58]
 ;00000205.pro;Flare;205;Normal;1;1;Throw;None;15;0;0;0;0;0;None [0];;0;60;1;Weapon Accurate [59]
-;00000233.pro;Turbo Plasma Rifle;233;Plasma;40;60;Single;None;35;0;4;0;24;0;D Energy Cell [4];Micro Fusion Cell [39];6;6500;12;Weapon Long Range [58]
+;00000233.pro;Turbo Plasma Rifle;233;Plasma;35;65;Single;None;35;0;4;0;24;0;D Energy Cell [4];Micro Fusion Cell [39];6;6500;14;Weapon Long Range [58]
 #;00000234.pro;Spiked Knuckles;234;Normal;4;10;Punch;None;1;0;3;0;0;0;None [0];;1;250;1;
 ;00000235.pro;Power Fist;235;Normal;12;24;Punch;None;1;0;3;0;20;0;C Energy Cell [3];Small Energy Cell [38];1;2200;7;Weapon Penetrate [60]
 ;00000236.pro;Combat Knife;236;Normal;5;12;Swing;Thrust;1;1;3;4;0;0;None [0];;2;200;2;
@@ -85,14 +85,14 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000397.pro;YK42B Pulse Rifle;397;Electrical;54;78;Single;None;30;0;5;0;10;1;D Energy Cell [4];Micro Fusion Cell [39];6;9500;9;Weapon Penetrate [60]
 ;00000398.pro;.44 Magnum (Speed Load);398;Normal;12;18;Single;None;15;0;4;0;6;0;.44 cal [9];.44 Magnum JHP [31];5;1100;4;Weapon Fast Reload [65]
 ;00000399.pro;Super Cattle Prod;399;Electrical;20;32;Swing;Thrust;1;1;4;4;20;0;C Energy Cell [3];Small Energy Cell [38];4;1200;3;Weapon Accurate [59]
-;00000400.pro;Improved Flamer;400;Fire;60;90;Flame;None;7;0;6;0;5;1;Flamethrower Fuel [2];Flamethrower Fuel MKII [382];6;3000;19;Weapon Flameboy [67]
-;00000401.pro;Laser Rifle (Ext. Cap.);401;Laser;35;50;Single;None;45;20;5;6;20;2;D Energy Cell [4];Micro Fusion Cell [39];5;5000;12;Weapon Long Range [58]
+;00000400.pro;Improved Flamer;400;Fire;60;90;Flame;None;7;0;6;0;10;2;Flamethrower Fuel [2];Flamethrower Fuel MKII [382];6;3000;19;Weapon Flameboy [67]
+;00000401.pro;Laser Rifle (Ext. Cap.);401;Laser;35;50;Single;None;45;20;5;6;24;2;D Energy Cell [4];Micro Fusion Cell [39];5;5000;12;Weapon Long Range [58]
 ;00000402.pro;Magneto-Laser Pistol;402;Laser;16;26;Single;None;30;0;4;0;12;0;C Energy Cell [3];Small Energy Cell [38];3;1400;4;Weapon Penetrate [60]
 ;00000403.pro;FN FAL (Night Sight);403;Normal;18;26;Single;Burst;40;30;5;6;20;5;7.62mm [18];7.62mm FMJ [363];5;2500;10;Weapon Night Sight [66]
 ;00000404.pro;Desert Eagle (Exp. Mag.);404;Normal;10;18;Single;None;22;0;5;0;14;0;.44 cal [9];.44 Magnum JHP [31];4;950;4;
 ;00000405.pro;Assault Rifle (Exp. Mag.);405;Normal;10;16;Single;Burst;40;35;5;6;64;8;5mm [6];5mm JHP [35];5;2000;8;Weapon Accurate [59]
 ;00000406.pro;Plasma Pistol (Ext. Cap.);406;Plasma;20;35;Single;None;15;0;4;0;32;0;C Energy Cell [3];Small Energy Cell [38];4;2750;5;
-;00000407.pro;Mega Power Fist;407;Normal;20;40;Punch;None;1;0;3;0;20;0;C Energy Cell [3];Small Energy Cell [38];1;2200;7;Weapon Penetrate [60]
+;00000407.pro;Mega Power Fist;407;Normal;20;40;Punch;None;1;0;3;0;20;0;C Energy Cell [3];Small Energy Cell [38];1;3000;7;Weapon Penetrate [60]
 ;00000421.pro;Holy Hand Grenade;421;Explode;300;500;Throw;None;30;0;4;0;0;0;None [0];;2;1;2;Weapon Long Range [58]
 #;00000423.pro;Gold Nugget;423;Normal;3;6;Throw;Punch;10;1;4;3;0;0;None [0];;2;50;10;
 #;00000426.pro;Uranium Ore;426;Normal;3;6;Throw;Punch;10;1;4;3;0;0;None [0];;2;0;10;
@@ -117,14 +117,14 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000613.pro;Home-made grenade;613;Explode;20;45;Throw;None;15;0;4;0;0;0;None [0];;3;75;1;
 ;00000617.pro;Taser;617;Electrical;3;5;Single;None;8;0;4;0;2;0;C Energy Cell [3];Small Energy Cell [38];3;750;1;
 ;00000629.pro;9mm SMG;629;Normal;5;10;Single;Burst;20;12;5;6;32;8;9mm [12];9mm ball [121];4;700;3;
-;00000630.pro;Grenade Launcher;630;Explode;20;40;Single;None;25;0;5;0;1;0;40mm grenade [20];40mm HE Grenades [631];4;1000;5;
+;00000630.pro;Grenade Launcher;630;Explode;20;40;Single;None;30;0;5;0;1;0;40mm grenade [20];40mm HE Grenades [631];4;1000;5;
 ;00000634.pro;MGL;634;Explode;25;45;Single;None;40;0;4;0;6;0;40mm grenade [20];40mm HE Grenades [631];5;3000;14;
 ;00000637.pro;Boomerang;637;Normal;8;16;Throw;None;28;0;5;0;0;0;None [0];;4;150;1;
 ;00000638.pro;Spiked Sledge;638;Normal;12;18;Swing;Thrust;2;2;4;5;0;0;None [0];;6;1100;12;Weapon Knockback [61]
 ;00000639.pro;Piston Spear;639;Normal;12;26;Thrust;None;2;8;5;5;0;0;None [0];;5;1750;8;Weapon Penetrate [60]
-;00000640.pro;Deathclaw Gauntlet;640;Normal;18;30;Punch;None;1;0;4;0;0;0;None [0];;3;3500;5;Weapon Penetrate [60]
-;00000643.pro;Cowboy Repeater;643;Normal;16;24;Single;None;35;0;5;0;12;0;.44 cal [9];.44 Magnum FMJ [111];4;1300;6;Weapon Accurate [59]
-;00000644.pro;14mm SMG;644;Normal;18;28;Single;Burst;20;12;5;6;24;6;14mm [10];14mm AP [33];6;4500;3;
+;00000640.pro;Deathclaw Gauntlet;640;Normal;18;36;Punch;None;1;0;3;0;0;0;None [0];;3;3200;5;Weapon Penetrate [60]
+;00000643.pro;Cowboy Repeater;643;Normal;16;24;Single;None;30;0;5;0;12;0;.44 cal [9];.44 Magnum FMJ [111];4;1300;6;Weapon Accurate [59]
+;00000644.pro;14mm SMG;644;Normal;18;28;Single;Burst;22;14;5;6;24;6;14mm [10];14mm AP [33];6;4500;3;
 ;00000646.pro;Incinerator;646;Fire;30;60;Flame;None;3;0;6;0;10;1;Flamethrower Fuel [2];Flamethrower Fuel [32];5;1250;12;
 ;00000647.pro;Makeshift Laser Pistol;647;Laser;12;20;Single;None;15;0;5;0;5;0;C Energy Cell [3];Small Energy Cell [38];3;750;4;Weapon Accurate [59]
-;00000648.pro;Plasma Lance;648;Plasma;32;64;Thrust;None;3;8;5;5;12;0;D Energy Cell [4];Micro Fusion Cell [39];5;4000;12;Weapon Penetrate [60]
+;00000648.pro;Plasma Lance;648;Plasma;30;50;Thrust;None;3;8;4;5;24;0;D Energy Cell [4];Micro Fusion Cell [39];5;4000;12;Weapon Penetrate [60]

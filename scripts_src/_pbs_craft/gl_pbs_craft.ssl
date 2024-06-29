@@ -130,6 +130,8 @@ procedure do_down begin
 end
 
 procedure do_up begin
+   if (not button_pressed) then return;
+   
    button_pressed := false;
 
    if combat_is_initialized then begin

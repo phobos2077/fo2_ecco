@@ -4,7 +4,7 @@
 
 [Setup]
 #define MyAppName "Fallout 2: EcCo Gameplay Overhaul"
-#define MyAppVersion "0.9.6"
+#define MyAppVersion "0.9.7"
 #define MyAppPublisher "phobos2077"
 
 #define DocsDir "..\docs\"
@@ -17,7 +17,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-6
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-7
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no
@@ -67,8 +67,12 @@ en.CMain=EcCo Gameplay Overhaul mod
 en.CAICalledShots=Improved AI aimed attack selection algorithm
 en.CAICalledShotsMore=More frequent aimed attacks
 en.CCriticals=Critical hit table improvements
+en.CDropWeapon=Weapons drop to the ground sometimes on death & critical hits
+en.CAPCost=Action Point related changes
+en.CInvenCostPerAction=Every inventory action costs AP, but opening is free
 en.CCarryUnspentAP=Carry up to 2 unspent AP to next round
 en.CRemoveBonusRoF=Removal of Bonus Rate of Fire perk
+en.CReloadCost=Reloading costs 4 AP instead of 2
 en.CThrowingMeleeDmg=Apply Melee Damage stat to Throwing weapons
 en.CStimpakRadiation=Stimpaks slightly irradiate on use
 en.CStimpakSkillScaling=Stimpaks & Healing Powders heal amount scales with First Aid skill
@@ -93,8 +97,12 @@ ru.CMain=EcCo - переработка геймплея
 ru.CAICalledShots=Улучшенный алгоритм выбора прицельных атак ИИ
 ru.CAICalledShotsMore=Более частые прицельные атаки
 ru.CCriticals=Улучшения таблицы критических повреждений
+ru.CDropWeapon=Падение оружия на землю в бою иногда при смертях и критических попаданиях
+ru.CAPCost=Изменения системы Очков Действия
+ru.CInvenCostPerAction=Каждое действие в инвентаре стоит ОД, но его открытие - бесплатно
 ru.CCarryUnspentAP=Перенос части непотраченных ОД на следующих ход
 ru.CRemoveBonusRoF=Удаление перка "Бонус скорострельности"
+ru.CReloadCost=Перезарядка стоит 4 ОД вместо 2-х
 ru.CThrowingMeleeDmg=Применять урон ближнего боя к метательному оружию
 ru.CStimpakRadiation=Стимпаки слегка облучают при применении
 ru.CStimpakSkillScaling=Эффективность стимпаков и лечебных порошков зависит от навыка первой помощи
@@ -118,12 +126,15 @@ Name: "custom"; Description: "{cm:InstallCustom}"; Flags: iscustom
 
 [Components]
 Name: "main"; Description: "{cm:CMain}"; Types: full custom; Flags: fixed
-;Name: "option"; Description: "{cm:COptions}"; Types: full
 Name: "ai_called_shots"; Description: "{cm:CAICalledShots}"; Types: full
 Name: "ai_called_shots\more"; Description: "{cm:CAICalledShotsMore}"; Types: full
+Name: "apcost"; Description: "{cm:CAPCost}"; Types: full
+Name: "apcost\carry_unspent_ap"; Description: "{cm:CCarryUnspentAP}"; Types: full
+Name: "apcost\inven_cost_per_action"; Description: "{cm:CInvenCostPerAction}"; Types: full
+Name: "apcost\reload_cost"; Description: "{cm:CReloadCost}"; Types: full
+Name: "apcost\remove_bonus_rof"; Description: "{cm:CRemoveBonusRoF}"; Types: full
 Name: "criticals"; Description: "{cm:CCriticals}"; Types: full
-Name: "carry_unspent_ap"; Description: "{cm:CCarryUnspentAP}"; Types: full
-Name: "remove_bonus_rof"; Description: "{cm:CRemoveBonusRoF}"; Types: full
+Name: "drop_weapons"; Description: "{cm:CDropWeapon}"; Types: full
 Name: "throwing_melee_dmg"; Description: "{cm:CThrowingMeleeDmg}"; Types: full
 Name: "healing_skills_mod"; Description: "{cm:CHealingSkillsMod}"; Types: full
 Name: "stimpak_skill_scaling"; Description: "{cm:CStimpakSkillScaling}"; Types: full
@@ -175,8 +186,11 @@ Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer4"; String
 Filename: "{app}\mods\ecco\combat.ini"; Section: "AI"; Key: "called_tweaks"; String: "0"; Components: not ai_called_shots
 Filename: "{app}\mods\ecco\combat.ini"; Section: "AI"; Key: "called_freq_mult"; String: "1.0"; Components: not ai_called_shots\more
 Filename: "{app}\mods\ecco\combat.ini"; Section: "CRITICALS"; Key: "enable_tweaks"; String: "0"; Components: not criticals
-Filename: "{app}\mods\ecco\combat.ini"; Section: "CRITICALS"; Key: "drop_flag_fix"; String: "0"; Components: not criticals
-Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "carry_unspent_ap"; String: "0"; Components: not carry_unspent_ap
+Filename: "{app}\mods\ecco\combat.ini"; Section: "CRITICALS"; Key: "drop_flag_fix"; String: "0"; Components: not drop_weapons
+Filename: "{app}\mods\ecco\combat.ini"; Section: "CRITTER_LOOT"; Key: "weapon_drop_chance"; String: "0"; Components: not drop_weapons
+Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "carry_unspent_ap"; String: "0"; Components: not apcost\carry_unspent_ap
+Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "inventory_cost_per_action"; String: "0"; Components: not apcost\inven_cost_per_action
+Filename: "{app}\mods\ecco\combat.ini"; Section: "APCOST"; Key: "reload_cost"; String: "-1"; Components: not apcost\reload_cost
 Filename: "{app}\mods\ecco\combat.ini"; Section: "THROWING"; Key: "apply_melee_dmg"; String: "0"; Components: not throwing_melee_dmg
 Filename: "{app}\mods\ecco\combat.ini"; Section: "MONSTER_PARTS"; Key: "enable"; String: "0"; Components: not monster_parts
 Filename: "{app}\mods\ecco\misc.ini"; Section: "ITEM_TWEAKS"; Key: "stimpak_radiation_disable"; String: "1"; Components: not stimpak_radiation
@@ -187,7 +201,7 @@ Filename: "{app}\mods\ecco\misc.ini"; Section: "HEALING_REST"; Key: "heal_time_t
 Filename: "{app}\mods\ecco\misc.ini"; Section: "CAR_TRAVEL"; Key: "enable_tweaks"; String: "0"; Components: not car_travel_tweaks
 Filename: "{app}\mods\ecco\misc.ini"; Section: "STEAL"; Key: "enable_tweaks"; String: "0"; Components: not steal_tweaks
 
-Filename: "{app}\sfall\perks.ini"; Section: "5"; Key: "Level"; String: "15"; Components: not remove_bonus_rof
+Filename: "{app}\sfall\perks.ini"; Section: "5"; Key: "Level"; String: "15"; Components: not apcost\remove_bonus_rof
 
                                                                               
 [Run]

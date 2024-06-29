@@ -34,6 +34,7 @@ v0.9.7:
 - added option for additional car trunk capacity upgrade by using Repair skill
 - added more MFC to stores for car refueling, as well as more healing kits and certain types of ammo
 - added bonus damage for fire-based traps with Pyromaniac perk
+- slightly adjusted Hakunin dream timers for more consistent intervals
 - fixed incorrect car charging amount when using Cells on trunk
 - tweaked AI weapon selection logic to avoid some illogical choices
 
