@@ -37,6 +37,10 @@
 
 #include "../headers/ncr.h"
 
+// phobos2077:
+#undef EXP_FOUND_SPY
+#define EXP_FOUND_SPY          (2000) // lower from 4000
+
 
 /* Standard Script Procedures */
 procedure start;
@@ -468,9 +472,9 @@ end
 procedure Node019 begin
    if (map_var(MVAR_Vault_reward) > 0) then begin
       if (map_var(MVAR_Vault_reward) == 1) then begin
-         dude_caps_adjust(10000);
+         dude_caps_adjust(6000); // pbs: was 10000
       end else begin
-         dude_caps_adjust(15000); // pbs: was 20000
+         dude_caps_adjust(10000); // pbs: was 20000
       end
       set_map_var(MVAR_Vault_reward, 0);
       give_xp(500); // lowered 2000 => 500 by phobos2077 (you get 2000 reward already when visit V13)
@@ -551,7 +555,7 @@ procedure Node999b begin
    inc_general_rep(REP_BONUS_NCR_SPY_NO);
    inc_ncr_rep(REP_HERO_NCR_FOUND_SPY);
    give_xp(EXP_FOUND_SPY);
-   dude_caps_adjust(4000);
+   dude_caps_adjust(3000); // pbs: was 4000
    call Node999;
 end
 

@@ -210,11 +210,11 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_CURED_LEATHER_ARMOR, 1, 1, 10)
          check_restock_item(PID_223_FMJ, 2, 5, 100)
          check_restock_item(PID_7_62MM_AMMO, 3, 8, 100)
-         check_restock_item(PID_PBS_7_62MM_AP, 1, 2, 50) // pbs
          check_restock_item(PID_2MM_EC_AMMO, 1, 5, 25)
          check_restock_item(PID_HN_AP_NEEDLER_CARTRIDGE, 2, 5, 100)
 
-         check_restock_item(PID_PBS_50_AMMO, 2, 5, 50) // pbs 
+         check_restock_item(PID_PBS_7_62MM_AP, 1, 3, 50) // pbs
+         check_restock_item(PID_PBS_50_AMMO, 1, 4, 50) // pbs 
          check_restock_item(PID_FRAG_GRENADE, 2, 3, 50) // pbs
          check_restock_item(PID_PBS_40MM_HE, 2, 3, 50) // pbs
 
