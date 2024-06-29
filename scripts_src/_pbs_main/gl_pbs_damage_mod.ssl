@@ -39,7 +39,7 @@ procedure check_damage_formula;
 procedure get_weapon_damage_type_override(variable weapon);
 procedure calc_damage(variable weapon, variable rounds, variable targetDT, variable targetDR, variable rangedBonus,
    variable criticalMult, variable difficulty, variable ctdSource, variable flags, variable dmgType, variable weaponPerk, variable attackType);
-procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypass,
+export procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypass,
    variable weaponPerk, variable attackType);
 procedure get_ammo_value(variable weapon, variable param);
 procedure map_enter_p_proc;
@@ -73,7 +73,8 @@ variable
    ini_dr_adjust_by_attack_mode,
    ini_debug,
    living_anatomy_bonus,
-   pyromaniac_bonus;
+   pyromaniac_bonus,
+   last_dtdr;
 
 procedure start begin
    if game_loaded then begin
@@ -449,7 +450,12 @@ procedure calc_dtdr_vanilla_plus(variable targetDT, variable targetDR, variable 
    // No change to DR calculation.
    targetDR += ammoDR;
 
-   return [math_max(targetDT, 0), math_max(math_min(targetDR, 100), 0)];
+   if (not last_dtdr) then
+      last_dtdr := create_array_list(2);
+
+   last_dtdr[0] := math_max(targetDT, 0);
+   last_dtdr[1] := math_max(math_min(targetDR, 100), 0);
+   return last_dtdr;
 end
 
 procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypassArmor,

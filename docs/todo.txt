@@ -26,6 +26,7 @@ Considering:
 
 
 IDEAS:
+- napalm/incendiary throwing grenade? (similar to 40mm IC but for throwing, higher tier alternative to Molotov)
 - leather hides from dead brahmin?
 - weapon destruction chance/% to depend on attack type/damage (bursts vs single, explosion vs punch, etc)
 - Demolition Expert to buff all "explosion" attacks, not just traps?

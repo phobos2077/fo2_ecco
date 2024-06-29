@@ -20,11 +20,16 @@
 
 #define SCRIPT_REALNAME    "pbs_ai"
 
+import procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypass,
+   variable weaponPerk, variable attackType);
+
 variable begin
    ini_called_int_req;
    ini_called_freq_mult;
    turn_critter;
    modified_hit_chance;
+
+   ini_bestweapon_ref_armor_pid;
 end
 
 /**
@@ -191,6 +196,7 @@ procedure combatturn_handler begin
    end
 end
 
+#define ref_armor_dtdr(offset, dmgType)    (get_proto_data(ini_bestweapon_ref_armor_pid, offset + dmgType * 4) if ini_bestweapon_ref_armor_pid > 0 else 0)
 
 procedure weapon_rank(variable critter, variable weapon, variable target) begin
    // TODO: vanilla uses combat_safety_invalidate_weapon to account for potential friendly fire, this code does not
@@ -203,10 +209,11 @@ procedure weapon_rank(variable critter, variable weapon, variable target) begin
       ammoDmgMult := (1.0 * get_proto_data(ammoPid, PROTO_AM_DMG_MULT) / get_proto_data(ammoPid, PROTO_AM_DMG_DIV) if (ammoPid > 0) else 1),
       dmgType := get_proto_data(pid, PROTO_WP_DMG_TYPE),
       perk := get_proto_data(pid, PROTO_WP_PERK),
-      targetDT := get_critter_stat(target, STAT_dmg_thresh + dmgType) if target != 0 else 0,
-      targetDR := get_critter_stat(target, STAT_dmg_resist + dmgType) if target != 0 else 0,
-      effectiveDT := (targetDT * 20 / 100) if perk == PERK_weapon_penetrate else targetDT,
-      expectedDmgPerAttack := (ammoDmgMult * avgDmg * avgBurstSize - effectiveDT) * (100 - targetDR) / 100,
+      targetDT := get_critter_stat(target, STAT_dmg_thresh + dmgType) if target != 0 else ref_armor_dtdr(PROTO_AR_DT_NORMAL, dmgType),
+      targetDR := get_critter_stat(target, STAT_dmg_resist + dmgType) if target != 0 else ref_armor_dtdr(PROTO_AR_DR_NORMAL, dmgType),
+      ammoDR := get_proto_data(ammoPid, PROTO_AM_DR_MOD) if (ammoPid > 0) else 0,
+      finalDTDR := calc_effective_dtdr(targetDT, targetDR, ammoDR, critter, false, perk, ATKTYPE_LWEP1),
+      expectedDmgPerAttack := avgBurstSize * math_max((ammoDmgMult * avgDmg - finalDTDR[0]) * (100 - finalDTDR[1]) / 100, 0),
       attackAP := get_proto_data(pid, PROTO_WP_APCOST_2) if (weapon_attack_mode2(pid) == ATTACK_MODE_BURST) else get_proto_data(pid, PROTO_WP_APCOST_1),
       expectedDmgPerAP := expectedDmgPerAttack / attackAP,
       range := get_proto_data(pid, PROTO_WP_RANGE_1),
@@ -223,7 +230,8 @@ procedure weapon_rank(variable critter, variable weapon, variable target) begin
    end else 
       rangeFactor := range;
 
-   // TODO: get calculated damage from gl_pbs_damage_mod via exported proc?
+   //debug_log_fmt("%s DR dmg mult: %.2f, dr mod: %d | target DT %d, DR %d", proto_data(ammoPid, it_name), ammoDmgMult, ammoDR, targetDT, targetDR);
+   //debug_log_fmt("%s effective DT/DR %s, dmgPerAttack: %.2f", obj_name(weapon), debug_array_str(finalDTDR), expectedDmgPerAttack);
    return round(dmgFactor + rangeFactor);
 end
 
@@ -275,7 +283,7 @@ procedure bestweapon_handler begin
       weapon1rank := weapon_rank(critter, weapon1, target),
       weapon2rank := weapon_rank(critter, weapon2, target);
    
-   debug_log_fmt("%s's bestweapon: %s (%d) vs %s (%d)", obj_name_safe(critter), obj_name_safe(weapon1), weapon1rank, obj_name_safe(weapon2), weapon2rank);
+   debug_log_fmt("%s's bestweapon against %s: %s (%d) vs %s (%d)", obj_name_safe(critter), obj_name_safe(target), obj_name_safe(weapon1), weapon1rank, obj_name_safe(weapon2), weapon2rank);
    set_sfall_return(weapon1 if weapon1rank > weapon2rank else weapon2);
 end
 
@@ -306,5 +314,8 @@ procedure start begin
       register_hook_proc(HOOK_COMBATTURN, combatturn_handler);
    end
 
-   register_hook_proc(HOOK_BESTWEAPON, bestweapon_handler);
+   if (get_ini_value_def(INI_FILE, INI_SECTION, "bestweapon_tweaks", 0)) then begin
+      load_num_from_ini_unclamped(bestweapon_ref_armor_pid, 0);
+      register_hook_proc(HOOK_BESTWEAPON, bestweapon_handler);
+   end
 end
