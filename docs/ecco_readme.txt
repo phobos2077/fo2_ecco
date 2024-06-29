@@ -13,7 +13,6 @@
 - Gain a little EXP for crafting a new item for the first time.
 - Craftable food that heals a little, reduces negative effects and increases some stats.
 - Crafting menu is accessible by clicking a new button on main panel or with a hotkey: Ctrl+C.
-- New book for Doctor skill (required to craft drugs).
 
 
 > TRAPS:
@@ -33,9 +32,10 @@
 
 
 > BARTER & ECONOMY:
-- Selling prices are affected by skill and generally are much lower until you get Barter skill high enough. This way, if you want to get rich by selling weapons, invest into Barter, or you'll need to sell many times more than before.
-- Prices are ~40% lower than base game. This makes money more valuable and quest-related money transactions more meaningful.
+- Value of items sold to NPC's is affected by skill and generally lower until you get Barter skill high enough.
+- Buy/sell ratio differs between item categories. For example, NPC's will offer less for weapons and armor (vs asking price), to balance against the abundance/high price of these loot items.
 - Buying prices have a steeper curve to increase the importance of Barter skill (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
+- All prices are ~40% lower than base game. This makes money more valuable and quest-related money transactions more meaningful.
 - Prices of some end-game transactions were reduced to accomodate deflated economy.
 - Some misc items prices were adjusted, so you can still make profit selling them, especially in early game (gecko pelts and scorpion tails in Klamath, etc.).
 - Some items have their prices differ between towns to simulate supply/demand differences.
@@ -85,6 +85,7 @@
 - Using kits & bags now has clear benefit: this ignores daily usage limits.
 - To have more reason for using these skills, all passive healing was considerably nerfed (now it matches in-game Healing Rate description from vanilla).
 - Stimpak/Healing Powder HP gain amount scales with your First Aid skill.
+- New book for Doctor skill.
 
 
 > AMMO:
@@ -92,8 +93,8 @@
 - AP/FMJ generally do less damage then JHP against unarmored, but is effective against armored targets (thanks to new damage script).
 - Reduced pack sizes of certain ammo calibers to further balance the total amount of that ammo in game.
 - Weight and cost was rebalanced as well.
-- To further reduce "ammo swimming", all dying critters are stripped from some amount of ammo.
-- Ammo now occupies space, so you cannot store unlimited ammo in car trunk (increased trunk capacity by 20% to balance that).
+- To further reduce "ammo swimming", all dying critters are stripped from large portion of their ammo.
+- Ammo now occupies space, so you cannot store unlimited ammo in car trunk (trunk capacity is increased to balance).
 - New "calibers" and ammo types: .50 BMG (for AMR) and 40mm Grenade.
 - New ammo types for existing calibers: 12ga Slugs, "special" 12ga ammo, .223AP, 7.62mm AP, 14mm JHP.
 
@@ -116,7 +117,8 @@
 > BIG GUNS:
 - Two new 40mm Grenade weapons and a new flamethrower added to make Big Guns skill more useful in early-to-mid game.
 - Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
-- M60 is a true machine gun: more powerful with 100 rounds ammo capacity.
+- M60 is a true machine gun: more powerful with 100 rounds ammo capacity, while LSW is a versatile LMG.
+- Some ammo types can be crafted and Flamethrower can be upgraded via Fix-Boy.
 - ST now adds to base skill.
 
 
@@ -183,6 +185,7 @@
 
 > MISC:
 - Slightly nerfed car travel speed and fuel consumption upgrades to buff Outdoorsman skill and increase money sink.
+- Car trunk base capacity is increased by 20% with additional 20% as new upgrade (requires use of Repair skill)
 - Small adjustments to base value formulas of some skills for better balance.
 - Buffed some underused perks: Demolition Expert, Pyromaniac, Survivalist, MrFixit, Medic, Ghost, Ranger, Harmless, Salesman.
 - Some mine traps in the game became more dangerous.
@@ -204,10 +207,10 @@ DerivedStats=sfall\stats.ini
 SkillsFile=sfall\skills.ini
 PerksFile=sfall\perks.ini
 BooksFile=sfall\books.ini
-MovieTimer_artimer1=120
-MovieTimer_artimer2=235
-MovieTimer_artimer3=350
-MovieTimer_artimer4=470
+MovieTimer_artimer1=90
+MovieTimer_artimer2=210
+MovieTimer_artimer3=330
+MovieTimer_artimer4=450
 
 4. Follow the rest of the installation steps from github.
 

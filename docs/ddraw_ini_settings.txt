@@ -11,7 +11,8 @@ SkillsFile=sfall\skills.ini
 PerksFile=sfall\perks.ini
 BooksFile=sfall\books.ini
 
-MovieTimer_artimer1=120
-MovieTimer_artimer2=235
-MovieTimer_artimer3=350
-MovieTimer_artimer4=470
+MovieTimer_artimer1=90
+MovieTimer_artimer2=210
+MovieTimer_artimer3=330
+MovieTimer_artimer4=450
+

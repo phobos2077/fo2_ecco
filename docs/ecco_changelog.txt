@@ -2,26 +2,27 @@
 
 v0.9.7:
 > Crafting:
-- added recipes for crafting .50 cal, 40mm HE ammo
+- added recipes for crafting .50 cal, 40mm HE ammo, Fuel MK2
 - adjusted recipes involving Doctor skill to always use sum with another skill
 - fixed inconsistent craft button visibility (hiding or visible on top of other windows)
 - fixed displayed exp point gain amount for crafting with Swift Learner perk
 
 > Balance:
-- flamethrower fuel weight & price halfed, but Flamer consumption increased to 2 per burst
-- replaced barter price formula with vanilla-inspired one, for simpler configuration
+- halfed flamethrower fuel weight & price, but Flamer consumption increased to 2 per burst
+- replaced barter price formula with vanilla-inspired one, for simplicity
 - added item price multipliers per item category, when selling to NPC's (higher buy/sell ratio for weapons & armor, lower for ammo & misc)
 - added value scaling of limited-use items based on uses left
 - added probability for new monster parts not to drop
-- recalibrated barter formula parameters for better balance across item categories and skill levels
+- tweaked barter formula parameters for better balance across item categories and skill levels
 - tweaked laser vs plasma rifle stats for more clear distinction (closer to vanilla)
 - tweaked some late game melee weapon stats for balance
 - tweaked late game armor prices for balance
+- tweaked Marcus's armor stats for consistency with other armor types
 - nerfed NPC weapon destruction percentage and added chance to drop Junk instead
 - nerfed Bear Trap durability
 
 > Encounters:
-- reverted undocumented change of enemy start points from original RP, resulting in point-blank encounters
+- removed undocumented change of enemy start points from original RP, resulting in point-blank encounters
 - tweaked and expanded vanilla start points to take advantage of certain map features
 - tweaked Redding Bounty Hunt quest for more variety and better balance
 - tweaked floaters and centaurs to have more clear distinction in stats
@@ -35,6 +36,9 @@ v0.9.7:
 - added bonus damage for fire-based traps with Pyromaniac perk
 - fixed incorrect car charging amount when using Cells on trunk
 - tweaked AI weapon selection logic to avoid some illogical choices
+
+> Installer:
+- added more options for disabling some mod features
 
 
 v0.9.6:

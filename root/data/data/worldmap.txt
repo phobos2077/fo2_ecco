@@ -902,10 +902,10 @@ position=double_line, spacing:2
 
 [Encounter: FRAN_Elronologists]
 type_00=ratio:25%, pid:16777494, Item:235(wielded), Item:(0-50)41, Script:766                             ; Elronologist Male w/ Power Fist
-type_01=ratio:25%, pid:16777494, Item:352(wielded), Item:(0-50)41, Script:766, If(Player(Level) < 16)     ; Elronologist Male w/ H&K G11
+type_01=ratio:25%, pid:16777494, Item:352(wielded), Item:(0-50)41, Script:766, If(Player(Level) < 19)     ; Elronologist Male w/ H&K G11
 type_02=ratio:25%, pid:16777495, Item:(1-3)26(wielded), Item:(0-50)41, Script:766                         ; Elronologist Female w/ Plasma Grenade
 type_03=ratio:25%, pid:16777495, Item:352(wielded), Item:(0-50)41, Script:766                             ; Elronologist Female w/ H&K G11
-type_04=ratio:25%, pid:16777494, Item:644(wielded), Item:(0-50)41, Script:766, If(Player(Level) > 15)     ; Elronologist Male w/ 14mm SMG
+type_04=ratio:25%, pid:16777494, Item:644(wielded), Item:(0-50)41, Script:766, If(Player(Level) > 18)     ; Elronologist Male w/ 14mm SMG
 position=huddle, spacing:3
 
 [Encounter: FRAN_Press_Gang]

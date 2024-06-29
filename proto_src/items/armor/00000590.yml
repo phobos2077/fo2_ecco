@@ -1,0 +1,38 @@
+pid: 590
+messageId: 59000
+name: Mutant Armor
+description: Wearable Mutant Armor (FAKE)
+fid: 173
+lightDistance: 0
+lightIntensity: 0
+flags: '0xa0000008'
+extendedFlags: '0xa000'
+sid: -1
+type: ITEM_TYPE_ARMOR
+material: 1
+size: 1
+weight: 70
+cost: 0
+inventoryFid: -1
+soundId: '0'
+armorData:
+  armorClass: 0
+  damageResistance:
+    normal: 10
+    laser: 0
+    fire: 30
+    plasma: 30
+    electrical: 50
+    emp: 0
+    explosion: 15
+  damageThreshold:
+    normal: 1
+    laser: 0
+    fire: 0
+    plasma: 0
+    electrical: 2
+    emp: 0
+    explosion: 2
+  perk: NONE
+  maleFid: 16777335
+  femaleFid: 16777335

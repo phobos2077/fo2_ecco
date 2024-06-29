@@ -14,6 +14,7 @@ for "future":
 
 
 Considering:
+- craft Combat Armor mk2 (what component? fuel is overused)
 - hard to choose specific craft component when several are available: don't auto-search trunk? or provide UI to select component?
 - installer switch to disable barter formula
 - random encounter: more interesting enemy formations?
@@ -22,7 +23,6 @@ Considering:
 - Hunting Rifle -> Scoped for Slags rewards
 - Marcus Scoped Rifle  to something better as reward
 - port "grenades anywhere" script from FO2Tweaks?
-- port auto-cursor from FO2Tweaks (with modifications)
 
 
 IDEAS:
