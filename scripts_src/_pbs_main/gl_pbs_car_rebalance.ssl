@@ -22,6 +22,7 @@ variable
    ini_speed_mult,
    ini_fuel_consumption_base,
    ini_fuel_cell_regulator_percent,
+   ini_car_blower_consumption_percent,
    step_remainder;
 
 /*
@@ -56,9 +57,10 @@ procedure cartravel_hook begin
    step_remainder -= floor(step_remainder);
 
    fuel := ini_fuel_consumption_base;
-   if (global_var(GVAR_NEW_RENO_SUPER_CAR)) then fuel -= fuel * 80 / 100;
+   if (global_var(GVAR_CAR_BLOWER)) then fuel += fuel * ini_car_blower_consumption_percent / 100;
+   if (global_var(GVAR_NEW_RENO_SUPER_CAR)) then fuel += fuel * (-80) / 100;
    //if (global_var(GVAR_NEW_RENO_CAR_UPGRADE)) then fuel -= fuel * 10 / 100;
-   if (global_var(GVAR_CAR_UPGRADE_FUEL_CELL_REGULATOR)) then fuel -= fuel * ini_fuel_cell_regulator_percent / 100;
+   if (global_var(GVAR_CAR_UPGRADE_FUEL_CELL_REGULATOR)) then fuel += fuel * ini_fuel_cell_regulator_percent / 100;
 
    //debug_msg(string_format("car orig: %d, %d, calc: %d, %d", origSteps, origFuel, steps, fuel));
    set_sfall_return(steps);
@@ -79,7 +81,8 @@ procedure start begin
 
       float_from_ini_file_clamped(speed_mult, INI_FILE, INI_SECTION, 0.25, 3);
       int_from_ini_file_clamped(fuel_consumption_base, INI_FILE, INI_SECTION, 0, 1000);
-      int_from_ini_file_clamped(fuel_cell_regulator_percent, INI_FILE, INI_SECTION, 0, 100);
+      int_from_ini_file_clamped(fuel_cell_regulator_percent, INI_FILE, INI_SECTION, -1000, 1000);
+      int_from_ini_file_clamped(car_blower_consumption_percent, INI_FILE, INI_SECTION, -1000, 1000);
 
       register_hook_proc(HOOK_CARTRAVEL, cartravel_hook);
       //register_hook_proc(HOOK_ENCOUNTER, enc_hook);
