@@ -1,7 +1,9 @@
 /*
    Map loot mod:
 
-   - Removes a portion of ammo and drugs from containers/ground on first map enter.
+   - Deterministically reduces certain amount of ammo in containers/ground on first map enter:
+      - All weapons are unloaded.
+      - Ammo items and ammo stacks in containers are reduced based on custom "pack size for pre-spawned ammo" from ini.
 */
 
 #define SCRIPT_REALNAME     "pbs_map_loot"
@@ -12,6 +14,7 @@
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.inven.h"
 #include "../sfall/lib.math.h"
+#include "../sfall/lib.misc.h"
 
 #include "../_pbs_headers/ecco_ids.h"
 #include "../_pbs_headers/ecco_ini.h"
@@ -21,12 +24,60 @@
 
 variable begin
    ini_enable_tweaks;
-   ini_reduce_weapons_percent;
-   ini_reduce_weapons_pids;
-   ini_reduce_ammo_percent;
-   ini_reduce_drugs_percent;
-   ini_reduce_drugs_pids;
-   //processed_containers_map;
+   ini_unload_weapons;
+   ini_map_loot_ammo_qty;
+end
+
+procedure unload_weapon(variable item) begin
+   if (not ini_unload_weapons) then return "";
+
+   variable count := get_weapon_ammo_count(item);
+   if (count <= 0) then return "";
+
+   set_weapon_ammo_count(item, 0);
+   return string_format("%s mag ammo (%d -> 0)", obj_name(item), count);
+end
+
+procedure calc_reduced_ammo_count(variable pid, variable packSize, variable count) begin
+   variable
+      ammoQtyPerPack := ini_map_loot_ammo_qty[pid];
+
+   if (ammoQtyPerPack <= 0) then return count;
+   return count * math_min(ammoQtyPerPack, packSize) / packSize;
+end
+
+procedure reduce_ammo_in_stack_by_pack_qty(variable invenObj, variable item) begin
+   variable
+      pid := obj_pid(item),
+      packSize := get_proto_data(pid, PROTO_AM_PACK_SIZE),
+      count := (obj_is_carrying_obj(invenObj, item) - 1) * packSize + get_weapon_ammo_count(item),
+      newCount := calc_reduced_ammo_count(pid, packSize, count);
+
+   if (newCount >= count) then return "";
+
+   call reduce_item_count(invenObj, item, ceil(1.0 * newCount / packSize));
+   // if number of items reduced, object reference will be different
+   item := obj_carrying_pid_obj(invenObj, pid);
+   if (item and newCount % packSize > 0) then
+      set_weapon_ammo_count(item, newCount % packSize);
+
+   return obj_name(item)+" ("+count+" -> "+newCount+")";
+end
+
+procedure reduce_ammo_on_ground_by_pack_qty(variable item) begin
+   variable
+      pid := obj_pid(item),
+      packSize := get_proto_data(pid, PROTO_AM_PACK_SIZE),
+      count := get_weapon_ammo_count(item),
+      newCount := calc_reduced_ammo_count(pid, packSize, count);
+
+   if (newCount >= count) then return "";
+   if (newCount > 0) then
+      set_weapon_ammo_count(item, newCount);
+   else
+      destroy_object(item);
+
+   return string_format("%s (%d -> %d)", obj_name(item), count, newCount);
 end
 
 procedure reduce_container_loot(variable container) begin
@@ -40,11 +91,9 @@ procedure reduce_container_loot(variable container) begin
 
       switch (subType) begin
          case item_type_weapon:
-            stats := reduce_item_in_stack(container, item, ini_reduce_weapons_pids, ini_reduce_weapons_percent);
+            stats := unload_weapon(item);
          case item_type_ammo:
-            stats := reduce_item_in_stack(container, item, 0, ini_reduce_ammo_percent);
-         case item_type_drug:
-            stats := reduce_item_in_stack(container, item, ini_reduce_drugs_pids, ini_reduce_drugs_percent);
+            stats := reduce_ammo_in_stack_by_pack_qty(container, item);
          case item_type_container:
             stats := reduce_container_loot(item);
          default:
@@ -66,11 +115,9 @@ procedure reduce_ground_item_loot(variable item) begin
    //debug_log_fmt("processing %s (%d)...", obj_name(item), subType);
    switch (subType) begin
       case item_type_weapon:
-         return reduce_item_on_ground(item, ini_reduce_weapons_pids, ini_reduce_weapons_percent);
+         return unload_weapon(item);
       case item_type_ammo:
-         return reduce_item_on_ground(item, 0, ini_reduce_ammo_percent);
-      case item_type_drug:
-         return reduce_item_on_ground(item, ini_reduce_drugs_pids, ini_reduce_drugs_percent);
+         return reduce_ammo_on_ground_by_pack_qty(item);
       case item_type_container: begin
          return reduce_container_loot(item);
       end
@@ -90,38 +137,6 @@ procedure reduce_loot_on_map begin
    end
 end
 
-/*
-procedure get_processed_containers_map begin
-   if (not processed_containers_map) then
-      processed_containers_map := load_create_array_map(ARR_LOOTED_CONTAINERS);
-   return processed_containers_map;
-end
-
-#define processed_map_key(obj)         ((cur_map_index * 0x100000) bwor get_object_data(obj, OBJ_DATA_ID))
-
-procedure useanimobj_hook begin
-   variable user := get_sfall_arg, obj := get_sfall_arg;
-   if (user != dude_obj or obj_type(obj) != OBJ_TYPE_ITEM or obj_item_subtype(obj) != item_type_container) then return;
-
-   variable stats,
-      processed := get_processed_containers_map,
-      key := processed_map_key(obj);
-
-   display_msg_fmt("useobj %s key %x processed: %d", obj_name(obj), key, processed[key]);
-
-   if (processed[key]) then return;
-
-   stats := reduce_container_loot(obj);
-   if (stats != "") then
-      debug_log_fmt("Reduce loot [%d-%d] %s", elevation(obj), tile_num(obj), stats);
-
-   processed[key] := 1;
-end
-
-procedure useskillon_hook begin
-   display_msg("useskill "+obj_name(get_sfall_arg_at(1)));
-end
-*/
 
 #define INI_FILE        INI_MISC
 #define INI_SECTION     "MAP_LOOT"
@@ -131,11 +146,15 @@ procedure start begin
       load_bool_from_ini(enable_tweaks, false);
       if (not ini_enable_tweaks) then return;
 
-      load_num_from_ini(reduce_ammo_percent, 0, 0, 100);
-      load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
-      load_num_from_ini(reduce_weapons_percent, 0, 0, 100);
-      load_int_list_from_ini(reduce_drugs_pids);
-      load_int_list_from_ini(reduce_weapons_pids);
+      // load_num_from_ini(reduce_ammo_percent, 0, 0, 100);
+      // load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
+      // load_num_from_ini(reduce_weapons_percent, 0, 0, 100);
+      // load_int_list_from_ini(reduce_drugs_pids);
+      // load_int_list_from_ini(reduce_weapons_pids);
+
+      load_bool_from_ini(unload_weapons, false);
+
+      ini_map_loot_ammo_qty := get_ini_section_int_to_int(INI_FILE, "MAP_LOOT_AMMO_QTY", true);
 
       //register_hook_proc(HOOK_USEANIMOBJ, useanimobj_hook);
       //register_hook_proc(HOOK_USESKILLON, useskillon_hook);
@@ -149,7 +168,7 @@ end
 
 procedure map_enter_p_proc begin
    //debug_log("cur_town = "+cur_town+", is_loading = "+is_loading_game+", map_first_run = "+map_first_run);
-   if (not ini_enable_tweaks or cur_town == -1 or is_loading_game or not map_first_run) then return;
+   if (not ini_enable_tweaks or is_loading_game or not map_first_run) then return;
 
    call reduce_loot_on_map;
 end

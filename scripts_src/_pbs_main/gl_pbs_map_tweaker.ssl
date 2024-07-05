@@ -161,10 +161,10 @@ procedure command_script(variable tileNum, variable elev, variable tileObj, vari
       debug_err_cmd("s: invalid sid", tileNum);
       return;
    end
-   if (tileObj) then begin
+   if (radius < 0) then begin
       // Set/remove script on object.
-      if (radius >= 0) then begin
-         debug_err_cmd("s: radius set but tile has object", tileNum);
+      if (not tileObj) then begin
+         debug_err_cmd("s: tile has no object and spatial radius is not set", tileNum);
          return;
       end
       if (sid > 0) then
@@ -174,10 +174,7 @@ procedure command_script(variable tileNum, variable elev, variable tileObj, vari
 
       debug_log_cmd("set " + obj_name(tileObj) + " script to " + sid, tileNum);
    end else begin
-      if (radius < 0) then begin
-         debug_err_cmd("s: no object to change script", tileNum);
-         return;
-      end
+      // Create spatial script.
       if (sid > 0) then begin
          create_spatial(sid, tileNum, elev, radius);
          debug_log_cmd("created spatial script " + sid, tileNum);

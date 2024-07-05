@@ -56,7 +56,6 @@ procedure reduce_ammo_in_weapon(variable item, variable percentRange) begin
    if (percentRange[1] <= 0) then return "";
 
    variable
-      pid := obj_pid(item),
       count := get_weapon_ammo_count(item),
       newCount;
 
@@ -76,7 +75,6 @@ procedure reduce_ammo_on_ground(variable item, variable percentRange) begin
    if (percentRange[1] <= 0) then return "";
 
    variable
-      pid := obj_pid(item),
       count := get_weapon_ammo_count(item),
       newCount := calc_reduced_ammo_range(count, percentRange);
 
