@@ -32,5 +32,5 @@ weaponData:
   rounds: 0
   caliber: 3
   ammoTypePid: 38
-  ammoCapacity: 16
+  ammoCapacity: 10
   soundCode: F

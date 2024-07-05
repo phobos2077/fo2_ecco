@@ -33,5 +33,5 @@ weaponData:
   rounds: 0
   caliber: 3
   ammoTypePid: 38
-  ammoCapacity: 12
+  ammoCapacity: 10
   soundCode: C

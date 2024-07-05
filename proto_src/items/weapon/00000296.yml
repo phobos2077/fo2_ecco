@@ -20,7 +20,7 @@ inventoryFid: 117440702
 soundId: '0'
 weaponData:
   animationCode: 6
-  minDamage: 9
+  minDamage: 8
   maxDamage: 14
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 30
@@ -34,5 +34,5 @@ weaponData:
   rounds: 8
   caliber: 8
   ammoTypePid: 30
-  ammoCapacity: 24
-  soundCode: H
+  ammoCapacity: 32
+  soundCode: D
