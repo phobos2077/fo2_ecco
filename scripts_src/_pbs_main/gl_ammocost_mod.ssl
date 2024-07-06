@@ -15,6 +15,12 @@ variable
 
 procedure start;
 
+export procedure ammocost_mod_get_cost(variable weaponPid);
+
+procedure ammocost_mod_get_cost(variable weaponPid) begin
+   return ini_ammocost[weaponPid] or 1;
+end
+
 /*
    HOOK_AMMOCOST
    Runs when calculating ammo cost for a weapon. Doesn't affect damage, only how much ammo is spent. By default, weapons can make attacks when at least 1 ammo is left, regardless of ammo cost calculations. To add proper check for ammo before attacking and proper calculation of the number of burst rounds (hook type 1 and 2 in arg3), set CheckWeaponAmmoCost=1 in Misc section of ddraw.ini.

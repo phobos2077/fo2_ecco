@@ -1,19 +1,20 @@
 for 1.0.0:
 - finish Big Guns run
 - add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
-
-for 0.9.7:
-- playtest
+- add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
+- review usages of WEAPON_ACCURATE perk
+- recheck economy of all craft involving ammo after pack size changes
 
 
 for "future":
+- investigate "damage_mod: Expected attacker and weapon differs", seems to be rare
 - custom craft schematic art
 - cavern encounters need rebalance!!
-- take a look at 4/5 AP cost for pistols
-- add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 
 
 Considering:
+- 4 AP cost for 14mm Pistol?
+- add special sounds for Bozar AMR (& M2?)
 - craft Combat Armor mk2 (what component? fuel is overused)
 - hard to choose specific craft component when several are available: don't auto-search trunk? or provide UI to select component?
 - installer switch to disable barter formula
@@ -27,10 +28,10 @@ Considering:
 
 IDEAS:
 - some way to lure more enemy types into traps than just Geckos and Rats (Scorpions, Deathclaws, Humans...)
-- napalm/incendiary throwing grenade? (similar to 40mm IC but for throwing, higher tier alternative to Molotov)
 - leather hides from dead brahmin?
 - weapon destruction chance/% to depend on attack type/damage (bursts vs single, explosion vs punch, etc)
 - Demolition Expert to buff all "explosion" attacks, not just traps?
+- napalm/incendiary throwing grenade? (similar to 40mm IC but for throwing, higher tier alternative to Molotov)
 - more powerful crafted grenade (3 home-made grenades bundled together?)
 - NEW PERK: +1 to carry over AP
 - NEW PERK: subsequent shots to the same target cost less AP (except bursts)

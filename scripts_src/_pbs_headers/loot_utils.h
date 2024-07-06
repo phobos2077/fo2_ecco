@@ -17,23 +17,38 @@ procedure reduce_item_count(variable invenObj, variable item, variable newCount)
    destroy_object(item);
 end
 
-#define calc_reduced_ammo_range(count, percentRange)        math_round_chance(count * (100 - random(percentRange[0], percentRange[1])) / 100.0)
+procedure calc_reduced_ammo_range(variable count, variable percentRange, variable emptyChance := 0) begin
+   if (emptyChance > 0 and random(0, 99) < emptyChance) then
+      return 0;
+
+   /* variable
+      rnd := random(percentRange[0], percentRange[1]),
+      clamped := math_max(100 - rnd, 0),
+      multed := count * clamped / 100.0,
+      rounded := math_round_chance(multed),
+      allInOne :=   */
+
+   //debug_log_fmt("calc range from %d: rnd = %d, clamped = %d, multed = %.2f, rounded = %d, allInOne = %d", count, rnd, clamped, multed, rounded, allInOne);
+   return math_round_chance(count * math_max(100 - random(percentRange[0], percentRange[1]), 0) / 100.0);
+end
 
 /**
  * Reduces number of individual bullets in an ammo stack by a percentage range.
  * @arg {ObjectPtr} invenObj - Container or critter
  * @arg {ObjectPtr} item - item stack object
  * @arg {list} percentRange - [min, max] range of % to remove
+ * @arg {int} emptyChance - probabiltiy to remove all ammo
  * @ret {string}
  */
-procedure reduce_ammo_in_stack(variable invenObj, variable item, variable percentRange) begin
+procedure reduce_ammo_in_stack(variable invenObj, variable item, variable percentRange, variable emptyChance := 0) begin
    if (percentRange[1] <= 0) then return "";
 
    variable
       pid := obj_pid(item),
       packSize := get_proto_data(pid, PROTO_AM_PACK_SIZE),
       count := (obj_is_carrying_obj(invenObj, item) - 1) * packSize + get_weapon_ammo_count(item),
-      newCount := calc_reduced_ammo_range(count, percentRange);
+      newCount := calc_reduced_ammo_range(count, percentRange, emptyChance),
+      itemName := obj_name(item);
 
    //display_msg("count: "+count+", pack: "+packSize+", new: "+newCount+" ("+ceil(1.0*newCount / packSize)+")");
    call reduce_item_count(invenObj, item, ceil(1.0 * newCount / packSize));
@@ -42,7 +57,7 @@ procedure reduce_ammo_in_stack(variable invenObj, variable item, variable percen
    if (item and newCount % packSize > 0) then
       set_weapon_ammo_count(item, newCount % packSize);
 
-   return obj_name(item)+" ("+count+" -> "+newCount+")";
+   return itemName+" ("+count+" -> "+newCount+"), ";
 end
 
 
@@ -50,9 +65,10 @@ end
  * Reduces number of individual bullets in an ammo stack by a percentage range.
  * @arg {ObjectPtr} item - Weapon item
  * @arg {list} percentRange - [min, max] range of % to remove
+ * @arg {int} emptyChance - probabiltiy to remove all ammo
  * @ret {string}
  */
-procedure reduce_ammo_in_weapon(variable item, variable percentRange) begin
+procedure reduce_ammo_in_weapon(variable item, variable percentRange, variable emptyChance := 0) begin
    if (percentRange[1] <= 0) then return "";
 
    variable
@@ -61,9 +77,9 @@ procedure reduce_ammo_in_weapon(variable item, variable percentRange) begin
 
    if (count <= 0) then return "";
 
-   newCount := calc_reduced_ammo_range(count, percentRange);
+   newCount := calc_reduced_ammo_range(count, percentRange, emptyChance);
    set_weapon_ammo_count(item, newCount);
-   return string_format("%s mag ammo (%d -> %d)", obj_name(item), count, newCount);
+   return string_format("%s mag ammo (%d -> %d), ", obj_name(item), count, newCount);
 end
 
 /**
@@ -83,7 +99,7 @@ procedure reduce_ammo_on_ground(variable item, variable percentRange) begin
    else
       destroy_object(item);
 
-   return string_format("%s (%d -> %d)", obj_name(item), count, newCount);
+   return string_format("%s (%d -> %d), ", obj_name(item), count, newCount);
 end
 
 
@@ -110,7 +126,7 @@ procedure reduce_item_in_stack(variable invenObj, variable item, variable pidLis
    if (newCount == count) then return "";
 
    call reduce_item_count(invenObj, item, newCount);
-   return obj_name(item)+" ("+count+" -> "+newCount+")";
+   return obj_name(item)+" ("+count+" -> "+newCount+"), ";
 end
 
 /**

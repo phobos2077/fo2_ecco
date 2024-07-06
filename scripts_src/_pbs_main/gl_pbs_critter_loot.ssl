@@ -11,7 +11,9 @@ procedure start;
 
 #define SCRIPT_REALNAME     "gl_pbs_critter_loot"
 
+#include "../headers/animcomd.h"
 #include "../headers/scenepid.h"
+
 #include "../sfall/define_lite.h"
 #include "../sfall/command_lite.h"
 #include "../sfall/lib.strings.h"
@@ -34,6 +36,7 @@ variable
    ini_weapon_drop_dist,
    ini_weapon_drop_dir,
    ini_reduce_ammo_percent,
+   ini_reduce_ammo_to_zero_chance,
    ini_reduce_drugs_percent,
    ini_reduce_drugs_pids;
 
@@ -41,8 +44,8 @@ variable
 variable destroyed_stats;
 
 procedure destroy_critter_weapon(variable critter);
-procedure drop_weapons(variable critter);
-procedure reduce_loot(variable critter);
+procedure try_drop_weapons(variable critter);
+procedure try_reduce_loot(variable critter);
 
 #define INI_FILE        INI_COMBAT
 #define INI_SECTION     "CRITTER_LOOT"
@@ -51,6 +54,25 @@ procedure reduce_loot(variable critter);
 //#define load_ini_str(name)       str_from_ini_file(name, INI_COMBAT, INI_SECTION)
 //#define load_ini_int_clamped(name, min, max)    int_from_ini_file_clamped(name, INI_COMBAT, INI_SECTION, min, max)
 //#define load_ini_int_list(name)  int_list_from_ini_file(name, INI_COMBAT, INI_SECTION)
+
+
+procedure deathanim2_handler begin
+   variable
+      critter := get_sfall_arg_at(2),
+      animId := get_sfall_arg_at(4);
+
+   // Reduce loot before all items drop to the ground due to violent death.
+   /*if ((    animId == ANIM_electrified_to_nothing
+         or animId == ANIM_exploded_to_nothing
+      )
+      and is_critter(critter)
+      and not critter_proto_has_flag(obj_pid(critter), CFLG_NODROP)
+      and not critter_proto_has_flag(obj_pid(critter), CFLG_SPECIAL))
+   then begin
+      call try_reduce_loot(critter);
+   end*/
+   call try_reduce_loot(critter);
+end
 
 /*
    HOOK_ONDEATH
@@ -68,14 +90,10 @@ procedure ondeath_handler begin
    if (not critter or obj_type(critter) != OBJ_TYPE_CRITTER) then
       return;
 
-   if (not obj_in_party(critter)
-      and (ini_reduce_ammo_percent[1] > 0 or ini_reduce_drugs_percent > 0 or ini_destroy_weapon_percent > 0)) then begin
-      call reduce_loot(critter);
-   end
-   if (ini_weapon_drop_chance > 0 and random(1, 100) <= ini_weapon_drop_chance) then begin
-      call drop_weapons(critter);
-   end
+   //call try_reduce_loot(critter);
+   call try_drop_weapons(critter);
 end
+
 
 procedure start begin
    if (game_loaded) then begin
@@ -89,9 +107,11 @@ procedure start begin
       load_num_from_ini(weapon_drop_dir, 0, 0, 5);
 
       load_range_from_ini(reduce_ammo_percent, 0, 0, 0, 100);
+      load_num_from_ini(reduce_ammo_to_zero_chance, 0, 0, 100);
       load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
       load_int_list_from_ini(reduce_drugs_pids);
 
+      register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
       register_hook_proc(HOOK_ONDEATH, ondeath_handler);
    end
 end
@@ -152,7 +172,7 @@ end
 
 #define is_unarmed_weapon_pid(pid)            (weapon_attack_mode1(pid) == ATTACK_MODE_PUNCH)
 
-procedure drop_weapons(variable critter) begin
+procedure try_drop_weapons(variable critter) begin
    variable
       dist,
       dir,
@@ -161,7 +181,9 @@ procedure drop_weapons(variable critter) begin
       critter_flags,
       i;
 
-   if (critter_proto_has_flag(obj_pid(critter), CFLG_NODROP)) then return;
+   if (ini_weapon_drop_chance <= 0
+      or critter_proto_has_flag(obj_pid(critter), CFLG_NODROP)
+      or random(1, 100) > ini_weapon_drop_chance) then return;
 
    for (i := 1; i <= 2; i++) begin
       weapon := critter_inven_obj(critter, i);
@@ -192,13 +214,15 @@ procedure drop_weapons(variable critter) begin
    move_to(weapon, dropped_hex, elevation(critter));
 end
 
-procedure reduce_loot(variable critter) begin
+procedure try_reduce_loot(variable critter) begin
    variable
       item,
       list,
       removeStats;
 
-   if (critter_proto_has_flag(obj_pid(critter), CFLG_NOSTEAL)) then return;
+   if ((ini_reduce_ammo_percent[1] <= 0 and ini_reduce_drugs_percent <= 0 and ini_destroy_weapon_percent <= 0)
+      or obj_in_party(critter)
+      or critter_proto_has_flag(obj_pid(critter), CFLG_NOSTEAL)) then return;
 
    list := inven_as_array(critter);
    removeStats := "";
@@ -207,7 +231,7 @@ procedure reduce_loot(variable critter) begin
          continue;
 
       if (obj_item_subtype(item) == item_type_ammo) then begin
-         removeStats += reduce_ammo_in_stack(critter, item, ini_reduce_ammo_percent);
+         removeStats += reduce_ammo_in_stack(critter, item, ini_reduce_ammo_percent, ini_reduce_ammo_to_zero_chance);
       end
       else if (obj_item_subtype(item) == item_type_drug) then begin
          removeStats += reduce_item_in_stack(critter, item, ini_reduce_drugs_pids, ini_reduce_drugs_percent);
@@ -218,7 +242,7 @@ procedure reduce_loot(variable critter) begin
             and try_destroy_weapon(critter, item)) then
                removeStats += obj_name(item)+", ";
          else
-            removeStats += reduce_ammo_in_weapon(item, ini_reduce_ammo_percent);
+            removeStats += reduce_ammo_in_weapon(item, ini_reduce_ammo_percent, ini_reduce_ammo_to_zero_chance);
       end
    end
    if (removeStats != "") then
