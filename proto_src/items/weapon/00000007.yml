@@ -18,14 +18,14 @@ inventoryFid: 117440519
 soundId: '0'
 weaponData:
   animationCode: 10
-  minDamage: 45
-  maxDamage: 90
+  minDamage: 55
+  maxDamage: 110
   damageType: DAMAGE_TYPE_EXPLOSION
   maxRange1: 40
   maxRange2: 0
   projectilePid: 83886081
   minStrength: 6
-  actionPointCost1: 6
+  actionPointCost1: 5
   actionPointCost2: 0
   criticalFailureType: 5
   perk: PERK_WEAPON_LONG_RANGE
