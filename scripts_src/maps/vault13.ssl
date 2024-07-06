@@ -63,7 +63,7 @@ procedure map_enter_p_proc begin
 
    if (map_var(MVAR_Gave_V13_Xp) == 0) then begin
       set_map_var(MVAR_Gave_V13_Xp, 1);
-      display_msg(mstr(101) + EXP_FOUND_V13 + mstr(102));
+      display_msg(mstr(101) + calc_actual_xp_gain(EXP_FOUND_V13) + mstr(102));
       give_exp_points(EXP_FOUND_V13);
    end
    if (VAULT13_SEQ) then begin
