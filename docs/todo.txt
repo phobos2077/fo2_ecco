@@ -4,10 +4,10 @@ for 1.0.0:
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - review usages of WEAPON_ACCURATE perk
 - recheck economy of all craft involving ammo after pack size changes
+- try to make expanded awareness less verbose and distracting
 
 
 for "future":
-- investigate "damage_mod: Expected attacker and weapon differs", seems to be rare
 - custom craft schematic art
 - cavern encounters need rebalance!!
 

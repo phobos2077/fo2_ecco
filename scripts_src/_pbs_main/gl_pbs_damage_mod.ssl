@@ -200,10 +200,7 @@ procedure combatdamage_handler begin
       amountKnockback  := get_sfall_arg,
       attackType         := get_sfall_arg;
 
-   if (ctdSource != item_damage_attacker or weapon != item_damage_weapon) then begin
-      debug_msg("! ERROR ! damage_mod: Expected attacker and weapon differs!");
-      return;
-   end
+   //debug_log_fmt("source: %s, target: %s, flags: %X, amt: %d/%d", obj_name_safe(ctdSource), obj_name_safe(ctdTarget), flagsSource, amountTarget, amountSource);
 
    if (flagsSource bwand DAM_HIT) then begin
       target := ctdTarget;
@@ -214,8 +211,12 @@ procedure combatdamage_handler begin
       flags := flagsSource;
       knockback := false;
    end
-
    if not target or (obj_type(target) != OBJ_TYPE_CRITTER) then begin
+      return;
+   end
+   if (ctdSource != item_damage_attacker or weapon != item_damage_weapon) then begin
+      debug_err_fmt("Expected attacker and weapon differs! %s != %s or %s != %s",
+         obj_name_safe(ctdSource), obj_name_safe(item_damage_attacker), obj_name_safe(weapon), obj_name_safe(item_damage_weapon));
       return;
    end
 
@@ -519,6 +520,7 @@ procedure itemdamage_handler begin
       attackType := get_sfall_arg;
       //isMelee := get_sfall_arg;
 
+   //debug_log_fmt("itemdamage attacker: %s, weapon: %s", obj_name_safe(item_damage_attacker), obj_name_safe(item_damage_weapon));
    //display_msg("itemdamage: " + item_damage_min + "-" + item_damage_max + ", wpn: "+(obj_pid(item_damage_weapon) if item_damage_weapon else 0)+", attackType: "+attackType+", isMelee: "+isMelee);
    if (ini_unarmed_weapon_punch_bonus > 0 and item_damage_weapon) then begin
       variable attackMode := weapon_attack_mode(obj_pid(item_damage_weapon), attackType);
