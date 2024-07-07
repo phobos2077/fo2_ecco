@@ -207,6 +207,7 @@ DerivedStats=sfall\stats.ini
 SkillsFile=sfall\skills.ini
 PerksFile=sfall\perks.ini
 BooksFile=sfall\books.ini
+DrugsFile=sfall\drugs.ini
 MovieTimer_artimer1=90
 MovieTimer_artimer2=210
 MovieTimer_artimer3=330

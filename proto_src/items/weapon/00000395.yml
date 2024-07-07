@@ -20,8 +20,8 @@ inventoryFid: 117440791
 soundId: '0'
 weaponData:
   animationCode: 9
-  minDamage: 16
-  maxDamage: 22
+  minDamage: 18
+  maxDamage: 24
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 30
   maxRange2: 0
@@ -30,8 +30,8 @@ weaponData:
   actionPointCost1: 6
   actionPointCost2: 0
   criticalFailureType: 2
-  perk: PERK_WEAPON_PENETRATE
-  rounds: 20
+  perk: NONE
+  rounds: 25
   caliber: 16
   ammoTypePid: 359
   ammoCapacity: 100
