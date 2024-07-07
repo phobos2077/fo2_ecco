@@ -28,7 +28,7 @@ weaponData:
   actionPointCost1: 5
   actionPointCost2: 0
   criticalFailureType: 2
-  perk: PERK_WEAPON_ACCURATE
+  perk: PERK_WEAPON_LONG_RANGE
   rounds: 0
   caliber: 5
   ammoTypePid: 34

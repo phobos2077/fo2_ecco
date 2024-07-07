@@ -4,7 +4,7 @@ name: Holy Hand Grenade
 description: A Holy relic of godly might.
 fid: 122
 lightDistance: 2
-lightIntensity: 65536
+lightIntensity: 65535
 flags: '0xa0000008'
 extendedFlags: '0xa005'
 sid: -1
@@ -27,7 +27,7 @@ weaponData:
   actionPointCost1: 4
   actionPointCost2: 0
   criticalFailureType: 4
-  perk: PERK_WEAPON_LONG_RANGE
+  perk: PERK_WEAPON_PENETRATE
   rounds: 0
   caliber: 0
   ammoTypePid: -1

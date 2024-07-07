@@ -29,7 +29,7 @@ weaponData:
   actionPointCost1: 4
   actionPointCost2: 0
   criticalFailureType: 2
-  perk: PERK_WEAPON_ACCURATE
+  perk: NONE
   rounds: 0
   caliber: 15
   ammoTypePid: 358
