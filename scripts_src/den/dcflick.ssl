@@ -24,6 +24,8 @@
 #include "../headers/den.h"
 
 #include "../_pbs_headers/talking_heads_compat.h"
+#include "../_pbs_headers/rpu_utils.h"
+#include "../_pbs_headers/merchant_loot.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -73,6 +75,10 @@ procedure Node021;
 #define LVAR_Told_Arrangement             (5) //added by killap - expansion
 #define LVAR_Told_Angry                   (6) //added by killap - expansion
 
+//#define got_shotty_bit                    bit_10
+//#define got_shotty                        lvar_bit(LVAR_Flags, got_shotty_bit)
+//#define set_got_shotty                    set_lvar_bit_on(LVAR_Flags, got_shotty_bit)
+
 /* Imported variables from the Map scripts. These should only be
    pointers and variables that need not be saved. If a variable
    Needs to be saved, make it a map variable (MVAR_) */
@@ -112,7 +118,24 @@ procedure critter_p_proc begin
    end
 end
 
+/*
+procedure take_from_box(variable pid) begin
+   variable obj := obj_carrying_pid_obj(den_flick_box_obj, pid);
+   if (obj) then
+      rm_obj_from_inven(den_flick_box_obj, obj);
+   else
+      obj := create_object_sid(pid, 0, 0, -1);
+
+   add_obj_to_inven(self_obj, obj);
+   return obj;
+end*/
+
 procedure damage_p_proc begin
+   /*if (not got_shotty) then begin
+      call take_from_box(PID_SHOTGUN_SHELLS);
+      wield_obj(take_from_box(PID_SHOTGUN));
+      set_got_shotty;
+   end*/
    if (source_obj == dude_obj) then begin
       set_personal_enemy;
    end
@@ -165,16 +188,22 @@ end
 procedure destroy_p_proc begin
    flick_obj := 0;
    set_flick_dead;
-   // phobos2077: reduce loot: all armors and all weapons except shotgun
-   restock_amt := 0;
-   while (inven_ptr(den_flick_box_obj, restock_amt) != 0) do begin
-      restock_obj := inven_ptr(den_flick_box_obj, restock_amt);
-      if (obj_item_subtype(restock_obj) == item_type_armor or (obj_item_subtype(restock_obj) == item_type_weapon and obj_pid(restock_obj) != PID_SHOTGUN)) then begin
-      	rm_obj_from_inven(den_flick_box_obj, restock_obj);
-      	destroy_object(restock_obj);
-      end else
-      	restock_amt += 1;
-   end
+   // phobos2077:
+   call merchant_loot_trim(den_flick_box_obj, {
+      PID_BOTTLE_CAPS: 55,
+      PID_CATS_PAW: 1,
+      PID_10MM_JHP: 1,
+      PID_BEER: 5,
+      PID_BOOZE: 3,
+      PID_NUKA_COLA: 2,
+      PID_44_MAGNUM_JHP: 1,
+      PID_STIMPAK: 1,
+      PID_223_FMJ: 1,
+      //PID_SHOTGUN: 1,
+      PID_SHOTGUN_SHELLS: 2,
+      PID_THROWING_KNIFE: 2
+   });
+
    move_obj_inven_to_obj(den_flick_box_obj,self_obj);
    inc_evil_critter
 end

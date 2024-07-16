@@ -28,14 +28,9 @@ variable begin
    ini_map_loot_ammo_qty;
 end
 
-procedure unload_weapon(variable item) begin
+procedure unload_weapon_if_enabled(variable item) begin
    if (not ini_unload_weapons) then return "";
-
-   variable count := get_weapon_ammo_count(item);
-   if (count <= 0) then return "";
-
-   set_weapon_ammo_count(item, 0);
-   return string_format("%s mag ammo (%d -> 0)", obj_name(item), count);
+   return unload_weapon(item);
 end
 
 procedure calc_reduced_ammo_count(variable pid, variable packSize, variable count) begin
@@ -80,9 +75,12 @@ procedure reduce_ammo_on_ground_by_pack_qty(variable item) begin
    return string_format("%s (%d -> %d)", obj_name(item), count, newCount);
 end
 
-procedure reduce_container_loot(variable container) begin
+/**
+ * Reduce loot from a given inventory using map loot reduction rules.
+ */
+procedure reduce_inven_loot(variable invenObj) begin
    variable item, list, subType, stats, totalStats := "";
-   list := inven_as_array(container);
+   list := inven_as_array(invenObj);
    foreach item in list begin
       if (item == 0) then
          continue;
@@ -91,11 +89,11 @@ procedure reduce_container_loot(variable container) begin
 
       switch (subType) begin
          case item_type_weapon:
-            stats := unload_weapon(item);
+            stats := unload_weapon_if_enabled(item);
          case item_type_ammo:
-            stats := reduce_ammo_in_stack_by_pack_qty(container, item);
+            stats := reduce_ammo_in_stack_by_pack_qty(invenObj, item);
          case item_type_container:
-            stats := reduce_container_loot(item);
+            stats := reduce_inven_loot(item);
          default:
             stats := "";
       end
@@ -106,7 +104,7 @@ procedure reduce_container_loot(variable container) begin
       end
    end
    if (totalStats != "") then
-      totalStats := obj_name(container) + ": " + totalStats;
+      totalStats := obj_name(invenObj) + ": " + totalStats;
    return totalStats;
 end
 
@@ -115,12 +113,11 @@ procedure reduce_ground_item_loot(variable item) begin
    //debug_log_fmt("processing %s (%d)...", obj_name(item), subType);
    switch (subType) begin
       case item_type_weapon:
-         return unload_weapon(item);
+         return unload_weapon_if_enabled(item);
       case item_type_ammo:
          return reduce_ammo_on_ground_by_pack_qty(item);
-      case item_type_container: begin
-         return reduce_container_loot(item);
-      end
+      case item_type_container:
+         return reduce_inven_loot(item);
       default:
          return "";
    end
@@ -132,7 +129,7 @@ procedure reduce_loot_on_map begin
       if (obj and not obj_in_party(obj)) then begin
          stats := reduce_ground_item_loot(obj);
          if (stats != "") then
-            debug_log_fmt("Reduce loot [%d-%d] %s", elevation(obj), tile_num(obj), stats);
+            debug_log_fmt("Reduce loot [%d, %d] %s", elevation(obj), tile_num(obj), stats);
       end
    end
 end
@@ -145,19 +142,10 @@ procedure start begin
    if (game_loaded) then begin
       load_bool_from_ini(enable_tweaks, false);
       if (not ini_enable_tweaks) then return;
-
-      // load_num_from_ini(reduce_ammo_percent, 0, 0, 100);
-      // load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
-      // load_num_from_ini(reduce_weapons_percent, 0, 0, 100);
-      // load_int_list_from_ini(reduce_drugs_pids);
-      // load_int_list_from_ini(reduce_weapons_pids);
-
+      
       load_bool_from_ini(unload_weapons, false);
 
       ini_map_loot_ammo_qty := get_ini_section_int_to_int(INI_FILE, "MAP_LOOT_AMMO_QTY", true);
-
-      //register_hook_proc(HOOK_USEANIMOBJ, useanimobj_hook);
-      //register_hook_proc(HOOK_USESKILLON, useskillon_hook);
 
       debug_log("Map loot reduction enabled.");
 

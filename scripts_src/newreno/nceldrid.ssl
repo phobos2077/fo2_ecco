@@ -42,8 +42,10 @@
 #include "../headers/newreno.h"
 #include "../headers/upgweap.h"
 
-#include "../sfall/lib.inven.h" // pbs
 #include "../_pbs_headers/talking_heads_compat.h"
+#include "../_pbs_headers/rpu_utils.h"
+#include "../_pbs_headers/merchant_loot.h"
+#include "../_pbs_headers/ecco_ids.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -368,11 +370,40 @@ end
 
 procedure destroy_p_proc begin
    new_reno_eldridge_obj := 0;
-   call reduce_merchant_loot(new_reno_eldridge_box, 100, 100, 0, 70, 50, 0); // pbs: reduce loot in his box, but keep what's in his inventory as trophy
-   move_obj_inven_to_obj(new_reno_eldridge_box, self_obj);
-   //move_obj_inven_to_obj(new_reno_eldridge_box_2, self_obj); // pbs
    give_voice_chip(self_obj)
    set_eldridge_dead;
+   // pbs: reduce loot in his box, but keep what's in his inventory as trophy
+   call merchant_loot_trim(new_reno_eldridge_box, {
+      PID_44_MAGNUM_REVOLVER: 1,
+      PID_7_62MM_AMMO: 1,
+      PID_HUNTING_RIFLE: 1,
+      PID_MOLOTOV_COCKTAIL: 3,
+      PID_FRAG_GRENADE: 1,
+      PID_44_MAGNUM_JHP: 1,
+      PID_45_CALIBER_AMMO: 3,
+      PID_223_FMJ: 2,
+      PID_14MM_AP: 2,
+      PID_SHOTGUN_SHELLS: 2,
+      PID_PLASTIC_EXPLOSIVES: 1,
+      PID_TOMMY_GUN: 1,
+      PID_THROWING_KNIFE: 3,
+      PID_PBS_M79: 1,
+      PID_PBS_40MM_HE: 3,
+      PID_FLAMETHROWER_FUEL: 1
+   });
+   move_obj_inven_to_obj(new_reno_eldridge_box, self_obj);
+
+   call ensure_pistol_blyat;
+   call merchant_loot_trim(new_reno_eldridge_box_2, {
+      PID_223_PISTOL: 1, // IMPORTANT!!!
+      PID_PBS_CRAFT_SCHEMA_T2: 1,
+      PID_ROCKET_LAUNCHER: 1,
+      PID_FLAMER: 1,
+      PID_MINIGUN: 1,
+      PID_SNIPER_RIFLE: 1,
+      PID_HK_CAWS: 1
+   });
+   move_obj_inven_to_obj(new_reno_eldridge_box_2, self_obj);
 end
 
 procedure look_at_p_proc begin

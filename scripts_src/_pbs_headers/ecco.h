@@ -40,7 +40,7 @@
 
 #define exp_for_kill_critter_pid(pid)         (get_proto_data(pid, PROTO_CR_KILL_EXP))
 #define critter_flags_by_pid(pid)             (get_proto_data(pid, PROTO_CR_FLAGS))
-#define can_steal_from_critter_pid(pid)       (not critter_proto_has_flag(pid, CFLG_NOSTEAL))
+#define can_steal_from_critter_pid(pid)       (not proto_critter_has_flag(pid, CFLG_NOSTEAL))
 #define critter_facing_dir(crit)              (has_trait(TRAIT_OBJECT,crit,OBJECT_CUR_ROT))
 
 #define is_critter(obj)      (obj_type(obj) == OBJ_TYPE_CRITTER)

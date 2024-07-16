@@ -36,6 +36,9 @@
 #include "../headers/modreact.h"
 
 #include "../_pbs_headers/talking_heads_compat.h"
+#include "../_pbs_headers/rpu_utils.h"
+#include "../_pbs_headers/merchant_loot.h"
+#include "../_pbs_headers/ecco_ids.h"
 
 #define JAIL_TILE   (21915)
 
@@ -136,18 +139,29 @@ procedure map_enter_p_proc begin
     store_shelf_obj := tile_contains_pid_obj(12112,dude_elevation,152);
     move_obj_inven_to_obj(self_obj, store_shelf_obj);
     move_obj_inven_to_obj(vault_city_harry_box, store_shelf_obj);
-    // phobos2077: reduce loot: all armors and 50% of other items
-    restock_amt := 0;
-    while (inven_ptr(store_shelf_obj, restock_amt) != 0) do begin
-      restock_obj := inven_ptr(store_shelf_obj, restock_amt);
-      if (obj_item_subtype(restock_obj) == item_type_armor or random(0,99)<50) then begin
-         rm_obj_from_inven(store_shelf_obj, restock_obj);
-         destroy_object(restock_obj);
-      end else
-      restock_amt += 1;
-    end
+
+      // phobos2077:
+      call merchant_loot_trim(store_shelf_obj, {
+         PID_BOTTLE_CAPS: 400,
+         PID_CROWBAR: 1,
+         PID_HUNTING_RIFLE: 1,
+         PID_44_FMJ_MAGNUM: 2,
+         PID_10MM_AP: 1,
+         PID_SHOTGUN_SHELLS: 2,
+         PID_DYNAMITE: 1,
+         PID_SHOVEL: 1,
+         PID_FLARE: 2,
+         PID_ROPE: 1,
+         PID_223_FMJ: 1,
+         PID_FRAG_GRENADE: 1,
+         PID_PBS_LASER_PISTOL_LT: 1,
+         PID_SMALL_ENERGY_CELL: 1,
+         PID_MICRO_FUSION_CELL: 1,
+         PID_PBS_COWBOY_REPEATER: 1,
+         PID_PBS_THROWING_AXE: 1,
+         PID_FLAMETHROWER_FUEL: 2
+      });
    end
-   //end
 end
 
 procedure map_update_p_proc begin

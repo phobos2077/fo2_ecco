@@ -27,6 +27,8 @@
 #include "../headers/denbus1.h"
 
 #include "../_pbs_headers/talking_heads_compat.h"
+#include "../_pbs_headers/rpu_utils.h"
+#include "../_pbs_headers/merchant_loot.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -175,16 +177,19 @@ end
 procedure destroy_p_proc begin
    tubby_obj := 0;
    set_tubby_dead;
-   // phobos2077: reduce loot: 50% of items and all weapons
-   restock_amt := 0;
-   while (inven_ptr(den_tubby_box_obj, restock_amt) != 0) do begin
-      restock_obj := inven_ptr(den_tubby_box_obj, restock_amt);
-      if (obj_item_subtype(restock_obj) == item_type_weapon or random(0,99) < 50) then begin
-      	rm_obj_from_inven(den_tubby_box_obj, restock_obj);
-      	destroy_object(restock_obj);
-      end else
-      	restock_amt += 1;
-   end
+   // phobos2077: reduce loot
+   call merchant_loot_trim(den_tubby_box_obj, {
+      PID_BOTTLE_CAPS: 300,
+      PID_JET: 5,
+      PID_10MM_JHP: 1,
+      PID_BRASS_KNUCKLES: 1,
+      PID_LEATHER_JACKET: 1,
+      PID_STIMPAK: 2,
+      PID_9MM_BALL: 2,
+      PID_SPRINGER_RIFLE: 1,
+      PID_SLEDGEHAMMER: 1
+   });
+
    move_obj_inven_to_obj(den_tubby_box_obj,self_obj);
    set_map_var(MVAR_Den_Tubby_Tile_Num, -1);
 end

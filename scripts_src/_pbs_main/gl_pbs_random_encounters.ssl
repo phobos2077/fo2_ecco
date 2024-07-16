@@ -15,6 +15,7 @@
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/ecco_log.h"
 #include "../_pbs_headers/maps_utils.h"
+#include "../_pbs_headers/inven_utils.h"
 
 variable begin
    ini_remember_sneak;
@@ -28,30 +29,6 @@ export variable pbs_random_encounter_placement;
 import procedure ammocost_mod_get_cost(variable weaponPid);
 
 #define weapon_pid_can_burst(pid)         (weapon_attack_mode1(pid) == ATTACK_MODE_BURST or weapon_attack_mode2(pid) == ATTACK_MODE_BURST)
-#define ammo_pid_pack_size(pid)           get_proto_data(pid, PROTO_AM_PACK_SIZE)
-
-procedure ammo_get_qty_pid(variable invenObj, variable pid) begin
-   variable
-      item := obj_carrying_pid_obj(invenObj, pid);
-
-   if (not item) then
-      return 0;
-
-   return (obj_is_carrying_obj(invenObj, item) - 1) * ammo_pid_pack_size(pid) + get_weapon_ammo_count(item);
-end
-
-procedure ammo_set_qty_pid(variable invenObj, variable pid, variable qty) begin
-   variable
-      packSize := ammo_pid_pack_size(pid),
-      packsNeeded := ceil(1.0 * qty / packSize),
-      ammoObj;
-
-   call set_items_qty_pid(invenObj, pid, packsNeeded);
-   if (qty > 0) then begin
-      ammoObj := obj_carrying_pid_obj(invenObj, pid);
-      set_weapon_ammo_count(ammoObj, qty - (packsNeeded - 1) * packSize);
-   end
-end
 
 procedure calc_required_spare_ammo(variable weaponPid) begin
    variable
@@ -82,10 +59,10 @@ procedure ensure_npcs_ammo begin
       magSize := get_proto_data(weaponPid, PROTO_WP_MAG_SIZE);
       if (ammoPid > 0 and magSize > 0) then begin
          ammoNeeded := calc_required_spare_ammo(weaponPid);
-         ammoActual := ammo_get_qty_pid(critter, ammoPid);
+         ammoActual := inven_ammo_qty_pid(critter, ammoPid);
          debug_log(string_format("%s ammo: %d / %d", obj_name(critter), ammoActual, ammoNeeded));
          if (ammoActual < ammoNeeded) then begin
-            call ammo_set_qty_pid(critter, ammoPid, ammoNeeded);
+            call inven_set_ammo_qty_pid(critter, ammoPid, ammoNeeded);
             debug_log(string_format("%s had less ammo (%d) than needed (%d) for his %s. Correcting.", obj_name(critter), ammoActual, ammoNeeded, obj_name_safe(weapon)));
          end
       end

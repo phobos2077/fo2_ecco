@@ -4,18 +4,14 @@
 
 #include "../sfall/lib.arrays.h"
 #include "../sfall/lib.inven.h"
+#include "../sfall/lib.math.h"
 
-#include "../_pbs_headers/math_ext.h"
-#include "../_pbs_headers/ecco_log.h"
+#include "math_ext.h"
+#include "ecco_define.h"
+#include "ecco_log.h"
 
+#include "inven_utils.h"
 
-procedure reduce_item_count(variable invenObj, variable item, variable newCount) begin
-   variable count := obj_is_carrying_obj(invenObj, item);
-   if (newCount >= count) then return;
-
-   count := rm_mult_objs_from_inven(invenObj, item, count - newCount);
-   destroy_object(item);
-end
 
 procedure calc_reduced_ammo_range(variable count, variable percentRange, variable emptyChance := 0) begin
    if (emptyChance > 0 and random(0, 99) < emptyChance) then
@@ -113,7 +109,7 @@ end
  */
 procedure reduce_item_in_stack(variable invenObj, variable item, variable pidList, variable percent) begin
    if (percent <= 0
-      or (pidList and not is_in_array(obj_pid(item), pidList))) then
+      or (pidList andAlso not is_in_array(obj_pid(item), pidList))) then
       return "";
 
    // reduce with probability formula
@@ -121,9 +117,9 @@ procedure reduce_item_in_stack(variable invenObj, variable item, variable pidLis
       count := obj_is_carrying_obj(invenObj, item),
       newCount := count * (100 - percent) / 100.0;
 
-   //debug_log_fmt("reducing %d -> %04f", count, newCount);
+   //debug_log_fmt("reducing %s: %d -> %04f", obj_name(item), count, newCount);
    newCount := floor(newCount) + (random(0, 99) < (newCount - floor(newCount))*100);
-   if (newCount == count) then return "";
+   if (newCount >= count) then return "";
 
    call reduce_item_count(invenObj, item, newCount);
    return obj_name(item)+" ("+count+" -> "+newCount+"), ";
@@ -144,5 +140,76 @@ procedure reduce_item_on_ground(variable item, variable pidList, variable percen
    destroy_object(item);
    return obj_name(item) + " (removed)";
 end
+
+procedure unload_weapon(variable item) begin
+   variable count := get_weapon_ammo_count(item);
+   if (count <= 0) then return "";
+
+   set_weapon_ammo_count(item, 0);
+   return string_format("%s mag ammo (%d -> 0)", obj_name(item), count);
+end
+
+
+procedure loot_trim_inventory(variable invenObj, variable pidToQty) begin
+   variable item, pid, list, n, qtyMax, qtyActual, rmvd, removeStats;
+   removeStats := "";
+
+   list := inven_as_array(invenObj);
+   foreach item in list begin
+      pid := obj_pid(item);
+      qtyActual := obj_is_carrying_obj(invenObj, item);
+      qtyMax := pidToQty[pid];
+      if (qtyActual > qtyMax) then begin
+         call inven_unwield_item(invenObj, item);
+         if (qtyMax > 0 and obj_item_subtype(item) == item_type_weapon) then
+            call unload_weapon(item);
+         removeStats += string_format("%s (%d -> %d); ", obj_name(item), qtyActual, qtyMax);
+         n := rm_mult_objs_from_inven(invenObj, item, qtyActual - qtyMax);
+         if (n != qtyActual - qtyMax) then
+            debug_err_fmt("Expected to remove %d of %s, but actually removed: %d", qtyActual - qtyMax, obj_name(item), n);
+         destroy_object(item);
+      end
+   end
+   if (removeStats != "") then
+      debug_log_fmt("Removed merchant loot in %s: %s", obj_name(invenObj), removeStats);
+end
+
+/*
+procedure merchant_stock_cleanup(variable invenObj, variable percentMoney, variable percentAmmo, variable pidsToKeep) begin
+   variable item, pid, list, n, prob, qtyMax, qtyActual, packSize, removeStats;
+   removeStats := "";
+   item_caps_adjust(invenObj, -(item_caps_total(invenObj) * percentMoney / 100));
+
+   list := inven_as_array(invenObj);
+   foreach item in list begin
+      pid := obj_pid(item);
+      if (proto_item_is_hidden(pid) or pid == PID_BOTTLE_CAPS) then continue;
+
+      qtyMax := pidsToKeep[pid];
+      if (qtyMax == 0) then begin
+         removeStats += string_format("%s -> 0", obj_name(item));
+         call remove_item_obj(invenObj, item);
+      end else if (obj_item_subtype(item) == item_type_ammo) then begin
+         packSize := proto_ammo_pack_size(pid);
+         qtyMax := qtyMax * packSize * percentAmmo / 100;
+         qtyActual := inven_ammo_qty_obj_w_pack_size(invenObj, item, packSize);
+         if (qtyActual > qtyMax) then begin
+            removeStats += string_format("%s (%d -> %d)", obj_name(item), qtyActual, qtyMax);
+            call inven_set_ammo_qty_obj(invenObj, item, qtyAmmo * percentAmmo / 100);
+         end
+      end else begin
+         qtyActual := obj_is_carrying_obj(invenObj, item);
+         if (qtyActual > qtyMax) then begin
+            removeStats += string_format("%s (%d -> %d)", obj_name(item), qtyActual, qtyMax);
+            n := rm_mult_objs_from_inven(invenObj, item, qtyActual - qtyMax);
+            destroy_object(item);
+         end
+      end
+   end
+   if (removeStats != "") then
+      debug_log_fmt("Removed merchant loot in %s: %s", obj_name(invenObj), removeStats);
+end
+*/
+
 
 #endif

@@ -66,8 +66,8 @@ procedure deathanim2_handler begin
          or animId == ANIM_exploded_to_nothing
       )
       and is_critter(critter)
-      and not critter_proto_has_flag(obj_pid(critter), CFLG_NODROP)
-      and not critter_proto_has_flag(obj_pid(critter), CFLG_SPECIAL))
+      and not proto_critter_has_flag(obj_pid(critter), CFLG_NODROP)
+      and not proto_critter_has_flag(obj_pid(critter), CFLG_SPECIAL))
    then begin
       call try_reduce_loot(critter);
    end*/
@@ -182,14 +182,14 @@ procedure try_drop_weapons(variable critter) begin
       i;
 
    if (ini_weapon_drop_chance <= 0
-      or critter_proto_has_flag(obj_pid(critter), CFLG_NODROP)
+      or proto_critter_has_flag(obj_pid(critter), CFLG_NODROP)
       or random(1, 100) > ini_weapon_drop_chance) then return;
 
    for (i := 1; i <= 2; i++) begin
       weapon := critter_inven_obj(critter, i);
       if (weapon and obj_item_subtype(weapon) == item_type_weapon
          and not is_unarmed_weapon_pid(obj_pid(weapon))
-         and not item_proto_is_hidden(obj_pid(weapon))) then 
+         and not proto_item_is_hidden(obj_pid(weapon))) then 
          break;
       else
          weapon := 0;
@@ -222,12 +222,12 @@ procedure try_reduce_loot(variable critter) begin
 
    if ((ini_reduce_ammo_percent[1] <= 0 and ini_reduce_drugs_percent <= 0 and ini_destroy_weapon_percent <= 0)
       or obj_in_party(critter)
-      or critter_proto_has_flag(obj_pid(critter), CFLG_NOSTEAL)) then return;
+      or proto_critter_has_flag(obj_pid(critter), CFLG_NOSTEAL)) then return;
 
    list := inven_as_array(critter);
    removeStats := "";
    foreach item in list begin
-      if (item == 0 or item_proto_is_hidden(obj_pid(item))) then
+      if (item == 0 or proto_item_is_hidden(obj_pid(item))) then
          continue;
 
       if (obj_item_subtype(item) == item_type_ammo) then begin
