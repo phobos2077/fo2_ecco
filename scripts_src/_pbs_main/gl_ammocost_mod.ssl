@@ -15,11 +15,7 @@ variable
 
 procedure start;
 
-export procedure ammocost_mod_get_cost(variable weaponPid);
-
-procedure ammocost_mod_get_cost(variable weaponPid) begin
-   return ini_ammocost[weaponPid] or 1;
-end
+export variable pbs_ammocost_map;
 
 /*
    HOOK_AMMOCOST
@@ -58,5 +54,6 @@ procedure start begin
       if (len_array(ini_ammocost) > 0) then begin
          register_hook_proc(HOOK_AMMOCOST, ammocost_handler);
       end
+      pbs_ammocost_map = ini_ammocost;
    end
 end

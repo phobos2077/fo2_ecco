@@ -26,7 +26,7 @@ end
 
 export variable pbs_random_encounter_placement;
 
-import procedure ammocost_mod_get_cost(variable weaponPid);
+import variable pbs_ammocost_map;
 
 #define weapon_pid_can_burst(pid)         (weapon_attack_mode1(pid) == ATTACK_MODE_BURST or weapon_attack_mode2(pid) == ATTACK_MODE_BURST)
 
@@ -41,7 +41,7 @@ procedure calc_required_spare_ammo(variable weaponPid) begin
 
    return burstSize * random(2, 4)
       if canBurst
-      else ammocost_mod_get_cost(weaponPid) * random(10, 20);
+      else (pbs_ammocost_map[weaponPid] or 1) * random(10, 20);
 end
 
 procedure ensure_npcs_ammo begin

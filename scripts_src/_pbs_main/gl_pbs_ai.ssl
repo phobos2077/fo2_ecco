@@ -277,7 +277,7 @@ procedure bestweapon_handler begin
 
    if (weapon1 == 0 or weapon2 == 0
       or weapon_type(weapon1) != weapon_type(weapon2)
-      or item_proto_is_hidden(obj_pid(weapon1)) or item_proto_is_hidden(obj_pid(weapon2))) then return;
+      or proto_item_is_hidden(obj_pid(weapon1)) or proto_item_is_hidden(obj_pid(weapon2))) then return;
 
    variable
       weapon1rank := weapon_rank(critter, weapon1, target),
