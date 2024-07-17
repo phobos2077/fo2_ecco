@@ -33,8 +33,12 @@ end
 
 procedure stdprocedure_end_hook begin
    variable proc := get_sfall_arg, obj := get_sfall_arg;
-   if (proc == description_proc and obj != dude_obj and obj_type(obj) == OBJ_TYPE_CRITTER
-      and dude_perk(PERK_bonus_awareness) and not is_critter_dead(obj)) then begin
+   if (proc == description_proc
+      and combat_is_initialized
+      and obj != dude_obj
+      and obj_type(obj) == OBJ_TYPE_CRITTER
+      and dude_perk(PERK_bonus_awareness)
+      and not is_critter_dead(obj)) then begin
       variable
          //dmgType := obj_pid get_active_weapon(dude_obj)
          ac := get_critter_stat(obj, STAT_ac),

@@ -1,0 +1,96 @@
+#include "../sfall/sfall.h"
+#include "../sfall/lib.arrays.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+
+#include "../_pbs_headers/engine_funcs.h"
+
+variable snd_lookup_weapon_type;
+
+#define WEAPON_SOUND_EFFECT_READY         (0)
+#define WEAPON_SOUND_EFFECT_ATTACK        (1)
+#define WEAPON_SOUND_EFFECT_OUT_OF_AMMO   (2)
+#define WEAPON_SOUND_EFFECT_AMMO_FLYING   (3)
+#define WEAPON_SOUND_EFFECT_HIT           (4)
+
+procedure item_w_is_grenade(variable weapon) begin
+   variable damageType := item_w_damage_type(0, weapon);
+   return damageType == DMG_explosion or damageType == DMG_plasma or damageType == DMG_emp;
+end
+
+procedure material_code_by_material(variable material) begin
+   if (material == MATERIAL_TYPE_GLASS or material == MATERIAL_TYPE_METAL or material == MATERIAL_TYPE_PLASTIC) then
+      return 'M';
+   
+   if (material == MATERIAL_TYPE_WOOD) then
+      return 'W';
+
+   if (material == MATERIAL_TYPE_DIRT or material == MATERIAL_TYPE_STONE or material == MATERIAL_TYPE_CEMENT) then
+      return 'S';
+
+   return 'F';
+end
+
+procedure buildsfxname_handler begin
+   if (get_sfall_arg != 1) then return;
+
+   variable
+      effectType := get_sfall_arg,
+      weapon := get_sfall_arg,
+      attackType := get_sfall_arg,
+      target := get_sfall_arg;
+
+   variable attackTypeCode, weaponSoundCode, effectTypeCode, materialCode, variantCode, result;
+
+   if (not snd_lookup_weapon_type) then
+      snd_lookup_weapon_type := array_fixed([
+         'R', // Ready/Reload
+         'A', // Attack
+         'O', // Out of ammo
+         'F', // Firing
+         'H' // Hit
+      ]);
+
+   weaponSoundCode := get_proto_data(obj_pid(weapon), PROTO_WP_SOUND) bwand 0xFF;
+   effectTypeCode := snd_lookup_weapon_type[effectType];
+
+   if (effectType != WEAPON_SOUND_EFFECT_READY and effectType != WEAPON_SOUND_EFFECT_OUT_OF_AMMO) then begin
+      attackTypeCode := 2
+         if attackType != ATKTYPE_LWEP1 and attackType != ATKTYPE_RWEP1 and attackType != ATKTYPE_PUNCH
+         else 1;
+   end else
+      attackTypeCode := 1;
+
+   if (effectTypeCode != 'H' or target == 0 or item_w_is_grenade(weapon)) then begin
+      materialCode = 'X';
+   end else begin
+      variable type := obj_type(target), targetPid := obj_pid(target), material;
+      switch (type) begin
+         case OBJ_TYPE_ITEM:
+            material := get_proto_data(targetPid, PROTO_IT_MATERIAL);
+         case OBJ_TYPE_SCENERY:
+            material := get_proto_data(targetPid, PROTO_SC_MATERIAL);
+         case OBJ_TYPE_WALL:
+            material := get_proto_data(targetPid, PROTO_WL_MATERIAL);
+         default:
+            material := -1;
+      end
+      materialCode := material_code_by_material(material);
+   end
+
+   variantCode := random(1, 2)
+      if effectType == WEAPON_SOUND_EFFECT_ATTACK
+      else 1;
+
+   result := string_format("W%c%c%1d%cXX%1d", effectTypeCode, weaponSoundCode, attackTypeCode, materialCode, variantCode);
+
+   display_msg("gsnd_build_weapon_sfx_name hook for " + obj_name(weapon) + ", effect: "+ effectType + ", result: " + result);
+   set_sfall_return(result);
+end
+
+procedure start begin
+   if (not game_loaded) then return;
+
+   register_hook_proc(HOOK_BUILDSFXNAME, buildsfxname_handler);
+   display_msg("Registered buildsfxname");
+end
