@@ -72,8 +72,8 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_223_FMJ, 1, 5, 75)
          check_restock_item(PID_14MM_AP, 2, 6, 100) // pbs: 2x count
          check_restock_item(PID_PBS_14MM_JHP, 1, 1, 40) // new
-         check_restock_item(PID_SHOTGUN_SHELLS, 1, 5, 100)
-         check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 5, 100) // new
+         check_restock_item(PID_SHOTGUN_SHELLS, 3, 5, 100) // pbs: was 1-5
+         check_restock_item(PID_PBS_SHOTGUN_SLUGS, 1, 4, 100) // new
          check_restock_item(PID_PBS_DRAGON_BREATH, 1, 2, 25) // new
          check_restock_item(PID_DYNAMITE, 1, 1, 50)
          check_restock_item(PID_PLASTIC_EXPLOSIVES, 1,1 , 50)

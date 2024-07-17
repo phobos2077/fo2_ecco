@@ -181,6 +181,9 @@ Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer2"; String
 Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer3"; String: "330"; Components: main
 Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "MovieTimer_artimer4"; String: "450"; Components: main
 
+; Disable wipe_inventory
+Filename: "{app}\mods\upu.ini"; Section: "main"; Key: "wipe_inventory"; String: "0"; Components: main
+
 ;Filename: "{app}\ddraw.ini"; Section: "Misc"; Key: "CheckWeaponAmmoCost"; String: "1"; Components: combat
 
 Filename: "{app}\mods\ecco\combat.ini"; Section: "AI"; Key: "called_tweaks"; String: "0"; Components: not ai_called_shots

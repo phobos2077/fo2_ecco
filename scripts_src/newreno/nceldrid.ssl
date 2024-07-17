@@ -112,7 +112,7 @@ procedure Node030;
 #define back_room_bit                  bit_16
 #define closed_warning_bit             bit_17
 // pbs:
-#define pistol_blyat_bit               bit_24
+#define pistol_given_blyat_bit         bit_24
 
 #define module                         lvar_bit(LVAR_Flags, module_bit)
 #define set_module                     set_lvar_bit_on(LVAR_Flags, module_bit)
@@ -138,8 +138,8 @@ procedure Node030;
 #define closed_warning                 lvar_bit(LVAR_Flags, closed_warning_bit)
 #define set_closed_warning             set_lvar_bit_on(LVAR_Flags, closed_warning_bit)
 
-#define pistol_blyat                   lvar_bit(LVAR_Flags, pistol_blyat_bit)
-#define set_pistol_blyat               set_lvar_bit_on(LVAR_Flags, pistol_blyat_bit)
+#define pistol_given_blyat             lvar_bit(LVAR_Flags, pistol_given_blyat_bit)
+#define set_pistol_given_blyat         set_lvar_bit_on(LVAR_Flags, pistol_given_blyat_bit)
 
 #define give_eldridge_box(x)           if (x != current_box) then begin                               \
                                           if (current_box != 0) then begin                            \
@@ -325,6 +325,17 @@ procedure pickup_p_proc begin
    end
 end
 
+procedure ensure_pistol_blyat begin
+   // pbs: workaround for overly-aggressive wipe_inventory: restore pistol, but only once (potentially grants a second one)
+   if (not pistol_given_blyat) then begin
+      if (obj_is_carrying_obj_pid(new_reno_eldridge_box_2, PID_223_PISTOL) == 0) then begin
+         ndebug("restoring deleted .223 Pistol!");
+         call add_item_pid(new_reno_eldridge_box_2, PID_223_PISTOL);
+      end
+      set_pistol_given_blyat;
+   end
+end
+
 procedure talk_p_proc begin
    //added by killap
    if (Fallout2_enclave_destroyed) then
@@ -335,14 +346,7 @@ procedure talk_p_proc begin
       gdialog_set_barter_mod(-10);
    //added by killap
 
-   // pbs: workaround for overly-aggressive wipe_inventory: restore pistol, but only once (potentially grants a second one)
-   if (not pistol_blyat) then begin
-      if (obj_is_carrying_obj_pid(new_reno_eldridge_box_2, PID_223_PISTOL) == 0) then begin
-         ndebug("restoring deleted .223 Pistol!");
-         call add_item_pid(new_reno_eldridge_box_2, PID_223_PISTOL);
-      end
-      set_pistol_blyat;
-   end
+   call ensure_pistol_blyat;
    if (eldridge_bed_time) then begin
       call Node030;
    end else begin

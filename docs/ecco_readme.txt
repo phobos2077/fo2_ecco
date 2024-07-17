@@ -213,7 +213,11 @@ MovieTimer_artimer2=210
 MovieTimer_artimer3=330
 MovieTimer_artimer4=450
 
-4. Follow the rest of the installation steps from github.
+4. Open mods\upu.ini and make sure to set the following in [main] section:
+
+wipe_inventory=0
+
+5. Follow the rest of the installation steps from github.
 
 
 
