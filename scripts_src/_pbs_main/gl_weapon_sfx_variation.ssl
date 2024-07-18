@@ -3,15 +3,57 @@
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 
+#define SCRIPT_REALNAME       "weapon_sfx_variation"
+
+#include "../_pbs_headers/ecco_log.h"
+
 #include "../_pbs_headers/engine_funcs.h"
 
-variable snd_lookup_weapon_type;
+variable begin
+   config_is_loaded;
+   sfx_config;
+   variations_code;
+   variations_pid;
+   snd_lookup_weapon_type;
+end
 
 #define WEAPON_SOUND_EFFECT_READY         (0)
 #define WEAPON_SOUND_EFFECT_ATTACK        (1)
 #define WEAPON_SOUND_EFFECT_OUT_OF_AMMO   (2)
 #define WEAPON_SOUND_EFFECT_AMMO_FLYING   (3)
 #define WEAPON_SOUND_EFFECT_HIT           (4)
+
+#define CONFIG_PATH     "config\\sfx_weapon.ini"
+
+procedure load_config begin
+   if (config_is_loaded) then return sfx_config;
+
+   sfx_config := get_ini_config_db(CONFIG_PATH);
+
+   if (not sfx_config) then begin
+      debug_err("Failed to load config " CONFIG_PATH);
+      return;
+   end
+
+   /*variable section := sfx_config.code_variations;
+   variations_code := create_array_map;
+   if (section) then begin
+      foreach (variable k: v in section) begin
+         variations_code[k] := 
+      end
+   end*/
+
+   snd_lookup_weapon_type := array_fixed([
+      'R', // Ready/Reload
+      'A', // Attack
+      'O', // Out of ammo
+      'F', // Firing
+      'H' // Hit
+   ]);
+
+   config_is_loaded := true;
+   return sfx_config;
+end
 
 procedure item_w_is_grenade(variable weapon) begin
    variable damageType := item_w_damage_type(0, weapon);
@@ -31,8 +73,8 @@ procedure material_code_by_material(variable material) begin
    return 'F';
 end
 
-procedure buildsfxname_handler begin
-   if (get_sfall_arg != 1) then return;
+procedure buildsfxweapon_handler begin
+   if (not load_config) then return;
 
    variable
       effectType := get_sfall_arg,
@@ -40,17 +82,10 @@ procedure buildsfxname_handler begin
       attackType := get_sfall_arg,
       target := get_sfall_arg;
 
-   variable attackTypeCode, weaponSoundCode, effectTypeCode, materialCode, variantCode, result;
+   variable effectTypeCode, weaponSoundCode, attackTypeCode, materialCode, variantCode,
+      weaponPid, result, configKey, variantList;
 
-   if (not snd_lookup_weapon_type) then
-      snd_lookup_weapon_type := array_fixed([
-         'R', // Ready/Reload
-         'A', // Attack
-         'O', // Out of ammo
-         'F', // Firing
-         'H' // Hit
-      ]);
-
+   weaponPid := obj_pid(weapon);
    weaponSoundCode := get_proto_data(obj_pid(weapon), PROTO_WP_SOUND) bwand 0xFF;
    effectTypeCode := snd_lookup_weapon_type[effectType];
 
@@ -60,6 +95,16 @@ procedure buildsfxname_handler begin
          else 1;
    end else
       attackTypeCode := 1;
+
+   configKey := string_format("%d_%c%1d", weaponPid, effectTypeCode, attackTypeCode);
+   variantList := sfx_config.variant_pid[configKey];
+   if (not variantList) then begin
+      configKey := string_format("%d_%c%1d", weaponSoundCode, effectTypeCode, attackTypeCode);
+      variantList := sfx_config.variant_code[configKey];
+      if (not variantList) then return;
+   end
+
+   variantList := string_split_ints(variantList, ",");
 
    if (effectTypeCode != 'H' or target == 0 or item_w_is_grenade(weapon)) then begin
       materialCode = 'X';
@@ -78,19 +123,17 @@ procedure buildsfxname_handler begin
       materialCode := material_code_by_material(material);
    end
 
-   variantCode := random(1, 2)
-      if effectType == WEAPON_SOUND_EFFECT_ATTACK
-      else 1;
+   variantCode := array_random_value(variantList);
 
    result := string_format("W%c%c%1d%cXX%1d", effectTypeCode, weaponSoundCode, attackTypeCode, materialCode, variantCode);
 
-   display_msg("gsnd_build_weapon_sfx_name hook for " + obj_name(weapon) + ", effect: "+ effectType + ", result: " + result);
+   debug_log("gsnd_build_weapon_sfx_name hook for " + obj_name(weapon) + ", effect: "+ effectType + ", result: " + result);
    set_sfall_return(result);
 end
 
 procedure start begin
    if (not game_loaded) then return;
 
-   register_hook_proc(HOOK_BUILDSFXNAME, buildsfxname_handler);
-   display_msg("Registered buildsfxname");
+   register_hook_proc(HOOK_BUILDSFXWEAPON, buildsfxweapon_handler);
+   debug_log("Initialized.");
 end
