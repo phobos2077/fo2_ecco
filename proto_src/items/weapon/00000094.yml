@@ -33,4 +33,4 @@ weaponData:
   caliber: 11
   ammoTypePid: 95
   ammoCapacity: 2
-  soundCode: (
+  soundCode: R
