@@ -10,7 +10,7 @@
 #include "../_pbs_headers/engine_funcs.h"
 
 variable begin
-   config_is_loaded;
+   load_config_attempted;
    sfx_config;
    variations_code;
    variations_pid;
@@ -26,7 +26,9 @@ end
 #define CONFIG_PATH     "config\\sfx_weapon.ini"
 
 procedure load_config begin
-   if (config_is_loaded) then return sfx_config;
+   if (load_config_attempted) then return sfx_config;
+
+   load_config_attempted := true;
 
    sfx_config := get_ini_config_db(CONFIG_PATH);
 
@@ -34,14 +36,6 @@ procedure load_config begin
       debug_err("Failed to load config " CONFIG_PATH);
       return;
    end
-
-   /*variable section := sfx_config.code_variations;
-   variations_code := create_array_map;
-   if (section) then begin
-      foreach (variable k: v in section) begin
-         variations_code[k] := 
-      end
-   end*/
 
    snd_lookup_weapon_type := array_fixed([
       'R', // Ready/Reload
@@ -51,7 +45,6 @@ procedure load_config begin
       'H' // Hit
    ]);
 
-   config_is_loaded := true;
    return sfx_config;
 end
 
