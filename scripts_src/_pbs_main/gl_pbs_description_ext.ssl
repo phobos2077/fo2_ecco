@@ -1,0 +1,158 @@
+/**
+ * Expanded object descriptions:
+ * - Prints critter armor stats.
+ * - Prints expanded weapon stats
+ * - Optional hotkey to press
+ * - Optionally requires awareness perk
+ * - Reads damage type overrides from combat.ini
+ */
+
+#include "../sfall/command_lite.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+#include "../sfall/sfall.h"
+
+#define SCRIPT_REALNAME    "pbs_description_ext"
+
+#include "../_pbs_headers/ecco_log.h"
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/ecco_msg.h"
+
+/*
+procedure description_hook begin
+   display_msg("desc "+obj_name(get_sfall_arg));
+end
+*/
+
+variable begin
+   ini_critter_info;
+   ini_weapon_info;
+   ini_modifier_key;
+   last_desc_obj;
+end
+
+#define critter_is_biped(cr)          (proto_data(obj_pid(cr), cr_body_type) == CR_BODY_BIPED)
+
+procedure mstr_dmg_resist(variable obj, variable dmgType) begin
+   variable
+      formatStr := mstr_ecco_combat(410),
+      dmgTypeStr := mstr_ecco_combat(420 + dmgType),
+      dt := get_critter_stat(obj, STAT_dmg_thresh + dmgType),
+      dr := get_critter_stat(obj, STAT_dmg_resist + dmgType);
+   
+   return string_format(formatStr, dt, dr, dmgTypeStr);
+end
+
+procedure stdprocedure_hook begin
+   variable
+      proc := get_sfall_arg,
+      obj := get_sfall_arg,
+      isEnd := get_sfall_arg_at(3);
+
+   if (proc != description_proc) then
+      return;
+   
+   if (((not isEnd and key_pressed(ini_modifier_key) if ini_modifier_key else isEnd))
+      and obj != dude_obj
+      and obj_type(obj) == OBJ_TYPE_CRITTER
+      and (ini_critter_info == 1 or dude_perk(PERK_bonus_awareness))
+      and not is_critter_dead(obj)) then begin
+      variable
+         //dmgType := obj_pid get_active_weapon(dude_obj)
+         ac := get_critter_stat(obj, STAT_ac),
+         msg := mstr_ecco_combat(400 + get_gender(obj) if critter_is_biped(obj) else 402)
+            + mstr_dmg_resist(obj, DMG_normal_dam)
+            + mstr_dmg_resist(obj, DMG_laser)
+            + mstr_dmg_resist(obj, DMG_fire)
+            + mstr_dmg_resist(obj, DMG_plasma)
+            + mstr_dmg_resist(obj, DMG_explosion)
+            + string_format(mstr_ecco_combat(411), ac);
+
+      display_msg(msg);
+      iF (not isEnd) then
+         set_sfall_return(-1);
+   end
+end
+
+#define dmg_type_override(pid)      get_int_from_ini(INI_COMBAT, INI_DAMAGE_TYPE_SECTION, pid)
+
+procedure get_damage_type_with_pbs_damage_mod(variable weaponPid, variable ammoPid) begin
+   variable dmgType := dmg_type_override(ammoPid);
+   if (dmgType >= 0) then
+      return dmgType;
+
+   dmgType := dmg_type_override(weaponPid);
+   if (dmgType >= 0) then
+      return dmgType;
+
+   return get_proto_data(weaponPid, PROTO_WP_DMG_TYPE);
+end
+
+procedure description_hook begin
+   variable obj := get_sfall_arg;
+   if (obj_type(obj) == OBJ_TYPE_ITEM
+      and obj_item_subtype(obj) == item_type_weapon
+      and (not ini_modifier_key or key_pressed(ini_modifier_key) or obj == last_desc_obj)) then begin
+      
+      variable
+         pid := obj_pid(obj),
+         dmgMin := get_proto_data(pid, PROTO_WP_DMG_MIN),
+         dmgMax := get_proto_data(pid, PROTO_WP_DMG_MAX),
+         dmgType := get_damage_type_with_pbs_damage_mod(pid, get_weapon_ammo_pid(obj)),
+         attackMode1 := weapon_attack_mode1(pid),
+         attackMode2 := weapon_attack_mode2(pid),
+         apCost1 := get_proto_data(pid, PROTO_WP_APCOST_1),
+         apCost2 := get_proto_data(pid, PROTO_WP_APCOST_2) if attackMode2 != ATTACK_MODE_NONE else 0,
+         range1 := get_proto_data(pid, PROTO_WP_RANGE_1),
+         range2 := get_proto_data(pid, PROTO_WP_RANGE_2) if attackMode2 != ATTACK_MODE_NONE else 0,
+         burstRounds := get_proto_data(pid, PROTO_WP_BURST)
+            if attackMode1 == ATTACK_MODE_BURST or attackMode2 == ATTACK_MODE_BURST
+            else 0,
+         perk := get_proto_data(pid, PROTO_WP_PERK),
+         desc := "";
+   
+      desc += string_format("%s%d-%d", mstr_ecco_combat(450), dmgMin, dmgMax);
+      if (burstRounds > 1) then
+         desc += mstr_ecco_combat(451) + burstRounds;
+
+      desc += mstr_ecco_combat(452) + range1;
+      if apCost2 > 0 then
+         desc += ", " + range2;
+
+      desc += mstr_ecco_combat(453) + mstr_ecco_combat(420 + dmgType);
+
+      desc += mstr_ecco_combat(454) + apCost1;
+      if apCost2 > 0 then
+         desc += ", " + apCost2;
+
+      if (perk > -1) then
+         desc += mstr_ecco_combat(455) + mstr_perk(101 + perk);
+
+      if (not ini_modifier_key) then
+         desc := proto_data(pid, it_description) + "\n" + desc;
+
+      set_sfall_return(desc);
+      last_desc_obj := 0;
+   end else
+      last_desc_obj := obj;
+end
+
+#define INI_FILE     INI_MISC
+#define INI_SECTION  "DESCRIPTION_EXT"
+
+procedure start begin
+   if not game_loaded then return;
+
+   load_num_from_ini(critter_info, 0, 0, 2);
+   load_bool_from_ini(weapon_info, false);
+   load_num_from_ini(modifier_key, 0, 0, 255);
+
+   if (ini_critter_info > 0) then begin
+      register_hook_proc(HOOK_STDPROCEDURE, stdprocedure_hook);
+      register_hook_proc(HOOK_STDPROCEDURE_END, stdprocedure_hook);
+   end
+
+   if (ini_weapon_info) then
+      register_hook_proc(HOOK_DESCRIPTIONOBJ, description_hook);
+end
+

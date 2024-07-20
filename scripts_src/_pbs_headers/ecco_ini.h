@@ -9,6 +9,9 @@
 #define INI_ECONOMY        "ecco\\barter.ini"
 #define INI_MISC           "ecco\\misc.ini"
 
+#define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
+#define INI_ATTACK_MODES_SECTION  "ATTACK_MODES"
+
 #define get_int_from_ini(file, section, setting)       get_ini_setting(file + "|" + section + "|" + setting)
 #define get_str_from_ini(file, section, setting)       get_ini_string(file + "|" + section + "|" + setting)
 #define get_float_from_ini(file, section, setting)     atof(get_str_from_ini(file, section, setting))

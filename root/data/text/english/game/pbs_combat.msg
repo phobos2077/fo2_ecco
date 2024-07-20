@@ -23,7 +23,7 @@
 # skill booster kits
 {310}{}{ It has supplies for %d/%d uses.}
 
-# armor awareness
+# NPC armor awareness
 {400}{}{His resistances are: }
 {401}{}{Her resistances are: }
 {402}{}{Its resistances are: }
@@ -33,4 +33,14 @@
 {421}{}{laser}
 {422}{}{fire}
 {423}{}{plasma}
+{424}{}{electro}
+{425}{}{EMP}
 {426}{}{explode}
+
+# weapon awareness
+{450}{}{Base Dmg: }
+{451}{}{\nBurst: }
+{452}{}{\nRange: }
+{453}{}{\nDmg Type: }
+{454}{}{\nAP cost: }
+{455}{}{\nPerk: }

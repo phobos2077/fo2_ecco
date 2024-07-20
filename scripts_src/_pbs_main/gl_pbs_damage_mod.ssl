@@ -45,8 +45,6 @@ procedure get_ammo_value(variable weapon, variable param);
 procedure map_enter_p_proc;
 
 #define INI_SECTION   "DAMAGE"
-#define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
-#define INI_ATTACK_MODES_SECTION  "ATTACK_MODES"
 
 #define debug_verbose(msg)    if ini_debug then debug_log(msg)
 
