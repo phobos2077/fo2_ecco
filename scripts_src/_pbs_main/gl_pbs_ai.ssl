@@ -18,10 +18,9 @@
 #include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/ecco_log.h"
 
-#define SCRIPT_REALNAME    "pbs_ai"
+#include "../_pbs_headers/damage_mod.h"
 
-import procedure calc_effective_dtdr(variable targetDT, variable targetDR, variable ammoDR, variable ctdSource, variable bypass,
-   variable weaponPerk, variable attackType);
+#define SCRIPT_REALNAME    "pbs_ai"
 
 variable begin
    ini_called_int_req;
