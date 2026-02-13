@@ -245,9 +245,9 @@ procedure Node996 begin
    end
 end
 procedure Node995 begin
-   if (town_rep_is_accepted or check_title(KARMA_SHIELD_OF_HOPE)) then begin
+   if (town_rep_is_accepted or perceived_rep >= KARMA_SHIELD_OF_HOPE) then begin
       call Node011;
-   end else if town_rep_is_antipaty or check_title_bad(KARMA_SWORD_OF_DESPAIR) then begin
+   end else if (town_rep_is_antipaty or perceived_rep <= KARMA_SWORD_OF_DESPAIR) then begin
       call Node017;
    end else begin
       call Node018;

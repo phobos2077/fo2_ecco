@@ -62,7 +62,7 @@ procedure map_enter_p_proc begin
 
    restock_fix
    if (local_var(LVAR_Restock_Time) < game_time) then begin
-      variable tmp_box := move_critical_items();
+      variable tmp_box := move_quest_items();
       check_restock_item(PID_BOTTLE_CAPS, 150, 225, 100)
       check_restock_item(PID_LEATHER_ARMOR, 1, 1, 50) // pbs: probability was 100
       check_restock_item(PID_HEALING_POWDER, 2, 4, 100)

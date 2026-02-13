@@ -43,8 +43,7 @@ procedure map_enter_p_proc begin
    if (is_loading_game == false) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
-         display_msg("Restock Smitty");
-         variable tmp_box := move_critical_items();
+         variable tmp_box := move_quest_items();
          check_restock_item(PID_BOX_OF_NOODLES, 0, 1, 100)
          check_restock_item(PID_BEER, 0, 6, 100)
          check_restock_item(PID_SUPER_TOOL_KIT, 1, 1, 40)

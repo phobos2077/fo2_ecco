@@ -196,7 +196,7 @@ procedure map_enter_p_proc begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
          ndebug("first restock shelf 1");
-         variable tmp_box := move_critical_items();
+         variable tmp_box := move_quest_items();
          check_restock_item(PID_44_MAGNUM_JHP, 7, 10, 40)
          check_restock_item(PID_BBS, 30, 50, 10)
          check_restock_item(PID_AVENGER_MINIGUN, 0, 1, 100)

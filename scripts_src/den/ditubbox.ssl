@@ -43,7 +43,7 @@ procedure map_enter_p_proc begin
    if (is_loading_game == false) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
-         variable tmp_box := move_critical_items();
+         variable tmp_box := move_quest_items();
          self_caps_adjust(random(151, 161) - self_caps);
          check_restock_item(PID_JET, 5, 10, 100)
          check_restock_item(PID_PSYCHO, 0, 2, 100)

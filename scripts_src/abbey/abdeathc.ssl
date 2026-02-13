@@ -78,7 +78,7 @@ procedure destroy_p_proc begin
    inc_evil_critter
    if (self_pid == PID_LARGE_DEATHCLAW or self_pid == PID_TOUGH_DEATHCLAW) then begin
       give_exp_points(500);
-      display_msg(mstr(102));
+      display_msg(sprintf(mstr(102), calc_actual_xp_gain(500)));
       set_global_var(GVAR_ABBEY_BEAST, 2);
    end
 end

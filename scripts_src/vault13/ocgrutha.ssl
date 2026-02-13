@@ -134,7 +134,7 @@ import variable i_matt_obj;
 import variable i_gruthar_obj;
 
 #define GRUTHAR_NO_LIKE_YOU    \
-   (bad_critter_reaction or self_rep_negative or town_rep_negative or has_rep_childkiller or has_rep_berserker)
+   (bad_critter_reaction or perceived_rep_negative or town_rep_negative or has_rep_childkiller or has_rep_berserker)
 
 #define STARTTILE 14695
 

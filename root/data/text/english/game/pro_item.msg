@@ -77,7 +77,7 @@
 {3900}{}{Micro Fusion Cell}
 {3901}{}{A medium sized energy production unit. Self-contained fusion plant.}
 {4000}{}{Stimpak}
-{4001}{}{A healing drug. When injected, the drug provides immediate healing of minor wounds.}
+{4001}{}{A healing chem. When injected, the chem provides immediate healing of minor wounds.}
 {4100}{}{Money}
 {4101}{}{Legal tender for the world of the wastes.}
 {4200}{}{Fridge}
@@ -103,7 +103,7 @@
 {5200}{}{Geiger Counter}
 {5201}{}{A Wattz Electronics C-Radz model Geiger Counter. Detects the presence and strength of radiation fields.}
 {5300}{}{Mentats}
-{5301}{}{A pillbox of mind-altering drugs. Increases memory related functions, and speeds other mental processes. Highly addictive.}
+{5301}{}{A pillbox of mind-altering chems. Increases memory related functions, and speeds other mental processes. Highly addictive.}
 {5400}{}{Stealth Boy}
 {5401}{}{A RobCo Stealth Boy 3001 personal stealth device. Generates a modulating field that transmits the reflected light from one side of an object to the other.}
 {5500}{}{Water Chip}
@@ -179,7 +179,7 @@
 {9000}{}{Back Pack}
 {9001}{}{A basic backpack, with optional carrying straps.}
 {9100}{}{Doctor's Bag}
-{9101}{}{This brown bag contains instruments and drugs used by doctors in the application of their trade.}
+{9101}{}{This brown bag contains instruments and chems used by doctors in the application of their trade.}
 {9200}{}{Scorpion Tail}
 {9201}{}{The severed tail of a radscorpion.}
 {9300}{}{Bag}
@@ -215,7 +215,7 @@
 {10800}{}{Bones}
 {10801}{}{A collection of strange bones.}
 {10900}{}{Rad-X}
-{10901}{}{Anti-radiation drugs to be taken before exposure. No known side effects.}
+{10901}{}{Anti-radiation chems to be taken before exposure. No known side effects.}
 {11000}{}{Psycho}
 {11001}{}{An unique delivery system filled with strange and unknown chemicals of probably military origin. It is supposed to increase the combat potential of a soldier.}
 {11100}{}{.44 Magnum FMJ}
@@ -795,7 +795,7 @@
 {40800}{}{Field Medic First Aid Kit}
 {40801}{}{A small kit containing basic emergency medical equipment. Bandages, wraps, antiseptic spray, and more.}
 {40900}{}{Paramedics Bag}
-{40901}{}{This bag contains instruments and drugs used by paramedics in the field. The tools contained are specifically designed for high trauma and emergency cases.}
+{40901}{}{This bag contains instruments and chems used by paramedics in the field. The tools contained are specifically designed for high trauma and emergency cases.}
 {41000}{}{Expanded Lockpick Set}
 {41001}{}{A set of locksmith tools. Includes all the necessary picks and tension wrenches to open conventional pin and tumbler locks. This set also includes some special tools for more difficult mechanical locking mechanisms.}
 {41100}{}{Electronic Lockpick MKII}

@@ -48,7 +48,7 @@ procedure map_enter_p_proc begin
    if (is_loading_game == false) then begin
       restock_fix
       if (local_var(LVAR_Restock_Time) < game_time) then begin
-         variable tmp_box := move_critical_items();
+         variable tmp_box := move_quest_items();
          check_restock_item(PID_BOTTLE_CAPS, 200, 600, 100)
          check_restock_item(PID_BIG_BOOK_OF_SCIENCE, 1, 2, 75)
          check_restock_item(PID_DEANS_ELECTRONICS, 1, 1, 75)
@@ -60,9 +60,13 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_DOCTORS_BAG, 1, 2, 100) // pbs
          check_restock_item(PID_KNIFE, 1, 3, 100)
          check_restock_item(PID_10MM_PISTOL, 1, 2, 100)
+         check_restock_item(PID_DESERT_EAGLE, 1, 2, 100)
          check_restock_item(PID_SHOTGUN, 1, 2, 25)
          check_restock_item(PID_CLUB, 1, 1, 25)
+         check_restock_item(PID_LEATHER_ARMOR, 1, 2, 50)
+         check_restock_item(PID_LEATHER_ARMOR_MK_II, 1, 2, 50)
          check_restock_item(PID_METAL_ARMOR, 1, 2, 25)
+         check_restock_item(PID_METAL_ARMOR_MK_II, 1, 1, 25)
          check_restock_item(PID_10MM_JHP, 1, 3, 100)
          check_restock_item(PID_SHOTGUN_SHELLS, 1, 3, 100)
          check_restock_item(PID_STIMPAK, 3, 8, 100)

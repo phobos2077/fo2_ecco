@@ -171,7 +171,7 @@
 {1140}{}{Your reputation is always positive to people. Without this Perk, a large negative reputation would have a bad effect on good natured people. This works in the reverse as well. Evil people will even treat Mr. Goodie Good as one of the gang.}
 {1141}{}{You can find more ammo than the normal post-holocaust survivor. This Perk doubles the amount of ammo found in random encounters.}
 {1142}{}{The mark of the Explorer is to search out new and interesting locations. With this Perk, you have a greater chance of finding special places and people.}
-{1143}{}{With this Perk, you are less likely to be addicted to drugs (50% less likely, actually), and you suffer half the withdrawal time of a normal person.}
+{1143}{}{With this Perk, you are less likely to be addicted to chems (50% less likely, actually), and you suffer half the withdrawal time of a normal person.}
 {1144}{}{The Pathfinder is better able to find the shortest route. With this Perk, your travel time on the World Map is reduced by 25% for each level.}
 {1145}{}{Animals will not attack one of their friends, unless the animal is threatened or attacked first. Exactly what an animal is in this world is open to debate.}
 {1146}{}{You have improved your ability to see distant locations, increasing the size of explorations on the World Map by one square in each direction. You also have a better chance of finding special encounters.}

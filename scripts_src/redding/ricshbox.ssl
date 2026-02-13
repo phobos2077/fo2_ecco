@@ -56,7 +56,7 @@ procedure map_enter_p_proc begin
 
    restock_fix
    if (local_var(LVAR_Restock_Time) < game_time) then begin
-      variable tmp_box := move_critical_items();
+      variable tmp_box := move_quest_items();
       set_local_var(LVAR_Restock_Time, (game_time + (2*ONE_GAME_WEEK)));
       // by phobos2077:
       lvl := dude_level;

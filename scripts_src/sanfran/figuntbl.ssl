@@ -55,6 +55,8 @@ procedure validHandle(variable handle);
    Needs to be saved, make it a map variable (MVAR_)
 *******************************************************************/
 import variable i_table_swap;
+import variable i_gun_table_1;
+import variable i_gun_table_2;
 import variable i_gun_merchant;
 
 /*******************************************************************
@@ -76,6 +78,8 @@ import variable i_gun_merchant;
 
 procedure start begin
    i_table_swap := self_obj;
+   if (self_tile == TABLE_1) then i_gun_table_1 := self_obj;
+   if (self_tile == TABLE_2) then i_gun_table_2 := self_obj;
 end
 
 procedure timed_event_p_proc begin
@@ -153,7 +157,7 @@ procedure map_enter_p_proc begin
       if (local_var(LVAR_Restock_Time) < game_time) then begin
          if (self_tile == TABLE_1) then begin //Armor table
             ndebug("table 1 set");
-            tmp_box := move_critical_items();
+            tmp_box := move_quest_items();
             //Used to be on Table 3
             check_restock_item(PID_BOTTLE_CAPS, 1000, 8000, 100)   // pbs: max from 2000
             check_restock_item(PID_FLAMER, 1, 2, 60)
@@ -189,7 +193,7 @@ procedure map_enter_p_proc begin
             call restore_critical_items(tmp_box);
          end else if (self_tile == TABLE_2) then begin //Ammo table
             ndebug("table 2 set");
-            tmp_box := move_critical_items();
+            tmp_box := move_quest_items();
             //Used to be on table 3
             check_restock_item(PID_HK_CAWS, 1, 5, 40)
             check_restock_item(PID_HK_P90C, 1, 2, 55)
