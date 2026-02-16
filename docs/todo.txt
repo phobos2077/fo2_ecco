@@ -14,6 +14,7 @@ for "future":
 
 
 Considering:
+- most doctors should be able to heal limbs and companions (money sink, compensation for nerfed rest)
 - Make APA at Navarro harder to get early (see NMA forum)
 - look into caravan run issues ("naked" people, poor balance)
 - Add Tesla Armor to SAD: is needed to fight Salvatores and from gameplay and roleplay perspective it will be the ONLY instance when it will be useful
