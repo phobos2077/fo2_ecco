@@ -4,7 +4,7 @@
 
 [Setup]
 #define MyAppName "Fallout 2: EcCo Gameplay Overhaul"
-#define MyAppVersion "0.9.7"
+#define MyAppVersion "0.9.8"
 #define MyAppPublisher "phobos2077"
 
 #define DocsDir "..\docs\"
@@ -17,7 +17,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-7
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-8
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no
@@ -38,7 +38,7 @@ VersionInfoVersion={#MyAppVersion}
 ;Compression=lzma
 OutputDir=.
 
-AppCopyright=Copyright © 2024, (phobos2077)
+AppCopyright=Copyright © 2026, (phobos2077)
 InfoBeforeFile={#DocsDir}ecco_readme.txt
 SetupIconFile=fallout.ico
 WizardSmallImageFile=phobos.bmp

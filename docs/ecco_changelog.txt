@@ -1,5 +1,34 @@
 -=== CHANGELOG ===-
 
+v0.9.8:
+> Sound:
+- restored and normalized classic BLAM for .223 Pistol
+- added new burst sounds for some SMG's to match their actual RPM (number of shots)
+- unlocked previously unused vanilla weapon sound effect variations
+
+> Balance:
+- reduced pre-placed ammo in all maps via new script to ensure adequate quantities for each caliber
+- overhauled NPC ammo reduction for more appropriate quantities
+- overhauled all ammo pack sizes for realistic per-round weights, similar to vanilla
+- overhauled ammo-related craft recipies to make sense economy-wise
+- reworked merchant loot reduction for determinism and exploit prevention
+- buffed Rocket Launcher damage by 20%
+- buffed G11E RPM to be twice the regular variant
+- buffed .223 Pistol damage/range to be competitive against 14mm
+- reduced hit chance bonuses from some weapons and ammo types to motivate skill investment
+- reverted Vindicator Minigun's Penetrate perk and burst size change, but increased damage slightly
+- reduced Rocket/Grenade launchers AP cost to compensate for higher reload cost
+- reduced DEagle AP cost so it remains viable alternative to Magnum
+- ensured constant fuel consumption per distance traveled after car upgrade
+
+> Misc:
+- expanded Awareness perk by printing target's resistance values and additional weapon stats (hold Ctrl)
+- made double-sure that you can't get locked out of unique .223 Pistol
+- updated required RPU version to 2.4.34
+- fixed incorrect sprite for Advanced Power Armor
+- fixed potential crash when attempting to equip the best weapon on a party member
+
+
 v0.9.7:
 > Crafting:
 - added recipes for crafting .50 cal, 40mm HE ammo, Fuel MK2

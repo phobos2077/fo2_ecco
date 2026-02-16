@@ -1141,7 +1141,7 @@ type_02=ratio:15%, pid:16777264, Item:630(wielded), Item:(1-2)631, Item:(0-2)40,
 type_03=ratio:20%, pid:16777474, Item:23(wielded), Item:(1-2)36, Item:(0-2)40, Item:259, Script:772             ; Tough Ghoul w/ Assault Rifle
 type_04=ratio:20%, pid:16777475, Item:283(wielded), Item:357, Script:772, If(enctr(num_critters) > 4)           ; Mobster w/ Tommy Gun
 type_05=ratio:20%, pid:16777366, Item:332(wielded), Item:357, Item:(0-2)125, Script:772                         ; Shop Owner (halfling) w/ Grease Gun
-type_06=ratio:10%, pid:16777298, Script:772                                                                     ; Wild Dog
+type_06=ratio:10%, pid:16777298, Script:632                                                                     ; Wild Dog
 position=cone, spacing:2
 
 ; put around San Francisco
@@ -1154,7 +1154,7 @@ type_03=ratio:10%, pid:16777406, Item:15(wielded), Item:(1-2)39, Item:(1-4)40, S
 type_04=ratio:10%, pid:16777406, Item:644(wielded), Item:(1-2)633, Item:(1-4)40, Script:772                     ; Bounty Hunter (Pwr. armor) w/ 14mm SMG
 type_05=ratio:20%, pid:16777224, Script:772, If(enctr(num_critters) > 6)                                        ; Deathclaw
 type_06=ratio:10%, pid:16777291, Item:268(wielded), Script:772, If(enctr(num_critters) > 5)                     ; Robobrain w/ H&K CAWS
-type_07=ratio:10%, pid:16777692, Script:772, If(enctr(num_critters) > 7)                                        ; Generic Cyberdog
+type_07=ratio:10%, pid:16777692, Script:632, If(enctr(num_critters) > 7)                                        ; Generic Cyberdog
 position=cone, spacing:2
 
 [Encounter: BOUNTY_Ghouls]

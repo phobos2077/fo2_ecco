@@ -1,6 +1,6 @@
 -====================-
 -===   EcCo mod   ===-
--=== v0.9.7 BETA  ===-
+-=== v0.9.8 BETA  ===-
 -====================-
 						by phobos2077
 
@@ -52,8 +52,8 @@
 
 > LOOTING:
 - There is a chance a weapon will get destroyed when critter dies (except unique and rare weapons).
-- Corpses are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
-- Loot slightly reduced/rearranged in various containers across the game, especially in certain underground facilities.
+- Corpses and containers are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
+- Loot in general is slightly reduced/rearranged in various containers across the game, especially in certain underground facilities.
 - NPCs will be more likely to detect if you're stealing from their property.
 - EPA: room with most powerful stuff at security level will be harder to get in.
 - Measures introduced to prevent trivial stealing from some places in Redding, New Reno and NCR.
@@ -101,7 +101,7 @@
 
 > GUNS:
 - New guns for .44 Magnum and 14mm calibers to add variety and make these calibers feel "complete".
-- Reload now costs 4 AP up from 2. This makes magazine capacity a much bigger factor.
+- Reload now costs 4 AP up from 2. This makes magazine capacity a much bigger factor. Some weapon stats were adjusted to compensate for this change.
 - Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
 - Sawed off shotgun have a duplet (burst) firing mode with single shot animation and correct death animations.
 - Some smaller pistols cost 4 AP to shoot to make them viable compared to "long" guns.
@@ -119,6 +119,7 @@
 - Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
 - M60 is a true machine gun: more powerful with 100 rounds ammo capacity, while LSW is a versatile LMG.
 - Some ammo types can be crafted and Flamethrower can be upgraded via Fix-Boy.
+- Rocket Launcher damage buffed to account for higher average critter HP compared to FO1 where the vanilla values come from.
 - ST now adds to base skill.
 
 
@@ -182,6 +183,12 @@
 - Throwing weapons will be used against you more often.
 - Ranged enemies will sure to have some spare ammo.
 
+> SOUND EFFECTS:
+- Classic BLAM for .223 Pistol from FO1 is back!
+- New burst sounds for some weapons to better represent their actual RPM.
+- Previously unused vanilla weapon sound effect variations are now unlocked.
+
+
 
 > MISC:
 - Slightly nerfed car travel speed and fuel consumption upgrades to buff Outdoorsman skill and increase money sink.
@@ -223,7 +230,7 @@ wipe_inventory=0
 
 -=== COMPATIBILITY ===-
 Talking Heads Addon & Talking Heads Actually Talk (THAT):
-- Full built-in support, no patches needed (if you previously used compatibility patches, DELETE them)
+- Full built-in support, no additional patches needed (except for potential patches for newer RPU versions)
 
 Inventory Filter (2.0.3+ from github):
 - SmartBarter option seems to cause issues with barter, avoid!
@@ -235,15 +242,16 @@ max_knockback=-1
 healing_revision=0
 molotov_fire=0
 damage_mod=0
+ap_rollover=0
 
 Companion Expansion:
-- Has conflicts, mainly with the RPU/maps update that EcCo requires, needs a patch!
+- Has conflicts and needs a patch (not included)!
 
 
 
 -=== CREDITS ===-
 
-Mod was developed by phobos2077 between 2010 and 2024 (with years-long gaps).
+Mod was developed by phobos2077 between 2010 and 2026 (with years-long gaps).
 
 Additional dialogs, designs, flow fixes: Lujo.
 Russian translators: Pyran, Drobovik, phobos2077, Frederika, PolarTulip.

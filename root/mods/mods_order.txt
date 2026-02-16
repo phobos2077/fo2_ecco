@@ -23,9 +23,6 @@ rpu_improved_mysterious_stranger.dat
 walk_speed_fix_low_fps.dat
 goris_fast_derobing_low_fps.dat
 
-; Pixote Updated maps
-rpu_map_update.dat
-
 ; Visual and audio
 talking_heads.dat
 talking_heads_audio.dat
