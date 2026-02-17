@@ -131,6 +131,9 @@ procedure checkItems;
 // ecco:
 #include "../_pbs_headers/talking_heads_compat.h"
 #define start_dialog_check_head           start_gdialog_check_talking_head(4, HEAD_DOCJ, BACKGROUND_ADOBE)
+variable heal_cost;
+
+#include "../_pbs_headers/healers.h"
 // ;
 
 /* Imported variables from the Map scripts. These should only be
@@ -364,16 +367,16 @@ end
 
 procedure doHeal begin
    fadeout(1);
-   critter_heal(dude_obj, dude_max_hits - dude_cur_hits);
+   call heal_and_uncripple_party(true);
    game_time_advance(ONE_GAME_HOUR);
    fadein(1);
 end
 
 procedure Node3Heal begin
-   if (dude_caps >= 50) then begin
+   if (dude_caps >= heal_cost) then begin
       call doHeal;
-      dude_caps_adjust(-50);
-      self_caps_adjust(50);
+      dude_caps_adjust(-heal_cost);
+      self_caps_adjust(heal_cost);
       call Node003;
    end else begin
       call Node007;
@@ -393,15 +396,18 @@ procedure Node003 begin
 end
 
 procedure Node004 begin
+   variable numInjured := party_injured_or_crippled_count(true);
+   heal_cost := (numInjured if numInjured > 1 else 1) * 50;
+   variable healCostMsg := sprintf(mstr(116), heal_cost);
    if (dude_level <= 5) then
-      Reply(mstr(107) + " " + mstr(116));
+      Reply(mstr(107) + " " + healCostMsg);
    else
-      Reply(mstr(108) + " " + mstr(116));
-   if (dude_max_hits > dude_cur_hits) then
+      Reply(mstr(108) + " " + healCostMsg);
+   if (party_injured_or_crippled_count(true) > 0) then begin
       NOption(117, Node3Heal, 4);
-   NOption(118, Node999, 4);
-   if (dude_max_hits > dude_cur_hits) then
       NLowOption(119, Node3Heal);
+   end
+   NOption(118, Node999, 4);
    NLowOption(120, Node999);
 end
 

@@ -26,19 +26,19 @@
 {125}{}{He went home, did he. I hope he has found peace there.}
 {126}{}{I think he has. I have more questions.}
 {127}{}{Probably. I have to go. Bye.}
-{128}{}{That'll cost you $100.}
+{128}{}{That'll cost you $%d.}
 {129}{}{I'll pay.}
 {130}{}{Forget it.}
-{131}{}{This appears serious. That will cost $200.}
+{131}{}{This appears serious. That will cost $%d.}
 {132}{}{I'll pay.}
 {133}{}{Forget it.}
-{134}{}{Those are impressive wounds. $300 is all it takes to procure my services.}
+{134}{}{Those are impressive wounds. $%d is all it takes to procure my services.}
 {135}{}{I'll pay.}
 {136}{}{Forget it.}
-{137}{}{For this much damage, I'm afraid that I will have to demand $400.}
+{137}{}{For this much damage, I'm afraid that I will have to demand $%d.}
 {138}{}{I'll pay.}
 {139}{}{Forget it.}
-{140}{}{Sit down. You'll need to when you hear my bill. Crippled limbs cost $600.}
+{140}{}{Sit down. You'll need to when you hear my bill. Crippled limbs cost $%d.}
 {141}{}{I'll pay.}
 {142}{}{Forget it.}
 

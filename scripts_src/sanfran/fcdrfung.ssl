@@ -47,6 +47,9 @@
 #define PHEONIX_IMPLANT_COST         (7500)  // from  8500
 #define PHEONIX_ENCHANCEMENT_COST   (22500)  // from 49000
 
+#include "../_pbs_headers/healers.h"
+variable heal_cost;
+
 
 /* Standard Script Procedures */
 procedure start;
@@ -323,21 +326,60 @@ procedure Node001 begin
    NOption(111, Node999, 1);
 end
 
+procedure NodeHealAll begin
+   if (dude_caps >= heal_cost) then begin
+      dude_caps_adjust(-heal_cost);
+      self_caps_adjust(heal_cost);
+      call heal_and_uncripple_party(true);
+      call Node022;
+   end else begin
+      call Node017;
+   end
+end
+
+procedure NodeHealOffer(variable msg) begin
+   Reply(sprintf(msg, heal_cost));
+   NOption(129, NodeHealAll, 4);
+   NOption(130, Node999, 4);
+end
+
+procedure get_injury_points(variable who) begin
+   variable hpPercent := get_cur_hits(who) * 100 / get_max_hits(who);
+   if Is_Crippled(who) or (hpPercent < 35) then
+      return 4;
+   else if (hpPercent < 60) then
+      return 3;
+   else if (hpPercent < 90) then
+      return 2;
+   else if (hpPercent < 100) then
+      return 1;
+   return 0;
+end
+
 procedure NodeHowMuch begin
-   variable val;
+   variable partyInjury, injuryPart, injury, hpPercent;
+   foreach (variable who in party_member_list_critters) begin
+      if (who != dude_obj) then
+         partyInjury += get_injury_points(who);
+   end
+   heal_cost := (partyInjury + get_injury_points(dude_obj) * 2) * 50;
 
-   val := ((dude_cur_hits - dude_max_hits) / -dude_max_hits) * 100;
+   //val := ((dude_cur_hits - dude_max_hits) / -dude_max_hits) * 100;
+   //val := dude_cur_hits * 100 / dude_max_hits;
+   //ndebug("val = "+val+", max = " + dude_max_hits + ", cur = " + dude_cur_hits);
 
-   if (Is_Crippled(dude_obj)) then
-      call Node011;
-   else if (val >= 90) then
-      call Node007;
-   else if (val >= 60) then
-      call Node008;
-   else if (val >= 35) then
-      call Node009;
+   ndebug("partyInjury = " + partyInjury);
+
+   if (dude_is_crippled > 0) then
+      call NodeHealOffer(mstr(140));
+   else if (heal_cost < 200) then
+      call NodeHealOffer(mstr(128));
+   else if (heal_cost < 400) then
+      call NodeHealOffer(mstr(131));
+   else if (heal_cost < 600) then
+      call NodeHealOffer(mstr(134));
    else
-      call Node010;
+      call NodeHealOffer(mstr(137));
 end
 
 procedure Node002 begin
@@ -359,7 +401,7 @@ procedure Node004 begin
    Reply(118);
    if (KNOW_DOC_HOLIDAY) then
       GOption(119, Node005, 4);
-   if ( (dude_max_hits - dude_cur_hits) or ( dude_is_crippled ) ) then //added ( dude_is_crippled ) - killap
+   if (party_injured_or_crippled_count(true) > 0) then //added ( dude_is_crippled ) - killap
       NOption(120, Node002, 4);
 //   NOption(121, Node003, 4);
    NOption(184, NOde001, 4); //added by killap
@@ -534,7 +576,7 @@ end
 
 procedure Node022 begin
    Reply(171);
-   if ( (dude_cur_hits != dude_max_hits) or ( dude_is_crippled ) ) then //added ( dude_is_crippled ) - killap
+   if (party_injured_or_crippled_count(true) > 0) then //added ( dude_is_crippled ) - killap
       NOption(172, Node002, 4);
 //   NOption(173, Node003, 4);
    NOption(107, NodeBarter, 4);
