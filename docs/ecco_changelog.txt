@@ -8,6 +8,7 @@ v0.9.8:
 
 > Balance:
 - reduced pre-placed ammo in all maps via new script to ensure adequate quantities for each caliber
+- locked the Navarro Armory door
 - overhauled NPC ammo reduction for more appropriate quantities
 - overhauled all ammo pack sizes for realistic per-round weights, similar to vanilla
 - overhauled ammo-related craft recipies to make sense economy-wise
@@ -23,9 +24,10 @@ v0.9.8:
 - increased base healing rate slightly for high-EN characters
 
 > Misc:
-- expanded Awareness perk by printing target's resistance values and additional weapon stats (hold Ctrl)
-- made double-sure that you can't get locked out of unique .223 Pistol
 - updated required RPU version to 2.4.34
+- expanded Awareness perk by printing target's resistance values and additional weapon stats (hold Ctrl)
+- expanded doctor's services to include healing party and limbs: Dr John, Dr Fung, Dr Jubilee
+- made double-sure that you can't get locked out of unique .223 Pistol
 - fixed incorrect sprite for Advanced Power Armor
 - fixed potential crash when attempting to equip the best weapon on a party member
 

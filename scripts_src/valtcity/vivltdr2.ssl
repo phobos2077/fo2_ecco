@@ -1,0 +1,63 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/******************************************************************************************
+        Item: Wood Door
+        Locked: NO
+        Trapped: NO
+        Closing: YES
+        Description: This is a generic locked and trapped wooden door.
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: September 26, 1997
+
+           Updated:
+******************************************************************************************/
+
+/* Include Files */
+#define SCRIPT_REALNAME "vivltdr2"
+
+/* Sets whether the door is locked or trapped or closing */
+#define LOCKED_STATUS                   STATE_ACTIVE
+#define TRAPPED_STATUS                  STATE_INACTIVE
+#define DOOR_STATUS                     STATE_METAL
+#define LOCK_STATUS                     STATE_ELECTRIC_LOCK
+#define CLOSE_STATUS                    STATE_DOOR_CLOSE
+
+// pbs: hack to repurpose the script for Navarro Armory entrance door
+#define MAP_NAVARRO_ENTRANCE            (109)
+#define is_navarro_entrance_map         (cur_map_index == MAP_NAVARRO_ENTRANCE)
+/* Penalties for Lock difficulty based on whether or not you are using lockpicks. */
+#define Lock_Bonus                      (-140 if is_navarro_entrance_map else -50)
+#define Crowbar_Bonus                   (-10 if is_navarro_entrance_map else -4)
+#define Lockpick_Exp                    (EXP_LOCKPICK_NEG_50 if is_navarro_entrance_map else EXP_LOCKPICK_NEG_90 * 2)
+#define DOOR_STRENGTH                   (2)
+
+
+#define custom_damage_p_proc
+
+#include "../headers/doors.h"
+
+procedure damage_p_proc begin
+  variable Trap_Damage;
+  /************ Wood Door ****************/
+  if (weapon_dmg_type(target_obj) == DMG_explosion) then begin
+    if (is_navarro_entrance_map) then begin
+      set_global_var(GVAR_NAVARRO_BASE_ALERT, 1);
+    end
+    set_local_var(LVAR_Explosion_Attempts,local_var(LVAR_Explosion_Attempts)+1);
+    if (local_var(LVAR_Explosion_Attempts) > DOOR_STRENGTH) then begin
+      set_local_var(LVAR_Trapped, STATE_INACTIVE);
+      set_local_var(LVAR_Locked,STATE_INACTIVE);
+      destroy_object(self_obj);
+    end
+  end
+  else begin
+    display_msg(my_mstr(193));
+  end
+end

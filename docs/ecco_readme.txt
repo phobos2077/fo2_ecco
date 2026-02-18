@@ -83,7 +83,8 @@
 - Much more HP is restored per skill use.
 - Critical successes restore even more and crit chance depends heavily on skill level.
 - Using kits & bags now has clear benefit: this ignores daily usage limits.
-- To have more reason for using these skills, all passive healing was considerably nerfed (now it matches in-game Healing Rate description from vanilla).
+- All passive healing was considerably nerfed to motivate more interesting healing options.
+- More doctors now heal party members and crippled limbs.
 - Stimpak/Healing Powder HP gain amount scales with your First Aid skill.
 - New book for Doctor skill.
 
