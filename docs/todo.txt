@@ -15,10 +15,7 @@ for "future":
 
 Considering:
 - more doctors should be able to heal limbs and companions (money sink, compensation for nerfed rest)
-- Make APA at Navarro harder to get early (see NMA forum)
 - look into caravan run issues ("naked" people, poor balance)
-- Add Tesla Armor to SAD: is needed to fight Salvatores and from gameplay and roleplay perspective it will be the ONLY instance when it will be useful
-- Make Salvatores "wear" Tesla Armor
 - 4 AP cost for 14mm Pistol?
 - add special sounds for Bozar AMR (& M2?)
 - craft Combat Armor mk2 (what component? fuel is overused)

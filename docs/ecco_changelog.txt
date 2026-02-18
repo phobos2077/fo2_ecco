@@ -20,6 +20,7 @@ v0.9.8:
 - reverted Vindicator Minigun's Penetrate perk and burst size change, but increased damage slightly
 - reduced Rocket/Grenade launchers AP cost to compensate for higher reload cost
 - reduced DEagle AP cost so it remains viable alternative to Magnum
+- reduced Tesla Armor price and weight to make it more attractive for purchase
 - ensured constant fuel consumption per distance traveled after car upgrade
 - increased base healing rate slightly for high-EN characters
 
