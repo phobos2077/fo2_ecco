@@ -33,15 +33,18 @@
 #define MAP_NAVARRO_ENTRANCE            (109)
 #define is_navarro_entrance_map         (cur_map_index == MAP_NAVARRO_ENTRANCE)
 /* Penalties for Lock difficulty based on whether or not you are using lockpicks. */
-#define Lock_Bonus                      (-140 if is_navarro_entrance_map else -50)
+#define Lock_Bonus                      (-150 if is_navarro_entrance_map else -50)
 #define Crowbar_Bonus                   (-10 if is_navarro_entrance_map else -4)
 #define Lockpick_Exp                    (EXP_LOCKPICK_NEG_50 if is_navarro_entrance_map else EXP_LOCKPICK_NEG_90 * 2)
-#define DOOR_STRENGTH                   (2)
+#define DOOR_STRENGTH                   (3 if is_navarro_entrance_map else 2)
 
 
 #define custom_damage_p_proc
+#define custom_use_obj_on_p_proc
 
 #include "../headers/doors.h"
+
+#include "../_pbs_headers/ecco_ids.h"
 
 procedure damage_p_proc begin
   variable Trap_Damage;
@@ -61,3 +64,22 @@ procedure damage_p_proc begin
     display_msg(my_mstr(193));
   end
 end
+
+procedure use_obj_on_p_proc begin
+  variable Tool;
+  Tool := obj_pid(obj_being_used_with);
+  if (Tool == PID_PBS_NAVARRO_ARMORY_KEY) then begin
+    if (obj_is_locked(self_obj)) then begin
+      script_overrides;
+      set_local_var(LVAR_Locked, STATE_INACTIVE);
+      obj_unlock(self_obj);
+      display_msg(my_mstr(300));
+    end else begin
+      script_overrides;
+      display_msg(my_mstr(601));
+    end
+  end else
+  pry_trap_block
+  full_lockpick_block
+end
+

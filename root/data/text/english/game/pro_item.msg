@@ -1238,3 +1238,5 @@
 {64901}{}{A paper with some crude drawings and instructions for creating: %s.}
 {65000}{}{Blueprints}
 {65001}{}{A set of blueprints and instructions for creating: %s.}
+{65100}{}{Armory Access Card}
+{65101}{}{A level 4 security key card, used for the armory of Navarro Base. Only authorized personal. If you find this card, please hand it to your superior officer!}

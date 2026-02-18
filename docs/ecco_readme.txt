@@ -271,6 +271,7 @@ Many thanks to following people, who made this mod possible:
 - vad for F12se - an invaluable mod testing/debugging tool
 - PercivalCrump for another save editor with unique features
 - Ziro for solid balance advice
+- bratmanntoffel for his Navarro APA fix
 - Haenlomal, Glovz and Burn for their damage formulas that inspired me to make my own
 - people at NMA and Nuclear-City forums for useful comments
 - Black Isle Studios (R.I.P.) for my favorite game of all time!

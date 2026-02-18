@@ -8,7 +8,7 @@ v0.9.8:
 
 > Balance:
 - reduced pre-placed ammo in all maps via new script to ensure adequate quantities for each caliber
-- locked the Navarro Armory door
+- locked the Navarro Armory door with several ways to bypass it and let Quartermaster give standard PA instead
 - overhauled NPC ammo reduction for more appropriate quantities
 - overhauled all ammo pack sizes for realistic per-round weights, similar to vanilla
 - overhauled ammo-related craft recipies to make sense economy-wise
