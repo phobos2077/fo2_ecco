@@ -34,8 +34,8 @@
 
 #include "../headers/command.h"
 
-#define MIN_RAD_DAMAGE          (1)
-#define MAX_RAD_DAMAGE          (3)
+#define MIN_RAD_DAMAGE          (2)
+#define MAX_RAD_DAMAGE          (8)
 
 /* Standard Script Procedures */
 procedure start;
@@ -113,13 +113,13 @@ procedure combat_p_proc begin
    
    if (fixed_param == COMBAT_SUBTYPE_HIT_SUCCEEDED) then begin
       if (target_obj == dude_obj) then begin
-         if (not(is_success(do_check(dude_obj,STAT_lu,-1)))) then begin
+         if (not(is_success(do_check(dude_obj,STAT_lu,-3)))) then begin // pbs: luck bias from -1
             rads:=random(MIN_RAD_DAMAGE,dude_level*MAX_RAD_DAMAGE);
             if (rads > 5) then
                rads:=5;
             //if (((cur_town == AREA_KLAMATH) or (cur_town == AREA_KLAMATH_TOXIC_CAVES)) and (rads > 3)) then
             if ((cur_town == AREA_KLAMATH) or (cur_town == AREA_KLAMATH_TOXIC_CAVES)) then begin
-               rads:=random(0,1);
+               rads := 0 if random(0, 1) else rads / 2; // pbs: was random(0,1)
             end
             radiation_inc(target_obj,rads);
          end

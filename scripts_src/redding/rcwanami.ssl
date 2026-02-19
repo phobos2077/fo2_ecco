@@ -1,0 +1,138 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Generic Lesser Death Claw
+        Location: Generic
+        Description: Generic Lesser Death Claw.
+
+        Log:
+
+           Created: December 02, 1997
+
+           Updated:
+*/
+
+/* Include Files */
+
+#define SCRIPT_REALNAME "rcwanami"
+#include "../headers/define.h"
+//#include "../headers/<TownName.h>"
+
+#define NAME                    SCRIPT_RCWANAMI
+
+#include "../headers/command.h"
+//#include "../headers/modreact.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure combat_p_proc;
+
+/* Local variables which do not need to be saved between map changes. */
+variable starttile;
+
+#define LVAR_Queen_Tile         (0)
+
+// pbs: radiation
+#define RAD_MIN                 (5)
+#define RAD_MAX                (20)
+
+procedure start begin
+end
+
+procedure critter_p_proc begin
+   variable tiles;
+
+   if (self_can_see_dude) then begin
+      attack(dude_obj);
+   end
+
+   if (not anim_busy(self_obj)) then begin
+      reg_anim_clear(self_obj);
+      reg_anim_begin();
+      if (self_pid != PID_QUEEN_ALIEN) then
+          self_walk_to_tile(tile_num_in_direction(starttile, Random(0, 5), Random(3, 10)));
+      else begin
+           tiles:=tile_num_in_direction(starttile, Random(0, 5), Random(3, 8));
+           if (tile_in_tile_rect(16728,16718,24728,24718,tiles)) then
+               self_walk_to_tile(tiles);
+      end
+      reg_anim_end();
+   end
+end
+
+procedure destroy_p_proc begin
+   dec_global_var(GVAR_TOTAL_WANAMINGOS);
+
+   if ((global_var(GVAR_TOTAL_WANAMINGOS) <= 0) and (global_var(GVAR_WANAMINGO_OCCUPADO) != WANAMINGO_CLEARED_OUT)) then begin
+       set_global_var(GVAR_WANAMINGO_OCCUPADO,WANAMINGO_CLEARED_OUT);
+       set_global_var(GVAR_MINE_DEED,CLEARED_MINE); //added by killap - expansion
+       display_msg(g_mstr(1014));
+       give_xp(EXP_CLEAR_WANAMINGO_MINE);
+   end
+end
+
+procedure damage_p_proc begin
+   if (source_obj == dude_obj) then begin
+      attack(dude_obj);
+   end
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   //added by killap - expansion
+   if (self_pid == PID_QUEEN_ALIEN) then
+     display_msg(mstr(102));
+   else
+     display_msg(mstr(100));
+end
+
+procedure description_p_proc begin
+   script_overrides;
+   //added by killap - expansion
+   if (self_pid == PID_QUEEN_ALIEN) then
+     display_msg(mstr(103));
+   else
+     display_msg(mstr(101));
+end
+
+procedure use_obj_on_p_proc begin
+end
+
+procedure use_skill_on_p_proc begin
+   if (action_being_used == SKILL_STEAL) then
+      script_overrides;
+end
+
+procedure map_enter_p_proc begin
+   set_self_team(TEAM_WANAMINGO);
+   set_self_ai(AI_GENERIC_DEATH_CLAW);
+   starttile := self_tile;
+   reg_anim_clear(self_obj);
+   reg_anim_begin();
+   self_rotate(Random(0, 5));
+   reg_anim_end();
+
+   if ((self_pid == PID_QUEEN_ALIEN) and (local_var(LVAR_Queen_Tile) == 0)) then begin
+       set_local_var(LVAR_Queen_Tile,self_tile);
+   end
+
+end
+
+
+// pbs: radiation
+procedure combat_p_proc begin
+   if (fixed_param == COMBAT_SUBTYPE_HIT_SUCCEEDED) then begin
+      if (target_obj == dude_obj and not(is_success(do_check(dude_obj, STAT_lu, -3)))) then begin
+         radiation_inc(target_obj,random(RAD_MIN, RAD_MAX));
+      end
+   end
+end

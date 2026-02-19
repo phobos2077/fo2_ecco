@@ -11,9 +11,12 @@ for 1.0.0:
 for "future":
 - custom craft schematic art
 - cavern encounters need rebalance!!
+- even more radiation sources
 
 
 Considering:
+- is Vic repair skill too low? (should he be your ticket to crafting Metal armor?)
+- guns to hit penalty at close range (like WEAPON_SCOPE_RANGE but less severe)
 - more doctors should be able to heal limbs and companions (money sink, compensation for nerfed rest)
 - look into caravan run issues ("naked" people, poor balance)
 - 4 AP cost for 14mm Pistol?

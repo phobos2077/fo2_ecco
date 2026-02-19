@@ -19,8 +19,10 @@
 #define RADIATE_GECKO_OPTIMIZED         (24)
 #define RADIATE_GECKO_MELTDOWN         (480)
 #define RADIATE_GECKO_PLANT_MULT         (3)
-#define RADIATE_BH                      (48)
-#define RADIATE_BH_FIXED                (12)
+#define RADIATE_BH                      (96)
+#define RADIATE_BH_FIXED                (24)
+#define RADIATE_MBASE_1                (120)
+#define RADIATE_MBASE_2                (480)
 
 #define last_radiated                   get_sfall_global_int(SGVAR_RADIATION_LAST_UPDATE)
 #define update_last_radiated            set_sfall_global(SGVAR_RADIATION_LAST_UPDATE, game_time)
@@ -57,6 +59,11 @@ procedure get_area_radiation_per_day begin
       return rads;
    end else if (cur_town == AREA_BROKEN_HILLS) then begin
       return RADIATE_BH if (global_var(GVAR_BH_MINE) < MINE_FIXED_CASH) else RADIATE_BH_FIXED;
+   end else if (cur_town == AREA_MILITARY_BASE) then begin
+      if (cur_map_index == MAP_MILITARY_BASE_12) then
+         return RADIATE_MBASE_1;
+      else if (cur_map_index == MAP_MILITARY_BASE_34) then
+         return RADIATE_MBASE_2;
    end
    return 0;
 end

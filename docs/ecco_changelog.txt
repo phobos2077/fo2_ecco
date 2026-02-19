@@ -19,6 +19,8 @@ v0.9.8:
 - buffed reload speed for Zip Gun and Pipe Rifle
 - buffed makeshift laser pistol and added some cells in early areas to make it viable
 - increased Pulse weapons energy consumption (a lot) and reduced range
+- increased Mega Power Fist energy consumption
+- reduced Metal armor craft requirements, buffed Mk2 variant slightly and reduced it's weight
 - reduced DR mod of MFC to -10% as certain energy weapons seemed overbuffed
 - reduced price of batteries by 20%
 - reduced hit chance bonuses from some weapons and ammo types to motivate skill investment
@@ -31,6 +33,7 @@ v0.9.8:
 
 > Misc:
 - updated required RPU version to 2.4.34
+- added more sources of radiation
 - expanded Awareness perk by printing target's resistance values and additional weapon stats (hold Ctrl)
 - expanded doctor's services to include healing party and limbs: Dr John, Dr Fung, Dr Jubilee
 - made double-sure that you can't get locked out of unique .223 Pistol
