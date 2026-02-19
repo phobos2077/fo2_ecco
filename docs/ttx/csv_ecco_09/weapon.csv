@@ -53,8 +53,8 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 #;00000292.pro;Boxing Gloves;292;Normal;1;1;Punch;None;1;0;3;0;0;0;None [0];;1;250;5;Weapon Knockback [61]
 #;00000293.pro;Plated Boxing Gloves;293;Normal;2;5;Punch;None;1;0;3;0;0;0;None [0];;1;300;10;Weapon Knockback [61]
 ;00000296.pro;H&K P90c;296;Normal;8;14;Single;Burst;30;25;4;5;32;8;10mm [8];10mm AP [30];4;2500;8;
-;00000299.pro;Pipe Rifle;299;Normal;7;15;Single;None;25;0;5;0;1;0;10mm [8];10mm JHP [29];5;250;10;
-;00000300.pro;Zip Gun;300;Normal;7;12;Single;None;15;0;4;0;1;0;10mm [8];10mm JHP [29];4;150;4;
+;00000299.pro;Pipe Rifle;299;Normal;7;15;Single;None;25;0;5;0;1;0;10mm [8];10mm JHP [29];5;250;10;Weapon Fast Reload [65]
+;00000300.pro;Zip Gun;300;Normal;7;12;Single;None;15;0;4;0;1;0;10mm [8];10mm JHP [29];4;150;4;Weapon Fast Reload [65]
 ;00000313.pro;.44 Magnum Revolver;313;Normal;12;18;Single;None;16;0;4;0;6;0;.44 cal [9];.44 Magnum JHP [31];5;900;4;
 #;00000319.pro;Switchblade;319;Normal;2;5;Swing;Thrust;1;1;3;3;0;0;None [0];;1;50;1;
 #;00000320.pro;Sharpened Pole;320;Normal;2;4;Thrust;Throw;2;8;4;6;0;0;None [0];;4;5;3;
@@ -77,12 +77,12 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000389.pro;Avenger Minigun;389;Normal;12;17;Burst;None;40;0;6;0;120;30;5mm [6];5mm JHP [35];7;5500;28;Weapon Long Range [58]
 ;00000390.pro;Solar Scorcher;390;Fire;20;60;Single;None;20;0;4;0;10;0;None [0];;3;2000;5;
 ;00000391.pro;H&K G11E;391;Normal;14;20;Single;Burst;40;35;5;6;50;10;4.7mm caseless [16];4.7mm Caseless [359];6;6000;8;Weapon Night Sight [66]
-;00000392.pro;M72 Gauss Rifle;392;Normal;35;45;Single;None;50;0;5;0;10;1;2mm [15];2mm EC [358];6;5750;9;Weapon Long Range [58]
+;00000392.pro;M72 Gauss Rifle;392;Normal;32;43;Single;None;50;0;5;0;10;1;2mm [15];2mm EC [358];6;5750;9;Weapon Long Range [58]
 #;00000393.pro;Phazer;393;Laser;20;30;Single;None;25;0;4;0;12;0;C Energy Cell [3];Small Energy Cell [38];3;7500;4;Weapon Accurate [59]
 ;00000394.pro;PPK12 Gauss Pistol;394;Normal;22;32;Single;None;30;0;4;0;10;0;2mm [15];2mm EC [358];4;3750;5;
 ;00000395.pro;Vindicator Minigun;395;Normal;18;24;Burst;None;30;0;6;0;100;25;4.7mm caseless [16];4.7mm Caseless [359];7;12000;28;
-;00000396.pro;YK32 Pulse Pistol;396;Electrical;32;46;Single;None;15;0;4;0;5;0;C Energy Cell [3];Small Energy Cell [38];3;7500;5;Weapon Penetrate [60]
-;00000397.pro;YK42B Pulse Rifle;397;Electrical;54;78;Single;None;30;0;5;0;10;1;D Energy Cell [4];Micro Fusion Cell [39];6;9500;9;Weapon Penetrate [60]
+;00000396.pro;YK32 Pulse Pistol;396;Electrical;32;46;Single;None;15;0;4;0;20;0;C Energy Cell [3];Small Energy Cell [38];3;7500;5;Weapon Penetrate [60]
+;00000397.pro;YK42B Pulse Rifle;397;Electrical;54;78;Single;None;23;0;5;0;30;1;D Energy Cell [4];Micro Fusion Cell [39];6;9500;9;Weapon Penetrate [60]
 ;00000398.pro;.44 Magnum (Speed Load);398;Normal;12;18;Single;None;16;0;4;0;6;0;.44 cal [9];.44 Magnum JHP [31];5;1100;4;Weapon Fast Reload [65]
 ;00000399.pro;Super Cattle Prod;399;Electrical;20;32;Swing;Thrust;1;1;4;4;20;0;C Energy Cell [3];Small Energy Cell [38];4;1200;3;Weapon Accurate [59]
 ;00000400.pro;Improved Flamer;400;Fire;60;90;Flame;None;7;0;6;0;10;2;Flamethrower Fuel [2];Flamethrower Fuel MKII [382];6;3000;19;Weapon Flameboy [67]
@@ -126,5 +126,5 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000643.pro;Cowboy Repeater;643;Normal;16;24;Single;None;30;0;5;0;12;0;.44 cal [9];.44 Magnum FMJ [111];4;1300;6;Weapon Accurate [59]
 ;00000644.pro;14mm SMG;644;Normal;18;28;Single;Burst;22;14;5;6;24;6;14mm [10];14mm AP [33];6;4500;3;
 ;00000646.pro;Incinerator;646;Fire;30;60;Flame;None;3;0;6;0;10;1;Flamethrower Fuel [2];Flamethrower Fuel [32];5;1250;12;
-;00000647.pro;Makeshift Laser Pistol;647;Laser;12;20;Single;None;15;0;5;0;5;0;C Energy Cell [3];Small Energy Cell [38];3;750;4;Weapon Accurate [59]
+;00000647.pro;Makeshift Laser Pistol;647;Laser;10;26;Single;None;18;0;5;0;5;0;C Energy Cell [3];Small Energy Cell [38];3;750;4;Weapon Accurate [59]
 ;00000648.pro;Plasma Lance;648;Plasma;30;50;Thrust;None;3;8;4;5;24;0;D Energy Cell [4];Micro Fusion Cell [39];5;4000;12;Weapon Penetrate [60]

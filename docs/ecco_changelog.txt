@@ -16,6 +16,11 @@ v0.9.8:
 - buffed Rocket Launcher damage by 20%
 - buffed G11E RPM to be twice the regular variant
 - buffed .223 Pistol damage/range to be competitive against 14mm
+- buffed reload speed for Zip Gun and Pipe Rifle
+- buffed makeshift laser pistol and added some cells in early areas to make it viable
+- increased Pulse weapons energy consumption (a lot) and reduced range
+- reduced DR mod of MFC to -10% as certain energy weapons seemed overbuffed
+- reduced price of batteries by 20%
 - reduced hit chance bonuses from some weapons and ammo types to motivate skill investment
 - reverted Vindicator Minigun's Penetrate perk and burst size change, but increased damage slightly
 - reduced Rocket/Grenade launchers AP cost to compensate for higher reload cost

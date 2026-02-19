@@ -27,7 +27,7 @@ weaponData:
   actionPointCost1: 4
   actionPointCost2: 0
   criticalFailureType: 2
-  perk: NONE
+  perk: PERK_WEAPON_FAST_RELOAD
   rounds: 0
   caliber: 8
   ammoTypePid: 29

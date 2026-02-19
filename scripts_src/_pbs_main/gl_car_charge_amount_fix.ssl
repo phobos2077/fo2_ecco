@@ -7,6 +7,7 @@
 #define PID_SMALL_ENERGY_CELL               (38)
 #define PID_MICRO_FUSION_CELL               (39)
 #define GAS_TANK_CAPACITY                   (80000)
+#define GAS_PER_CELL                        (GAS_TANK_CAPACITY / 100)
 
 procedure useobjon_hook begin
    variable
@@ -20,10 +21,10 @@ procedure useobjon_hook begin
       user == dude_obj and (obj_pid(item) == PID_MICRO_FUSION_CELL or obj_pid(item) == PID_SMALL_ENERGY_CELL) and
       car_gas_amount < GAS_TANK_CAPACITY) then
    begin
-      variable refillPercent := get_weapon_ammo_count(item);
+      variable refillAmount := get_weapon_ammo_count(item) * GAS_PER_CELL;
       if (obj_pid(item) == PID_SMALL_ENERGY_CELL) then
-         refillPercent /= 2;
-      car_give_gas(80000 * refillPercent / 100);
+         refillAmount /= 2;
+      car_give_gas(refillAmount);
       display_msg(mstr_proto(595));
       set_sfall_return(1);
    end
