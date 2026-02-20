@@ -7,6 +7,8 @@ v0.9.8:
 - unlocked previously unused vanilla weapon sound effect variations
 
 > Balance:
+- fixed all NPC's having incorrect armor protection values after map change
+- fixed some NPC's having incorrect starting HP on first entering a map
 - reduced pre-placed ammo in all maps via new script to ensure adequate quantities for each caliber
 - locked the Navarro Armory door with several ways to bypass it and let Quartermaster give standard PA instead
 - overhauled NPC ammo reduction for more appropriate quantities

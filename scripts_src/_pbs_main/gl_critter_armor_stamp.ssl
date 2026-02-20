@@ -3,51 +3,88 @@
  * Mapping between critters and armors is configured by INI file.
  */
 
+#define SCRIPT_REALNAME  "gl_critter_armor_stamp"
+
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
 #include "../sfall/lib.strings.h"
 #include "../sfall/sfall.h"
+#include "../_pbs_headers/ecco_log.h"
 
 #define INI_CRITTER_ARMOR   "ecco\\critter_armor.ini"
 
 procedure start;
 
 variable
-   ini_apply_ac;
+   ini_apply_ac,
+   cached_data;
+
+#define DAMAGE_LIST_SIZE   (DMG_explosion + 1)
+
+procedure apply_stats_from_cache begin
+   variable i, critterPid, dataArr, dt, dr, ac;
+   foreach (critterPid: dataArr in cached_data) begin
+      for (i := DMG_normal_dam; i <= DMG_explosion; i++) begin
+         dt := dataArr[i];
+         dr := dataArr[DAMAGE_LIST_SIZE + i];
+         set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_thresh*4 + i*4, dt);
+         set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_resist*4 + i*4, dr);
+      end
+      if (ini_apply_ac) then begin
+         ac := dataArr[DAMAGE_LIST_SIZE * 2];
+         set_proto_data(critterPid, PROTO_CR_BONUS_AC, ac);
+      end
+   end
+
+   debug_log_fmt("Applied armor stats for %d critters.", len_array(cached_data));
+end
 
 procedure start begin
-   variable section, k, v, i, critterId, critterPid, armorPid, dt, dr, dtArr, drArr, name, armorName, numApplied := 0;
+   variable section, k, v, i, critterId, critterPid, armorPid, dataArr, dtArr, drArr, name, armorName;
    if game_loaded then begin
       section := get_ini_section(INI_CRITTER_ARMOR, "CRITTER_TO_ARMOR");
       ini_apply_ac := get_ini_setting(INI_CRITTER_ARMOR + "|SETTINGS|apply_ac");
       
-      dtArr := temp_array_list(DMG_explosion + 1);
-      drArr := temp_array_list(DMG_explosion + 1);
+      cached_data := create_array_map;
       foreach (k: v in section) begin
          critterId := atoi(k);
          armorPid := atoi(v);
          if (critterId == 0 or armorPid == 0) then begin
             continue;
          end
+         dataArr := create_array_list(DAMAGE_LIST_SIZE * 2 + 1);
          critterPid := 0x01000000 + critterId;
          for (i := DMG_normal_dam; i <= DMG_explosion; i++) begin
-            dt := get_proto_data(armorPid, PROTO_AR_DT_NORMAL + i*4);
-            set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_thresh*4 + i*4, dt);
-            dr := get_proto_data(armorPid, PROTO_AR_DR_NORMAL + i*4);
-            set_proto_data(critterPid, PROTO_CR_BONUS_STATS + STAT_dmg_resist*4 + i*4, dr);
-            dtArr[i] := dt;
-            drArr[i] := dr;
+            dataArr[i] := get_proto_data(armorPid, PROTO_AR_DT_NORMAL + i*4);
+            dataArr[DAMAGE_LIST_SIZE + i] := get_proto_data(armorPid, PROTO_AR_DR_NORMAL + i*4);
          end
          if (ini_apply_ac) then begin
-            set_proto_data(critterPid, PROTO_CR_BONUS_AC, get_proto_data(armorPid, PROTO_AR_AC));
+            dataArr[DAMAGE_LIST_SIZE * 2] := get_proto_data(armorPid, PROTO_AR_AC);
          end
-         name := message_str_game(GAME_MSG_PRO_CRIT, critterId * 100);
+         cached_data[critterPid] := dataArr;
+
+         //name := message_str_game(GAME_MSG_PRO_CRIT, critterId * 100);
          //debug_msg(""+k+"="+v+" ; "+name);
-         armorName := message_str_game(GAME_MSG_PRO_ITEM, armorPid * 100);
+         //armorName := message_str_game(GAME_MSG_PRO_ITEM, armorPid * 100);
          //debug_msg("Applying stats of armor "+armorName+"("+armorPid+") to critter "+ name +" ("+critterId+"). DT: "+string_join(dtArr,",")+". DR: "+string_join(drArr,","));
-         numApplied++;
       end
 
-      debug_msg("gl_critter_armor: Applied armor stats to "+numApplied+" critters.");
+      debug_log_fmt("Loaded armor stats for %d critters.", len_array(cached_data));
+
+      call apply_stats_from_cache;
    end
 end
+
+
+
+procedure map_enter_p_proc begin
+   call apply_stats_from_cache;
+
+   /*
+   variable dt, dr;
+   dt := get_proto_data(16777638, PROTO_CR_BONUS_STATS + STAT_dmg_thresh*4);
+   dr := get_proto_data(16777638, PROTO_CR_BONUS_STATS + STAT_dmg_resist*4);
+   display_msg_fmt("Map enter: Salvatore Normal DMG bonus %d/%d", dt, dr);
+   */
+end
+

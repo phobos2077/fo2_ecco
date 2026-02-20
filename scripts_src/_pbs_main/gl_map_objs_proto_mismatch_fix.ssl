@@ -89,6 +89,32 @@ procedure check_item(variable item) begin
 end
 
 /*
+   Check item for possible inconsistency with PROTO and fix if needed
+
+   returns 1 if object was changed, 2 if destroyed
+*/
+procedure check_critter(variable critter) begin
+   variable
+      curHp, maxHp,
+      pid,
+      affected := false;
+ 
+   if (critter == 0 or critter == dude_obj or party_member_obj(obj_pid(critter)) != 0) then
+      return false;
+
+   pid := obj_pid(critter);
+   curHp := get_critter_stat(critter, STAT_current_hp);
+   maxHp := get_critter_stat(critter, STAT_max_hp);
+
+   if (curHp != maxHp) then begin
+      critter_heal(critter, maxHp - curHp);
+      debug_msg(obj_name(critter) + " had incorrect HP (" + curHp + "), changed to " + maxHp);
+      affected := true;
+   end
+   return affected;
+end
+
+/*
    Apply checks to object inventory
    returns number of affected objects
 */
@@ -115,6 +141,7 @@ procedure map_enter_p_proc begin
    if (cur_town != -1 and not is_loading_game and map_first_run) then begin
       debug_msg("Fixing objects data from prototypes...");
       foreach (obj in list_as_array(LIST_CRITTERS)) begin
+         totalAffected += check_critter(obj);
          totalAffected += check_inven(obj);
       end
       foreach (obj in list_as_array(LIST_GROUNDITEMS)) begin
