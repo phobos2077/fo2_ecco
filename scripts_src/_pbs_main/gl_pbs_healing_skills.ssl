@@ -43,6 +43,7 @@
 
 variable begin
    ini_use_charges;
+   ini_skill_use_mod;
    ini_kit_remove_freq;
    ini_skill_uses_per_day;
    ini_first_aid_hp;
@@ -512,7 +513,7 @@ procedure load_skill_items begin
    end
 end
 
-procedure revert_kit_charges begin
+procedure revert_kit_charges(variable skipLog := false) begin
    variable pid, v, n;
    foreach pid: v in ini_skill_items begin
       if (v[SKILL_ITEM_DEPLETEMSG]) then begin
@@ -520,13 +521,12 @@ procedure revert_kit_charges begin
          n += 1;
       end
    end
-   debug_log_fmt("Reverted max charges to 0 for %d heal items.", n);
+   if (not skipLog) then
+      debug_log_fmt("Reverted max charges to 0 for %d heal items.", n);
 end
 
 procedure start begin
    if (game_loaded) then begin
-      variable ini_skill_use_mod;
-
       load_bool_from_ini(skill_use_mod, false);
       load_bool_from_ini(use_charges, false);
       call load_skill_items;
@@ -563,4 +563,9 @@ procedure start begin
 
       call apply_rest_heal_time_tweaks;
    end
+end
+
+procedure map_enter_p_proc begin
+   if (not ini_skill_use_mod or not ini_use_charges) then
+      call revert_kit_charges(true);
 end
