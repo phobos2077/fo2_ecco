@@ -1,7 +1,7 @@
 #ifndef PBS_HEALERS_H
 #define PBS_HEALERS_H
 
-#include "party.h"
+//#include "party.h"
 
 procedure party_injured_or_crippled_count(variable includeDude := false) begin
    variable count = 0;

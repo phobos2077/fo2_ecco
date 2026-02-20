@@ -5,14 +5,14 @@ set cwd=%cd%
 cd /d "%~dp0..\"
 
 set root=%cd%
-set archive=%root%\extra\pbs_fo2rpu_ecco_mod_v0-9-7.zip
+set archive=%root%\extra\pbs_fo2rpu_ecco_mod_v0-9-8.zip
 
 if exist %archive% (
    echo Deleting existing %archive%...
    del %archive%
 )
 
-set exe="C:\Program Files (x86)\7-Zip\7z.exe"
+set exe="C:\Program Files\7-Zip\7z.exe"
 
 echo Adding mod files...
 cd /d %root%\root

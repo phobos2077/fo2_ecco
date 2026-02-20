@@ -80,6 +80,7 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_PBS_40MM_HE, 0, 5, 100)
          check_restock_item(PID_PBS_FLAMER_LT, 1, 1, 50)
          check_restock_item(PID_FLAMETHROWER_FUEL, 1, 4, 75)
+         check_restock_item(PID_CATTLE_PROD, 1, 1, 75)
          call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA, PID_METAL_ARMOR, 100); // pbs
          call check_restock_craft_schematic(PID_PBS_CRAFT_SCHEMA, PID_METAL_ARMOR_MK_II, 100); // pbs
          // ;

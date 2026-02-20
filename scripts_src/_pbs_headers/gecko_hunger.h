@@ -83,6 +83,7 @@ procedure forgetFood begin
    food := 0; // forget about food in combat
 end
 
+#define SEEK_AND_EAT_FOOD_WANAMINGO  call seekAndEatFood(25, FOOD_DETECT_RADIUS, FOOD_PREFERENCE_GECKO);
 #define SEEK_AND_EAT_FOOD_GECKO  call seekAndEatFood(15, FOOD_DETECT_RADIUS, FOOD_PREFERENCE_GECKO);
 #define SEEK_AND_EAT_FOOD_RAT  call seekAndEatFood(15, FOOD_DETECT_RADIUS, FOOD_PREFERENCE_RAT);
 

@@ -115,7 +115,7 @@ procedure CreateZone1 begin
    check_restock_item(PID_KNIFE, 1, 1, 10)
    check_restock_item(PID_SHARPENED_POLE, 1, 2, 20)
    check_restock_item(PID_SPEAR, 1, 1, 5)
-   check_restock_item(PID_ROCK, 1, 10, 40) // pbs: prob was 20
+   check_restock_item(PID_ROCK, 1, 10, 50) // pbs: prob was 20
    check_restock_item(PID_HEALING_POWDER, 1, 1, 5)
    check_restock_item(PID_MUTATED_FRUIT, 1, 2, 20) // pbs: prob was 10
    // added by phobos2077:

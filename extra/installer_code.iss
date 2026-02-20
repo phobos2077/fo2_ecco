@@ -36,7 +36,7 @@ end;
  var  
  ErrorCode: Integer;  
  begin  
- ShellExec('open', 'http://www.nma-fallout.com/showthread.php?193578-Economy-and-Combat-Rebalance-mod', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode)  
+ ShellExec('open', 'https://www.nma-fallout.com/threads/ecco-gameplay-overhaul-new-version-for-rpu.193578/', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode)  
  end;  
   
  procedure SiteLabelMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);  

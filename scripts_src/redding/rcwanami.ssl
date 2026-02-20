@@ -25,6 +25,8 @@
 #include "../headers/command.h"
 //#include "../headers/modreact.h"
 
+#include "..\_pbs_headers\gecko_hunger.h" // phobos2077
+
 /* Standard Script Procedures */
 procedure start;
 procedure critter_p_proc;
@@ -34,7 +36,7 @@ procedure description_p_proc;
 procedure use_skill_on_p_proc;
 procedure damage_p_proc;
 procedure map_enter_p_proc;
-procedure combat_p_proc;
+procedure combat_p_proc; // pbs
 
 /* Local variables which do not need to be saved between map changes. */
 variable starttile;
@@ -55,7 +57,7 @@ procedure critter_p_proc begin
       attack(dude_obj);
    end
 
-   if (not anim_busy(self_obj)) then begin
+   if (not anim_busy(self_obj) and not food) then begin // pbs
       reg_anim_clear(self_obj);
       reg_anim_begin();
       if (self_pid != PID_QUEEN_ALIEN) then
@@ -67,6 +69,8 @@ procedure critter_p_proc begin
       end
       reg_anim_end();
    end
+
+   if (not(combat_is_initialized)) then SEEK_AND_EAT_FOOD_WANAMINGO // phobos2077
 end
 
 procedure destroy_p_proc begin
@@ -130,6 +134,7 @@ end
 
 // pbs: radiation
 procedure combat_p_proc begin
+   call forgetFood;
    if (fixed_param == COMBAT_SUBTYPE_HIT_SUCCEEDED) then begin
       if (target_obj == dude_obj and not(is_success(do_check(dude_obj, STAT_lu, -3)))) then begin
          radiation_inc(target_obj,random(RAD_MIN, RAD_MAX));

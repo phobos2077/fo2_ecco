@@ -153,15 +153,14 @@ Type: filesandordirs; Name: "{app}\mods\ecco"
 [Files]
 ; 
 #define FLAGS "Flags: recursesubdirs createallsubdirs overwritereadonly"
-; 
-;Source: "{#RootDir}ddraw.dll"; DestDir: "{app}\";
+; No need for sfall update for now
+; Source: "{#RootDir}ddraw.dll"; DestDir: "{app}\";
 Source: "{#RootDir}mods\*"; DestDir: "{app}\mods\"; {#FLAGS}
 Source: "{#RootDir}sfall\*"; DestDir: "{app}\sfall\"; {#FLAGS}
 Source: "{#DocsDir}ecco_readme.txt"; DestDir: "{app}\"
 Source: "{#DocsDir}ecco_changelog.txt"; DestDir: "{app}\"
 Source: "{#DocsDir}ecco_changelog_ru.txt"; DestDir: "{app}\"
 
-;Source: "__batch\@pbs_rebalance_finalize.cmd"; DestDir: "{app}\"
 
 #undef FLAGS
 
