@@ -1,6 +1,3 @@
-for 0.9.8:
-- playtest
-
 for 1.0.0:
 - finish Big Guns run
 - add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
