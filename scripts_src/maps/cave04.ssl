@@ -1,0 +1,176 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Cave04
+        Location: Cave04 Random encounter map
+        Description: This is a cave random encounter
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: April 14, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "cave04"
+#include "../headers/define.h"
+#include "../headers/updatmap.h"
+
+#define NAME                         SCRIPT_CAVE04
+
+#define mstr_cave1(x) message_str(SCRIPT_CAVE01, x)
+
+#include "../headers/command.h"
+
+// pbs:
+//#include "../headers/cvgenenc.h"
+#include "../_pbs_headers/cave_enc.h"
+
+procedure start;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+procedure map_exit_p_proc;
+
+procedure SetupEncounter;
+
+#define AREA_1 20896
+#define AREA_2 24306
+#define AREA_3 21320
+
+#define CHEST_1 21491
+#define CHEST_2 24301
+#define CHEST_3 19697
+
+variable Critter;
+variable Critter_Tile;
+
+procedure start begin
+end
+
+procedure map_exit_p_proc begin
+   if (not car_out_of_fuel) then begin
+      if (tile_contains_pid_obj(global_var(GVAR_CAR_PLACED_TILE), 0, PID_DRIVABLE_CAR) != 0 or
+          tile_contains_pid_obj(global_var(GVAR_CAR_PLACED_TILE), 1, PID_DRIVABLE_CAR) != 0 or
+          tile_contains_pid_obj(global_var(GVAR_CAR_PLACED_TILE), 2, PID_DRIVABLE_CAR) != 0) then begin
+         ndebug("car_give_to_party");
+         set_global_var(GVAR_CAR_PLACED_TILE, 0);
+         car_give_to_party;
+      end
+   end
+end
+
+procedure map_enter_p_proc begin
+   variable the_hex;
+   variable the_elev;
+
+   set_cur_exit;
+   if (not is_loading_game) then begin
+      call SetupEncounter;
+   end
+
+   if (cur_map_index == MAP_RND_CAVERN0) then begin
+       the_hex := CAR_RANDOM_MOUNTAIN_HEX;
+       the_elev := CAR_RANDOM_MOUNTAIN_ELEV;
+   end
+   else if (cur_map_index == MAP_RND_CAVERN1) then begin
+       the_hex := CAR_RND_CAVE1_HEX;
+       the_elev := CAR_RANDOM_MOUNTAIN_ELEV;
+   end
+   else if (cur_map_index == MAP_RND_CAVERN2) then begin
+       the_hex := CAR_RND_CAVE2_HEX;
+       the_elev := CAR_RANDOM_MOUNTAIN_ELEV;
+   end
+   else if (cur_map_index == MAP_RND_CAVERN3) then begin
+       the_hex := CAR_RND_CAVE3_HEX;
+       the_elev := CAR_RANDOM_MOUNTAIN_ELEV;
+   end
+   else if (cur_map_index == MAP_RND_CAVERN4) then begin
+       the_hex := CAR_RND_CAVE4_HEX;
+       the_elev := CAR_RANDOM_MOUNTAIN_ELEV;
+   end
+   else if (cur_map_index == MAP_RND_CAVERN5) then begin
+       the_hex := CAR_RND_CAVE5_HEX;
+       the_elev := CAR_RANDOM_MOUNTAIN_ELEV;
+   end
+   if (the_hex != 0) then begin
+      Check_Create_Car(the_hex, the_elev)
+   end else
+      ndebug("DIDN'T HAVE MAP HEX FOR CAR, WE NEED TO CREATE ONE");
+
+   if (map_first_run) then begin
+      display_msg(mstr_cave1(100));
+   end
+   Cavern_Lighting;
+
+   if ((map_first_run) and (not(get_stranger_flag(STRANGER_DEAD))) and (random(0,99) < (30 + (2*dude_luck))) and ((dude_perk(PERK_mysterious_stranger)))) then begin
+       if (not(get_stranger_flag(STRANGER_GENDER))) then begin
+           set_stranger_flag(STRANGER_GENDER);
+           ndebug("Set the Stranger Gender");
+           if (random(0,99) < 50) then
+               set_stranger_flag(STRANGER_FEMALE);
+       end
+       if (get_stranger_flag(STRANGER_FEMALE)) then begin
+           if (dude_level > 26) then
+               Critter:=create_object_sid(PID_MYST_STRANGER_FEMALE_21,0,0,SCRIPT_ECMSTSTR);
+           else if (dude_level > 22) then
+               Critter:=create_object_sid(PID_MYST_STRANGER_FEMALE_16_20,0,0,SCRIPT_ECMSTSTR);
+           else if (dude_level > 18) then
+               Critter:=create_object_sid(PID_MYST_STRANGER_FEMALE_11_15,0,0,SCRIPT_ECMSTSTR);
+           else if (dude_level > 14) then
+               Critter:=create_object_sid(PID_MYST_STRANGER_FEMALE_5_10,0,0,SCRIPT_ECMSTSTR);
+           else
+               Critter:=create_object_sid(PID_MYSTERIOUS_STRANGER_FEMALE,0,0,SCRIPT_ECMSTSTR);
+       end
+       else begin
+           if (dude_level > 26) then
+               Critter:=create_object_sid(PID_MYST_STRANGER_MALE_21,0,0,SCRIPT_ECMSTSTR);
+           else if (dude_level > 22) then
+               Critter:=create_object_sid(PID_MYST_STRANGER_MALE_16_20,0,0,SCRIPT_ECMSTSTR);
+           else if (dude_level > 18) then
+               Critter:=create_object_sid(PID_MYST_STRANGER_MALE_11_15,0,0,SCRIPT_ECMSTSTR);
+           else if (dude_level > 14) then
+               Critter:=create_object_sid(PID_MYST_STRANGER_MALE_5_10,0,0,SCRIPT_ECMSTSTR);
+           else
+               Critter:=create_object_sid(PID_MYSTERIOUS_STRANGER_MALE,0,0,SCRIPT_ECMSTSTR);
+       end
+       Critter_Tile:=tile_num_in_direction(dude_tile,random(0,5),random(5,10));
+       critter_attempt_placement(Critter,Critter_Tile,dude_elevation);
+   end
+
+   set_global_var(GVAR_LOAD_MAP_INDEX,0);
+end
+
+procedure map_update_p_proc begin
+   //added by killap
+   if( dude_elevation == 0) then
+      Lighting;
+   else
+   //end
+      Cavern_Lighting;
+end
+
+
+procedure Initial_Inven begin
+end
+
+procedure SetupEncounter begin
+   cave_areas := [AREA_1, AREA_2, AREA_3];
+   cave_groups_num := random(1, 2);
+   cave_chests := [CHEST_1, CHEST_2, CHEST_3];
+   cave_elevation := 1;
+
+   call DoSetupEncounter;
+end
