@@ -7,6 +7,7 @@
 *.log
 *.tmp
 *.zip
+*.int
 **/.tmp.ssl
 
 .vscode/*
@@ -14,6 +15,5 @@
 __pycache__/
 .~lock*
 
-root/data/scripts/*.int
 maps_txt/*
 root/data/scripts/_ssl/*

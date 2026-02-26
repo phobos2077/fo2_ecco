@@ -148,6 +148,7 @@ Type: files; Name: "{app}\data\worldmap.dat"
 ; cleanup previous EcCo installations:
 Type: filesandordirs; Name: "{app}\mods\rpu_y_ecco_pcx.dat"
 Type: filesandordirs; Name: "{app}\mods\rpu_y_ecco_patch.dat"
+Type: filesandordirs; Name: "{app}\mods\rpu_map_update.dat"
 Type: filesandordirs; Name: "{app}\mods\ecco"
 
 [Files]

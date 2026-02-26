@@ -8,11 +8,12 @@ for 1.0.0:
 
 for "future":
 - custom craft schematic art
-- cavern encounters need rebalance!!
 - even more radiation sources
 
 
 Considering:
+- integrate Sneak to Drug, Deadly Poison mods (https://nma-fallout.com/threads/banjos-fallout-2-mods.220413/)
+- look at the karma penalty for stealing? ?5 per fail feels harsh, especially with the steeper steal chance progression from your mod’s Steal and Sneak skill changes.
 - is Vic repair skill too low? (should he be your ticket to crafting Metal armor?)
 - guns to hit penalty at close range (like WEAPON_SCOPE_RANGE but less severe)
 - most doctors should be able to heal limbs and companions (money sink, compensation for nerfed rest)
