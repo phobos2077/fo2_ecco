@@ -1,5 +1,5 @@
 {100}{}{Leather Armor}
-{101}{}{Your basic all leather apparel. Finely crafted from tanned brahmin hide.}
+{101}{}{Your basic all leather apparel. Finely crafted from tanned animal hide.}
 {200}{}{Metal Armor}
 {201}{}{Polished metal plates, crudely forming a suit of armor.}
 {300}{}{Power Armor}
@@ -735,7 +735,7 @@
 {37800}{}{Cookie}
 {37801}{}{A chocolate chip cookie. Yum!}
 {37900}{}{Leather Armor Mark II}
-{37901}{}{An enhanced version of the basic leather armor with extra layers of protection. Finely crafted from tanned brahmin hide.}
+{37901}{}{An enhanced version of the basic leather armor with extra layers of protection. Finely crafted from tanned animal hide.}
 {38000}{}{Metal Armor Mark II}
 {38001}{}{Polished metal plates, finely crafted into a suit of armor.}
 {38100}{}{Combat Armor Mark II}
@@ -1240,3 +1240,5 @@
 {65001}{}{A set of blueprints and instructions for creating: %s.}
 {65100}{}{Armory Access Card}
 {65101}{}{A level 4 security key card, used for the armory of Navarro Base. Only authorized personal. If you find this card, please hand it to your superior officer!}
+{65200}{}{Fire Gecko Armor}
+{65201}{}{Enhanced version of the basic leather armor with extra layers from tanned fire gecko pelts. }

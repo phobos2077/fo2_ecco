@@ -82,6 +82,7 @@
 #define PID_PBS_CRAFT_SCHEMA        (649)
 #define PID_PBS_CRAFT_SCHEMA_T2     (650)
 #define PID_PBS_NAVARRO_ARMORY_KEY  (651)
+#define PID_PBS_FIRE_GECKO_ARMOR    (652)
 
 // new scenery
 #define PID_PBS_SPIKE_TRAP           (0x02000000 + 2335)
