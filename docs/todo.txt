@@ -12,8 +12,8 @@ for "future":
 
 
 Considering:
+- early game craftable big gun (heavy arbalest? junk cannon? bolt thrower? harpoon?)
 - late game reusable throwing weapon (upgrade from Hatchet)
-- add makeshift laser pistol to some NPC's
 - integrate Sneak to Drug, Deadly Poison mods (https://nma-fallout.com/threads/banjos-fallout-2-mods.220413/)
 - look at the karma penalty for stealing? ?5 per fail feels harsh, especially with the steeper steal chance progression from your mod’s Steal and Sneak skill changes.
 - is Vic repair skill too low? (should he be your ticket to crafting Metal armor?)
@@ -26,9 +26,13 @@ Considering:
 - hard to choose specific craft component when several are available: don't auto-search trunk? or provide UI to select component?
 - installer switch to disable barter formula
 - random encounter: more interesting enemy formations?
-- add crafting components like rocks and junk to human enemy bodies on death with small probability (broken weapons already spawn junk)
 - Hunting Rifle -> Scoped for Slags rewards, Scoped Rifle -> something better for Marcus
 - automatically fix FO2Tweaks settings via installer? (what if it's installed after?)
+
+
+Rejected:
+- add makeshift laser pistol to some NPC's -> already added in Redding and DVMV encounters
+- add crafting components like rocks and junk to human enemy bodies on death -> junk onlready from wpns, rocks in caves
 
 
 IDEAS:

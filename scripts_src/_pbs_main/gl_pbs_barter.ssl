@@ -71,6 +71,7 @@ variable begin
 	Buy_Bias;
 	Buy_DudeSkillCoef;
 	Buy_DudeSkillOffset;
+	Buy_DifficultySkillMod;
 	Buy_MerchantSkillCoef;
 	Buy_MerchantSkillOffset;
 	Buy_PerkCoef;
@@ -145,6 +146,7 @@ procedure barterprice_init begin
 	Buy_Bias                := load_setting_float(INI_SECT_BUY, "Bias");
 	Buy_DudeSkillCoef       := load_setting_float(INI_SECT_BUY, "DudeSkillCoef");
 	Buy_DudeSkillOffset     := load_setting_int  (INI_SECT_BUY, "DudeSkillOffset");
+	Buy_DifficultySkillMod  := load_setting_int  (INI_SECT_BUY, "DifficultySkillMod");
 	Buy_MerchantSkillCoef   := load_setting_float(INI_SECT_BUY, "MerchantSkillCoef");
 	Buy_MerchantSkillOffset := load_setting_int  (INI_SECT_BUY, "MerchantSkillOffset");
 	Buy_PerkCoef            := load_setting_float(INI_SECT_BUY, "PerkCoef");
@@ -226,7 +228,7 @@ procedure barterprice_handler begin
 
 		// Formula only changes the skillContestMult
 		if (Buy_Formula == 0 or Buy_Formula == 1 or Buy_Formula == 2) then begin
-			skillContestMult := 1.0 * (Buy_MerchantSkillOffset + merchantBarter) / (Buy_DudeSkillOffset + dudeBarter);
+			skillContestMult := 1.0 * (Buy_MerchantSkillOffset + merchantBarter) / (Buy_DudeSkillOffset + dudeBarter + Buy_DifficultySkillMod * (1 - difficulty_level));
 		end else begin
 			variable dudeBarterMult := (1 + dudeBarter * Buy_DudeSkillCoef)
 				if (Buy_Formula == 3)
