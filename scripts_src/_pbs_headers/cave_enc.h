@@ -50,56 +50,56 @@ procedure SelectEncounter begin
          pid := PID_GECKO_SMALL;
       end else if (dude_level < 12) then begin
          pid := PID_TOUGH_GECKO_SMALL;
-      end else if (dude_level < 13) then begin
+      end else if (dude_level < 16) then begin
          pid := PID_FIRE_GECKO;
       end else begin
          pid := PID_TOUGH_FIRE_GECKO;
       end
-      call SetEnc(3, 5, [pid], [SCRIPT_ECGECKO]);
+      call SetEnc(2, 5, [pid], [SCRIPT_ECGECKO]);
    end else if (val == 2) then begin
-      if (dude_level < 5) then begin
+      if (dude_level < 6) then begin
          pid := PID_GOLDEN_GECKO;
       end else if (dude_level < 12) then begin
          pid := PID_TOUGH_GOLDEN_GECKO;
-      end else if (dude_level < 13) then begin
+      end else if (dude_level < 16) then begin
          pid := PID_FIRE_GECKO;
       end else begin
          pid := PID_TOUGH_FIRE_GECKO;
       end
-      call SetEnc(3, 5, [pid], [SCRIPT_ECGECKO]);
+      call SetEnc(2, 4, [pid], [SCRIPT_ECGECKO]);
    end else if (val == 3) then
-      call SetEnc(3, 5, [PID_SMALL_RADSCORPION], [SCRIPT_ECSCORP]);
+      call SetEnc(4, 5, [PID_SMALL_RADSCORPION], [SCRIPT_ECSCORP]);
    else if (val == 4) then
-      call SetEnc(3, 5, [PID_LARGE_RADSCORPION], [SCRIPT_ECSCORP]);
+      call SetEnc(1, 4, [PID_LARGE_RADSCORPION], [SCRIPT_ECSCORP]);
    else if (val == 5) then
-      call SetEnc(3, 5, [PID_SMALL_DEATHCLAW], [SCRIPT_ZCLDTHCL]);
+      call SetEnc(2, 4, [PID_SMALL_DEATHCLAW], [SCRIPT_ZCLDTHCL]);
    else if (val == 6) then
-      call SetEnc(5, 5, [PID_LARGE_DEATHCLAW], [SCRIPT_ZCLDTHCL]);
+      call SetEnc(1, 3, [PID_LARGE_DEATHCLAW], [SCRIPT_ZCLDTHCL]);
    else if (val == 7) then
-      call SetEnc(3, 5, [PID_MUTATED_MOLE_RAT], [SCRIPT_ECRAT]);
+      call SetEnc(2, 3, [PID_MUTATED_MOLE_RAT], [SCRIPT_ECRAT]);
    else if (val == 8) then
       call SetEnc(4, 5, [PID_MUTATED_PIG_RAT], [SCRIPT_ECRAT]);
    else if (val == 9) then begin
-      if (dude_level < 5) then
+      if (dude_level < 6) then
          call SetEnc(3, 5, [PID_GECKO_SMALL, PID_GOLDEN_GECKO], [SCRIPT_ECGECKO]);
       else begin
          pids := [PID_TOUGH_GECKO_SMALL, PID_TOUGH_GOLDEN_GECKO];
-         if (dude_level > 12) then begin
+         if (dude_level > 11) then begin
             call array_push(pids, PID_FIRE_GECKO);
          end else if (dude_level > 15) then begin
             call array_push(pids, PID_TOUGH_FIRE_GECKO);
          end
-         call SetEnc(5, 5, pids, [SCRIPT_ECGECKO]);
+         call SetEnc(3, 5, pids, [SCRIPT_ECGECKO]);
       end
    end else if (val == 10) then
       call SetEnc(3, 5, [PID_SMALL_RADSCORPION, PID_LARGE_RADSCORPION], [SCRIPT_ECSCORP]);
    else if (val == 11) then
-      call SetEnc(5, 5, [PID_SMALL_DEATHCLAW, PID_LARGE_DEATHCLAW], [SCRIPT_ZCLDTHCL]);
+      call SetEnc(3, 5, [PID_SMALL_DEATHCLAW, PID_LARGE_DEATHCLAW], [SCRIPT_ZCLDTHCL]);
    else if (val == 12) then
-      call SetEnc(5, 5, [PID_MUTATED_MOLE_RAT, PID_MUTATED_PIG_RAT], [SCRIPT_ECRAT]);
+      call SetEnc(3, 5, [PID_MUTATED_MOLE_RAT, PID_MUTATED_PIG_RAT], [SCRIPT_ECRAT]);
    else if (val == 13) then begin
       if (stat_success(dude_obj, STAT_lu, 2)) then begin
-         if (dude_level < 5) then
+         if (dude_level < 6) then
             call SetEnc(2, 3, [PID_MYSTERIOUS_STRANGER_MALE, PID_MYSTERIOUS_STRANGER_FEMALE], [SCRIPT_ECROBBER], true);
          else if (dude_level < 11) then
             call SetEnc(3, 4, [PID_BOUNTY_MALE_7_12, PID_BOUNTY_FEMALE_7_12], [SCRIPT_ECROBBER], true);

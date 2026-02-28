@@ -217,6 +217,9 @@ procedure map_enter_p_proc begin
          check_restock_item(PID_PBS_50_AMMO, 1, 4, 50) // pbs 
          check_restock_item(PID_FRAG_GRENADE, 2, 3, 50) // pbs
          check_restock_item(PID_PBS_40MM_HE, 2, 3, 50) // pbs
+         if (dude_level > 11) then begin
+            check_restock_item(PID_PBS_FIRE_GECKO_ARMOR, 1, 1, 50) // pbs
+         end
 
          call restore_critical_items(tmp_box);
          set_local_var(LVAR_Restock_Time, (random(1,4) * ONE_GAME_DAY) + game_time);
