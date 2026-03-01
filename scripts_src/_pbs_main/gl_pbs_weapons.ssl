@@ -10,13 +10,20 @@
 #include "../sfall/lib.strings.h"
 #include "../headers/animcomd.h"
 #include "../headers/itempid.h"
+
 #include "../_pbs_headers/ecco.h"
+//#include "../_pbs_headers/ecco_ids.h"
+//#include "../_pbs_headers/ecco_log.h"
+//#include "../_pbs_headers/ecco_ini.h"
 #include "../_pbs_headers/miscpid.h"
+#include "../_pbs_headers/engine_funcs.h"
 
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 #define INI_EFFECTS_SECTION       "EFFECTS"
 #define INI_DEATHANIM_SECTION     "DEATHANIM"
 #define INI_EXPLOSIVES_SECTION    "EXPLOSIVES"
+
+#define WPN_ANIM_SNIPER_RIFLE         (0x0D) // (P)
 
 // These are used in custom door script.
 export variable pbs_last_burst_size;
@@ -25,6 +32,7 @@ export variable pbs_last_hit_roll_result;
 variable
    emp_effect_armor_pids,
    emp_effect_armor_fids,
+   ini_long_guns_melee_range_mod,
    duplet_fix_pids;
 
 procedure start;
@@ -33,6 +41,7 @@ procedure ammocost_handler;
 procedure combatdamage_handler;
 procedure deathanim2_handler;
 procedure itemdamage_handler;
+procedure tohit_handler;
 
 procedure load_settings begin
    variable pid, pidList, fid;
@@ -45,6 +54,7 @@ procedure load_settings begin
    //debug_msg("Loaded weapon pids for duplet fix: "+debug_array_str(array_keys(duplet_fix_pids)));
 
    pidList := get_int_list_from_ini(INI_COMBAT, INI_EFFECTS_SECTION, "emp_effect_armor_pids");
+   ini_long_guns_melee_range_mod := get_ini_value_def(INI_COMBAT, INI_EFFECTS_SECTION, "long_guns_melee_range_mod", 0);
    emp_effect_armor_pids := create_array_map;
    emp_effect_armor_fids := create_array_map;
    foreach (pid in pidList) begin
@@ -85,6 +95,9 @@ procedure start begin
       register_hook_proc(HOOK_COMBATDAMAGE, combatdamage_handler);
       register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
       register_hook_proc(HOOK_ITEMDAMAGE, itemdamage_handler);
+      if (ini_long_guns_melee_range_mod != 0) then begin
+         register_hook_proc(HOOK_TOHIT, tohit_handler);
+      end
    end
 end
 
@@ -291,6 +304,61 @@ procedure itemdamage_handler begin
       // increase radius for EMP grenades
       if (damageType == DMG_emp and attackMode == ATTACK_MODE_THROW) then begin
          set_attack_explosion_radius(4);
+      end
+   end
+end
+
+
+#define is_long_gun_anim_code(ac)      (ac == WPN_ANIM_RIFLE or ac == WPN_ANIM_SNIPER_RIFLE or ac == WPN_ANIM_BIG_GUN or ac == WPN_ANIM_MINIGUN or ac == WPN_ANIM_ROCKET_LAUNCHER)
+
+/*
+Runs when Fallout is calculating the chances of an attack striking a target. Runs after the hit chance is fully calculated normally, including applying the 95% cap.
+
+int     arg0 - The hit chance (capped)
+Critter arg1 - The attacker
+Critter arg2 - The target of the attack
+int     arg3 - The targeted bodypart
+int     arg4 - Source tile (may differ from attacker's tile, when AI is considering potential fire position)
+int     arg5 - Attack Type (see ATKTYPE_* constants)
+int     arg6 - Ranged flag. 1 if the hit chance calculation takes into account the distance to the target. This does not mean the attack is a ranged attack
+int     arg7 - The raw hit chance before applying the cap
+
+int     ret0 - The new hit chance. The value is limited to the range of -99 to 999
+*/
+procedure tohit_handler begin
+   variable
+      hitChance := get_sfall_arg,
+      attacker := get_sfall_arg,
+      target := get_sfall_arg,
+      bodyPart := get_sfall_arg,
+      fromTile := get_sfall_arg,
+      attackType := get_sfall_arg,
+      useDist := get_sfall_arg,
+      hitChanceRaw := get_sfall_arg;
+      //ctdBodyPart := get_object_data(ctd, C_ATTACK_BODY_PART),
+      //ctdFlags := get_object_data(ctd, C_ATTACK_FLAGS_TARGET);
+
+   /*debug_log(string_format("tohit %s = %d (same_tile: %d, use_dist: %d, part: %d)",
+      obj_name(attacker), hitChance, sameTile, useDist, bodyPart)
+      + string_format("; ctd: (crit: %s, part: %d, flags: %d)",
+      obj_name(ctdAttacker), ctdBodyPart, ctdFlags) );*/
+
+   if (useDist and attacker and target) then begin
+      variable
+         weapon := item_hit_with(attacker, attackType);
+
+      if (weapon) then begin
+         variable
+            wpnAnim := get_proto_data(obj_pid(weapon), PROTO_WP_ANIM),
+            dist := tile_distance_objs(attacker, target);
+
+         //debug_log_fmt("dist = %d, wpnAnim = %d", dist, wpnAnim);
+         if (dist <= 1 and is_long_gun_anim_code(wpnAnim)) then begin
+            debug_log_fmt("TOHIT penalty for %s in melee range: %d + %d", obj_name(weapon), hitChanceRaw, ini_long_guns_melee_range_mod);
+            hitChance := math_clamp(hitChanceRaw + ini_long_guns_melee_range_mod, -100, 95);
+            set_sfall_return(hitChance);
+            set_sfall_arg(0, hitChance);
+         end
       end
    end
 end

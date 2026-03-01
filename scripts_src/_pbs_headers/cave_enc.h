@@ -268,7 +268,7 @@ procedure DoSetupEncounter begin
 
    call SelectEncounter;
    if (len_array(encounter_pids) > 0) then begin
-      debug_log_fmt("Encounter Pids: %s, Sids: %s", debug_array_str(encounter_pids), debug_array_str(encounter_sids));
+      //debug_log_fmt("Encounter Pids: %s, Sids: %s", debug_array_str(encounter_pids), debug_array_str(encounter_sids));
 
       call PlaceAllCritters(cave_areas, cave_groups_num, cave_elevation);
 

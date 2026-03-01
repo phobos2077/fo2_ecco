@@ -1,4 +1,5 @@
 for 1.0.0:
+- integrate sneak to drug based on EtTu https://github.com/rotators/Fo1in2/blob/master/Fallout2/Fallout1in2/Mapper/source/scripts.misc/gl_use_items.ssl
 - finish Big Guns run
 - add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
@@ -12,6 +13,7 @@ for "future":
 
 
 Considering:
+- port auto-push from EtTu
 - early game craftable big gun (heavy arbalest? junk cannon? bolt thrower? harpoon?)
 - late game reusable throwing weapon (upgrade from Hatchet)
 - integrate Sneak to Drug, Deadly Poison mods (https://nma-fallout.com/threads/banjos-fallout-2-mods.220413/)
