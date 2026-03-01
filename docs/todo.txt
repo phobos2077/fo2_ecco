@@ -12,6 +12,11 @@ for "future":
 - even more radiation sources
 
 
+Milestones after 1.0:
+- portable/lite version of EcCo (for EtTu, Resurrection, Nevada, Sonora): no content, only global scripts with custom inis
+- port to F2:CE
+
+
 Considering:
 - port auto-push from EtTu
 - early game craftable big gun (heavy arbalest? junk cannon? bolt thrower? harpoon?)

@@ -71,10 +71,11 @@
 > COMBAT:
 - A couple of unspent AP points carry over to the next round. This should make low-AG builds more viable and make difference between weapon AP cost less dramatic.
 - Opening inventory has no cost, but every action (except reload, see below) requires 2 AP (or 1 with Quick Pockets).
-- Bonus Move perk is now available at level 3 (was 6) and grants 3 Move Points per level (was 2).
-- Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
+- All two-handed ranged weapons have a hit chance penalty at point-blank range.
 - Enemy AI will now use aimed shots much more often.
 - Critical hits to arms will sometimes make target drop their weapon.
+- Bonus Move perk is now available at level 3 (was 6) and grants 3 Move Points per level (was 2).
+- Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
 
 
 > HEALING:

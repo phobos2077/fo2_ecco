@@ -1,0 +1,94 @@
+/*
+   - Hit chance penalty for long guns at point blank range
+*/
+
+#define SCRIPT_REALNAME       "gl_pbs_hitchance_mod"
+
+#include "../sfall/lib.arrays.h"
+
+#include "../_pbs_headers/ecco_ids.h"
+#include "../_pbs_headers/ecco_log.h"
+#include "../_pbs_headers/ecco_ini.h"
+#include "../_pbs_headers/engine_funcs.h"
+
+#define INI_FILE           INI_COMBAT
+#define INI_SECTION        "TOHIT"
+
+#define WPN_ANIM_SNIPER_RIFLE         (0x0D) // (P)
+
+variable
+   ini_melee_range_mod,
+   ini_melee_range_mod_npc,
+   ini_melee_range_anim_codes,
+   ini_melee_range_exclude_pids;
+
+procedure start;
+procedure tohit_handler;
+
+
+procedure start begin
+   if game_loaded then begin
+
+      load_num_from_ini(melee_range_mod, 0, -100, 100);
+      load_num_from_ini(melee_range_mod_npc, 0, -100, 100);
+
+      if (ini_melee_range_mod != 0 or ini_melee_range_mod_npc != 0) then begin
+         load_int_list_from_ini(melee_range_anim_codes);
+         load_int_list_from_ini(melee_range_exclude_pids);
+         register_hook_proc(HOOK_TOHIT, tohit_handler);
+
+         debug_log_fmt("Loaded anim codes: %s, excludes: %s", debug_array_str(ini_melee_range_anim_codes), debug_array_str(ini_melee_range_exclude_pids));
+      end
+   end
+end
+
+
+//#define is_long_gun_anim_code(ac)      (ac == WPN_ANIM_RIFLE or ac == WPN_ANIM_SNIPER_RIFLE or ac == WPN_ANIM_BIG_GUN or ac == WPN_ANIM_MINIGUN or ac == WPN_ANIM_ROCKET_LAUNCHER)
+
+/*
+Runs when Fallout is calculating the chances of an attack striking a target. Runs after the hit chance is fully calculated normally, including applying the 95% cap.
+
+int     arg0 - The hit chance (capped)
+Critter arg1 - The attacker
+Critter arg2 - The target of the attack
+int     arg3 - The targeted bodypart
+int     arg4 - Source tile (may differ from attacker's tile, when AI is considering potential fire position)
+int     arg5 - Attack Type (see ATKTYPE_* constants)
+int     arg6 - Ranged flag. 1 if the hit chance calculation takes into account the distance to the target. This does not mean the attack is a ranged attack
+int     arg7 - The raw hit chance before applying the cap
+
+int     ret0 - The new hit chance. The value is limited to the range of -99 to 999
+*/
+procedure tohit_handler begin
+   variable
+      hitChance := get_sfall_arg,
+      attacker := get_sfall_arg,
+      target := get_sfall_arg,
+      bodyPart := get_sfall_arg,
+      fromTile := get_sfall_arg,
+      attackType := get_sfall_arg,
+      useDist := get_sfall_arg,
+      hitChanceRaw := get_sfall_arg;
+
+   if (useDist and attacker and target) then begin
+      variable
+         weapon := item_hit_with(attacker, attackType);
+
+      if (weapon) then begin
+         variable
+            wpnPid := obj_pid(weapon),
+            wpnAnim := get_proto_data(wpnPid, PROTO_WP_ANIM),
+            dist := tile_distance_objs(attacker, target),
+            tohitMod;
+
+         //debug_log_fmt("dist = %d, wpnAnim = %d", dist, wpnAnim);
+         if (dist <= 1 and is_in_array(wpnAnim, ini_melee_range_anim_codes) and not is_in_array(wpnPid, ini_melee_range_exclude_pids)) then begin
+            tohitMod := ini_melee_range_mod if attacker == dude_obj else ini_melee_range_mod_npc;
+            debug_log_fmt("TOHIT penalty for %s in melee range: %d + %d", obj_name(weapon), hitChanceRaw, tohitMod);
+            hitChance := math_clamp(hitChanceRaw + tohitMod, -100, 95);
+            set_sfall_return(hitChance);
+            set_sfall_arg(0, hitChance);
+         end
+      end
+   end
+end
