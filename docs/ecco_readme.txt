@@ -47,7 +47,7 @@
 - If Steal roll fails but Catch roll also fails - fails steal without getting caught instead of just succeeding, as in vanilla.
 - Stealing now correctly uses number of items stolen when calculating difficulty.
 - Stealing money and other weightless items now adds to difficulty based on cost.
-- Karma penalty based on total value of goods being stolen.
+- Town Reputation penalty based on total value of goods being stolen.
 
 
 > LOOTING:
