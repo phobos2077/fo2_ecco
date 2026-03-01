@@ -23,6 +23,7 @@ variable
    ini_bonus_crit_chance,
    ini_bonus_crit_chance_luck_mult,
    ini_apply_melee_dmg_mult,
+   ini_no_bonus_weapon_pids,
    ini_return_weapon_pids,
    ini_return_catch_skill_mod,
    thrown_owner,
@@ -40,6 +41,7 @@ procedure start begin
       int_from_ini_file_clamped(bonus_crit_chance, INI_COMBAT, INI_SECTION, 0, 100);
       int_from_ini_file_clamped(bonus_crit_chance_luck_mult, INI_COMBAT, INI_SECTION, 0, 100);
       float_from_ini_file_clamped(apply_melee_dmg_mult, INI_COMBAT, INI_SECTION, 0.0, 10.0);
+      int_list_from_ini_file(no_bonus_weapon_pids, INI_COMBAT, INI_SECTION);
       int_list_from_ini_file(return_weapon_pids, INI_COMBAT, INI_SECTION);
       int_from_ini_file(return_catch_skill_mod, INI_COMBAT, INI_SECTION);
 
@@ -59,6 +61,8 @@ end
 
 
 #define var_as_str(name)            #name": "+name+"; "
+
+//#define weapon_not_in_no_bonus_list(item)    is_in_array(obj_pid(item), ini_no_bonus_weapon_pids)
 
 /*
 HOOK_ROLLCHECK
@@ -96,7 +100,7 @@ procedure rollcheck_handler begin
             dmgType := weapon_dmg_type(weapon);
          
          //display_msg("attacker: "+obj_name(attacker)+"; "+var_as_str(hitMode)+var_as_str(weaponPid)+var_as_str(attackMode));
-         if (attackMode == ATTACK_MODE_THROW and weapon_dmg_type(weapon) == DMG_normal_dam) then begin
+         if (attackMode == ATTACK_MODE_THROW and weapon_dmg_type(weapon) == DMG_normal_dam and not is_in_array(obj_pid(weapon), ini_no_bonus_weapon_pids)) then begin
             critChanceBonus += ini_bonus_crit_chance;
             critChanceBonus += get_critter_stat(attacker, STAT_lu) * ini_bonus_crit_chance_luck_mult;
             if (random(1, 100) <= randomDelta / 10 + critChanceBonus) then begin
