@@ -1,0 +1,127 @@
+/*
+   NPC's reacting to PC's trying to drug them.
+   - Non-intelligent kill types are ignored
+   - PC must be successfully sneaking
+   - PC must pass a steal skill check
+*/
+
+#include "../sfall/sfall.h"
+#include "../sfall/define_lite.h"
+#include "../sfall/define_extra.h"
+#include "../sfall/command_lite.h"
+
+#include "../sfall/lib.arrays.h"
+//#include "../sfall/lib.math.h"
+//#include "../sfall/lib.obj.h"
+
+#define SCRIPT_REALNAME    "gl_pbs_useobjon_sneak"
+
+#include "../_pbs_headers/ecco_log.h"
+#include "../_pbs_headers/ecco_ini.h"
+
+//#include "../headers/scripts.h"
+
+#define INI_FILE        INI_MISC
+#define INI_SECTION     "USEOBJON_SNEAK"
+
+#define SCRIPT_GENERIC          (14)    // Generic.int     ; Generic dialog for scripts
+
+variable
+   ini_ignore_drug_list,
+   ini_attack_drug_list,
+   ini_warn_drug_list,
+   ini_base_skill_mod,
+   ini_skill_mod_perception_mult,
+   ini_facing_skill_mod;
+
+
+procedure is_in_front(variable thief, variable target) begin
+   variable diff = get_cur_rot(thief) - get_cur_rot(target);
+   if (diff < 0) then diff = -diff;
+   return diff != 0 and diff != 1 and diff != 5;
+end
+
+/*
+procedure try_generic_speak(variable critter, variable num) begin
+   variable killType;
+   float_msg(critter, g_mstr(random(3054, 3058)), FLOAT_COLOR_BAD);
+end*/
+
+procedure critter_is_intelligent(variable critter) begin
+   variable kt := get_proto_data(obj_pid(critter), PROTO_CR_KILL_TYPE);
+   return kt == KILL_TYPE_men_kills or kt == KILL_TYPE_women_kills or kt == KILL_TYPE_children_kills or kt == KILL_TYPE_super_mutant_kills or kt == KILL_TYPE_ghoul_kills;
+end
+
+/**
+HOOK_USEOBJON
+Runs when:
+
+a critter uses an object on another critter. (Or themselves)
+a critter uses an object from inventory screen AND this object does not have "Use" action flag set and it's not active flare or explosive.
+player or AI uses any drug
+This is fired before the object is used, and the relevant use_obj_on script procedures are run. You can disable default item behavior.
+
+NOTE: You can't remove and/or destroy this object during the hookscript (game will crash otherwise). To remove it, return 1.
+
+Critter arg0 - The target
+Critter arg1 - The user
+int     arg2 - The object used
+
+int     ret0 - overrides hard-coded handler and selects what should happen with the item (0 - place it back, 1 - remove it, -1 - use engine handler)
+ */
+procedure useobjon_handler begin
+   variable
+      target := get_sfall_arg,
+      source := get_sfall_arg,
+      item := get_sfall_arg,
+      itemPid := obj_pid(item),
+      skillMod;
+
+   if (source != dude_obj or 
+      obj_type(target) != OBJ_TYPE_CRITTER or
+      obj_in_party(target)) then return;
+
+   variable targetFlags := get_object_data(target, OBJ_DATA_DAMAGE_FLAGS);
+   if ((targetFlags bwand (DAM_KNOCKED_OUT bwor DAM_KNOCKED_DOWN bwor DAM_DEAD)) != 0 or
+      not critter_is_intelligent(target) or
+      is_in_array(itemPid, ini_ignore_drug_list)) then return;
+
+   skillMod := ini_base_skill_mod + ini_skill_mod_perception_mult * get_perception(target);
+   if (targetFlags bwand (DAM_BLIND) != 0) then begin
+      skillMod += 20;
+   end
+   if (is_in_front(source, target)) then begin
+      skillMod += ini_facing_skill_mod;
+   end
+   // Detect player interaction
+   // NOTE: engine will add +30 inside roll_vs_skill(STEAL) if player is sneaking
+   debug_log_fmt("Attempting to use %s on %s: skill mod: %d", obj_name(item), obj_name(target), skillMod);
+   if (sneak_success and is_success(roll_vs_skill(dude_obj, SKILL_STEAL, skillMod))) then return;
+
+   set_sfall_return(0);
+   if (is_in_array(itemPid, ini_warn_drug_list)) then begin
+      float_msg(target, g_mstr(random(3054, 3058)), FLOAT_COLOR_BAD);
+   end
+   else if (is_in_array(itemPid, ini_attack_drug_list)) then begin
+      float_msg(target, g_mstr(random(3060, 3062)), FLOAT_COLOR_BAD);
+      set_self(target);
+      attack(source);
+   end
+end
+
+procedure start begin
+   if (not game_loaded) then return;
+
+   //if (get_int_from_ini(INI_FILE, INI_SECTION, "enable_tweaks") <= 0) then return;
+
+   load_num_from_ini(facing_skill_mod, 0, -100, 100);
+   load_num_from_ini(base_skill_mod, 0, -300, 300);
+   load_num_from_ini(skill_mod_perception_mult, 0, -100, 0);
+   load_int_list_from_ini(ignore_drug_list);
+   load_int_list_from_ini(attack_drug_list);
+   load_int_list_from_ini(warn_drug_list);
+
+   register_hook_proc(HOOK_USEOBJON, useobjon_handler);
+
+   //debug_log_fmt("NPC Drug react %d %s", ini_facing_skill_mod, debug_array_str(ini_attack_drug_list));
+end
