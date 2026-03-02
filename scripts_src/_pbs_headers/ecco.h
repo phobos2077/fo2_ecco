@@ -40,7 +40,6 @@
 
 #define exp_for_kill_critter_pid(pid)         (get_proto_data(pid, PROTO_CR_KILL_EXP))
 #define critter_flags_by_pid(pid)             (get_proto_data(pid, PROTO_CR_FLAGS))
-#define can_steal_from_critter_pid(pid)       (not proto_critter_has_flag(pid, CFLG_NOSTEAL))
 #define critter_facing_dir(crit)              (has_trait(TRAIT_OBJECT,crit,OBJECT_CUR_ROT))
 
 #define is_critter(obj)      (obj_type(obj) == OBJ_TYPE_CRITTER)
@@ -58,13 +57,6 @@
             or critter_kill_type(crit) == KILL_TYPE_dog_kills \
             or critter_kill_type(crit) == KILL_TYPE_gecko_kills \
             or critter_kill_type(crit) == KILL_TYPE_giant_ant_kills)
-#define is_deathclaw(crit)   (critter_kill_type(crit) == KILL_TYPE_deathclaw_kills)
-#define is_molerat(crit)     (proto_data(obj_pid(crit), cr_fid) == 0x01000013 or proto_data(obj_pid(crit), cr_fid) == 0x0100004C)
-#define is_floater(crit)     (critter_kill_type(crit) == KILL_TYPE_floater_kills)
-#define is_centaur(crit)     (critter_kill_type(crit) == KILL_TYPE_centaur_kills)
-#define is_alien(crit)       (critter_kill_type(crit) == KILL_TYPE_alien_kills)
-#define is_gecko(crit)       (critter_kill_type(crit) == KILL_TYPE_gecko_kills)
-#define is_scorpion(crit)    (critter_kill_type(crit) == KILL_TYPE_radscorpion_kills)
 
 
 #define tile_fid_is_stone(x)  ((x < 84) or  \
