@@ -43,6 +43,27 @@ procedure mstr_dmg_resist(variable obj, variable dmgType) begin
    return string_format(formatStr, dt, dr, dmgTypeStr);
 end
 
+procedure can_show_critter_info(variable obj) begin
+   return obj != dude_obj
+      and (ini_critter_info == 1 or dude_perk(PERK_bonus_awareness))
+      and not is_critter_dead(obj);
+end
+
+procedure get_critter_info(variable obj) begin
+   variable
+      //dmgType := obj_pid get_active_weapon(dude_obj)
+      ac := get_critter_stat(obj, STAT_ac),
+      msg := mstr_ecco_combat(400 + get_gender(obj) if critter_is_biped(obj) else 402)
+         + mstr_dmg_resist(obj, DMG_normal_dam)
+         + mstr_dmg_resist(obj, DMG_laser)
+         + mstr_dmg_resist(obj, DMG_fire)
+         + mstr_dmg_resist(obj, DMG_plasma)
+         + mstr_dmg_resist(obj, DMG_explosion)
+         + string_format(mstr_ecco_combat(411), ac);
+
+   return msg;
+end
+
 procedure stdprocedure_hook begin
    variable
       proc := get_sfall_arg,
@@ -52,24 +73,12 @@ procedure stdprocedure_hook begin
    if (proc != description_proc) then
       return;
    
-   if (((not isEnd and key_pressed(ini_modifier_key) if ini_modifier_key else isEnd))
-      and obj != dude_obj
+   if ((not isEnd and key_pressed(ini_modifier_key) if ini_modifier_key else isEnd)
       and obj_type(obj) == OBJ_TYPE_CRITTER
-      and (ini_critter_info == 1 or dude_perk(PERK_bonus_awareness))
-      and not is_critter_dead(obj)) then begin
-      variable
-         //dmgType := obj_pid get_active_weapon(dude_obj)
-         ac := get_critter_stat(obj, STAT_ac),
-         msg := mstr_ecco_combat(400 + get_gender(obj) if critter_is_biped(obj) else 402)
-            + mstr_dmg_resist(obj, DMG_normal_dam)
-            + mstr_dmg_resist(obj, DMG_laser)
-            + mstr_dmg_resist(obj, DMG_fire)
-            + mstr_dmg_resist(obj, DMG_plasma)
-            + mstr_dmg_resist(obj, DMG_explosion)
-            + string_format(mstr_ecco_combat(411), ac);
+      and can_show_critter_info(obj)) then begin
 
-      display_msg(msg);
-      iF (not isEnd) then
+      //display_msg(critter_info_text);
+      if (not isEnd) then
          set_sfall_return(-1);
    end
 end
@@ -133,8 +142,15 @@ procedure description_hook begin
 
       set_sfall_return(desc);
       last_desc_obj := 0;
-   end else
-      last_desc_obj := obj;
+   end else begin
+      if (obj_type(obj) == OBJ_TYPE_CRITTER
+         and (key_pressed(ini_modifier_key) if ini_modifier_key else true)
+         and can_show_critter_info(obj)) then
+      begin
+         set_sfall_return(get_critter_info(obj));
+      end else
+         last_desc_obj := obj;
+   end
 end
 
 #define INI_FILE     INI_MISC
@@ -152,7 +168,7 @@ procedure start begin
       register_hook_proc(HOOK_STDPROCEDURE_END, stdprocedure_hook);
    end
 
-   if (ini_weapon_info) then
+   if (ini_weapon_info or ini_critter_info > 0) then
       register_hook_proc(HOOK_DESCRIPTIONOBJ, description_hook);
 end
 
