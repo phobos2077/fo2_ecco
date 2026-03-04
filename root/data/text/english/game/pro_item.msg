@@ -1242,3 +1242,5 @@
 {65101}{}{A level 4 security key card, used for the armory of Navarro Base. Only authorized personal. If you find this card, please hand it to your superior officer!}
 {65200}{}{Fire Gecko Armor}
 {65201}{}{Enhanced version of the basic leather armor with extra layers from tanned fire gecko pelts. }
+{65300}{}{Special Spike Trap}
+{65301}{}{This trap consists of a crude triggering mechanism and a number of sharp spikes. It can be used several times before the spikes are worn out. This one is made from unusually sharp Plant Spikes.}

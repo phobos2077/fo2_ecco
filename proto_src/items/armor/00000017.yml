@@ -19,7 +19,7 @@ armorData:
   armorClass: 20
   damageResistance:
     normal: 40
-    laser: 30
+    laser: 40
     fire: 30
     plasma: 50
     electrical: 50

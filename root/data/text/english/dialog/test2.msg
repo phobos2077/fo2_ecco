@@ -4,6 +4,7 @@
 {12}{}{bear trap}
 {13}{}{mine trap}
 {14}{}{proximity sensor trap}
+{15}{}{special spike trap}
 
 # traps look at
 {50}{}{You see a %s.}

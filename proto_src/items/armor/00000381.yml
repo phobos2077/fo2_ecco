@@ -19,14 +19,14 @@ armorData:
   armorClass: 25
   damageResistance:
     normal: 45
-    laser: 40
+    laser: 50
     fire: 35
     plasma: 50
     electrical: 55
     emp: 500
     explosion: 45
   damageThreshold:
-    normal: 6
+    normal: 7
     laser: 6
     fire: 5
     plasma: 5
