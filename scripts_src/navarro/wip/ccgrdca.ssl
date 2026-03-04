@@ -3,7 +3,7 @@
 */
 
 /*
-        Name: Quartermaster
+        Name: Navarro Guard, combat armor
         Location: Navarro
         Description:
 
@@ -12,22 +12,25 @@
            the code which you have changed/altered/commented out. Please, do not delete any
            code which was written.
 
-           Created: Sept 10, 1998
+           Created: May 5, 1998
 */
 
 /* Include Files */
 
-#define SCRIPT_REALNAME "ccqmstr"
+#define SCRIPT_REALNAME "ccgrdca"
 #include "../headers/define.h"
 //#include "../headers/navdef.h"
 #include "../headers/navarro.h"
 //#include "../headers/<TownName.h>"
 
-#define NAME                    SCRIPT_CCQMSTR
+#define NAME                    SCRIPT_CCGRDCA
 #define TOWN_REP_VAR            GVAR_TOWN_REP_NAVARRO
 
 #include "../headers/command.h"
 #include "../headers/modreact.h"
+
+// phobos2077:
+#include "../_pbs_headers/watchers.h"
 
 /* Standard Script Procedures */
 procedure start;
@@ -46,11 +49,6 @@ procedure Node002;
 procedure Node003;
 procedure Node004;
 procedure Node005;
-procedure Node006;
-procedure Node007;
-procedure Node008;
-procedure Node009;
-procedure Node010;
 
 /* Script Specific Procedure Calls */
 procedure Node998;                                      // This Node is Always Combat
@@ -62,15 +60,11 @@ procedure Node999;                                      // This Node is Always E
 #define LVAR_Hostile                    (5)
 #define LVAR_Personal_Enemy             (6)
 #define LVAR_second_look                (7)
-#define LVAR_Said_Intruder              (8)
-#define LVAR_Suited_Up                  (9)
-
-// ecco:
-#include "../_pbs_headers/talking_heads_compat.h"
-#define start_dialog_check_head           start_gdialog_check_talking_head(4, HEAD_QM, BACKGROUND_ENCLAVE)
 
 /* Local variables which do not need to be saved between map changes. */
 variable Only_Once:=0;
+variable said_intruder:=0;
+variable i_am_a_warrior:=1;
 
 procedure start begin
 end
@@ -88,19 +82,18 @@ procedure critter_p_proc begin
          attack(dude_obj);
       end
       else if (global_var(GVAR_NAVARRO_BASE_ALERT) > 0) then begin
-         if (local_var(LVAR_Said_Intruder) == 0) then begin
-            start_dialog_check_head;
-            gSay_Start;
-              call Node008;
-            gSay_End;
-            end_dialogue;
-         end
-         else begin
-            set_local_var(LVAR_Hostile,1);
-            attack(dude_obj);
-         end
+         set_local_var(LVAR_Hostile,1);
+         attack(dude_obj);
       end
-   end //can see dude
+      else if( not_alone ) then begin
+         if( said_intruder == 0 ) then begin
+            said_intruder:=1;
+            call Node003;
+         end
+      end else
+         call check_watcher;
+   end else
+      call check_watcher;
 end
 
 procedure damage_p_proc begin
@@ -123,34 +116,22 @@ end
    stored which affects player interactions. */
 procedure talk_p_proc begin
    GetReaction;
-
-   if (global_var(GVAR_NAVARRO_BASE_ALERT) > 0) then begin
-      start_dialog_check_head;
-      gSay_Start;
-        call Node008;
-      gSay_End;
-      end_dialogue;
+   if ( local_var(LVAR_Hostile) == 1 ) then begin
+      call Node005;
+      call Node998;
    end
-   else if (map_var(MVAR_Get_Armor) == 1) then begin
-      start_dialog_check_head;
-      gSay_Start;
-        call Node007;
-      gSay_End;
-      end_dialogue;
+   else if (global_var(GVAR_NAVARRO_BASE_ALERT) > 0) then begin
+      call Node004;
+      call Node998;
+   end
+   else if( not_alone ) then begin //dude is not alone
+      call Node003;
+   end
+   else if ( not_wearing_power_armor ) then begin //not wearing power armor
+      call Node002;
    end
    else begin
-      // pbs: allow to talk until suited up
-      if (local_var(LVAR_Herebefore) == 0 or local_var( LVAR_Suited_Up ) == 0) then begin
-         set_local_var(LVAR_Herebefore,1);
-         start_dialog_check_head;
-         gSay_Start;
-           call Node001;
-         gSay_End;
-         end_dialogue;
-      end
-      else begin
-         call Node006;
-      end
+      call Node001;
    end
 end
 
@@ -192,111 +173,31 @@ procedure use_skill_on_p_proc begin
    //end
 end
 
+//ANY TIME
 procedure Node001 begin
-   if( not_alone ) then begin //dude is not alone
-      //set alarm
-      Reply(103);
-
-      BOption(106,Node998,001);
-   end
-   else begin
-      // pbs: don't give PA if already wearing one
-      /*if ( ( obj_pid( dude_armor ) == PID_POWERED_ARMOR ) or
-           ( obj_pid( dude_armor ) == PID_HARDENED_POWER_ARMOR ) ) then begin
-         Reply(104);
-
-         NOption(107,Node004,001);
-      end
-      else */
-      if( obj_pid( dude_armor ) != PID_POWERED_ARMOR ) and
-          ( obj_pid( dude_armor ) != PID_HARDENED_POWER_ARMOR) and
-          ( obj_pid( dude_armor ) != PID_ADVANCED_POWER_ARMOR ) and
-          ( obj_pid( dude_armor ) != PID_ADVANCED_POWER_ARMOR_MK2 ) then begin
-         Reply(105); //Not in poper uniform as where to go's should have caught this
-
-         NLowOption(108,Node002);
-         if (map_var(MVAR_Replace) == 1) then
-            NLowOption(109,Node004);
-         BLowOption(110,Node998); // Seraph's Fix: BLowOption only takes 2 args. Thanks Rob!
-         NOption(111,Node002,004);
-         if (map_var(MVAR_Replace) == 1) then
-            NOption(112,Node004,004);
-         BOption(113,Node998,004);
-      end
-      else begin
-         NMessage(124);
-      end
-   end
+   floater(random(103,105));
 end
 
+//NOT IN POWER ARMOR
 procedure Node002 begin
-   Reply(114);
-
-   NLowOption(115,Node003);
-   NOption(116,Node003,004);
+   floater(random(106,108));
 end
 
+//NOT ALONE
 procedure Node003 begin
-   if (dude_iq < 4) then begin
-      Reply(117);
-   end
-   else begin
-      Reply(118);
-   end
-
-   NLowOption(119,Node004);
-   NOption(120,Node004,004);
+   set_global_var(GVAR_NAVARRO_BASE_ALERT,1);
+   floater(random(109,111));
 end
 
+//ALERT
 procedure Node004 begin
-   Reply(121);
-
-   // pbs: gives you lower-end equipment instead of sending into the Armory, which is not locked with a key
-   set_local_var( LVAR_Suited_Up, 1 ); // moved here from Node007
-   give_pid_qty(dude_obj, PID_POWERED_ARMOR, 1)
-   give_pid_qty(dude_obj, PID_LASER_RIFLE, 1)
-   game_time_advance(5 * ONE_GAME_MINUTE);
-   NOption(122,Node005,001);
+   said_intruder:=1;
+   floater(random(112,114));
 end
 
+//HOSTILE
 procedure Node005 begin
-   NMessage(123);
-end
-
-procedure Node006 begin
-   floater(124);
-end
-
-procedure Node007 begin
-   //set_local_var( LVAR_Suited_Up, 1 );
-   if( ( local_var( LVAR_Suited_Up ) == 0 ) and
-       ( obj_pid(dude_armor) != PID_ADVANCED_POWER_ARMOR ) and
-       ( obj_pid(dude_armor) != PID_ADVANCED_POWER_ARMOR_MK2 ) ) then begin
-      Reply(125);
-
-      NOption(126,Node004,001);
-   end
-   else
-      NMessage(124);
-end
-
-procedure Node008 begin
-   set_local_var(LVAR_Said_Intruder,1);
-   Reply(127);
-
-   BLowOption(128,Node009);
-   BLowOption(129,Node998);
-   BOption(130,Node009,004);
-   BOption(131,Node998,004);
-end
-
-procedure Node009 begin
-   Reply(132);
-
-   BOption(133,Node998,001);
-end
-
-procedure Node010 begin
+   floater(random(115,117));
 end
 
 procedure Node998 begin
