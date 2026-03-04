@@ -219,8 +219,9 @@ procedure trap_damage_critter(variable critter, variable dmgMin, variable dmgMax
    end
    if (stop) then set_target_knockback(critter, 0, 0); // prevents knockback
 
-   debug_log_fmt("critter_dmg(%s, %d, %X)", obj_name(critter) if critter else "null", dmg, dmgType bwor (DMG_BYPASS_ARMOR if (effects bwand DAM_BYPASS) else 0));
-   critter_dmg(critter, dmg, dmgType bwor (DMG_BYPASS_ARMOR if (effects bwand DAM_BYPASS) else 0));
+   dmgType := dmgType bwor (DMG_BYPASS_ARMOR if (effects bwand DAM_BYPASS) else 0);
+   debug_log_fmt("critter_dmg(%s, %d, %X)", obj_name(critter) if critter else "null", dmg,  dmgType);
+   critter_dmg(critter, dmg, dmgType);
 
    if (stop) then remove_target_knockback(critter);
 

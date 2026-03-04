@@ -94,7 +94,9 @@ end
 
 procedure destroy_self_trap_object begin
    call destroy_spatials_on_tile;
-   destroy_object(self_obj);
+   // Destroy via event to avoid crashes if using self_obj
+   //destroy_object(self_obj);
+   add_timer_event(self_obj, 0, TRAP_EVENT_DESTROY);
 end
 
 procedure start begin
@@ -466,6 +468,7 @@ procedure trap_setoff_effect(variable armPid, variable critter) begin\
             audioSfx := sprintf("WH%c1XXX1", soundCode);
          end
       end
+      if (typeCfg.bypass_armor) then dmgType := dmgType bwor DMG_BYPASS_ARMOR;
       call trap_setoff_explosion(self_obj, critter, dmgMin, dmgMax, radius, dmgType, is_critical_hit, effectPid, audioSfx);
    end else begin // "melee" trap
       variable stop := typeCfg.stop;
@@ -475,7 +478,7 @@ procedure trap_setoff_effect(variable armPid, variable critter) begin\
       end else if (my_trap_charges <= 1 and stop > 1) then stop := 1; // trap can't hold critter if it's destroyed
       dmgMin := typeCfg.dmg_min;
       dmgMax := typeCfg.dmg_max;
-
-      call trap_setoff_melee(critter, dmgMin, dmgMax, DMG_normal_dam, is_critical_hit, stop);
+      dmgType := DMG_normal_dam bwor (DMG_BYPASS_ARMOR if typeCfg.bypass_armor else 0);
+      call trap_setoff_melee(critter, dmgMin, dmgMax, dmgType, is_critical_hit, stop);
    end
 end

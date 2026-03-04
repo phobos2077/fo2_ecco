@@ -86,6 +86,7 @@ procedure load_traps_config begin
          cfg_parse_int(typeCfg, section, stop_max_st);
          cfg_parse_int(typeCfg, section, dmg_min);
          cfg_parse_int(typeCfg, section, dmg_max);
+         cfg_parse_int(typeCfg, section, bypass_armor);
          cfg_parse_int(typeCfg, section, skill_mod);
          cfg_parse_intlist(typeCfg, section, armaments);
          cfg.types[type] := typeCfg;
