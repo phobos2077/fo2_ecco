@@ -438,8 +438,8 @@ procedure Node0914 begin
    end
 end
 
-// pbs: reduce money to match armor cost
-#define POWER_ARMOR_PRICE     (12000) // was 20000
+// pbs: reduce money to be maximum armor sell price + 1/3 markup
+#define POWER_ARMOR_PRICE     (proto_data(PID_HARDENED_POWER_ARMOR, it_cost) * 8 / 10) // was 20000, vanilla HPA price: 15000
 
 procedure Node015a begin
    variable obj;

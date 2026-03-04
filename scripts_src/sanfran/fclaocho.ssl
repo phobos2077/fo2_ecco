@@ -1,0 +1,742 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Lao Chou
+        Location: San Fran
+        Description: He is a shop keeper and knows where Chip's spleen is.
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define NPC_REACTION_TYPE       REACTION_TC
+#define NPC_REACTION_VAR        7 /* same as thief variable */
+#define SCRIPT_REALNAME "fclaocho"
+#include "../headers/define.h"
+//#include "../headers/<TownName.h>"
+
+#define NAME                    SCRIPT_FCLAOCHO
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_SAN_FRANCISCO)
+
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+
+#include "../headers/sanfran.h"
+
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head          start_gdialog_check_talking_head(4, HEAD_LAO, BACKGROUND_RAIDERS)
+
+// pbs: reduce info prices for new economy
+#define PRICE_INFO_SUBMARINE          (1500)  // from  2000
+#define PRICE_INFO_SUBMARINE_DISC     (1000)  // from  1500
+#define PRICE_INFO_PASSWORD           (7000)  // from  10000
+#define PRICE_INFO_PASSWORD_DISC      (4000)  // from  5000
+
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure timed_event_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure Node020;
+procedure Node021;
+procedure Node022;
+
+//added by killap - RP
+procedure Node900;
+procedure Node901;
+procedure Node902;
+
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+procedure Node035;
+procedure Node036;
+procedure Node037;
+procedure Node038;
+procedure Node039;
+procedure Node040;
+procedure Node041;
+procedure Node042;
+procedure Node043;
+procedure Node044;
+procedure Node045;
+procedure Node046;
+procedure Node047;
+procedure Node048;
+procedure Node049;
+procedure Node050;
+procedure Node051;
+procedure Node052;
+
+#define SWAP_OBJ_TILE 8966
+#define HOME_TILE     23720
+
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Caught_Thief               (7)
+#define LVAR_Money                      (8)
+#define LVAR_Restock_Money              (9)
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+import variable i_lao_table_swap;
+import variable i_lao_table_1;
+import variable i_lao_table_2;
+import variable i_lao_merchant;
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable swap_obj :=0;
+
+procedure timed_event_p_proc begin
+   if (fixed_param == TIMER_USE_TABLE) then begin
+      dialogue_system_enter;
+   end
+end
+
+procedure start begin
+   i_lao_merchant := self_obj;
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   set_self_team(TEAM_SAN_FRAN_SHI);
+   set_self_ai(AI_SF_SHI);
+
+   if (not is_loading_game) then begin
+      if (game_time > local_var(LVAR_Restock_Money)) then begin
+         if (self_caps < 5000) then
+            item_caps_adjust(i_lao_table_swap, Random(2000, 5000)); //edit by killap - was self_obj
+         set_local_var(LVAR_Restock_Money, game_time + (ONE_GAME_WEEK * Random(1, 3)));
+      end
+   end
+
+   swap_obj := tile_contains_pid_obj(SWAP_OBJ_TILE, 0, PID_FOOTLOCKER_CLEAN_LEFT);
+
+   i_lao_merchant := self_obj; //added by killap
+end
+
+//added by killap
+procedure map_update_p_proc begin
+   if (i_lao_merchant <= 0) then
+      i_lao_merchant := self_obj;
+end
+//end added
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+
+   if (self_tile != HOME_TILE) then begin
+      if (not anim_busy(self_obj)) then begin
+         reg_anim_clear(self_obj);
+         reg_anim_begin();
+         self_walk_to_tile(HOME_TILE);
+         reg_anim_end();
+      end
+   end
+
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   variable obj, caps;
+
+   Evil_Critter:=0;
+   Slavery_Tolerant:=SLAVE_INTOLERANT;
+   Karma_Perception:=KARMA_PERCEPTION0;
+
+   CheckKarma;
+
+   GetReaction;
+
+   move_obj_inven_to_obj(self_obj, swap_obj);
+   move_obj_inven_to_obj(i_lao_table_swap, self_obj);
+
+   if (i_lao_table_swap == i_lao_table_1) then begin
+      obj := i_lao_table_2;
+   end else begin
+      obj := i_lao_table_1;
+   end
+   caps := item_caps_total(obj);
+   self_caps_adjust(caps);
+   item_caps_adjust(obj, -caps);
+
+   if (san_fran_flag(SF_SHI_ENEMY)) then begin
+      call Node020;
+   end else if (struggle_flag(STRUG_OZ9DEAD)) then begin
+      start_dialog_check_head;
+      gSay_Start;
+         call Node021;
+      gSay_End;
+      end_dialogue;
+   end else begin
+      start_dialog_check_head;
+      gSay_Start;
+         call Node001;
+      gSay_End;
+      end_dialogue;
+   end
+
+   move_obj_inven_to_obj(self_obj, i_lao_table_swap);
+   move_obj_inven_to_obj(swap_obj, self_obj);
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+   i_lao_merchant := -1;
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Herebefore) == 0) then
+      display_msg(mstr(100));
+   else
+      display_msg(mstr(101));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(102));
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+variable n1;
+
+procedure NodeBarter begin
+   gdialog_barter;
+   call Node001;
+end
+
+procedure Node001 begin
+   if (n1 == 0) then begin
+      n1 := 1;
+      Reply(103);
+   end else begin
+      Reply(104);
+   end
+   NLowOption(105, Node002);
+   NLowOption(106, Node002);
+   NOption(107, Node005, 4);
+   NOption(108, NodeBarter, 4);
+   NOption(109, Node006, 4);
+   NOption(110, Node999, 1);
+end
+
+procedure Node002 begin
+   Reply(111);
+   NOption(112, Node003, 1);
+   NOption(113, Node004, 1);
+end
+
+procedure Node003 begin
+   Reply(114);
+   NOption(115, NodeBarter, 1);
+end
+
+procedure Node004 begin
+   Reply(116);
+   NOption(117, Node999, 1);
+end
+
+procedure Node005 begin
+   Reply(118);
+   NOption(119, Node006, 4);
+   NOption(120, NodeBarter, 4);
+end
+
+procedure Node01819 begin
+   if (san_fran_flag(SF_GAS_ELRONS)) then
+      call Node018;
+   else
+      call Node019;
+end
+
+procedure Node822 begin
+   if (shi_whirly(SH_WH_ACCEPTED)) then
+      call Node008;
+   else
+      call Node022;
+end
+
+procedure Node006 begin
+   Reply(121);
+   NOption(122, Node007, 4);
+   if (shi_whirly(SH_WH_ACCEPTED) or shi_whirly(SH_WH_STEALELE)) then
+      NOption(123, Node822, 4);
+   if (tanker_flag(TANK_KNOWN) and not tanker_flag(TANK_FUEL)) then
+      NOption(124, Node01819, 4);
+   if (tanker_flag(TANK_KNOWN) and not tanker_flag(TANK_FOB)) then
+      NOption(125, Node008, 4);
+   if (tanker_flag(TANK_KNOWN) and not tanker_flag(TANK_NAVCOMP)) then
+      NOption(126, Node009, 4);
+   if (spleen_flag(SP_ACCEPTED) and spleen_elapse < (ONE_GAME_DAY * 5)) then
+      NOption(127, Node010, 4);
+   //if (Fallout2_tribe_kidnapped) then
+   if ((f2_flag_any >= f2_state_tribe_kidnapped) and (f2_flag_any < f2_state_enclave_destroyed)) then //edit by killap
+      NOption(128, Node015, 4);
+   NOption(129, Node999, 4);
+end
+
+procedure Node007 begin
+   Reply(130);
+   NOption(131, Node006, 4);
+   NOption(132, Node999, 4);
+end
+
+procedure Node008 begin
+   Reply(133);
+   NOption(134, Node006, 4);
+   NOption(135, NOde999, 4);
+end
+
+procedure Node009 begin
+   Reply(136);
+   NOption(137, Node006, 4);
+   NOption(138, Node999, 4);
+end
+
+procedure Node010 begin
+   if (spleen_flag_any < SP_TALKWONG) then
+      set_spleen_flag(SP_TALKWONG);
+   Reply(139);
+   NOption(140, Node011, 4);
+   NOption(141, Node012, 4);
+   NOption(142, Node001, 4);
+   NOption(143, Node999, 4);
+end
+
+procedure Node011 begin
+   Reply(144);
+   NOption(145, Node012, 4);
+   NOption(146, Node006, 4);
+   NOption(147, Node999, 4);
+end
+
+procedure Node012 begin
+   Reply(148);
+   NOption(149, Node013, 4);
+   NOption(150, Node014, 4);
+end
+
+procedure Node014a begin
+   DownReactMinor;
+   call Node014;
+end
+
+procedure Node013 begin
+   Reply(151);
+   NOption(152, Node006, 4);
+   BOption(153, Node014a, 4);
+   NOption(154, Node999, 4);
+end
+
+procedure Node014 begin
+   Reply(155);
+   NOption(156, Node999, 4);
+end
+
+procedure Node015 begin
+   Reply(157);
+   GOption(158, Node016, 4);
+   BOption(159, Node014a, 4);
+end
+
+procedure Node016 begin
+   Reply(160);
+   NOption(161, Node017, 4);
+   BOption(162, Node999, 4);
+end
+
+procedure Node017 begin
+   Reply(163);
+   if (global_var(GVAR_SAN_FRAN_SUB) < SHI_SUB_HAS_PASSWORD) then
+      NOption(200, Node023, 4); //added by killap
+   NOption(164, Node006, 4);
+   NOption(165, Node999, 4);
+end
+
+procedure Node018 begin
+   Reply(166);
+   NOption(167, Node006, 4);
+   NOption(168, Node999, 4);
+end
+
+procedure Node019 begin
+   Reply(169);
+   NOption(170, Node006, 4);
+   NOption(171, Node999, 4);
+end
+
+procedure Node020 begin
+   float_msg(self_obj, mstr(172), FLOAT_MSG_RED);
+   call Node998;
+end
+
+procedure Node021 begin
+   Reply(173);
+   NOption(174, Node005, 4);
+   NOption(175, NodeBarter, 4);
+   NOption(176, Node006, 4);
+   NOption(177, Node999, 4);
+end
+
+procedure Node022 begin
+   Reply(178);
+   NOption(179, Node006, 4);
+   NOption(180, Node999, 4);
+end
+
+//added by killap - RP
+
+procedure Node023 begin
+   Reply(210);
+   NOption(211, Node024, 4);
+end
+
+procedure Node024 begin
+   Reply(220);
+   NOption(221, Node025, 4);
+end
+
+procedure Node025 begin
+   Reply(230);
+
+   if (has_skill(dude_obj, SKILL_SPEECH) > 90) then
+      NOption(231, Node026, 4);
+   NOption(232, Node027, 4);
+   if (dude_is_female) then
+      NOption(233, Node901, 4);
+   NOption(234, Node999, 4);
+end
+
+procedure Node026 begin
+   Reply(240);
+   NOption(241, Node042, 4);
+end
+
+procedure Node027 begin
+   Reply(250);
+   NOption(251, Node028, 4);
+end
+
+procedure Node028 begin
+   Reply(sprintf(mstr(260), PRICE_INFO_SUBMARINE));
+   if (dude_caps >= PRICE_INFO_SUBMARINE) then
+      NOption(261, Node052, 4);
+   if (dude_caps >= PRICE_INFO_SUBMARINE_DISC) then
+      NOption(sprintf(mstr(262), PRICE_INFO_SUBMARINE_DISC), Node900, 4);
+   NOption(263, Node031, 4);
+end
+
+procedure Node052 begin
+   dude_caps_adjust(-PRICE_INFO_SUBMARINE);
+
+   Reply(sprintf(mstr(270), PRICE_INFO_SUBMARINE));
+   NOption(271, Node042, 4);
+end
+
+procedure Node029 begin
+   dude_caps_adjust(-PRICE_INFO_SUBMARINE_DISC);
+
+   Reply(sprintf(mstr(285), PRICE_INFO_SUBMARINE_DISC));
+   NOption(286, Node030, 4);
+end
+
+procedure Node030 begin
+   Reply(sprintf(mstr(287), PRICE_INFO_SUBMARINE_DISC));
+   NOption(288, Node042, 4);
+end
+
+procedure Node031 begin
+   Reply(280);
+   if (Miria_In_Party) then
+      NOption(281, Node038, 4);
+   NOption(282, Node999, 4);
+end
+
+//CH >= 7 or sex appeal
+procedure Node032 begin
+   Reply(290);
+   NOption(291, Node033, 4);
+end
+
+procedure Node033 begin
+   do_default_sex;
+   Reply(300);
+   NOption(301, Node034, 4);
+end
+
+procedure Node034 begin
+   Reply(310);
+   NOption(311, Node042, 4);
+end
+
+procedure Node035 begin
+   Reply(330);
+   NOption(331, Node036, 4);
+end
+
+procedure Node036 begin
+   Reply(340);
+   NOption(341, Node037, 4);
+end
+
+procedure Node037 begin
+   Reply(350);
+   NOption(351, Node999, 4);
+   NOption(251, Node028, 4);
+end
+
+procedure Node038 begin
+   Reply(360);
+   NOption(361, Node039, 4);
+   NOption(362, Node999, 4);
+end
+
+procedure Node039 begin
+   game_time_advance(2*ONE_GAME_HOUR);
+   Reply(370);
+   NOption(371, Node040, 4);
+end
+
+procedure Node040 begin
+   Reply(380);
+   NOption(381, Node041, 4);
+end
+
+procedure Node041 begin
+   Reply(390);
+   NOption(391, Node042, 4);
+end
+
+procedure Node042 begin
+   Reply(400);
+   NOption(401, Node043, 4);
+end
+
+procedure Node043 begin
+   Reply(410);
+   NOption(411, Node044, 4);
+end
+
+procedure Node044 begin
+   Reply(420);
+   NOption(421, Node045, 4);
+end
+
+procedure Node045 begin
+   Reply(430);
+   NOption(431, Node046, 4);
+end
+
+procedure Node046 begin
+   Reply(440);
+   NOption(441, Node047, 4);
+end
+
+procedure Node047 begin
+   Reply(sprintf(mstr(450), PRICE_INFO_PASSWORD));
+
+   if (dude_caps >= PRICE_INFO_PASSWORD) then
+      NOption(sprintf(mstr(451), PRICE_INFO_PASSWORD), Node048, 4);
+   if (dude_caps >= PRICE_INFO_PASSWORD_DISC) then
+      NOption(sprintf(mstr(452), PRICE_INFO_PASSWORD_DISC), Node902, 4);
+   NOption(453, Node051, 4);
+end
+
+procedure Node048 begin
+   dude_caps_adjust(-PRICE_INFO_PASSWORD);
+
+   Reply(460);
+   NOption(461, Node999, 4);
+
+   if (global_var(GVAR_SAN_FRAN_SUB) < SHI_SUB_HAS_PASSWORD) then
+      set_sub_flag(SHI_SUB_HAS_PASSWORD);
+end
+
+procedure Node049 begin
+   dude_caps_adjust(-PRICE_INFO_PASSWORD_DISC);
+
+   Reply(470);
+   NOption(471, Node999, 4);
+
+   if (global_var(GVAR_SAN_FRAN_SUB) < SHI_SUB_HAS_PASSWORD) then
+      set_sub_flag(SHI_SUB_HAS_PASSWORD);
+end
+
+procedure Node050 begin
+   Reply(sprintf(mstr(480), PRICE_INFO_PASSWORD));
+   if (dude_caps >= PRICE_INFO_PASSWORD) then
+      NOption(sprintf(mstr(481), PRICE_INFO_PASSWORD), Node048, 4);
+   NOption(482, Node051, 4);
+end
+
+procedure Node051 begin
+   Reply(490);
+   NOption(491, Node999, 4);
+end
+
+procedure Node900 begin
+   if (is_success(roll_vs_skill(dude_obj,SKILL_BARTER,-15))) then
+      call Node029;
+   else
+      call Node031;
+end
+
+procedure Node901 begin
+   if( ( dude_trait( TRAIT_sex_appeal) ) or (dude_charisma >= 7) ) then
+      call Node032;
+   else
+      call Node035;
+end
+
+procedure Node902 begin
+   if (is_success(roll_vs_skill(dude_obj,SKILL_BARTER,-25))) then
+      call Node049;
+   else
+      call Node050;
+end
