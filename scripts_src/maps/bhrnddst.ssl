@@ -37,6 +37,8 @@
 
 #include "../headers/command.h"
 
+#include "../_pbs_headers/ecco_ids.h"
+
 #define START_HEX               (22097)
 
 #define REDDING_ENT_HEX         (26098)
@@ -4079,7 +4081,7 @@ procedure DNRV_Reno_Caravan begin
        Critter_Total:=1;
 
    while (Critter_Counter < Critter_Total) do begin
-       Create_Enemy(PID_MELEE_GUARD_MALE,PID_SUPER_SLEDGE,SCRIPT_ECGUARD);
+       Create_Enemy(PID_MELEE_GUARD_MALE,PID_PBS_SPIKED_SLEDGE,SCRIPT_ECGUARD);
        give_money(Critter,random(5,15));
    end
 
@@ -4870,7 +4872,7 @@ procedure Red_Prospector begin
        Critter_Total:=1;
 
    while (Critter_Counter < Critter_Total) do begin
-       Create_Enemy(PID_PROSPECTOR_MALE,PID_SUPER_SLEDGE,SCRIPT_ECPROSPE);
+       Create_Enemy(PID_PROSPECTOR_MALE,PID_PBS_SPIKED_SLEDGE,SCRIPT_ECPROSPE);
        give_money(Critter,random(0,20));
    end
 
@@ -5019,7 +5021,7 @@ procedure Red_Bootlegger begin
        Critter_Total:=1;
 
    while (Critter_Counter < Critter_Total) do begin
-       Create_Enemy(PID_BOOTLEGGER_MALE,PID_SUPER_SLEDGE,SCRIPT_ECMONSHN);
+       Create_Enemy(PID_BOOTLEGGER_MALE,PID_PBS_SPIKED_SLEDGE,SCRIPT_ECMONSHN);
        give_money(Critter,random(2,10));
    end
 

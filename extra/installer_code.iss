@@ -19,8 +19,7 @@ begin
   if (curPageID = wpSelectDir) then
   begin
     if not(ValidateRequirement('fallout2.exe', 'WFalloutNotFound')) or
-       not(ValidateRequirement('mods\rpu.dat', 'WRPNotFound')) or
-       not(ValidateRequirement('mods\rpu_map_update.dat', 'WRPMapUpdateNotFound')) then
+       not(ValidateRequirement('mods\rpu.dat', 'WRPNotFound')) then
     begin
         result := false;
     end

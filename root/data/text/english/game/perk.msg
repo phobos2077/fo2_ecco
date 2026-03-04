@@ -129,7 +129,7 @@
 #
 #   PERK DESCRIPTIONS
 #
-{1101}{}{With Awareness, you are given detailed information about any critter you examine. You see their exact hit points and information about any weapon they are equipped with.}
+{1101}{}{With Awareness, you are given detailed information about any critter you examine. You see their exact hit points and information about any weapon they are equipped with and armor they are wearing.}
 {1102}{}{You have learned the secret arts of the East, or you just punch faster. In any case, your hand-to-hand and melee attacks cost 1 AP less to perform.}
 {1103}{}{Experience in unarmed combat has given you the edge when it comes to damage. You cause +2 points of damage with hand-to-hand and melee attacks for each level of this Perk.}
 {1104}{}{For each level of Bonus Move, you get 3 free APs each turn that can only be used for movement. In other words, you can move 3 free hexes each turn for each level of this Perk.}

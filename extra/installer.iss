@@ -4,7 +4,7 @@
 
 [Setup]
 #define MyAppName "Fallout 2: EcCo Gameplay Overhaul"
-#define MyAppVersion "0.9.8"
+#define MyAppVersion "0.9.9"
 #define MyAppPublisher "phobos2077"
 
 #define DocsDir "..\docs\"
@@ -17,7 +17,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-8
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v0-9-9
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no
@@ -82,8 +82,7 @@ en.CStealTweaks=Steal changes
 en.CMonsterParts=New critter body parts and related quests
 
 en.WFalloutNotFound=Fallout not detected in selected directory (fallout2.exe), mod won't work. Install anyway?
-en.WRPNotFound=Restoration Project not detected in selected directory! This mod is only compatible with RPU 2.6 or above. Are you sure you want to continue?
-en.WRPMapUpdateNotFound=RPU: Maps Updated not detected in selected directory! This mod will not work without that. Are you sure you want to continue?
+en.WRPNotFound=Restoration Project not detected in selected directory! This mod is only compatible with RPU 2.4.* or above. Are you sure you want to continue?
 
 en.OpenReadme=Open ReadMe
 en.OpenDamageCalculator=Open Damage Calculator
@@ -112,8 +111,7 @@ ru.CStealTweaks=Изменения воровства
 ru.CMonsterParts=Новые части тел существ и связанные с ними квесты
 
 ru.WFalloutNotFound=По указанному пути не найдена установленная игра (fallout2.exe), мод не будет работать! Все равно установить?
-ru.WRPNotFound=Restoration Project не обнаружен в указанной папке! Данный мод совместим только с RPU 2.6. Все равно продолжить?
-ru.WRPMapUpdateNotFound=RPU: Maps Updated не обнаружен в указанной папке! Данный мод без него работать не будет. Всё равно продолжить?
+ru.WRPNotFound=Restoration Project не обнаружен в указанной папке! Данный мод совместим только с RPU 2.4.* или выше. Все равно продолжить?
 
 ru.OpenReadme=Открыть Readme
 ru.OpenDamageCalculator=Открыть Калькулятор Урона

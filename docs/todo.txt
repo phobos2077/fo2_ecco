@@ -17,30 +17,34 @@ Milestones after 1.0:
 
 
 Considering:
-- port auto-push from EtTu
+- EMP 40mm grenade type (with PA disable effect)
+- rebase the RPU-based part of EcCo as git fork for easier RPU merges and multi-script header changes (but: need to use 2 repos, complicated build scripts)
+- automatically fix FO2Tweaks settings via script on run
 - early game craftable big gun (heavy arbalest? junk cannon? bolt thrower? harpoon?)
 - late game reusable throwing weapon (upgrade from Hatchet)
-- integrate Deadly Poison mod (https://nma-fallout.com/threads/banjos-fallout-2-mods.220413/)
-- is Vic repair skill too low? (should he be your ticket to crafting Metal armor?)
-- guns to hit penalty at close range (like WEAPON_SCOPE_RANGE but less severe)
 - most doctors should be able to heal limbs and companions (money sink, compensation for nerfed rest)
 - look into caravan run issues ("naked" people, poor balance)
-- 4 AP cost for 14mm Pistol?
+- add 2 or 3-round burst fire mode for Bozar (upgrade?)
 - add special sounds for Bozar AMR (& M2?)
 - craft Combat Armor mk2 (what component? fuel is overused)
 - hard to choose specific craft component when several are available: don't auto-search trunk? or provide UI to select component?
 - installer switch to disable barter formula
 - random encounter: more interesting enemy formations?
 - Hunting Rifle -> Scoped for Slags rewards, Scoped Rifle -> something better for Marcus
-- automatically fix FO2Tweaks settings via installer? (what if it's installed after?)
 
 
 Rejected:
-- add makeshift laser pistol to some NPC's -> already added in Redding and DVMV encounters
-- add crafting components like rocks and junk to human enemy bodies on death -> junk onlready from wpns, rocks in caves
+- add makeshift laser pistol to some NPC's
+   -> already added in Redding and DVMV encounters
+- add crafting components like rocks and junk to human enemy bodies on death
+   -> junk onlready from wpns, rocks in caves
+- port auto-push from EtTu
+   -> QoL is out of scope, better to do this in engine
 
 
 IDEAS:
+- integrate Deadly Poison mod (https://nma-fallout.com/threads/banjos-fallout-2-mods.220413/)
+- usable cosmetics for women (+CH for 1 day)
 - some way to lure more enemy types into traps than just Geckos and Rats (Scorpions, Deathclaws, Humans...)
 - leather hides from dead brahmin?
 - weapon destruction chance/% to depend on attack type/damage (bursts vs single, explosion vs punch, etc)
@@ -63,4 +67,4 @@ IDEAS:
 - add "metal sheets" crafting item and distribute along with "Junk"
 - make robots drop "robot parts" and use them in crafting
 - some new trap-related perk (arm traps in combat?)
-- add simple ready-to-go traps (maybe to vendors), without having to install explosive
+- add simple ready-to-go explosive trap to vendors
