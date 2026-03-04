@@ -14,14 +14,14 @@ sid: -1
 type: ITEM_TYPE_WEAPON
 material: 1
 size: 6
-weight: 20
+weight: 16
 cost: 3000
 inventoryFid: 117440745
 soundId: '0'
 weaponData:
   animationCode: 8
-  minDamage: 18
-  maxDamage: 24
+  minDamage: 16
+  maxDamage: 26
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 40
   maxRange2: 40

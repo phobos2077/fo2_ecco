@@ -14,23 +14,23 @@ sid: -1
 type: ITEM_TYPE_WEAPON
 material: 1
 size: 5
-weight: 9
-cost: 4200
+weight: 6
+cost: 3000
 inventoryFid: 117440743
 soundId: '0'
 weaponData:
   animationCode: 13
-  minDamage: 16
+  minDamage: 18
   maxDamage: 22
   damageType: DAMAGE_TYPE_NORMAL
   maxRange1: 40
   maxRange2: 30
   projectilePid: -1
-  minStrength: 5
-  actionPointCost1: 5
+  minStrength: 4
+  actionPointCost1: 4
   actionPointCost2: 6
   criticalFailureType: 2
-  perk: PERK_WEAPON_PENETRATE
+  perk: PERK_WEAPON_LONG_RANGE
   rounds: 8
   caliber: 5
   ammoTypePid: 615

@@ -26,7 +26,7 @@ Import;ProFILE;NAME;PID;Caliber;AC Adjust;DR Adjust;Dam Mult;Dam Div
 ;00000382.pro;Flamethrower Fuel MKII;382;Flamethrower Fuel [2];-25;-30;1;1
 ;00000610.pro;.50 BMG;610;.50 cal [19];-10;-50;1;1
 ;00000614.pro;12 ga. Slugs;614;12-gauge [11];0;-20;1;1
-;00000615.pro;.223 AP;615;.223 [5];0;-50;4;5
+;00000615.pro;.223 AP;615;.223 [5];0;-45;4;5
 ;00000631.pro;40mm HE Grenades;631;40mm grenade [20];0;-10;1;1
 ;00000632.pro;40mm IC Grenades;632;40mm grenade [20];0;0;4;3
 ;00000633.pro;14mm JHP;633;14mm [10];0;0;3;2
