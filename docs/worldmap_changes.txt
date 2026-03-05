@@ -1,0 +1,14 @@
+KAGA Vanilla levels:
+- KAGA1: 1-4 (4)   // naked, spear
+- KAGA2: 5-8 (4)   // leather, hunting rifle
+- KAGA3: 9-12 (4)  // metal, assault rifle
+- KAGA4: 13-16 (4) // combat, minigun
+- KAGA5: 17+       // APA mk2, gatling laser
+
+
+KAGA modified levels:
+- KAGA1: 1-6 (6)
+- KAGA2: 7-11 (5)
+- KAGA3: 12-16 (5)
+- KAGA4: 17-22 (6)
+- KAGA5: 23+
