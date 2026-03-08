@@ -1,0 +1,216 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/******************************************************************************************
+        Item: Tanker Gun Merchants table
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: September 26, 1997
+
+           Updated:
+******************************************************************************************/
+
+
+/* Include Files */
+#define SCRIPT_REALNAME "fitmertb"
+#include "../headers/define.h"
+
+#define NAME                    SCRIPT_FITMERTB
+#define CUR_COMP_SCRIPT         SCRIPT_FITMERTB
+
+#include "../headers/command.h"
+#include "../headers/sanfran.h"
+
+#include "../_pbs_headers/ecco_ids.h"
+
+/* Standard Script Procedures */
+procedure start;
+procedure use_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure use_obj_on_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure map_update_p_proc;
+
+procedure validHandle(variable handle);
+
+/*****************************************************************
+   Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_
+*****************************************************************/
+#define LVAR_Restock_Time                         (0)
+#define LVAR_Restock_Time_Fix                     (1) //added by killap
+
+/*******************************************************************
+   Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_)
+*******************************************************************/
+import variable i_tmer_table_swap;
+import variable i_tmer_merchant;
+
+#define SETSWAPTABLE(x)  i_tmer_table_swap := x
+#define MERCHANTOBJ      i_tmer_merchant
+#define TABLE_1 21288
+#define TABLE_2 22489
+
+/*******************************************************************
+   Local variables which do not need to be saved between map changes.
+*******************************************************************/
+
+
+/*******************************************************************
+*******                         PROCEDURES                   *******
+*******************************************************************/
+/*******************************************************************
+   The start procedure is the first procedure called when the map is
+   first entered. Any initial information that needs to be set up
+   should be placed in here.
+*******************************************************************/
+
+procedure start begin
+   SETSWAPTABLE(self_obj);
+end
+
+procedure timed_event_p_proc begin
+end
+
+/********************************************************************
+********************************************************************/
+
+procedure use_p_proc begin
+   if (validHandle(MERCHANTOBJ)) then begin
+      script_overrides;
+      SETSWAPTABLE(self_obj);
+      add_timer_event(MERCHANTOBJ, 0, TIMER_USE_TABLE);
+   end
+end
+
+/***************************************************************************
+   This is cursory glance description that the player will receive should
+   he just pass the Action Cursor over. Examines which give more information
+   need to be in the description_p_proc procedure.
+***************************************************************************/
+
+procedure look_at_p_proc begin
+end
+
+/**********************************************************************************
+**********************************************************************************/
+
+procedure description_p_proc begin
+end
+
+
+/**********************************************************************************
+   Make sure the door is working.
+**********************************************************************************/
+
+procedure use_skill_on_p_proc begin
+   if (validHandle(MERCHANTOBJ)) then begin
+      call use_p_proc;
+   end
+end
+
+
+/**********************************************************************************
+   This is called when the player is using an object on the door. When the check is
+   made to find out what is being used, obj_pid(obj_being_used_with) will need to
+   be checked against a prototype.
+**********************************************************************************/
+
+procedure use_obj_on_p_proc begin
+   if (validHandle(MERCHANTOBJ)) then begin
+      call use_p_proc;
+   end
+end
+
+
+/******************************************************************************************
+   IF it gets damaged it breaks
+******************************************************************************************/
+
+procedure damage_p_proc begin
+end
+
+/***************************************************************************************
+   Whenever the map is first entered, this procedure will be called.
+***************************************************************************************/
+
+procedure map_enter_p_proc begin
+   variable tmp_box;
+
+   if (validHandle(MERCHANTOBJ)) then begin
+      restock_fix
+      if (local_var(LVAR_Restock_Time) < game_time) then begin
+         if (self_tile == TABLE_1) then begin
+            tmp_box := move_quest_items();
+            check_restock_item(PID_BOTTLE_CAPS, 300, 436, 80)
+            check_restock_item(PID_STIMPAK, 10, 20, 80)
+            check_restock_item(PID_FIRST_AID_KIT, 1, 2, 60)
+            check_restock_item(PID_RADAWAY, 10, 20, 60)
+            check_restock_item(PID_MENTATS, 4, 8, 50)
+            check_restock_item(PID_MUTATED_FRUIT, 4, 8, 60)
+            check_restock_item(PID_SUPER_STIMPAK, 6, 7, 30)
+            check_restock_item(PID_PBS_DRAGON_SKIN, 1, 3, 30)
+            check_restock_item(PID_ANTIDOTE, 5, 10, 80) // pbs
+            check_restock_item(PID_MEAT_JERKY, 4, 5, 45)
+            call restore_critical_items(tmp_box);
+         end else if (self_tile == TABLE_2) then begin
+            tmp_box := move_quest_items();
+            check_restock_item(PID_BOTTLE_CAPS, 300, 436, 80)
+            check_restock_item(PID_BIG_BOOK_OF_SCIENCE, 1, 2, 40)
+            check_restock_item(PID_DEANS_ELECTRONICS, 2, 3, 30)
+            check_restock_item(PID_FIRST_AID_BOOK, 2, 4, 40)
+            check_restock_item(PID_SCOUT_HANDBOOK, 2, 4, 40)
+            check_restock_item(PID_GUNS_AND_BULLETS, 1, 2, 30)
+            //check_restock_item(PID_TECHNICAL_MANUAL, 2, 5, 40)
+            //check_restock_item(PID_CHEMISTRY_MANUAL, 2, 3, 40)
+            check_restock_item(PID_PBS_BARTER_BOOK, 1, 2, 30)
+            check_restock_item(PID_PBS_DOCTOR_BOOK, 1, 2, 30)
+            check_restock_item(PID_DYNAMITE, 2, 6, 33)
+            check_restock_item(PID_GEIGER_COUNTER, 1, 2, 30)
+            check_restock_item(PID_MOTION_SENSOR, 2, 4, 40)
+            check_restock_item(PID_MULTI_TOOL, 2, 3, 50)
+            check_restock_item(PID_ELECTRONIC_LOCKPICKS, 2, 5, 20)
+            check_restock_item(PID_LOCKPICKS, 2, 4, 30)
+            check_restock_item(PID_PLASTIC_EXPLOSIVES, 2, 4, 60)
+            check_restock_item(PID_ROPE, 1, 5, 50)
+            check_restock_item(PID_PUMP_PARTS, 2, 5, 75) // pbs: added
+            check_restock_item(PID_EXP_LOCKPICK_SET, 2, 6, 40)
+            check_restock_item(PID_ELEC_LOCKPICK_MKII, 1, 2, 35)
+            check_restock_item(PID_BOX_OF_NOODLES, 3, 7, 30)
+            check_restock_item(PID_FROZEN_DINNER, 6, 10, 45)
+            check_restock_item(PID_SHOVEL, 2, 5, 30)
+            check_restock_item(PID_SUPER_TOOL_KIT, 1, 7, 25)
+            check_restock_item(PID_BLUE_CONDOM, 40, 80, 78)
+            check_restock_item(PID_GREEN_CONDOM, 40, 80, 90)
+            call restore_critical_items(tmp_box);
+         end
+         set_local_Var(LVAR_Restock_Time, game_time + (ONE_GAME_DAY * Random(2, 4)));
+      end
+   end
+end
+
+
+/**************************************************************************************
+   This procedure gets called roughly every 30 seconds of real time.
+**************************************************************************************/
+
+procedure map_update_p_proc begin
+end
+
+procedure validHandle(variable handle) begin
+   if (handle != 0 and handle != -1) then begin
+      return 1;
+   end
+   return 0;
+end

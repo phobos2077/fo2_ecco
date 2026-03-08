@@ -28,14 +28,18 @@ variable
 #define debug_err_cmd(msg, tile)		debug_err(format_cmd_log(msg, tile))
 
 procedure find_main_object_at(variable tileNum, variable elev) begin
-   variable obj, objs := tile_get_objs(tileNum, elev);
+   variable obj, objs := tile_get_objs(tileNum, elev), mainObj := 0;
    foreach (obj in objs) begin
       if ((obj_type(obj) == OBJ_TYPE_CRITTER) or 
          (obj_type(obj) == OBJ_TYPE_ITEM and obj_item_subtype(obj) == item_type_container and not OBJ_IS_FLAT(obj)) or
          (obj_type(obj) == OBJ_TYPE_SCENERY and not OBJ_IS_FLAT(obj))) then
-         return obj;
+      begin
+         mainObj := obj;
+         if (obj_type(obj) != OBJ_TYPE_SCENERY) then
+            break;
+      end
    end
-   return 0;
+   return mainObj;
 end
 
 procedure create_loot_object(variable pid, variable tileNum, variable elev, variable ammo, variable ammoPid) begin
@@ -258,16 +262,21 @@ procedure apply_tweaks_for_current_map begin
    end
 end
 
-#define is_cfg_true(x)      (x andAlso atoi(x))
-
 procedure start begin
    config := get_ini_config_db("config\\pbs_map_tweaks.ini");
    debug_log("Loaded "+len_array(config)+" sections.");
 
    // For development
-   if (is_cfg_true(config.debug.run_on_load) and cur_town != -1) then begin
-      display_msg("DEBUG: running map tweaks");
-      call apply_tweaks_for_elev(elevation(dude_obj));
+   variable debugRun := config.debug.run_on_load;
+   debugRun := debugRun andAlso atoi(debugRun);
+   if (debugRun > 0 and cur_town != -1) then begin
+      if (debugRun == 1) then begin
+         display_msg("DEBUG: running map tweaks for current elevation");
+         call apply_tweaks_for_elev(elevation(dude_obj));
+      end else begin
+         display_msg("DEBUG: running map tweaks for all elevations");
+         call apply_tweaks_for_current_map;
+      end
    end
 end
 

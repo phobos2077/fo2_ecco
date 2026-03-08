@@ -46,7 +46,7 @@
 #define start_dialog_check_head          start_gdialog_check_talking_head(4, HEAD_WONG, BACKGROUND_MILITARYBS)
 
 // pbs: quest reward reduced for new economy
-#define REWARD_QUEST       (4000)      // was 5000
+#define REWARD_QUEST       (3000)      // was 5000
 
 /* Standard Script Procedures */
 procedure start;
@@ -821,7 +821,7 @@ procedure Node039 begin
 end
 
 procedure Node040 begin
-   dude_caps_adjust(5000);
+   dude_caps_adjust(REWARD_QUEST);
 
    display_msg(mstr(600));
    give_xp(EXP_KILL_DR_SHENG_REWARD);

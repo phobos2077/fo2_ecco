@@ -28,7 +28,7 @@
 #define LOCK_STATUS                     STATE_STANDARD_LOCK
 
 #define Lock_Bonus                      (-60)
-#define Crowbar_Bonus                   (-6)
+#define Crowbar_Bonus                   (-4)
 
 #include "../headers/containers.h"
 // #include "../headers/containers_ext.h"

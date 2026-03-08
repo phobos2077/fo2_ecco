@@ -1,0 +1,246 @@
+/*     Script from map templete       */
+/*
+        Name: Nazwa
+        Location: Polozenie
+        Description: Opis
+
+        Log:
+
+
+           Created:
+
+           Updated:
+*/
+
+/* Include Files */
+
+#define SCRIPT_REALNAME "hisafe"
+#include "../headers/define.h"
+//#include "../headers/nazwamapy.h"
+//#include "../headers/updatmap.h"
+
+#define NAME                    SCRIPT_HISAFE
+
+#include "../headers/command.h"
+//#include "../headers/hubstash.h"
+
+procedure start;
+procedure use_p_proc;
+procedure pickup_p_proc;
+procedure map_enter_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure lock_safe;
+procedure unlock_safe;
+procedure use_skill_on_p_proc;
+procedure use_obj_on_p_proc;
+
+procedure Tamper_Proc;
+procedure Tamper_Proc2;
+
+#define Lock_Bonus                      (-100)
+#define Lockpick_Bonus                  (Lock_Bonus+20)
+#define Exd_Lockpick_Bonus              (Lock_Bonus+40)
+#define LOCK_STATUS                     STATE_ELECTRIC_LOCK
+#define STATE_ELECTRIC_LOCK             (1)
+
+#define LOCKED                          (0)
+#define UNLOCKED                        (1)
+
+
+
+#define LVAR_Gave_Locks_XP                (0)
+#define LVAR_Warn_Once                    (1)
+#define LVAR_Lock_State                   (2)
+
+variable Locks_Roll;
+
+import variable object_tamper;
+import variable guard2_obj;
+
+procedure start begin
+   if not(obj_is_open(self_obj)) then
+      set_local_var(LVAR_Lock_State,LOCKED);
+end
+
+procedure map_enter_p_proc begin
+   variable item;
+   if (map_first_run) then begin
+      item := create_object(PID_BOTTLE_CAPS,0,0);
+      add_mult_objs_to_inven(self_obj,item,random(2000,3000)); // pbs: was 3000,5000
+      item := create_object(PID_NECKLACE,0,0);
+      add_mult_objs_to_inven(self_obj,item,random(0,2)); // pbs: was 1,3
+      item := create_object(PID_OLD_COIN,0,0);
+      add_mult_objs_to_inven(self_obj,item,random(1,2));
+      item := create_object(PID_OLD_WATCH,0,0);
+      add_mult_objs_to_inven(self_obj,item,random(0,2));
+      //obj_lock(self_obj);
+   end
+end
+
+procedure look_at_p_proc begin
+   script_overrides;
+   display_msg(mstr(100));
+end
+
+
+/**********************************************************************************
+   Should the player examine the door closely, then he should be allowed a lockpick
+   roll, a traps roll and a perception roll. Depending on which rolls are made will
+   determine how much information about the door will be given.
+**********************************************************************************/
+
+procedure description_p_proc begin
+   script_overrides;
+   if (local_var(LVAR_Lock_State) == LOCKED) then
+      display_msg(mstr(101));
+   else
+      display_msg(mstr(102));
+
+end
+
+procedure use_p_proc
+begin
+   if (is_visible(guard2_obj)) then begin
+      call Tamper_Proc2;
+   end else begin
+      if (local_var(LVAR_Lock_State) == LOCKED) then begin
+         script_overrides;
+         display_msg(mstr(200));
+         play_sfx("snd_locked");
+      end
+   end
+end
+
+procedure pickup_p_proc begin
+   if (is_visible(guard2_obj)) then begin
+      call Tamper_Proc2;
+   end else begin
+      if (local_var(LVAR_Lock_State) == LOCKED) then begin
+         script_overrides;
+         display_msg(mstr(200));
+      end
+   end
+end
+
+
+procedure lock_safe begin
+   script_overrides;
+   game_time_advance(ONE_GAME_MINUTE);
+   //obj_lock(self_obj);
+   set_local_var(LVAR_Lock_State,LOCKED);
+   if (source_obj == dude_obj) then begin
+      display_msg(mstr(189));
+   end
+
+end
+
+procedure unlock_safe begin
+   script_overrides;
+
+   game_time_advance(ONE_GAME_MINUTE);
+
+   if (is_success(Locks_Roll)) then begin
+       //obj_unlock(self_obj);
+       set_local_var(LVAR_Lock_State,UNLOCKED);
+
+       if (source_obj == dude_obj) then begin
+           display_msg(mstr(170));
+       end
+
+       if (local_var(LVAR_Gave_Locks_XP) == 0) then begin
+           set_local_var(LVAR_Gave_Locks_XP,1);
+           give_xp(100);
+       end
+   end
+
+   else if (is_critical(Locks_Roll)) then begin
+       jam_lock(self_obj);
+
+       if (source_obj == dude_obj) then begin
+           display_msg(mstr(171));
+       end
+   end
+
+   else begin
+       if (source_obj == dude_obj) then begin
+           display_msg(mstr(172));
+       end
+   end
+
+end
+
+
+procedure use_skill_on_p_proc begin
+   variable Skill_Used;
+
+   script_overrides;
+   Locks_Roll:=roll_vs_skill(source_obj,SKILL_LOCKPICK,Lock_Bonus);
+
+   if (is_visible(guard2_obj)) then begin
+      object_tamper := 1;
+      call Tamper_Proc;
+   end
+   else begin
+      Skill_Used:=action_being_used;
+
+      if (Skill_Used == SKILL_LOCKPICK) then begin
+         if (local_var(LVAR_Lock_State) == LOCKED) then begin
+           call unlock_safe;
+         end
+         else begin
+            call lock_safe;
+         end
+      end
+   end
+end
+
+
+procedure use_obj_on_p_proc begin
+   variable Tool;
+   script_overrides;
+
+   if (is_visible(guard2_obj)) then begin
+      object_tamper := 1;
+      call Tamper_Proc;
+   end else begin
+
+   Tool:=obj_pid(obj_being_used_with);
+
+   if (LOCK_STATUS == STATE_ELECTRIC_LOCK) then begin
+       if (Tool == PID_ELECTRONIC_LOCKPICKS) then begin
+           script_overrides;
+           if (local_var(LVAR_Lock_State) == LOCKED) then begin
+               Locks_Roll:=roll_vs_skill(source_obj,SKILL_LOCKPICK,Lockpick_Bonus);
+               call unlock_safe;
+           end
+           else begin
+               call lock_safe;
+           end
+       end
+       else if (Tool == PID_ELEC_LOCKPICK_MKII) then begin
+           script_overrides;
+           if (local_var(LVAR_Lock_State) == LOCKED) then begin
+               Locks_Roll:=roll_vs_skill(source_obj,SKILL_LOCKPICK,Exd_Lockpick_Bonus);
+               call unlock_safe;
+           end
+           else begin
+               call lock_safe;
+           end
+       end
+   end
+   end
+end
+
+procedure Tamper_Proc begin
+   //if (obj_is_visible_flag(guard2_obj)) then begin
+         script_overrides;
+         add_timer_event(guard2_obj,5,5);
+   //end
+end
+
+procedure Tamper_Proc2 begin
+      script_overrides;
+      object_tamper := 2;
+      add_timer_event(guard2_obj,5,5);
+end
