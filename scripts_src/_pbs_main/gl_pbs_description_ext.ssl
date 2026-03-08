@@ -84,6 +84,8 @@ procedure stdprocedure_hook begin
 end
 
 #define dmg_type_override(pid)      get_int_from_ini(INI_COMBAT, INI_DAMAGE_TYPE_SECTION, pid)
+#define ammo_cost_per_shot(pid)     get_int_from_ini(INI_COMBAT, INI_AMMO_COST_SECTION, pid)
+#define spray_settings(pid)     get_int_list_from_ini(INI_SPRAY, INI_SECTION_SPRAY, pid)
 
 procedure get_damage_type_with_pbs_damage_mod(variable weaponPid, variable ammoPid) begin
    variable dmgType := dmg_type_override(ammoPid);
@@ -95,6 +97,20 @@ procedure get_damage_type_with_pbs_damage_mod(variable weaponPid, variable ammoP
       return dmgType;
 
    return get_proto_data(weaponPid, PROTO_WP_DMG_TYPE);
+end
+
+procedure calculate_accuracy(variable pid) begin
+   variable info := spray_settings(pid);
+   if (not info or len_array(info) < 4 or info[1] == 0 or info[3] == 0) then
+      return 25;
+
+   variable
+      cenMul := info[0],
+      cenDiv := info[1],
+      tgtMul := info[2],
+      tgtDiv := info[3];
+
+   return round(100.0 * cenMul / cenDiv * (tgtMul + (tgtDiv - tgtMul) * 0.5) / tgtDiv);
 end
 
 procedure description_hook begin
@@ -114,15 +130,20 @@ procedure description_hook begin
          apCost2 := get_proto_data(pid, PROTO_WP_APCOST_2) if attackMode2 != ATTACK_MODE_NONE else 0,
          range1 := get_proto_data(pid, PROTO_WP_RANGE_1),
          range2 := get_proto_data(pid, PROTO_WP_RANGE_2) if attackMode2 != ATTACK_MODE_NONE else 0,
-         burstRounds := get_proto_data(pid, PROTO_WP_BURST)
-            if attackMode1 == ATTACK_MODE_BURST or attackMode2 == ATTACK_MODE_BURST
-            else 0,
+         canBurst := attackMode1 == ATTACK_MODE_BURST or attackMode2 == ATTACK_MODE_BURST or attackMode1 == ATTACK_MODE_FLAME or attackMode2 == ATTACK_MODE_FLAME,
+         burstRounds := get_proto_data(pid, PROTO_WP_BURST) if canBurst else 0,
+         accuracy := calculate_accuracy(pid) if canBurst else 0,
          perk := get_proto_data(pid, PROTO_WP_PERK),
+         ammoCost := ammo_cost_per_shot(pid) or 1,
          desc := "";
    
       desc += string_format("%s%d-%d", mstr_ecco_combat(450), dmgMin, dmgMax);
-      if (burstRounds > 1) then
+      if (burstRounds > 1) then begin
          desc += mstr_ecco_combat(451) + burstRounds;
+
+         if (accuracy > 0) then
+            desc += mstr_ecco_combat(457) + accuracy + "%";
+      end
 
       desc += mstr_ecco_combat(452) + range1;
       if apCost2 > 0 then
@@ -133,6 +154,9 @@ procedure description_hook begin
       desc += mstr_ecco_combat(454) + apCost1;
       if apCost2 > 0 then
          desc += ", " + apCost2;
+
+      if (ammoCost > 1) then
+         desc += mstr_ecco_combat(456) + ammoCost;
 
       if (perk > -1) then
          desc += mstr_ecco_combat(455) + mstr_perk(101 + perk);

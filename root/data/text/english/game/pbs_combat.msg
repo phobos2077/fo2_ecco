@@ -44,3 +44,5 @@
 {453}{}{\nDmg Type: }
 {454}{}{\nAP cost: }
 {455}{}{\nPerk: }
+{456}{}{\nAmmo per shot: }
+{457}{}{\nAccuracy: }
