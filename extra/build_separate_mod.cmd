@@ -11,11 +11,30 @@ SET root=%cd%
 cd /d "%cwd%"
 
 set modName=%1
+if "%modName%"=="" set modName=lite
+
 echo Mod Name = %modName%
+if "%modName%"=="lite" goto lite
 if "%modName%"=="weapon_sfx" goto weapon_sfx
 
 echo Mod '%1' doesn't exist!
 goto quit_with_error
+
+:lite
+
+set modFolder=ecco_lite
+
+cd /d "%root%\scripts_src\_pbs_main"
+set scriptOutPath=%root%\separate_mods\%modName%\mods\%modFolder%\scripts
+
+for /f "usebackq delims=" %%f in ("%root%\extra\ecco_lite_script_list.txt") do (
+   echo Processing %%f
+   call compile_wcc "%%f.ssl" -o "%scriptOutPath%\%%f.int"
+   if errorlevel 1 goto quit_with_error
+)
+
+goto make_zip_no_dat
+
 
 :weapon_sfx
 
@@ -36,6 +55,18 @@ if %compileErr% geq 1 goto quit_with_error
 
 goto make_zip_no_dat
 rem goto make_dat
+quit_with_error
+
+:compile_script
+rem "%compile%" -l -O2 -p -s -q -n "%%~nxi" -o "%output%/%%~ni.int"
+call compile_wcc "%1.ssl" -o "%scriptOutPath%/%1.int"
+set compileErr=%errorlevel%
+if %compileErr% geq 1 (
+   set /a ne+=1 >nul
+) else (
+   set /a ns+=1 >nul
+)
+exit /B %compileErr%
 
 
 :make_dat
@@ -77,7 +108,7 @@ cd /d "%root%\separate_mods\%modName%"
 
 echo Running 7Zip...
 set exe="C:\Program Files\7-Zip\7z.exe"
-%exe% a %zipFilePath% mods\* sfall\* *.txt > nul
+%exe% a %zipFilePath% mods\* ecco_config\* sfall\* *.txt > nul
 
 cd /d "%cwd%"
 echo Done!
@@ -86,6 +117,8 @@ exit /B
 
 
 :quit_with_error
+
+cd /d "%cwd%"
 echo Build failed!
 exit /B 1
 
