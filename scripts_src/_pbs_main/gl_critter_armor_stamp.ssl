@@ -11,7 +11,7 @@
 #include "../sfall/sfall.h"
 #include "../_pbs_headers/ecco_log.h"
 
-#define INI_CRITTER_ARMOR   "ecco\\critter_armor.ini"
+#define INI_CRITTER_ARMOR   "ecco_config\\critter_armor.ini"
 
 procedure start;
 

@@ -4,41 +4,51 @@
  * - This includes mult/div ratio for center vs side and target vs center (see INI for detailed explanation and examples).
  */
 
+#pragma sce
 #define SCRIPT_REALNAME    "gl_spray_settings"
 
-#include "..\sfall\define_lite.h"
-#include "..\sfall\define_extra.h"
+//#include "..\sfall\define_lite.h"
+//#include "..\sfall\define_extra.h"
 #include "..\sfall\sfall.h"
 #include "..\sfall\lib.strings.h"
 #include "..\sfall\lib.arrays.h"
 #include "..\sfall\lib.inven.h"
-#include "..\_pbs_headers\ecco.h"
 
-#define INI_FILE     "ecco\\spray_settings.ini"
+#include "..\_pbs_headers\ecco_log.h"
+
+#define CONFIG_PATH     "config\\weapon_spray.ini"
+#define INI_SECTION     "SPRAY_SETTINGS"
+
+export variable pbs_spray_settings_map;
 
 variable
-   ini_pid_to_settings,
    last_pid;
 
 procedure start;
 procedure tohit_handler;
 
 procedure start begin
-   variable rawSettings, k, v, pid, settings;
+   variable rawSettings, k, v, pid, settings, settingsMap;
    if game_loaded then begin
-      rawSettings := get_ini_section(INI_FILE, "SPRAY_SETTINGS");
-      ini_pid_to_settings := create_array_map;
+      rawSettings := get_ini_config_db(CONFIG_PATH);
+      if (not rawSettings or not rawSettings[INI_SECTION]) then begin
+         debug_log_fmt("Failed to load %s", CONFIG_PATH);
+         return;
+      end
+      rawSettings := rawSettings[INI_SECTION];
+      settingsMap := create_array_map;
       foreach (k: v in rawSettings) begin
          pid := atoi(k);
          settings := string_split_ints(v, ",");
          if (pid != 0 and len_array(settings) >= 4) then begin
             fix_array(settings);
-            ini_pid_to_settings[pid] := settings;
+            settingsMap[pid] := settings;
          end else begin
             debug_err("wrong item in settings: "+k+"="+v);
          end
       end
-      debug_log("Loaded "+len_array(ini_pid_to_settings)+" pid settings.");
+      debug_log("Loaded "+len_array(settingsMap)+" pid settings.");
+      pbs_spray_settings_map := settingsMap;
       register_hook_proc(HOOK_TOHIT, tohit_handler);
    end
 end
@@ -73,7 +83,7 @@ procedure tohit_handler begin
    if (attacker) then begin
       item := item_by_attack_type(attacker, attackType);
       if (item and last_pid != obj_pid(item)) then begin
-         settings := ini_pid_to_settings[obj_pid(item)];
+         settings := pbs_spray_settings_map[obj_pid(item)];
          if (settings) then begin
             set_spray_settings(settings[0], settings[1], settings[2], settings[3]);
             debug_log("spray_settings: spray settings set: "+debug_array_str(settings));

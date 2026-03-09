@@ -5,10 +5,9 @@
 #include "../sfall/lib.strings.h"
 
 #define INI_SFALL          "ddraw.ini"
-#define INI_COMBAT         "ecco\\combat.ini"
-#define INI_ECONOMY        "ecco\\barter.ini"
-#define INI_MISC           "ecco\\misc.ini"
-#define INI_SPRAY          "ecco\\spray_settings.ini"
+#define INI_COMBAT         "ecco_config\\combat.ini"
+#define INI_ECONOMY        "ecco_config\\barter.ini"
+#define INI_MISC           "ecco_config\\misc.ini"
 
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 #define INI_ATTACK_MODES_SECTION  "ATTACK_MODES"

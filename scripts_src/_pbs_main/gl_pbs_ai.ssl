@@ -4,6 +4,8 @@
    - Improved best weapon selection logic (better expected damage estimation, range/distance factors, etc)
 */
 
+#pragma sce
+#define SCRIPT_REALNAME    "pbs_ai"
 
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
@@ -20,7 +22,6 @@
 
 #include "../_pbs_headers/damage_mod.h"
 
-#define SCRIPT_REALNAME    "pbs_ai"
 
 variable begin
    ini_called_int_req;
@@ -197,6 +198,7 @@ end
 
 #define ref_armor_dtdr(offset, dmgType)    (get_proto_data(ini_bestweapon_ref_armor_pid, offset + dmgType * 4) if ini_bestweapon_ref_armor_pid > 0 else 0)
 
+
 procedure weapon_rank(variable critter, variable weapon, variable target) begin
    // TODO: vanilla uses combat_safety_invalidate_weapon to account for potential friendly fire, this code does not
    variable
@@ -206,7 +208,8 @@ procedure weapon_rank(variable critter, variable weapon, variable target) begin
       avgBurstSize := (0.66 * burstSize) if burstSize > 1 else 1,
       ammoPid := get_weapon_ammo_pid(weapon),
       ammoDmgMult := (1.0 * get_proto_data(ammoPid, PROTO_AM_DMG_MULT) / get_proto_data(ammoPid, PROTO_AM_DMG_DIV) if (ammoPid > 0) else 1),
-      dmgType := get_proto_data(pid, PROTO_WP_DMG_TYPE),
+      dmgTypeOverride := get_damage_type_override(pid, ammoPid),
+      dmgType := dmgTypeOverride if dmgTypeOverride >= 0 else get_proto_data(pid, PROTO_WP_DMG_TYPE),
       perk := get_proto_data(pid, PROTO_WP_PERK),
       targetDT := get_critter_stat(target, STAT_dmg_thresh + dmgType) if target != 0 else ref_armor_dtdr(PROTO_AR_DT_NORMAL, dmgType),
       targetDR := get_critter_stat(target, STAT_dmg_resist + dmgType) if target != 0 else ref_armor_dtdr(PROTO_AR_DR_NORMAL, dmgType),

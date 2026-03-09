@@ -19,17 +19,21 @@ end
 variable
    last_dtdr;
 
-procedure get_weapon_damage_type_override(variable weapon) begin
-   variable dmgType, ammoPid;
+/**
+ * Returns damage type override for a given weapon object, or -1 if no override is configured.
+ */
+procedure get_damage_type_override(variable weaponPid, variable ammoPid) begin
+   variable dmgType;
    // First, check override for ammo.
-   ammoPid := get_weapon_ammo_pid(weapon);
    if (ammoPid and ini_damage_types[ammoPid]) then begin
       return ini_damage_types[ammoPid] - 1;
-   end else if (ini_damage_types[obj_pid(weapon)]) then begin  // check override for weapon
-      return ini_damage_types[obj_pid(weapon)] - 1;
+   end else if (ini_damage_types[weaponPid]) then begin  // check override for weapon
+      return ini_damage_types[weaponPid] - 1;
    end
    return -1;
 end
+
+#define get_weapon_damage_type_override(weapon)       get_damage_type_override(obj_pid(weapon), get_weapon_ammo_pid(weapon))
 
 procedure calc_dtdr_vanilla_plus(variable targetDT, variable targetDR, variable ammoDR) begin
    variable calcDRMod, dtMult, dtMode;

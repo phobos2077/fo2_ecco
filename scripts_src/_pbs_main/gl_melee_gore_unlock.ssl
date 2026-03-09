@@ -14,7 +14,7 @@
 #include "../_pbs_headers/ecco_ini.h"
 
 
-#define INI_FILE                "ecco\\combat.ini"
+#define INI_FILE                "ecco_config\\combat.ini"
 #define INI_DEATHANIM_SECTION   "DEATHANIM"
 
 #define WPN_ANIM_SWORD              (0x0E) // (S)

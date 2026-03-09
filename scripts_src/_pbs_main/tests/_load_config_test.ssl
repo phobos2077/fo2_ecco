@@ -52,8 +52,8 @@ end
 procedure get_ini_section_test begin
    //display_array(get_ini_sections("ecco/combat.ini"));
    
-   display_array(get_ini_section("ecco\\combat.ini", "ATTACK_modes"));
-   display_msg("list: "+get_ini_string("ecco\\combat.ini|CRITTER_loot|DEStroy_weapon_list"));
+   display_array(get_ini_section("ecco_config\\combat.ini", "ATTACK_modes"));
+   display_msg("list: "+get_ini_string("ecco_config\\combat.ini|CRITTER_loot|DEStroy_weapon_list"));
 end
 
 procedure get_long_ini_str_test begin

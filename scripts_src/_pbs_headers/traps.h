@@ -17,7 +17,7 @@
 #include "../headers/itempid.h"
 #include "../headers/scenepid.h"
 
-#define INI_FILE          "ecco\\traps.ini"
+#define INI_FILE          "ecco_config\\traps.ini"
 #define INI_SECTION        "TRAPS"
 
 #define SCRIPT_PBS_TRAPS     SCRIPT_TEST2
