@@ -135,7 +135,7 @@ procedure reduce_loot_on_map begin
 end
 
 
-#define INI_FILE        INI_MISC
+#define INI_FILE        INI_LOOT
 #define INI_SECTION     "MAP_LOOT"
 
 procedure start begin

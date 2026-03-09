@@ -8,6 +8,7 @@
 #define INI_COMBAT         "ecco_config\\combat.ini"
 #define INI_ECONOMY        "ecco_config\\barter.ini"
 #define INI_MISC           "ecco_config\\misc.ini"
+#define INI_LOOT           "ecco_config\\loot.ini"
 
 #define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 #define INI_ATTACK_MODES_SECTION  "ATTACK_MODES"

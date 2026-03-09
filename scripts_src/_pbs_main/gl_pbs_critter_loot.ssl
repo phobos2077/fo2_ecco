@@ -47,7 +47,7 @@ procedure destroy_critter_weapon(variable critter);
 procedure try_drop_weapons(variable critter);
 procedure try_reduce_loot(variable critter);
 
-#define INI_FILE        INI_COMBAT
+#define INI_FILE        INI_LOOT
 #define INI_SECTION     "CRITTER_LOOT"
 
 //#define load_ini_int(name)       int_from_ini_file(name, INI_COMBAT, INI_SECTION)

@@ -18,7 +18,6 @@
 #include "../_pbs_headers/miscpid.h"
 #include "../_pbs_headers/engine_funcs.h"
 
-#define INI_DAMAGE_TYPE_SECTION   "DAMAGE_TYPE"
 #define INI_EFFECTS_SECTION       "EFFECTS"
 #define INI_DEATHANIM_SECTION     "DEATHANIM"
 #define INI_EXPLOSIVES_SECTION    "EXPLOSIVES"
