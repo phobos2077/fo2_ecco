@@ -1,10 +1,9 @@
--====================-
--===   EcCo Lite  ===-
--===     v 0.9.9  ===-
--====================-
-                  a Fallout 2 mod
-						by phobos2077
+# EcCo Lite 
+_a Fallout 2 mod by phobos2077_
 
+**v0.9.9**
+
+## Introduction
 
 Based on EcCo: RP, EcCo Lite, as the name suggests, is a cut-down version of the original mod without all the game content changes.
 This version of the mod is not tied to Restoration Project or any other Total Conversion and only requires sfall.
@@ -16,30 +15,13 @@ Official ini tweak sets for each of those popular mods might come later as I get
 Following is the list of optional features included in EcCo Lite.
 
 Important notes:
-   - Some of the features from the full mod were disable or toned down by default, but you can enable and tweak them.
-   - ALL of these changes are optional and can be disabled or tweaked in the ini files.
+- Some of the features from the full mod were disable or toned down by default, but you can enable and tweak them.
+- ALL of these changes are optional and can be disabled or tweaked in the ini files.
 
 
-> BARTER & ECONOMY:
-- Value of items sold to NPC's is affected by skill and generally lower until you get Barter skill high enough.
-- Buy/sell ratio differs between item categories. For example, NPC's will offer less for weapons and armor (vs asking price), to balance against the abundance/high price of these loot items.
-- Buying prices have a steeper curve to increase the importance of Barter skill (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
+## Features
 
-
-> STEALING:
-- Steal rolls calculation changed to make stealing harder but encourage investing into the skill.
-- If Steal roll fails but Catch roll also fails - fails steal without getting caught instead of just succeeding, as in vanilla.
-- Stealing now correctly uses number of items stolen when calculating difficulty.
-- Stealing money and other weightless items now adds to difficulty based on cost.
-- [disabled] Town Reputation penalty based on total value of goods being stolen.
-
-
-> LOOTING:
-- [disabled] There is a chance a weapon will get destroyed when critter dies.
-- [disabled] Corpses and containers are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
-
-
-> COMBAT:
+### COMBAT
 - A couple of unspent AP points carry over to the next round. This should make low-AG builds more viable and make difference between weapon AP cost less dramatic.
 - Opening inventory has no cost, but every action (except reload, see below) requires 2 AP (or 1 with Quick Pockets).
 - All two-handed ranged weapons have a hit chance penalty at point-blank range.
@@ -47,9 +29,33 @@ Important notes:
 - Critical hits to arms will sometimes make target drop their weapon.
 - Bonus Move perk now grants 3 Move Points per level (was 2).
 - Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
+- Attacking an enemy while sneaking and undetected grants bonus damage.
+- Attacking an enemy from behind with a club-type weapon might knock them out.
+- You can see NPC's protection against various damage types by holding Ctrl when examining them (optionally requires Awareness perk).
 
 
-> HEALING:
+### BARTER & ECONOMY
+- Value of items sold to NPC's is affected by skill and generally lower until you get Barter skill high enough.
+- Buy/sell ratio differs between item categories. For example, NPC's will offer less for weapons and armor (vs asking price), to balance against the abundance/high price of these loot items.
+- Buying prices have a steeper curve to increase the importance of Barter skill (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
+
+
+### STEALING & DRUGGING
+- You must now pass a Sneak and Steal checks in order to use certain drugs on non-party NPC's successfully, otherwise they might complain or even attack you.
+- Steal rolls calculation changed to make stealing harder but encourage investing into the skill.
+- If Steal roll fails but Catch roll also fails - fails steal without getting caught instead of just succeeding, as in vanilla.
+- Stealing now correctly uses number of items stolen when calculating difficulty.
+- Stealing money and other weightless items now adds to difficulty based on cost.
+- [disabled] Town Reputation penalty based on total value of goods being stolen.
+
+
+### LOOTING
+- [disabled] There is a chance a weapon will get destroyed when critter dies.
+- [disabled] Corpses and containers are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
+
+
+
+### HEALING
 - New skill healing system replaces the original to make First Aid & Doctor skills useful.
 - First Aid Kits & Doctor Bags have limited uses (instead of random 10% removal).
 - Much more HP is restored per skill use.
@@ -59,58 +65,65 @@ Important notes:
 - Stimpak/Healing Powder HP gain amount scales with your First Aid skill.
 
 
-> AMMO:
+### AMMO
 - A new damage calculation script is included. Almost the same as vanilla, it fixes the issue of ammo types not reducing DT in addition to DR.
 - Some dying critters have reduced ammo.
 
 
-> GUNS:
+### GUNS
+- You can see extended weapon stats (examine them twice or hold Ctrl).
 - Reload now costs 4 AP up from 2. This makes magazine capacity a much bigger factor.
 - [disabled] Bursts rebalanced to differ in bullet spread between weapon types. This makes certain guns work in new roles with effective mid-long range bursts.
 - In critical bursts, only a portion of bullets will "inherit" the increased damage and penetration of the critical. This should balance against bursts being more "accurate".
 
 
-> ENERGY WEAPONS:
+
+### ENERGY WEAPONS
 - Strong single-shot energy weapons now spend more than 1 cell round for each shot.
 
 
-> THROWING:
+### THROWING
 - All thrown melee weapons now have a big critical chance and armor penetration boost.
 - Melee Damage stat now also applies to thrown weapons, just like it does for Melee.
 - Molotov Cocktail now inflicts fire damage and does not knock back targets.
 
 
-> MELEE & UNARMED:
+### MELEE & UNARMED
 - Fatal attacks with melee/unarmed will now trigger gory death animations, similar to ranged weapons.
 - Thrust attacks now do better against armored enemies, but will cost 1 AP more than swings.
 - The cost of unarmed special attacks has been lowered to 4 for punches and 5 for kicks (taken from Weapons Redone mod).
 - Increased melee damage bonus for high ST characters
 
 
-> SOUND EFFECTS:
+### SOUND EFFECTS
 - Previously unused vanilla weapon sound effect variations are now unlocked.
 
 
--=== INSTALLATION (ZIP) ===-
+## INSTALLATION (ZIP)
 1. Make sure sfall 4.4.9 or higher is installed (https://sourceforge.net/projects/sfall/).
 2. Run the game at least once after sfall is installed.
 3. Unpack zip contents into the game root folder, overwriting files.
-4. Open <game_root>\mods\mods_order.txt and add a new line "ecco_lite" (without quotes)
-5. If you want to use EcCo damage formula, open ddraw.ini and find/change the following options in the [Misc] section:
-
+4. Open `<game_root>\mods\mods_order.txt` and add a new line `ecco_lite` (without quotes)
+5. If you want to use EcCo damage formula, open ddraw.ini and find/change the following options in the `[Misc]` section:
+```
 DamageFormula=0
+```
 
+## COMPATIBILITY
+Should be compatible with any Total Conversion mod, assuming it can work with sfall.
 
--=== COMPATIBILITY ===-
+Any gameplay alteration mod is not compatible, with the following exception.
+
 Inventory Filter (2.0.3+ from github):
 - SmartBarter option seems to cause issues with barter, avoid!
 
 FO2Tweaks:
 - Don't use with default settings! Some of them has conflicts with EcCo features
 - Disable the following (EcCo already includes similar changes):
+```
 max_knockback=-1
 healing_revision=0
 molotov_fire=0
 damage_mod=0
 ap_rollover=0
-
+```

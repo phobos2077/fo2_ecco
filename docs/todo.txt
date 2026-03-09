@@ -3,6 +3,7 @@ for 1.0.0:
 - add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - add "tutorial" for luring into traps
+- add some more installer options
 - ensure IniConfigFolder is correct on install
 
 
@@ -11,8 +12,11 @@ for "future":
 - even more radiation sources
 
 
+for EcCo Lite:
+- script to apply ammo proto tweaks from INI, for better use of new damage formula
+
+
 Milestones after 1.0:
-- portable/lite version of EcCo (for EtTu, Resurrection, Nevada, Sonora): no content, only global scripts with custom inis
 - port to F2:CE
 
 

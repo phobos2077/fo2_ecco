@@ -1,11 +1,10 @@
--====================-
--===   EcCo mod   ===-
--=== v0.9.8 BETA  ===-
--====================-
-						by phobos2077
+# EcCo: RP 
+_a Fallout 2: Restoration Project mod by phobos2077_
+
+**v1.0.0**
 
 
-> CRAFTING:
+### CRAFTING
 - New crafting system based on Mr.Fixit by Team-X and Fix-Boy by Lexx with many improvements.
 - Custom crafting schematics designed to serve game's balance and add variety, including new item types.
 - Unlock crafting schematics by finding teachers, buying blueprints from traders, and other means.
@@ -15,7 +14,7 @@
 - Crafting menu is accessible by clicking a new button on main panel or with a hotkey: Ctrl+C.
 
 
-> TRAPS:
+### TRAPS
 - To use traps you need to craft a Trap Kit first (need explosive schematics for mines and electronics for sensor mine).
 - To place the trap on the ground, Use it from the inventory screen or from your active hand slot. You can also use hotkey Ctrl+4 if you have a trap kit in active hand.
 - To actually arm the trap, use Traps skill on it.
@@ -31,7 +30,19 @@
 - New book for Traps skill added.
 
 
-> BARTER & ECONOMY:
+### COMBAT
+- A couple of unspent AP points carry over to the next round. This should make low-AG builds more viable and make difference between weapon AP cost less dramatic.
+- Opening inventory has no cost, but every action (except reload, see below) requires 2 AP (or 1 with Quick Pockets).
+- All two-handed ranged weapons have a hit chance penalty at point-blank range.
+- Enemy AI will now use aimed shots much more often.
+- Critical hits to arms will sometimes make target drop their weapon.
+- Bonus Move perk is now available at level 3 (was 6) and grants 3 Move Points per level (was 2).
+- Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
+- Attacking an enemy while sneaking and undetected grants bonus damage.
+- Attacking an enemy from behind with a club-type weapon might knock them out.
+
+
+### BARTER & ECONOMY
 - Value of items sold to NPC's is affected by skill and generally lower until you get Barter skill high enough.
 - Buy/sell ratio differs between item categories. For example, NPC's will offer less for weapons and armor (vs asking price), to balance against the abundance/high price of these loot items.
 - Buying prices have a steeper curve to increase the importance of Barter skill (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
@@ -42,7 +53,8 @@
 - New book for Barter skill added.
 
 
-> STEALING:
+### STEALING & DRUGGING
+- You must now pass a Sneak and Steal checks in order to use certain drugs on non-party NPC's successfully, otherwise they might complain or even attack you.
 - Steal rolls calculation changed to make stealing harder but encourage investing into the skill.
 - If Steal roll fails but Catch roll also fails - fails steal without getting caught instead of just succeeding, as in vanilla.
 - Stealing now correctly uses number of items stolen when calculating difficulty.
@@ -50,7 +62,7 @@
 - Town Reputation penalty based on total value of goods being stolen.
 
 
-> LOOTING:
+### LOOTING
 - There is a chance a weapon will get destroyed when critter dies (except unique and rare weapons).
 - Corpses and containers are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
 - Loot in general is slightly reduced/rearranged in various containers across the game, especially in certain underground facilities.
@@ -59,26 +71,7 @@
 - Measures introduced to prevent trivial stealing from some places in Redding, New Reno and NCR.
 
 
-> NEW QUEST CONTENT:
-- Learning crafting recipes (see "crafting" section).
-- One of the trappers in Klamath can now teach you gecko skinning (not free).
-- Kill groups of robbers near Redding.
-- Hunt down several rogues throughout the wastelend, one-by-one (NCR).
-- Bring a number of hides to Modoc tannery.
-- Bring a number of tentacles to NCR doctor.
-
-
-> COMBAT:
-- A couple of unspent AP points carry over to the next round. This should make low-AG builds more viable and make difference between weapon AP cost less dramatic.
-- Opening inventory has no cost, but every action (except reload, see below) requires 2 AP (or 1 with Quick Pockets).
-- All two-handed ranged weapons have a hit chance penalty at point-blank range.
-- Enemy AI will now use aimed shots much more often.
-- Critical hits to arms will sometimes make target drop their weapon.
-- Bonus Move perk is now available at level 3 (was 6) and grants 3 Move Points per level (was 2).
-- Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
-
-
-> HEALING:
+### HEALING
 - New skill healing system replaces the original to make First Aid & Doctor skills useful.
 - First Aid Kits & Doctor Bags have limited uses (instead of random 10% removal).
 - Much more HP is restored per skill use.
@@ -90,9 +83,9 @@
 - New book for Doctor skill.
 
 
-> AMMO:
+### AMMO & DAMAGE
 - Parameters of all ammo types were carefully edited to fix vanilla issues and add choices.
-- AP/FMJ generally do less damage then JHP against unarmored, but is effective against armored targets (thanks to new damage script).
+- AP/FMJ generally do less damage then JHP against unarmored, but is effective against armored targets (thanks to new damage formula).
 - Reduced pack sizes of certain ammo calibers to further balance the total amount of that ammo in game.
 - Weight and cost was rebalanced as well.
 - To further reduce "ammo swimming", all dying critters are stripped from large portion of their ammo.
@@ -101,7 +94,8 @@
 - New ammo types for existing calibers: 12ga Slugs, "special" 12ga ammo, .223AP, 7.62mm AP, 14mm JHP.
 
 
-> GUNS:
+### GUNS
+- You can see extended weapon stats (examine them twice or hold Ctrl).
 - New guns for .44 Magnum and 14mm calibers to add variety and make these calibers feel "complete".
 - Reload now costs 4 AP up from 2. This makes magazine capacity a much bigger factor. Some weapon stats were adjusted to compensate for this change.
 - Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
@@ -109,14 +103,14 @@
 - Some smaller pistols cost 4 AP to shoot to make them viable compared to "long" guns.
 - Sniper Rifle is much more powerful, rechambered to 7.62.
 - .223 Pistol is now unique, can only be found in one place.
-- Bursts rebalanced to differ in bullet spread between weapon types (thanks to sfall). This makes certain guns work in new roles with effective mid-long range bursts. Expect guns that should have small recoil to do better at long-range bursts.
+- Bursts rebalanced to differ in bullet spread between weapon types. This makes certain guns work in new roles with effective mid-long range bursts. Expect guns that should have small recoil to do better at long-range bursts.
 - Burst sizes were reduced across the board and rebalanced. This should make bursts viable with the added ammo scarcity.
 - In critical bursts, only half of bullets will "inherit" the increased damage and penetration of the critical. This should balance against bursts being more "accurate".
 - Better Scoped weapon aiming: penalty distance reduced (8 -> 6), perception mult increased (2.5x -> 3x)
 - Almost every weapon was subjectively improved (main concerns were: more interesting balance between weapons, taking new ammo behavior into account, BUT not going too far from vanilla stats, except those weapons mentioned specifically).
 
 
-> BIG GUNS:
+### BIG GUNS
 - Two new 40mm Grenade weapons and a new flamethrower added to make Big Guns skill more useful in early-to-mid game.
 - Bozar changed to be a single-shot anti-materiel rifle, uses new .50 BMG ammo, need 7 STR and has very high damage. For machinegunning use LSW or M60 instead.
 - M60 is a true machine gun: more powerful with 100 rounds ammo capacity, while LSW is a versatile LMG.
@@ -125,14 +119,14 @@
 - ST now adds to base skill.
 
 
-> ENERGY WEAPONS:
+### ENERGY WEAPONS
 - New Taser Pistol to stun enemies and a new laser weapon for early/mid game will make this skill useful earlier.
 - Laser weapons are now very effective against everything below Combat/Metal Armor.
 - "Real" Turbo Plasma rifle, costs 4 AP for shot (max damage reduced a bit).
 - Strong single-shot energy weapons now spend more than 1 cell round for each shot.
 
 
-> THROWING:
+### THROWING
 - New grenade type that you can craft yourself, as well as recipe for Molotov will ensure weapon availability early.
 - New, more powerful, melee thrown weapons for mid-game, including some that return to you after throw on successful skill roll.
 - All thrown melee weapons now have a big critical chance and armor penetration boost.
@@ -143,7 +137,7 @@
 - EMP grenades now can temporarily disrupt power armors, forcing target to lose turn (also their radius was increased).
 
 
-> MELEE & UNARMED:
+### MELEE & UNARMED
 - New weapons added (two "spear" type, one "knife", one "sledge") to fill the gaps in weapon progression for most weapon animation types.
 - Fatal attacks with melee/unarmed will now trigger gory death animations, similar to ranged weapons.
 - Thrust attacks now do better against armored enemies, but will cost 1 AP more than swings.
@@ -154,45 +148,55 @@
 - Some melee oriented NPCs made more dangerous.
 
 
-> ARMOR:
+### ARMOR
 - Armor Class lowered for heavy armor (metal and power). AC only affects hit chance, so it makes sense bigger/bulkier target is easier to hit.
 - Laser resistance changed: leather - zero protection, combat - mediocre, metal - good, power armor & tesla - great protection.
 - Explosion and Fire resistance slightly lowered for some armor.
 - All changes to armor are applied to all critters wielding that armor.
+- Areness perk now allows you to see NPC's protection per damage type as well as their AC (hold Ctrl when examining).
 
 
-> CRITTERS:
+### CRITTERS
 - Some "lesser" critters made tougher: Tough Giant Ant, Large radscorpion, Deathclaws, Mole Rat. (they are rare on early maps and were way too weak).
 - New monster parts can be harvested from critters for profit: Deathclaws, Mole Rats, Wanamingos, mutants.
 
 
-> QUESTS and NPCs:
+### QUESTS and NPCs
 - Lidya in VC rewards 500 for shipment of alcohol (was 300).
 - Better reward for VC plow quest.
 - Algernon need rest after work.
 - Small changes which better integrate some content restored by RP. A few hooks for some content, a new scouting quest in Vault City, and adjustments to the Vault Village quest. (by Lujo)
 
 
-> MERCHANTS:
+### MERCHANTS
 - More crafting components sold at general stores.
 - Cash tender in Redding now offers cash from 1000 to 7000 depending on player's current level.
 - Changed some merchants stock to offer some new items and more ammo for purchase.
 
 
-> RANDOM ENCOUNTERS:
+### RANDOM ENCOUNTERS
 - Weapon loadouts were adjusted in respect to new weapon balance.
 - Most new weapons are used by people in the wasteland.
 - Throwing weapons will be used against you more often.
 - Ranged enemies will sure to have some spare ammo.
 
-> SOUND EFFECTS:
+
+### SOUND EFFECTS
 - Classic BLAM for .223 Pistol from FO1 is back!
 - New burst sounds for some weapons to better represent their actual RPM.
 - Previously unused vanilla weapon sound effect variations are now unlocked.
 
 
+### NEW QUEST CONTENT
+- Learning crafting recipes (see "crafting" section).
+- One of the trappers in Klamath can now teach you gecko skinning (not free).
+- Kill groups of robbers near Redding.
+- Hunt down several rogues throughout the wastelend, one-by-one (NCR).
+- Bring a number of hides to Modoc tannery.
+- Bring a number of tentacles to NCR doctor.
 
-> MISC:
+
+### MISC
 - Slightly nerfed car travel speed and fuel consumption upgrades to buff Outdoorsman skill and increase money sink.
 - Car trunk base capacity is increased by 20% with additional 20% as new upgrade (requires use of Repair skill)
 - Small adjustments to base value formulas of some skills for better balance.
@@ -205,11 +209,12 @@
 
 
 
--=== MANUAL INSTALLATION (ZIP) ===-
+## MANUAL INSTALLATION (ZIP)
 1. Follow normal installation steps from the github releases page up until using the installer.
 2. Unpack zip contents into the game root folder, overwriting files.
-3. Open ddraw.ini and find/change the following options in the [Misc] section:
+3. Open `ddraw.ini` and find/change the following options in the `[Misc]` section:
 
+```
 DamageFormula=0
 ObjCanHearObjFix=1
 DerivedStats=sfall\stats.ini
@@ -221,37 +226,44 @@ MovieTimer_artimer1=90
 MovieTimer_artimer2=210
 MovieTimer_artimer3=330
 MovieTimer_artimer4=450
+```
 
-4. Open mods\upu.ini and make sure to set the following in [main] section:
+4. Open `mods\upu.ini` and make sure to set the following in `[main]` section:
 
+```
 wipe_inventory=0
+```
 
 5. Follow the rest of the installation steps from github.
 
 
 
--=== COMPATIBILITY ===-
-Talking Heads Addon & Talking Heads Actually Talk (THAT):
+## COMPATIBILITY
+Most mods will likely be incompatible, unless they are doing something very targeted, that doesn't interfere with EcCo changes. The following mods, however, were tested and confirmed to work:
+
+### Talking Heads Addon & Talking Heads Actually Talk (THAT)
 - Full built-in support, no additional patches needed (except for potential patches for newer RPU versions)
 
-Inventory Filter (2.0.3+ from github):
+### Inventory Filter (2.0.3+ from github)
 - SmartBarter option seems to cause issues with barter, avoid!
 
-FO2Tweaks:
+### FO2Tweaks
 - Don't use with default settings! Some of them has conflicts with EcCo features
 - Disable the following (EcCo already includes similar changes):
+```
 max_knockback=-1
 healing_revision=0
 molotov_fire=0
 damage_mod=0
 ap_rollover=0
+```
 
 Companion Expansion:
 - Has conflicts and needs a patch (not included)!
 
 
 
--=== CREDITS ===-
+## CREDITS
 
 Mod was developed by phobos2077 between 2010 and 2026 (with years-long gaps).
 
@@ -278,7 +290,7 @@ Many thanks to following people, who made this mod possible:
 - Black Isle Studios (R.I.P.) for my favorite game of all time!
 
 
-External art credits:
+### External art credits:
 - Skipperino (DownloadFree3D.com, Low Poly Lever Action Rifle)
 - "Grenade launcher - Milkor MGL" (https://skfb.ly/oESu8) by Valo is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "MP9" (https://skfb.ly/ovNCI) by FranciscoRodriguez is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).

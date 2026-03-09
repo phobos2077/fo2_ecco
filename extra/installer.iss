@@ -156,7 +156,7 @@ Type: filesandordirs; Name: "{app}\mods\ecco"
 ; Source: "{#RootDir}ddraw.dll"; DestDir: "{app}\";
 Source: "{#RootDir}mods\*"; DestDir: "{app}\mods\"; {#FLAGS}
 Source: "{#RootDir}sfall\*"; DestDir: "{app}\sfall\"; {#FLAGS}
-Source: "{#DocsDir}ecco_readme.txt"; DestDir: "{app}\"
+Source: "{#DocsDir}ecco_readme.md"; DestDir: "{app}\"
 Source: "{#DocsDir}ecco_changelog.txt"; DestDir: "{app}\"
 Source: "{#DocsDir}ecco_changelog_ru.txt"; DestDir: "{app}\"
 
@@ -206,7 +206,7 @@ Filename: "{app}\sfall\perks.ini"; Section: "5"; Key: "Level"; String: "15"; Com
 
                                                                               
 [Run]
-FileName: "{app}\ecco_readme.txt"; Description: "{cm:OpenReadme}"; WorkingDir: "{app}"; Flags: postinstall shellexec
+FileName: "{app}\ecco_readme.md"; Description: "{cm:OpenReadme}"; WorkingDir: "{app}"; Flags: postinstall shellexec
 FileName: "http://phobos2077.github.io/fo2_ecco/ttx/damage_calc.html"; Description: "{cm:OpenDamageCalculator}"; Flags: postinstall shellexec unchecked runasoriginaluser
   
 
