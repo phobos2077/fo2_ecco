@@ -112,7 +112,7 @@ end
 procedure start begin
    if (not game_loaded) then return;
 
-   //if (get_int_from_ini(INI_FILE, INI_SECTION, "enable_tweaks") <= 0) then return;
+   if (get_int_from_ini(INI_FILE, INI_SECTION, "enable_tweaks") <= 0) then return;
 
    load_num_from_ini(facing_skill_mod, 0, -100, 100);
    load_num_from_ini(base_skill_mod, 0, -300, 300);
@@ -123,5 +123,5 @@ procedure start begin
 
    register_hook_proc(HOOK_USEOBJON, useobjon_handler);
 
-   //debug_log_fmt("NPC Drug react %d %s", ini_facing_skill_mod, debug_array_str(ini_attack_drug_list));
+   debug_log_fmt("NPC Drug reactions enabled. Warn drug num: %d, attack drug num: %d", len_array(ini_warn_drug_list), len_array(ini_attack_drug_list));
 end

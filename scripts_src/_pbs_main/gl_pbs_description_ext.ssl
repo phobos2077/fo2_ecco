@@ -90,8 +90,8 @@ procedure stdprocedure_hook begin
    end
 end
 
-#define ammo_cost_per_shot(pid)     pbs_ammocost_map[pid]
-#define spray_settings(pid)         pbs_spray_settings_map[pid]
+#define ammo_cost_per_shot(pid)     (pbs_ammocost_map[pid] if pbs_ammocost_map else 0)
+#define spray_settings(pid)         (pbs_spray_settings_map[pid] if pbs_spray_settings_map else 0)
 
 procedure get_damage_type_with_pbs_damage_mod(variable weaponPid, variable ammoPid) begin
    variable dmgType := get_damage_type_override(weaponPid, ammoPid);

@@ -111,8 +111,12 @@ procedure start begin
       load_num_from_ini(reduce_drugs_percent, 0, 0, 100);
       load_int_list_from_ini(reduce_drugs_pids);
 
-      register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
-      register_hook_proc(HOOK_ONDEATH, ondeath_handler);
+      if (ini_destroy_weapon_percent > 0 or ini_reduce_ammo_percent[1] > 0 or ini_reduce_ammo_to_zero_chance > 0 or ini_reduce_drugs_percent > 0) then begin
+         register_hook_proc(HOOK_DEATHANIM2, deathanim2_handler);
+      end
+      if (ini_weapon_drop_chance > 0) then begin
+         register_hook_proc(HOOK_ONDEATH, ondeath_handler);
+      end
    end
 end
 

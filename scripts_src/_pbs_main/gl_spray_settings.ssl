@@ -36,6 +36,9 @@ procedure start begin
          return;
       end
       rawSettings := rawSettings[INI_SECTION];
+      if (len_array(rawSettings) == 0) then
+         return;
+
       settingsMap := create_array_map;
       foreach (k: v in rawSettings) begin
          pid := atoi(k);

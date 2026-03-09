@@ -33,7 +33,7 @@ variable
    
 procedure drop_monster_parts(variable critter);
 
-#define INI_FILE        INI_COMBAT
+#define INI_FILE        INI_LOOT
 #define INI_SECTION     "MONSTER_PARTS"
 
 

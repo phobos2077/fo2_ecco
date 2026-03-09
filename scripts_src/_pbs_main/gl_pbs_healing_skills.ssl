@@ -30,7 +30,8 @@
 #define SKILL_ITEM_SKILL_MOD     (1)
 #define SKILL_ITEM_CRIT_MOD      (2)
 #define SKILL_ITEM_DEPLETEMSG    (3)
-#define SKILL_ITEM_COUNT         (4)
+#define SKILL_ITEM_CHARGES       (4)
+#define SKILL_ITEM_COUNT         (5)
 
 #define obj_is_critter(obj)      (obj_type(obj) == OBJ_TYPE_CRITTER)
 #define critter_max_hp(cr)       get_critter_stat(cr, STAT_max_hit_points)
@@ -513,16 +514,20 @@ procedure load_skill_items begin
    end
 end
 
-procedure revert_kit_charges(variable skipLog := false) begin
-   variable pid, v, n;
+procedure apply_kit_charges_to_proto(variable skipLog := false) begin
+   variable pid, v, n, charges;
    foreach pid: v in ini_skill_items begin
-      if (v[SKILL_ITEM_DEPLETEMSG]) then begin
-         set_proto_data(pid, PROTO_MI_CHARGES, 0);
+      charges := v[SKILL_ITEM_CHARGES];
+      if (charges != 0) then begin
+         //if (not skipLog) then
+         //   debug_log_fmt("set_proto_data(%d, charges, %d)", pid, charges);
+
+         set_proto_data(pid, PROTO_MI_CHARGES, charges);
          n += 1;
       end
    end
    if (not skipLog) then
-      debug_log_fmt("Reverted max charges to 0 for %d heal items.", n);
+      debug_log_fmt("Applied max charges setting for %d heal items.", n);
 end
 
 procedure start begin
@@ -530,8 +535,8 @@ procedure start begin
       load_bool_from_ini(skill_use_mod, false);
       load_bool_from_ini(use_charges, false);
       call load_skill_items;
-      if (not ini_skill_use_mod or not ini_use_charges) then
-         call revert_kit_charges;
+      if (ini_skill_use_mod and ini_use_charges) then
+         call apply_kit_charges_to_proto;
 
       if (not ini_skill_use_mod) then return;
 
@@ -566,6 +571,6 @@ procedure start begin
 end
 
 procedure map_enter_p_proc begin
-   if (not ini_skill_use_mod or not ini_use_charges) then
-      call revert_kit_charges(true);
+   if (ini_skill_use_mod and ini_use_charges) then
+      call apply_kit_charges_to_proto(true);
 end

@@ -24,6 +24,9 @@ variable
  */
 procedure get_damage_type_override(variable weaponPid, variable ammoPid) begin
    variable dmgType;
+   if (not ini_damage_types) then
+      return -1;
+
    // First, check override for ammo.
    if (ammoPid and ini_damage_types[ammoPid]) then begin
       return ini_damage_types[ammoPid] - 1;
