@@ -76,7 +76,7 @@ let weapons = [];
 let ammoTypes = [];
 
 let lastCtx = {};
-
+let isLoading = false;
 
 function intRange(min, max) {
     let arr = [];
@@ -109,7 +109,9 @@ function fillOptions(selectId, arr, defaultVal, groupBy, defaultGroupKey) {
     const selectEl = document.getElementById(selectId);
     selectEl.innerHTML = "";
     defaultVal = getLastSetting(selectId) || defaultVal;
+    //console.log(`fill ${selectId}, last: ${getLastSetting(selectId)}, default: ${defaultVal}`);
     const optGroups = {};
+    let defaultFound = false;
     for (let i = 0; i < arr.length; i++) {
         let option = document.createElement("option");
         option.value = typeof(arr[i]) == "object" ? i : arr[i];
@@ -125,10 +127,13 @@ function fillOptions(selectId, arr, defaultVal, groupBy, defaultGroupKey) {
             selectEl.appendChild(option);
         }
         if (defaultVal && option.value == defaultVal) {
-            selectEl.value = option.value;
+            defaultFound = true;
         }
     }
     Object.keys(optGroups).sort().forEach(k => selectEl.appendChild(optGroups[k]));
+    if (defaultFound) {
+        selectEl.value = defaultVal;
+    }
 }
 
 function loadSettings() {
@@ -164,17 +169,22 @@ async function loadDataset() {
 
     //console.log(armors, ammoTypes, weapons);
     
+    isLoading = true;
     fillOptions("weapon", weapons, null, "caliber", "_Melee");
     fillOptions("formula", damageFormulas);
     fillOptions("critMult", [2,3,4,6,8]);
     fillOptions("difficulty", [75,100,125], 100);
     updateCheckbox("critBypass");
+    isLoading = false;
 
     updateTable();
 }
 
 
 function updateTable() {
+    if (isLoading)
+        return;
+
     console.log("Updating table...");
 
     /**
