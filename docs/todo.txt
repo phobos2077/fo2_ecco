@@ -10,6 +10,7 @@ for 1.0.0:
 for "future":
 - custom craft schematic art
 - even more radiation sources
+- smarter party formation in random encounters
 
 
 for EcCo Lite:
@@ -21,7 +22,7 @@ Milestones after 1.0:
 
 
 Considering:
-- EMP 40mm grenade type (with PA disable effect)
+- EMP 40mm grenade type (with PA disable effect?)
 - rebase the RPU-based part of EcCo as git fork for easier RPU merges and multi-script header changes (but: need to use 2 repos, complicated build scripts)
 - automatically fix FO2Tweaks settings via script on run
 - early game craftable big gun (heavy arbalest? junk cannon? bolt thrower? harpoon?)

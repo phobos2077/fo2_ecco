@@ -124,7 +124,7 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000639.pro;Piston Spear;639;Normal;12;26;Thrust;None;2;8;5;5;0;0;None [0];;5;1750;8;Weapon Penetrate [60]
 ;00000640.pro;Deathclaw Gauntlet;640;Normal;18;36;Punch;None;1;0;3;0;0;0;None [0];;3;3200;5;Weapon Penetrate [60]
 ;00000643.pro;Cowboy Repeater;643;Normal;16;24;Single;None;30;0;5;0;12;0;.44 cal [9];.44 Magnum FMJ [111];4;1300;6;Weapon Accurate [59]
-;00000644.pro;14mm SMG;644;Normal;18;28;Single;Burst;22;14;5;6;24;6;14mm [10];14mm AP [33];6;4500;3;
+;00000644.pro;14mm SMG;644;Normal;16;24;Single;Burst;22;14;5;6;24;6;14mm [10];14mm AP [33];6;4500;3;
 ;00000646.pro;Incinerator;646;Fire;30;60;Flame;None;3;0;6;0;10;1;Flamethrower Fuel [2];Flamethrower Fuel [32];5;1250;12;
 ;00000647.pro;Makeshift Laser Pistol;647;Laser;10;26;Single;None;18;0;5;0;5;0;C Energy Cell [3];Small Energy Cell [38];3;750;4;Weapon Accurate [59]
 ;00000648.pro;Plasma Lance;648;Plasma;30;50;Thrust;None;3;8;4;5;24;0;D Energy Cell [4];Micro Fusion Cell [39];5;4000;12;Weapon Penetrate [60]

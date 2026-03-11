@@ -680,7 +680,7 @@
 {34700}{}{Gravesite}
 {34701}{}{}
 {34800}{}{Advanced Power Armor}
-{34801}{}{This powered armor is composed of lightweight metal alloys, reinforced with ceramic castings at key points. The motion-assist servo-motors appear to be high quality models as well. The user is vulnerable to EMP attacks.}
+{34801}{}{This powered armor is composed of lightweight metal alloys, reinforced with ceramic castings at key points. The motion-assist servo-motors appear to be high quality models as well.}
 {34900}{}{Adv. Power Armor MKII}
 {34901}{}{This powered armor appears to be composed of entirely of lightweight ceramic composites rather than the usual combination of metal and ceramic plates. It seems as though it should give even more protection than the standard Advanced Power Armor.}
 {35000}{}{Bozar AMR}
@@ -1225,7 +1225,7 @@
 {64300}{}{Cowboy Repeater}
 {64301}{}{Winchester lever-action rifle, in .44 magnum. Min ST: 4.}
 {64400}{}{14mm SMG}
-{64401}{}{When you need the most firepower in the smallest package. Caliber: 14mm. Min ST: 6.}
+{64401}{}{When you need the most firepower in the smallest package. Caliber: 14mm. Min ST: 7.}
 {64500}{}{Bear Trap}
 {64501}{}{This trap can hold down a large animal, like a bear. But there are no bears around here...}
 {64600}{}{Incinerator}

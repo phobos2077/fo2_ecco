@@ -1125,36 +1125,40 @@ position=cone, spacing:2
 
 ; put around Modoc - Mod_M
 [Encounter: BOUNTY_Outlaws_Low]
+; Use unit count (1-3)  (3-5 with >2 party members)
+; because of how engine works, every "type" will always spawn at least 1 critter, unless conditions are used to skip it; so I use that count to skip some types via condition
 type_00=pid:16777399, Item:626, Item:287(wielded), Item:615, Item:236, Item:(1-4)40, Item:(0-200)41, Script:772   ; Bounty Hunter Lead (7-12) w/ Scoped Hunting Rifle + .223 AP ammo and stuff
 ; type_01=pid:16777262, Item:626, Item:242(wielded), Item:614, Item:236, Item:(1-4)40, Item:(0-300)41, Script:772   ; Gun Guard Male w/ Combat Shotgun + 12ga slugs and stuff
-type_01=ratio:25%, pid:16777420, Item:6(wielded), Item:273, Script:772                                          ; Cannibal Male w/ Sledge
-type_02=ratio:25%, pid:16777421, Item:(2-6)45(wielded), Item:7, Item:273, Script:772                            ; Cannibal Female w/ Throwing Knives and Sharp Spear
-type_03=ratio:25%, pid:16777440, Item:9(wielded), Item:(1-2)29, Item:4, Script:772                              ; Strong Slaver (blue pants) w/ 10mm SMG and knife
-type_04=ratio:25%, pid:16777246, Item:94(wielded), Item:95, Item:4, Script:772, If(enctr(num_critters) > 4)     ; Tough Thug male w/ Shotgun and knife
+type_01=pid:16777420, Item:6(wielded), Item:273, Script:772, If(enctr(num_critters) > 1)               ; Cannibal Male w/ Sledge
+type_02=pid:16777421, Item:(2-6)45(wielded), Item:7, Item:273, Script:772, If(enctr(num_critters) > 3) ; Cannibal Female w/ Throwing Knives and Sharp Spear
+type_03=pid:16777440, Item:9(wielded), Item:(1-2)29, Item:4, Script:772, If(enctr(num_critters) > 2) ; Strong Slaver (blue pants) w/ 10mm SMG and knife
+type_04=pid:16777246, Item:94(wielded), Item:95, Item:4, Script:772, If(enctr(num_critters) > 4)     ; Tough Thug male w/ Shotgun and knife
 position=huddle, spacing:2
 
 ; put to the east of Broken Hills - Brok_M
 [Encounter: BOUNTY_Outlaws_Mid]
+; Use unit count (2-4)  (4-6)
 type_00=pid:16777403, Item:626, Item:22, Item:25(wielded), Item:615, Item:234, Item:259, Item:(2-5)40, Item:(0-300)41, Script:772   ; Bounty Hunter Male (13-18) w/ Frag, 14mm Pistol and stuff
-type_01=ratio:20%, pid:16777264, Item:355(wielded), Item:(1-3)34, Item:(0-2)40, Script:772, If(enctr(num_critters) > 5)             ; Big gun guard w/ Light Support Weapon
-type_02=ratio:20%, pid:16777264, Item:630(wielded), Item:(1-2)631, Item:(0-2)40, Item:259, Script:772           ; Big gun guard w/ Grenade Launcher
-type_03=ratio:20%, pid:16777474, Item:23(wielded), Item:(1-2)36, Item:(0-2)40, Item:259, Script:772             ; Tough Ghoul w/ Assault Rifle
-type_04=ratio:20%, pid:16777475, Item:283(wielded), Item:357, Script:772, If(enctr(num_critters) > 4)           ; Mobster w/ Tommy Gun
-type_05=ratio:20%, pid:16777366, Item:332(wielded), Item:357, Item:(0-2)125, Script:772                         ; Shop Owner (halfling) w/ Grease Gun
+type_01=pid:16777264, Item:355(wielded), Item:(1-3)34, Item:(0-2)40, Script:772, If(enctr(num_critters) > 5); Big gun guard w/ Light Support Weapon
+type_02=pid:16777264, Item:630(wielded), Item:(1-2)631, Item:(0-2)40, Item:259, Script:772, If(enctr(num_critters) > 2)  ; Big gun guard w/ Grenade Launcher
+type_03=pid:16777474, Item:23(wielded), Item:(1-2)36, Item:(0-2)40, Item:259, Script:772                   ; Tough Ghoul w/ Assault Rifle
+type_04=pid:16777475, Item:283(wielded), Item:357, Script:772, If(enctr(num_critters) > 3)                 ; Mobster w/ Tommy Gun
+type_05=pid:16777366, Item:332(wielded), Item:357, Item:(0-2)125, Script:772, If(enctr(num_critters) > 4)  ; Shop Owner (halfling) w/ Grease Gun
 ;type_06=ratio:10%, pid:16777298, Script:632                                                                     ; Wild Dog
 position=cone, spacing:2
 
 ; put around San Francisco
 [Encounter: BOUNTY_Outlaws_High]
+; Use unit count (2-4)   (4-6)
 ; Bounty Hunter Lead (19-, Power Armor) w/ MGL, Plasma Pistol and stuff
 type_00=pid:16777405, Item:626, Item:634(wielded), Item:(1-2)631, Item:24, Item:236, Item:(2-3)144, Item:(0-900)41, Script:772
-type_01=ratio:20%, pid:16777478, Item:392, Item:358, Item:26(wielded), Script:772                               ; NCR Ranger female w/ Gauss Rifle and plasma grenade
-type_02=ratio:20%, pid:16777336, Item:235(wielded), Item:(0-2)40, Script:772                                    ; Powerfull mutant w/ Power fist
-type_03=ratio:10%, pid:16777406, Item:15(wielded), Item:(1-2)39, Item:(1-4)40, Script:772                       ; Bounty Hunter (Pwr. armor) w/ Plasma Rifle
-type_04=ratio:10%, pid:16777406, Item:644(wielded), Item:(1-2)633, Item:(1-4)40, Script:772                     ; Bounty Hunter (Pwr. armor) w/ 14mm SMG
-type_05=ratio:20%, pid:16777224, Script:772, If(enctr(num_critters) > 6)                                        ; Deathclaw
-type_06=ratio:10%, pid:16777291, Item:268(wielded), Script:772, If(enctr(num_critters) > 5)                     ; Robobrain w/ H&K CAWS
-type_07=ratio:10%, pid:16777692, Script:632, If(enctr(num_critters) > 7)                                        ; Generic Cyberdog
+type_01=pid:16777478, Item:392, Item:358, Item:26(wielded), Script:772, If(enctr(num_critters) < 5)             ; NCR Ranger female w/ Gauss Rifle and plasma grenade
+type_02=pid:16777336, Item:235(wielded), Item:(0-2)40, Script:772, If(enctr(num_critters) > 2)                  ; Powerfull mutant w/ Power fist
+type_03=pid:16777406, Item:15(wielded), Item:(1-2)39, Item:(1-4)40, Script:772, If(enctr(num_critters) > 4)     ; Bounty Hunter (Pwr. armor) w/ Plasma Rifle
+type_04=pid:16777406, Item:644(wielded), Item:(1-2)633, Item:(1-4)40, Script:772, If(enctr(num_critters) > 5)   ; Bounty Hunter (Pwr. armor) w/ 14mm SMG
+type_05=pid:16777224, Script:772, If(enctr(num_critters) > 3)                                       ; Deathclaw
+type_06=pid:16777291, Item:268(wielded), Script:772, If(enctr(num_critters) > 4)                    ; Robobrain w/ H&K CAWS
+;type_07=pid:16777692, Script:632, If(enctr(num_critters) > 5)                                       ; Generic Cyberdog
 position=cone, spacing:2
 
 [Encounter: BOUNTY_Ghouls]
@@ -1696,7 +1700,7 @@ enc_24=Chance:100%,Counter:1,Special,Map:Bess Dead,Enc:Special1, If(Global(299) 
 enc_25=Chance:5%,Counter:1,Special,Map:Special Bridge Encounter,Enc:Special1, If(Player(Level) > 9) And If(Global(605) < 1)
 enc_26=Chance:3%,Counter:1,Special,Map:Special Holy Encounter 2,Enc:Special1, If(Global(614) > 0) And If(Global(606) < 1)
 enc_27=Chance:80%,Special,Enc:KAGA2 AMBUSH Player, If (Global(399) < 68) And If(Player(Level) > 6) And If(Player(Level) < 12)
-enc_28=Chance:100%,Enc:(3-4) BOUNTY_Outlaws_Low AMBUSH Player, If(Global(645) == 1)
+enc_28=Chance:100%,Enc:(1-3) BOUNTY_Outlaws_Low AMBUSH Player, If(Global(645) == 1)
 enc_29=Chance:10%,Enc:(3-6) DEN_Molerats AMBUSH Player
 
 [Encounter Table 20]
@@ -2741,7 +2745,7 @@ enc_15=Chance:5%,Enc:(5-8) BROK_Unity_Patrol FIGHTING (8-12) RED_Wolves
 enc_16=Chance:20%,Enc:(8-12) BROK_Unity_Patrol
 enc_17=Chance:5%,Counter:1,Special,Map:Special Bridge Encounter,Enc:Special1, If(Player(Level) > 9) And If(Global(605) < 1)
 enc_18=Chance:3%,Counter:1,Special,Map:Special Holy Encounter 2,Enc:Special1, If(Global(614) > 0) And If(Global(606) < 1)
-enc_19=Chance:100%,Enc:(3-4) BOUNTY_Outlaws_Mid AMBUSH Player, If(Global(645) == 4)
+enc_19=Chance:100%,Enc:(2-4) BOUNTY_Outlaws_Mid AMBUSH Player, If(Global(645) == 4)
 
 [Encounter Table 58]
 lookup_name=Fran_O                                                                   ; Areas around San Francisco
@@ -2810,7 +2814,7 @@ enc_14=Chance:10%,Enc:(5-8) FRAN_Elronologists FIGHTING (3-6) FRAN_Mercenaries
 enc_15=Chance:10%,Enc:(5-8) FRAN_Elronologists FIGHTING (3-6) FRAN_Press_Gang
 enc_16=Chance:20%,Enc:(4-8) FRAN_Elronologists
 enc_17=Chance:80%,Special,Enc:KAGA5 AMBUSH Player, If (Global(399) < 128) And If(Player(Level) > 22)
-enc_18=Chance:100%,Enc:(5-6) BOUNTY_Outlaws_High AMBUSH Player, If(Global(645) == 7)
+enc_18=Chance:100%,Enc:(2-4) BOUNTY_Outlaws_High AMBUSH Player, If(Global(645) == 7)
 
 [Encounter Table 61]
 lookup_name=Fran_D                                                                    ; Areas around San Francisco
@@ -2903,7 +2907,7 @@ enc_16=Chance:3%,Enc:(6-8) DNRV_Redding_Caravan FIGHTING (3-6) EPA_Tough_Alien
 enc_17=Chance:10%,Enc:(4-8) FRAN2_San_Fran_Caravan
 enc_18=Chance:10%,Enc:(6-8) DNRV_Redding_Caravan
 enc_19=Chance:80%,Special,Enc:KAGA5 AMBUSH Player, If (Global(399) < 128) And If(Player(Level) > 22)
-enc_20=Chance:100%,Enc:(5-6) BOUNTY_Outlaws_High AMBUSH Player, If(Global(645) == 7)
+enc_20=Chance:100%,Enc:(2-4) BOUNTY_Outlaws_High AMBUSH Player, If(Global(645) == 7)
 
 [Encounter Table 64]
 lookup_name=Wild5_D                                                                       ; Areas between San Francisco and NCR

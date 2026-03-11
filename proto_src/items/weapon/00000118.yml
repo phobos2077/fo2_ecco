@@ -18,7 +18,7 @@ inventoryFid: 117440615
 soundId: '0'
 weaponData:
   animationCode: 8
-  minDamage: 35
+  minDamage: 30
   maxDamage: 50
   damageType: DAMAGE_TYPE_LASER
   maxRange1: 45
