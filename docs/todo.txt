@@ -1,5 +1,4 @@
 for 1.0.0:
-- finish Big Guns run
 - add warning message if wrong sfall version is used (save version to ini, if it changed and still wrong, show message again)
 - add tie-ins to barter "demand" feature, have some trader explain it in dialog (and maybe also boost your barter skill)
 - add "tutorial" for luring into traps
@@ -22,6 +21,8 @@ Milestones after 1.0:
 
 
 Considering:
+- make First Aid kit & Doctor's Bag required for using those skills
+- scale Stimpak healing amount to EN instead of First Aid skill
 - EMP 40mm grenade type (with PA disable effect?)
 - rebase the RPU-based part of EcCo as git fork for easier RPU merges and multi-script header changes (but: need to use 2 repos, complicated build scripts)
 - automatically fix FO2Tweaks settings via script on run

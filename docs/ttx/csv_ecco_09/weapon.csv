@@ -77,7 +77,7 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000389.pro;Avenger Minigun;389;Normal;12;17;Burst;None;40;0;6;0;120;30;5mm [6];5mm JHP [35];7;5500;28;Weapon Long Range [58]
 ;00000390.pro;Solar Scorcher;390;Fire;20;60;Single;None;20;0;4;0;10;0;None [0];;3;2000;5;
 ;00000391.pro;H&K G11E;391;Normal;14;20;Single;Burst;40;35;5;6;50;10;4.7mm caseless [16];4.7mm Caseless [359];6;6000;8;Weapon Night Sight [66]
-;00000392.pro;M72 Gauss Rifle;392;Normal;38;50;Single;None;50;0;5;0;10;1;2mm [15];2mm EC [358];6;5750;9;Weapon Long Range [58]
+;00000392.pro;M72 Gauss Rifle;392;Normal;34;46;Single;None;50;0;5;0;10;1;2mm [15];2mm EC [358];6;5750;9;Weapon Long Range [58]
 #;00000393.pro;Phazer;393;Laser;20;30;Single;None;25;0;4;0;12;0;C Energy Cell [3];Small Energy Cell [38];3;7500;4;Weapon Accurate [59]
 ;00000394.pro;PPK12 Gauss Pistol;394;Normal;24;35;Single;None;30;0;4;0;10;0;2mm [15];2mm EC [358];4;3750;5;
 ;00000395.pro;Vindicator Minigun;395;Normal;18;24;Burst;None;30;0;6;0;100;25;4.7mm caseless [16];4.7mm Caseless [359];7;12000;28;
@@ -124,7 +124,7 @@ Import;ProFILE;NAME;PID;Damage Type;Min Damage;Max Damage;Attack Primary;Attack 
 ;00000639.pro;Piston Spear;639;Normal;12;26;Thrust;None;2;8;5;5;0;0;None [0];;5;1750;8;Weapon Penetrate [60]
 ;00000640.pro;Deathclaw Gauntlet;640;Normal;18;36;Punch;None;1;0;3;0;0;0;None [0];;3;3200;5;Weapon Penetrate [60]
 ;00000643.pro;Cowboy Repeater;643;Normal;16;24;Single;None;30;0;5;0;12;0;.44 cal [9];.44 Magnum FMJ [111];4;1300;6;Weapon Accurate [59]
-;00000644.pro;14mm SMG;644;Normal;16;24;Single;Burst;22;14;5;6;24;6;14mm [10];14mm AP [33];6;4500;3;
+;00000644.pro;14mm SMG;644;Normal;18;26;Single;Burst;22;14;5;6;24;6;14mm [10];14mm AP [33];6;4500;3;
 ;00000646.pro;Incinerator;646;Fire;30;60;Flame;None;3;0;6;0;10;1;Flamethrower Fuel [2];Flamethrower Fuel [32];5;1250;12;
 ;00000647.pro;Makeshift Laser Pistol;647;Laser;10;26;Single;None;18;0;5;0;5;0;C Energy Cell [3];Small Energy Cell [38];3;750;4;Weapon Accurate [59]
 ;00000648.pro;Plasma Lance;648;Plasma;30;50;Thrust;None;3;8;4;5;24;0;D Energy Cell [4];Micro Fusion Cell [39];5;4000;12;Weapon Penetrate [60]

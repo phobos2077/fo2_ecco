@@ -205,8 +205,8 @@ procedure map_enter_p_proc begin
             check_restock_item(PID_PANCOR_JACKHAMMER, 1, 2, 45)
             check_restock_item(PID_AVENGER_MINIGUN, 1, 1, 35)
             check_restock_item(PID_HK_G11E, 1, 1, 30)
-            check_restock_item(PID_M72_GAUSS_RIFLE, 1, 1, 30)
-            check_restock_item(PID_PK12_GAUSS_PISTOL, 1, 1, 30)
+            check_restock_item(PID_M72_GAUSS_RIFLE, 1, 1, 50) // pbs: from 30%
+            check_restock_item(PID_PK12_GAUSS_PISTOL, 1, 1, 50) // pbs: from 30%
             check_restock_item(PID_VINDICATOR_MINIGUN, 1, 1, 30)
             check_restock_item(PID_MEGA_POWER_FIST, 1, 2, 40)
             check_restock_item(PID_PBS_14MM_SMG, 1, 1, 50) // pbs
