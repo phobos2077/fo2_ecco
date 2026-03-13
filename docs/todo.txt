@@ -1,5 +1,4 @@
 for 1.0.0:
-- review installer options
 
 
 for "future":

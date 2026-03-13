@@ -5,7 +5,7 @@ set cwd=%cd%
 cd /d "%~dp0..\"
 
 set root=%cd%
-set archive=%root%\extra\pbs_fo2rpu_ecco_mod_v0-9-8.zip
+set archive=%root%\extra\pbs_fo2rpu_ecco_mod_v1-0-0.zip
 
 if exist %archive% (
    echo Deleting existing %archive%...

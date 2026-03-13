@@ -1,5 +1,48 @@
 -=== CHANGELOG ===-
 
+
+v1.0.0:
+> Encounters:
+- improved cave encounters critter distribution (lower numbers) and added useful things to loot
+- changed more difficult Kaga encounters to happen at higher PC level and reverted all changes to his stats
+- fixed EcCo bounty encounters having incorrect number and composition of NPC's
+
+> Traps & crafting:
+- added powerful version of Spike Trap made from EPA Plant Spikes
+- added alternative ingredients for crafting soups and 7.62 AP ammo
+- fixed potential crash when traps are triggered
+
+> Skills:
+- added script to check Sneak and roll against Steal to apply potentially harmful drugs to NPC's successfully
+- reduced Karma penalties for Stealing and tweaked chance calculations
+- reduced First Aid effect on stimpak HP gain
+
+> Economy:
+- reduced sell value of weapons by 15%
+- increased effect of Game Difficulty on barter prices
+- changed party Barter skill to only provide price reduction when it is higher than PC skill
+- various loot content and accessibility tweaks at EPA, Navarro, Hubologist Stash, Enclave
+- added more useful items to late-game traders
+- adjusted certain dialog-based prices and rewards in San-Francisco for EcCo economy
+- added a dialog teaching Barter to Klamath trader
+
+> Combat:
+- added extended Awareness to certain NPC's where it didn't work before
+- added ammo cost and burst accuracy to extended item descriptions
+- added Fire Gecko Armor to be crafted
+- added hit chance penalty for long weapons in melee range
+- changed XL70E3 to have 4 AP single shot, low weight and tight burst instead of having Penetrate perk
+- changed various stats of late-game weapons and ammo for balance and consistency
+- excluded Plant Spikes from throwing skill buffs
+- nerfed throwing buff by reducing crit chance multiplier and using only a portion of base Melee Damage
+- reduced HP of certain Enclave and Shi soldiers slightly
+- buffed securibots damage and HP slightly but reduced AP
+
+> Installation:
+- added more options to disable mod features
+- changed INI config files location
+
+
 v0.9.8:
 > Sound:
 - restored and normalized classic BLAM for .223 Pistol

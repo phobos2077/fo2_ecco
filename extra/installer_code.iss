@@ -19,7 +19,9 @@ begin
   if (curPageID = wpSelectDir) then
   begin
     if not(ValidateRequirement('fallout2.exe', 'WFalloutNotFound')) or
-       not(ValidateRequirement('mods\rpu.dat', 'WRPNotFound')) then
+       not(ValidateRequirement('mods\rpu.dat', 'WRPNotFound')) or
+       not(ValidateRequirement('mods\rpu_rifle_animations.dat', 'WRPCustomAnimsNotFound')) or
+       not(ValidateRequirement('mods\rpu_wakizashi_animations.dat', 'WRPCustomAnimsNotFound')) then
     begin
         result := false;
     end
@@ -35,7 +37,7 @@ end;
  var  
  ErrorCode: Integer;  
  begin  
- ShellExec('open', 'https://www.nma-fallout.com/threads/ecco-gameplay-overhaul-new-version-for-rpu.193578/', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode)  
+ ShellExec('open', 'https://www.nma-fallout.com/threads/ecco-rp-gameplay-overhaul.193578/', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode)  
  end;  
   
  procedure SiteLabelMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);  

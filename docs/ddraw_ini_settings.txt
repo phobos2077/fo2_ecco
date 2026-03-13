@@ -1,6 +1,6 @@
 [Misc]
 
-VersionString=FALLOUT II 1.02d  RPU v29 + map_update + EcCo v0.9.*
+VersionString=FALLOUT II 1.02d  RPU + EcCo
 
 DamageFormula=0
 
@@ -10,6 +10,7 @@ DerivedStats=sfall\stats.ini
 SkillsFile=sfall\skills.ini
 PerksFile=sfall\perks.ini
 BooksFile=sfall\books.ini
+DrugsFile=sfall\drugs.ini
 
 MovieTimer_artimer1=90
 MovieTimer_artimer2=210

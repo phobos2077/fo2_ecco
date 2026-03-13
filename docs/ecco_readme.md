@@ -33,7 +33,6 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 ### COMBAT
 - A couple of unspent AP points carry over to the next round. This should make low-AG builds more viable and make difference between weapon AP cost less dramatic.
 - Opening inventory has no cost, but every action (except reload, see below) requires 2 AP (or 1 with Quick Pockets).
-- All two-handed ranged weapons have a hit chance penalty at point-blank range.
 - Enemy AI will now use aimed shots much more often.
 - Critical hits to arms will sometimes make target drop their weapon.
 - Bonus Move perk is now available at level 3 (was 6) and grants 3 Move Points per level (was 2).
@@ -96,6 +95,7 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 
 ### GUNS
 - You can see extended weapon stats (examine them twice or hold Ctrl).
+- All two-handed ranged weapons have a hit chance penalty at point-blank range, giving pistols an extra advantage.
 - New guns for .44 Magnum and 14mm calibers to add variety and make these calibers feel "complete".
 - Reload now costs 4 AP up from 2. This makes magazine capacity a much bigger factor. Some weapon stats were adjusted to compensate for this change.
 - Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
