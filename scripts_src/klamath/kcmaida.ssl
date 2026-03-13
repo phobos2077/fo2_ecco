@@ -1,0 +1,901 @@
+/*
+	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
+*/
+
+/*
+        Name: Maida Buckner
+        Location: Klamath
+        Description:
+
+        Log:
+           Please note any changes that have been made to the file in Updated. Then comment
+           the code which you have changed/altered/commented out. Please, do not delete any
+           code which was written.
+
+           Created: January 27, 1998
+
+           Updated:
+*/
+
+/* Include Files */
+
+/* Note, the Following Lines need to be in this order so that
+   the script will be compilable. The define Name is referenced
+   in a module from define.h and used in command.h. Please do
+   not change the ordering.
+        -rwh2   11/13/97
+*/
+#define SCRIPT_REALNAME "kcmaida"
+#include "../headers/define.h"
+#include "../headers/klamath.h"
+#include "../headers/kladwtn.h"
+
+#define NAME                    SCRIPT_KCMAIDA
+#define TOWN_REP_VAR            (GVAR_TOWN_REP_KLAMATH)
+
+#include "../headers/command.h"
+#include "../headers/modreact.h"
+
+#define Vault_Known             (1)     // Temp Until get command from Jesse
+#define Visited_City            (1)     // Temp Until get command from Jesse
+
+/* Standard Script Procedures */
+procedure start;
+procedure critter_p_proc;
+procedure pickup_p_proc;
+procedure talk_p_proc;
+procedure destroy_p_proc;
+procedure look_at_p_proc;
+procedure description_p_proc;
+procedure use_skill_on_p_proc;
+procedure combat_p_proc;
+procedure damage_p_proc;
+procedure map_enter_p_proc;
+procedure addbeer;
+procedure push_p_proc;
+
+/* Script Specific Procedure Calls */
+procedure maida_barter;
+procedure barter_for_sulik;
+procedure Node910;
+procedure Node911;
+procedure Node912;
+procedure Node920;
+procedure Node945;
+procedure Node955;
+procedure Node960;
+procedure Node970;
+procedure Node971;
+procedure Node975;
+procedure Node980;
+procedure Node981;
+procedure Node982;
+procedure Node983;
+procedure Node984;
+procedure Node985;
+procedure Node990;
+procedure Node991;
+procedure Node992;
+procedure Node993;
+procedure Node995;
+procedure Node996;
+procedure Node997;
+procedure Node998;                                      // This Node is Always Combat
+procedure Node999;                                      // This Node is Always Ending
+
+
+// The next lines are added in by the Designer Tool.
+// Do NOT add in any lines here.
+//~~~~~~~~~~~~~~~~ DESIGNER TOOL STARTS HERE
+
+procedure Node001;
+procedure Node002;
+procedure Node003;
+procedure Node004;
+procedure Node005;
+procedure Node006;
+procedure Node007;
+procedure Node008;
+procedure Node009;
+procedure Node010;
+procedure Node011;
+procedure Node012;
+procedure Node013;
+procedure Node014;
+procedure Node015;
+procedure Node016;
+procedure Node017;
+procedure Node018;
+procedure Node019;
+procedure node020;
+procedure Node021;
+procedure Node022;
+procedure Node023;
+procedure Node024;
+procedure Node025;
+procedure Node026;
+procedure Node027;
+procedure Node028;
+procedure Node029;
+procedure Node030;
+procedure Node031;
+procedure Node032;
+procedure Node033;
+procedure Node034;
+
+//added by killap - expansion pack
+procedure Node035;
+procedure Node022a;
+procedure Node022b;
+procedure Node022c;
+procedure Node036;
+//end added
+
+//pbobos2077:
+procedure NodeTeachBarter1;
+procedure NodeTeachBarter2;
+//end
+
+//~~~~~~~~~~~~~~~~ DESIGN TOOL ENDS HERE
+// The Following lines are for anything that is not needed to be
+// seen by the design Tool
+
+
+/* Local Variables which are saved. All Local Variables need to be
+   prepended by LVAR_ */
+
+#define LVAR_Herebefore                 (4)
+#define LVAR_Hostile                    (5)
+#define LVAR_Personal_Enemy             (6)
+#define LVAR_Flags                      (7) // pbs
+#define LVAR_Torr_Search_Accept         (8)
+#define LVAR_Torr_Left                  (9)
+#define LVAR_Maida_Angry                (10)
+#define LVAR_Sulik_Freed                (11)
+#define LVAR_Torr_Search_Success        (12)
+#define LVAR_High_Pelt                  (13)
+#define LVAR_05_before                  (14)
+#define LVAR_23_before                  (15)
+#define LVAR_attempted_barter           (16)
+#define LVAR_Max_Rep                    (17)
+
+// pbs/ecco:
+#define barter_tips_bit                 bit_6
+#define gave_barter_tips                lvar_bit(LVAR_Flags, barter_tips_bit)
+#define set_gave_barter_tips            set_lvar_bit_on(LVAR_Flags, barter_tips_bit)
+
+#include "../_pbs_headers/talking_heads_compat.h"
+#define start_dialog_check_head         start_gdialog_check_talking_head(4, HEAD_MAIDA, BACKGROUND1)
+
+
+/* Imported variables from the Map scripts. These should only be
+   pointers and variables that need not be saved. If a variable
+   Needs to be saved, make it a map variable (MVAR_) */
+
+
+/* Local variables which do not need to be saved between map changes. */
+variable Only_Once:=0;
+variable from_01:=0;
+variable from_23:=0;
+variable item;
+variable maida_weapon;
+
+import variable klam_bucknr_box_obj;
+
+procedure start begin
+end
+
+/* This procedure will get called each time that the map is first entered. It will
+   set up the Team number and AI packet for this critter. This will override the
+   default from the prototype, and needs to be set in scripts. */
+procedure map_enter_p_proc begin
+   Only_Once:=0;
+   set_self_team(TEAM_KLAMATH);
+   set_self_ai(AI_STORE_OWNER);
+   maida_weapon:=PID_KNIFE;
+end
+
+
+/* Every heartbeat that the critter gets, this procedure will be called. Anything from
+   Movement to attacking the player on sight can be placed in here.*/
+procedure critter_p_proc begin
+
+/* If the critter is mad at the player for any reason, it will attack and remember to attack
+   the player should the game be saved and loaded repeatedly. Additionally, if any special
+   actions need to be taken by the critter based on previous combat, the critter will remember
+   this as well. */
+
+   if ((local_var(LVAR_Hostile) == 2) and (self_can_see_dude)) then begin
+       set_local_var(LVAR_Hostile,1);
+       attack(dude_obj);
+   end
+
+end
+
+procedure combat_p_proc begin
+   if (fixed_param == 4) then begin //4 is combat_sequencing_turn
+      if (self_item_count(maida_weapon) == 0) then begin
+         item := create_object(maida_weapon,0,0);
+         add_obj_to_inven(self_obj, item);
+      end
+   end
+end
+
+/* Whenever the critter takes damage of any type, this procedure will be called. Things
+   like setting ENEMY_ and LVAR_Personal_Enemy can be set here. */
+procedure damage_p_proc begin
+
+/* If the player causes damage to this critter, then he will instantly consider the player
+   his personal enemy. In Critter_Proc or through dialog, actions will be taken against
+   the player for his evil acts. */
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Personal_Enemy,1);
+       set_global_var(GVAR_ENEMY_KLAMATH,1);
+   end
+
+end
+
+/* Any time that the player is caught stealing from this critter, Pickup_proc will be called.
+   In here, various things can happen. The most common response is instant hostility which
+   will be remembered. */
+procedure pickup_p_proc begin
+   if (source_obj == dude_obj) then begin
+       set_local_var(LVAR_Hostile,2);
+   end
+end
+
+/* The dialog system is setup and prepares the player to talk to this NPC. Where To Go
+   written by designers are placed in here. Additionally, Reactions are generated and
+   stored which affects player interactions. */
+procedure talk_p_proc begin
+   script_overrides;
+   GetReaction;
+
+   if ((REP_ENEMY_KLAMATH) or (local_var(LVAR_Personal_Enemy) == 1)) then begin
+       call Node998;
+   end
+   else begin
+      move_obj_inven_to_obj(klam_bucknr_box_obj,self_obj);
+      start_dialog_check_head;
+      gSay_Start;
+
+      if dude_low_iq then call Node002;
+      else if (local_var(LVAR_Maida_Angry) == 1) then call Node001; //moved up by killap
+      else if (global_var(GVAR_ARDIN_FREEDOM) == 1) then call Node034;
+      else if (global_var(GVAR_QUEST_RESCUE_TORR) == TORR_RESCUE_SUCCESS) then call Node023; //moved up and altered by killap
+      else if ( (local_var(LVAR_Torr_Search_Accept) == 1) and (global_var(GVAR_QUEST_RESCUE_TORR) != 3) ) then call Node030; // edit by killap - added (global_var(GVAR_QUEST_RESCUE_TORR) != 3
+      else if ( (global_var(GVAR_TORR_MISSING) == 1) and (global_var(GVAR_QUEST_RESCUE_TORR) != 3) )  then call Node024; //killap's fix: changed from (local_var(LVAR_Torr_Left) == 1)
+//      else if (local_var(LVAR_Maida_Angry) == 1) then call Node001;
+      else if (local_var(LVAR_Sulik_Freed) == 1) then call Node021;
+//      else if (local_var(LVAR_Torr_Search_Success) == 1) then call Node023; moved up and altered by killap
+      else call Node004;
+
+
+      set_local_var(LVAR_Herebefore,1);
+
+      gSay_End;
+      end_dialogue;
+      move_obj_inven_to_obj(self_obj,klam_bucknr_box_obj);
+   end
+
+end
+
+/* This procedure gets called only on the death of this NPC. Special things like
+   incrementing the death count for reputation purposes and Enemy Counters are placed
+   in here. */
+procedure destroy_p_proc begin
+   move_obj_inven_to_obj(klam_bucknr_box_obj,self_obj);
+/* Increment the aligned critter counter*/
+   inc_good_critter
+
+/* Set global_variable for Enemy status*/
+end
+
+/* Look_at_p_proc gets called any time that the player passes the cursor over any object.
+   This should only hold the most cursory of glances for the player. */
+procedure look_at_p_proc begin
+   script_overrides;
+   display_msg(mstr(100));
+end
+
+/* The player will see more indepth descriptions from this procedure. They are actively
+   looking at the critter and want more information. Things like names can be added here
+   if the critter is known to the player. */
+procedure description_p_proc begin
+   script_overrides;
+   display_msg(mstr(101));
+end
+
+procedure push_p_proc begin
+   script_overrides;
+end
+
+/* Any time a skill is used on a critter this call is made. This can be to give examinations
+   for things like Doctor skill or messages for various other skills. */
+procedure use_skill_on_p_proc begin
+end
+
+procedure maida_barter begin
+  set_local_var(LVAR_attempted_barter,1);
+
+  gdialog_mod_barter(0);
+
+  call Node009;
+end
+
+procedure barter_for_sulik begin
+   if (dude_caps > 349) then begin
+      dude_caps_adjust(-350);
+      call Node020;
+   end
+   else
+      call Node033;
+end
+
+procedure addbeer begin
+   item:=create_object(PID_BEER,0,0);
+   add_obj_to_inven(dude_obj,item);
+end
+
+procedure Node910 begin
+   DownReactMinor;
+end
+
+procedure Node911 begin
+   //if player has $5 subtract from inventory and add 1 beer(reaction + 5), else goto33
+   if (dude_caps >= 5) then begin
+      UpReactTiny;
+      dude_caps_adjust(-5);
+      call addbeer;
+      call Node004; //added by killap
+      //end
+   end
+   else
+      call Node033;
+end
+
+procedure Node912 begin
+   UpReactModerate;
+   if (dude_caps >= 30) then begin
+      dude_caps_adjust(-30); //subtract $30
+      set_map_var(MVAR_Round_Of_Drinks,1);
+      call addbeer;
+      if (local_var(LVAR_Max_Rep) < 3) then begin
+         set_local_var(LVAR_Max_Rep,local_var(LVAR_Max_Rep)+1);
+         set_global_var(GVAR_TOWN_REP_KLAMATH, global_var(GVAR_TOWN_REP_KLAMATH)+1);
+      end
+      call Node004;
+   end
+   else
+      call Node033;
+   //if player has $30 subtract from inventory, add 1 beer to players inventory,add 1 klamath town rep (max3) then goto4
+   //elsegoto33
+end
+
+procedure Node920 begin
+   NMessage(234);
+   call Node009;
+end
+
+procedure Node930 begin
+   UpReactMinor;
+   call Node005;
+    //reaction +10 goto 5
+end
+
+procedure Node940 begin
+   DownReactMajor;
+   call Node005;
+   //reaction -25 goto 5
+end
+
+procedure Node945 begin
+   DownReactMajor;
+   call Node019;
+end
+
+procedure Node950 begin
+   DownReactMinor;
+   //reaction -10 end
+end
+
+procedure Node955 begin
+   DownReactMinor;
+   call Node019;
+end
+
+procedure Node960 begin
+//barter,goto9
+
+end
+
+procedure Node970 begin
+   DownReactModerate;
+   call Node004;
+end
+
+procedure Node971 begin
+   DownReactMinor;
+   call Node005;
+end
+
+procedure Node975 begin
+   DownReactMinor;
+   call Node013;
+end
+
+procedure Node980 begin
+   UpReactMinor;
+   call Node004;
+end
+
+procedure Node981 begin
+   UpReactMinor;
+   call Node025;
+end
+
+procedure Node982 begin
+   DownReactMinor;
+   call Node004;
+end
+
+procedure Node983 begin
+   UpReactModerate;
+   call Node004;
+end
+
+procedure Node984 begin
+   UpReactModerate;
+end
+
+procedure Node985 begin
+   DownReactMinor;
+end
+
+procedure Node990 begin
+   DownReactMinor;
+   call Node011;
+end
+
+procedure Node991 begin
+   UpReactModerate;
+   set_local_var(LVAR_Torr_Search_Accept,1);
+   set_global_var(GVAR_QUEST_RESCUE_TORR, TORR_RESCUE_ACCEPT); //added by killap
+   call Node029;
+end
+
+procedure Node992 begin
+   UpReactMinor;
+   call Node028;
+end
+
+procedure Node993 begin
+   UpReactMinor;
+   call Node004;
+end
+
+procedure Node994 begin
+   UpReactTiny;
+   call Node004;
+end
+
+procedure Node995 begin
+   if (dude_charisma >= 7) then begin
+       TopReact;
+   end
+   else begin
+       BottomReact;
+   end
+end
+
+procedure Node996 begin
+   BottomReact;
+end
+
+procedure Node997 begin
+   if (dude_charisma >= 8) then
+       call Node004;
+   else
+       call Node005;
+end
+
+/* Should the Player ever cause the NPC too much discomfort that he desires to attack the player,
+   this call will be made. Essentially, it stores the Hostile vaule so that the critter remembers
+   he was once hostile towards the player.*/
+procedure Node998 begin
+   set_local_var(LVAR_Hostile,2);
+end
+
+/* Anytime that there is a need for an ending to dialog, this node is to be called. It will just
+   exit from the dialog system without any reprisals from the NPC. */
+procedure Node999 begin
+end
+
+// Not lines are allowed to be added below here
+// The Following lines are from the Design Tool
+//~~~~~~~~~~~~~~~~ DESIGN TOOL STARTS HERE
+
+procedure Node001 begin
+   from_01:=1;
+
+   if (local_var(LVAR_Herebefore) == 1) then
+      Reply(201);
+   else begin
+      set_local_var(LVAR_Herebefore, 1);
+      Reply(200);
+   end
+   NOption(202,Node910,004);//reaction -10 end
+   NOption(203,Node920,004);//speech roll, if success +20 reaction
+   NOption(204,Node930,004);//speech roll, if success +30 reaction
+   if (dude_is_male) then
+      NOption(205,Node940,006);//speech roll, if success +40 reaction
+   else
+      NOption(206,Node940,006);//speech roll, if success +40 reaction
+end
+
+procedure Node002 begin
+   Reply(210);
+   NLowOption(211,Node003);
+   NLowOption(mstr(212) + dude_name,Node003);
+   NLowOption(213,Node003);
+end
+
+procedure Node003 begin
+   NMessage(220);
+end
+
+procedure Node004 begin
+   if (from_01) then Reply(234); //need a from_01
+   else if (local_var(LVAR_Herebefore) == 1) then begin
+      if (local_var(LVAR_reaction) > 80) then Reply(232); //NBK - fix this
+      else Reply(233);
+   end
+   else begin
+      if town_rep_worse_than(5) then
+         Reply(230);
+      else
+         Reply(231);
+   end
+   //added by killap - expansion
+   if ( (global_var(GVAR_SCARE_DUNTONS) == 1) and (global_var(GVAR_KLAMATH_FIND_RUSTLERS) < FIND_RUSTLERS_SUCCESS) ) then
+      NOption(700,Node035,004);
+   //end added
+   NOption(235,Node005,004);
+   NOption(236,Node006,004);
+   NOption(237,Node007,004);
+   NOption(238,Node031,004);
+   NOption(239,Node999,004);
+end
+
+procedure Node005 begin
+   if (local_var(LVAR_05_before) == 1) then
+      Reply(241);
+   else begin
+      set_local_var(LVAR_05_before, 1);
+      Reply(240);
+   end
+   NOption(242,Node008,004);
+
+   if (global_var(GVAR_SULIK_FREE) == 0) then
+      NOption(243,Node013,004);
+
+   NOption(244,Node022,004);
+   NOption(245,Node010,004);
+   NOption(246,Node999,004);
+end
+
+procedure Node006 begin
+   Reply(250);
+   NOption(251,Node004,004);
+   NOption(252,Node999,004);
+end
+
+procedure Node007 begin
+   if (local_var(LVAR_High_Pelt) == 1) then
+      Reply(261);
+   else
+      Reply(260);
+   NOption(262,maida_barter,004);
+   NOption(263,Node004,004);
+   NOption(264,Node999,004);
+end
+
+procedure Node008 begin
+   Reply(270);
+   NOption(271,Node005,004);
+   NOption(272,Node930,004);
+   NOption(273,Node940,004);
+   NOption(274,Node950,004);
+end
+
+procedure Node009 begin
+   if (local_var(LVAR_High_Pelt) == 1) then
+      Reply(281);
+   else
+      Reply(280);
+
+   if (not gave_barter_tips) then
+      NOption(1001, NodeTeachBarter1,004);
+   NOption(282,maida_barter,004);
+   NOption(283,Node970,004);//reaction -20, goto 4
+   NOption(284,Node980,004);//reaction +10, goto 4
+   NOption(285,Node999,004);
+end
+
+procedure Node010 begin
+   mark_den_on_map
+   Reply(290);
+   NOption(291,Node012,004);
+   NOption(292,Node990,004);
+   NOption(293,Node930,004);
+   NOption(294,Node999,004);
+end
+
+procedure Node011 begin
+   Reply(300);
+   NOption(301,Node971,004);
+   NOption(302,Node971,004);
+
+   if (global_var(GVAR_SULIK_FREE) == 0) then
+      NOption(303,Node013,004);
+
+   NOption(304,Node012,004);
+   NOption(305,Node005,004);
+end
+
+procedure Node012 begin
+   mark_den_on_map
+   Reply(310);
+   NOption(311,Node011,004);
+   if (global_var(GVAR_SULIK_FREE) == 0) then //added check by killap
+      NOption(312,Node975,004);
+   NOption(313,Node005,004);
+end
+
+procedure Node013 begin
+   Reply(320);
+   NOption(321,Node014,004);
+end
+
+procedure Node014 begin
+   Reply(330);
+   NOption(331,Node015,004);
+end
+
+procedure Node015 begin
+   Reply(340);
+   NOption(341,Node016,004);
+end
+
+procedure Node016 begin
+   Reply(350);
+   NOption(351,Node017,004);
+end
+
+procedure Node017 begin
+   Reply(360);
+   NOption(361,Node005,004);
+   NOption(362,Node018,004);
+   NOption(363,Node999,004);
+end
+
+procedure Node018 begin
+   Reply(370);
+   NOption(371,Node945,004);
+   NOption(372,Node955,004);
+   NOption(373,Node950,004);
+end
+
+procedure Node019 begin
+   Reply(380);
+   NOption(381,barter_for_sulik,004);
+   NOption(382,Node999,004);
+end
+
+procedure Node020 begin
+set_local_var(LVAR_Sulik_Freed,1);
+set_global_var(GVAR_SULIK_FREE,1);
+give_xp(EXP_KC_FREE_SULIK); //added aug 06
+KC_REP_ADJUST(10)
+   if (from_23) then
+      Reply(391);
+   else
+      Reply(390);
+   GOption(392,Node980,004);
+   BOption(393,Node985,004);
+   NOption(394,Node999,004);
+end
+
+procedure Node021 begin
+   Reply(400);
+   NOption(401,Node004,004);
+   GOption(402,Node980,004);
+end
+
+procedure Node022 begin
+   // edits by killap - expansion
+   if (local_var(LVAR_Torr_Left) == 1) then begin
+      Reply(421);
+      NOption(427,Node022a,004);
+      NOption(423,Node005,004);
+   end else begin
+      call Node022a;
+   end
+
+   /*if (local_var(LVAR_Torr_Left) == 1) then
+      Reply(421);
+   else if ((global_var(GVAR_TORR_GUARD_STATUS) < TORR_GUARD_ACCEPT))
+      Reply(424);
+   else if ((global_var(GVAR_SMILEY_STATUS) < SMILEY_RETURNED))
+      Reply(420);
+   else
+      Reply(425);
+
+   if ((global_var(GVAR_TORR_GUARD_STATUS) < TORR_GUARD_ACCEPT)) then
+      NOption(426,Node005,004);
+   if ((global_var(GVAR_SMILEY_STATUS) < SMILEY_RETURNED)) then
+      NOption(422,Node005,004);
+   if (local_var(LVAR_Torr_Left) == 1) then
+      NOption(423,Node005,004);
+
+   if (local_var(LVAR_Told_Player) < 3) then begin
+      NOption(427,Node005,004);
+      set_local_var(LVAR_Told_Player,local_var(LVAR_Told_Player) + 1);
+   end
+   NOption(428,Node005,004);*/
+
+end
+
+procedure Node022a begin
+   if ( (global_var(GVAR_TORR_GUARD_STATUS) < TORR_GUARD_ACCEPT) or (global_var(GVAR_KLAMATH_FIND_RUSTLERS) < FIND_RUSTLERS_ACCEPT)) then begin
+      Reply(424);
+      NOption(710,Node036,004); //added by killap
+      NOption(712,Node022b,004);
+      NOption(426,Node005,004);
+      if (global_var(GVAR_KLAMATH_FIND_RUSTLERS) < FIND_RUSTLERS_ACCEPT) then
+         set_global_var(GVAR_KLAMATH_FIND_RUSTLERS,FIND_RUSTLERS_ACCEPT);
+   end else begin
+      call Node022b;
+   end
+end
+
+procedure Node022b begin
+   if ((global_var(GVAR_SMILEY_STATUS) < SMILEY_RETURNED)) then begin
+      Reply(420);
+      NOption(427,Node022c,004);
+      NOption(422,Node005,004);
+   end else begin
+      call Node022c;
+   end
+end
+
+procedure Node022c begin
+   Reply(425);
+   NOption(428,Node005,004);
+end
+
+procedure Node023 begin
+   from_23:=1;
+   if (local_var(LVAR_23_before) == 1) then
+      Reply(431);
+   else begin
+      set_local_var(LVAR_23_before, 1);
+      Reply(430);
+   end
+   NOption(432,Node004,004);//reaction +20, goto4 //killap's fix: changed from 005
+   NOption(433,Node999,004);//reaction +20, end   //killap's fix: changed from 006
+   if (global_var(GVAR_SULIK_FREE) == 0) then
+      NOption(434,Node020,004);
+end
+
+procedure Node024 begin
+   Reply(440);
+   NOption(441,Node981,004);//reaction +10,goto25
+   NOption(442,Node982,006);//reaction -10,goto4
+end
+
+procedure Node025 begin
+   Reply(450);
+   NOption(451,Node026,004);
+end
+
+procedure Node026 begin
+   Reply(460);
+   NOption(461,Node027,004);
+end
+
+procedure Node027 begin
+   Reply(470);
+   GOption(471,Node992,004);//reaction +15,goto28 //was NOption - killap
+   NOption(472,Node994,004);//reaction +5,goto4
+   BOption(473,Node970,004);//reaction +10,goto4   //killap's fix: changed from 980 and NOption
+end
+
+procedure Node028 begin
+   Reply(480);
+   NOption(481,Node991,004);//reaction +20,set Torr_Search_Accept, goto29
+   NOption(482,Node999,004);
+end
+
+procedure Node029 begin
+   Reply(500);
+   NOption(501,Node999,004);
+end
+
+procedure Node030 begin
+   Reply(510);
+   //NLowOption(600,Node004);
+
+   //added by killap
+   NOption(511,Node005,004);
+   NOption(512,Node029,004);
+   //end added by killap
+end
+
+procedure Node031 begin
+   Reply(520);
+   NOption(521,Node911,004);//if player has $5 subtract from inventory and add 1 beer(reaction + 5), else goto33
+   NOption(mstr(522) + dude_name + mstr(523),Node032,004);
+   NOption(524,Node004,004);
+end
+
+procedure Node032 begin
+   Reply(530);
+   NOption(531,Node912,004);
+   NOption(532,Node031,004);
+   NOption(533,Node004,004);
+end
+
+procedure Node033 begin
+   DownReactMinor; //reaction -10
+   Reply(540);
+   NOption(541,Node004,004);
+   NOption(542,Node999,004);
+end
+
+procedure Node034 begin
+   set_global_var(GVAR_ARDIN_FREEDOM,2); //dont call this node again
+   set_local_var(LVAR_Sulik_Freed,1);
+   set_global_var(GVAR_SULIK_FREE,1);
+   KC_REP_ADJUST(10)
+   give_xp(EXP_KC_FREE_SULIK); //added aug 06
+
+   Reply(550);
+   GOption(392,Node980,004);
+   BOption(393,Node985,004);
+   NOption(394,Node999,004);
+end
+//xxxxxxxxxxxxxxxxxxxx
+
+//added by killap - expansion
+procedure Node035 begin
+   Reply(701);
+   NOption(702,Node999,004);
+end
+
+procedure Node036 begin
+   Reply(711);
+   NOption(712,Node022b,004);
+   NOption(426,Node005,004);
+end
+//end added
+
+
+// added by phobos2077 - EcCo
+procedure NodeTeachBarter1 begin
+   Reply(1010);
+   NOption(600, NodeTeachBarter2,004);
+end
+
+procedure NodeTeachBarter2 begin
+   variable learn := dude_iq;
+   if (learn < 5) then learn := 5;
+
+   set_gave_barter_tips;
+   critter_mod_skill(dude_obj, SKILL_BARTER, learn);
+   display_msg( mstr(1020) );
+   Reply(1011);
+   NOption(428,Node005,004);
+   NOption(394,Node999,004);
+end
+// end added

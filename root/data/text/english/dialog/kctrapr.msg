@@ -91,7 +91,8 @@
 {507}{}{I don't have such money.}
 {508}{}{Money, here.}
 {509}{}{No money, no money...}
-{510}{}{Trapper named Smiley taught me this. Good fella... Anyway, here's how you skin them (the Trapper demonstrates)... You will get your money back in no time. They give pretty decent price for those skins here.}
+{510}{}{Trapper named Smiley taught me this. Good fella... Anyway, here's how you skin them (the Trapper demonstrates)... They give pretty decent price for those skins here.
+ Oh, almost forgot. You are going to place traps for them, right? Don't forget bait. Meat works with geckos and certain other animals. Some might like cheese instead. Got it?}
 {511}{}{Thanks, I'm sure that will come in handy.}
 {512}{}{Urk. Pretty, heh, heh, heh. Money. Heh, heh, heh. Bye.}
 {515}{}{Then we have nothing else to talk about.}

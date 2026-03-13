@@ -53,7 +53,7 @@
 #define teacher_no      (1)
 #define teacher_yes     (2)
 #define teacher_taught  (3)
-#define TEACHER_PRICE   (150)
+#define TEACHER_PRICE   (100)
 #define CRAFT_PRICE     (100)
 
 
