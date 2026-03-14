@@ -2,7 +2,7 @@
 
 A mod for Fallout 2 [Restoration Project Updated](https://github.com/BGforgeNet/Fallout2_Restoration_Project).
 
-A Lite version of the mod is also available, which does not require Restoration Project.
+An "Lite" version of the mod is also available, which does not require Restoration Project. See release page for downloads.
 
 By phobos2077
 
@@ -15,11 +15,11 @@ In short, this is a conservative gameplay overhaul.
 
 Design goals:
 - make more skills useful, to make non-standard builds more viable (Barter, Throwing, Melee, Repair, etc.)
-- add a little more challenge to the combat, barter and other aspects of the game, without any "hardcore"
+- add a little more challenge to the combat, barter, stealing and other aspects of the game, without any "hardcore"
 - make most weapons and other items in the game have a purpose
 - keep things configurable and modular, so the players can tweak mod to their liking and mod authors can re-use parts of it in their own creations
-- attempt to fix balance issues introduced by RP (more "free" loot, much more EXP, etc.) as well as original game
-- stay true to the original game mechanics and design as much as possibly, always try to improve when possible, not reinvent
+- fix balance issues introduced by RP (more "free" loot, much more EXP, etc.) as well as original game
+- stay true to the original game mechanics and design as much as possible, always try to improve when possible, not reinvent
 
 
 ## Main Highlights
@@ -51,15 +51,15 @@ Design goals:
 - Barter skill matters more as it affects prices more strongly now
 - value of goods sold to NPC's now also depend on Barter skill (instead of always being at 100%) and item category
 - some items vary in prices between towns, so you can trade for profit with enough skill
-- raise money by selling new types of monster parts or by doing several new quests (see details)
+- make money by selling new types of monster parts or by doing several new quests (see details)
 - reduced and made harder to get some overpowered loot in several locations
-- ammo, drugs and weapon abundance from fallen foes reduced
+- ammo, drugs and weapon abundance from fallen foes and containers is reduced
 
 **Progression**:
 - several small adjustments to quest flow to integrate content from Restoration Project better into the game
 - some gangs made tougher (Metzger, Salvatore, Vault 15 raiders)
 - redesigned entrances to the Raiders hideout for more challenge and variety
-- reduced unbalanced EXP rewards for killing the same critter type many times as well as for certain select quests
+- reduced XP rewards for killing the same critter type many times as well as for certain select quests to account for added RP content
 
 **Skills**:
 - healing system (First Aid, Doctor, Repair) is more useful with better logic, higher HP restore amounts and more
@@ -70,17 +70,17 @@ Design goals:
 - a couple of random-encounter-based "Bounty Hunt" quests
 - a couple of fetch quests involving new monster/animal parts
 
-For a detailed description of all features, see [full readme](https://github.com/phobos2077/fo2_ecco/blob/master/docs/ecco_readme.txt).
+For a detailed description of all features, see [full readme](https://github.com/phobos2077/fo2_ecco/blob/master/docs/ecco_readme.md).
 
 ## COMPATIBILITY
 
 Can ONLY be used with the *Restoration Project: Updated* and *Maps Updated* by Pixote (see release page for more info).
 
-See [full readme](https://github.com/phobos2077/fo2_ecco/blob/master/docs/ecco_readme.txt) for details on compatibility with other mods.
+See [full readme](https://github.com/phobos2077/fo2_ecco/blob/master/docs/ecco_readme.md) for details on compatibility with other mods.
 
 Start of a new game is **required**, if you're updating from EcCo 0.6.2 or basic RPU.
 
-[sfall](https://github.com/sfall-team/sfall) **v4.4.0** or higher is required! (comes with RPU)
+[sfall](https://github.com/sfall-team/sfall) **v4.4.5** or higher is required! (comes with RPU)
 
 ## INSTALLATION
 

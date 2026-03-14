@@ -178,6 +178,7 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 - Weapon loadouts were adjusted in respect to new weapon balance.
 - Most new weapons are used by people in the wasteland.
 - Throwing weapons will be used against you more often.
+- Cave encounters have less critters distributed in a smarter way and useful things added for looting.
 - Ranged enemies will sure to have some spare ammo.
 
 
