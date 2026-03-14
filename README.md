@@ -72,6 +72,8 @@ Design goals:
 
 For a detailed description of all features, see [full readme](https://github.com/phobos2077/fo2_ecco/blob/master/docs/ecco_readme.md).
 
+If you want to dive deeper into the new damage formula and weapon balance, see my [FO2 Damage Calculator app](https://phobos2077.github.io/fo2_ecco/ttx/damage_calc.html).
+
 ## COMPATIBILITY
 
 Can ONLY be used with the *Restoration Project: Updated* and *Maps Updated* by Pixote (see release page for more info).
