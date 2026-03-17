@@ -25,7 +25,7 @@ procedure assertNotEquals(variable desc, variable a, variable b) begin
 end
 #endif
 
-#define ARRAY_MAX_STRING	   (255)
+#define ARRAY_MAX_STRING	   (1024)
 #define ARRAY_MAX_SIZE		 (100000)
 
 procedure array_test_suite begin
@@ -155,10 +155,10 @@ procedure array_test_suite begin
    display_msg("Testing save/load...");
    arr := [2,1];
    arr2 := {1:2};
-   s := "";
+   s := "wtf";
    k := 1;
-   if (arr and not arr2[k]) then s := "ok";
-   call assertEquals("bracket syntax", "ok", s);
+   if (arr and arr2[k]) then s := "ok";
+   call assertEquals("bracket syntax", s, "ok");
    save_array("myarray", arr);
    call assertEquals("load 1", load_array("myarray"), arr);
    save_array("myarray", arr2);
@@ -176,7 +176,12 @@ procedure array_test_suite begin
    call assertEquals("unsave array 1", load_array(0.1), 0);
    call assertEquals("unsave array 2", len_array(arr), 2);
    call assertEquals("saved arrays 3", len_array(list_saved_arrays), len_array(arr2) - 1);
-   
+
+   display_msg("Testing nested expressions...");
+   arr := [["one", "two"], {"three": "four"}];
+   call assertEquals("nested 1", arr[0][1], "two");
+   call assertEquals("nested 2", arr[1].three, "four");
+
    display_msg("All tests finished with "+test_suite_errors+" errors.");
 end
 
@@ -198,3 +203,9 @@ procedure arrays_lib_tests begin
    display_msg("All tests finished with "+test_suite_errors+" errors.");
 end
 
+procedure start begin
+   if not game_loaded then return;
+
+   call array_test_suite;
+   call arrays_lib_tests;
+end

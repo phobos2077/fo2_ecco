@@ -5,6 +5,8 @@
    - PC must pass a steal skill check
 */
 
+#pragma sce
+
 #include "../sfall/sfall.h"
 #include "../sfall/define_lite.h"
 #include "../sfall/define_extra.h"
@@ -75,19 +77,26 @@ procedure useobjon_handler begin
       source := get_sfall_arg,
       item := get_sfall_arg,
       itemPid := obj_pid(item),
-      skillMod;
+      skillMod, itemDanger;
 
    if (source != dude_obj or 
       obj_type(target) != OBJ_TYPE_CRITTER or
       obj_in_party(target)) then return;
 
-   variable targetFlags := get_object_data(target, OBJ_DATA_DAMAGE_FLAGS);
-   if ((targetFlags bwand (DAM_KNOCKED_OUT bwor DAM_KNOCKED_DOWN bwor DAM_DEAD)) != 0 or
-      not critter_is_intelligent(target) or
-      is_in_array(itemPid, ini_ignore_drug_list)) then return;
+   variable targetFlags := critter_state(target);
+   if ((critter_state(target) bwand (CRITTER_IS_DEAD bwor CRITTER_IS_PRONE)) != 0 or
+      not critter_is_intelligent(target)) then return;
+
+   itemDanger := 2
+      if is_in_array(itemPid, ini_attack_drug_list)
+      else 1
+         if (is_in_array(itemPid, ini_warn_drug_list))
+         else 0;
+   
+   if (itemDanger <= 0) then return;
 
    skillMod := ini_base_skill_mod + ini_skill_mod_perception_mult * get_perception(target);
-   if (targetFlags bwand (DAM_BLIND) != 0) then begin
+   if ((targetFlags bwand DAM_BLIND) != 0) then begin
       skillMod += 20;
    end
    if (is_in_front(source, target)) then begin
@@ -99,13 +108,13 @@ procedure useobjon_handler begin
    if (sneak_success and is_success(roll_vs_skill(dude_obj, SKILL_STEAL, skillMod))) then return;
 
    set_sfall_return(0);
-   if (is_in_array(itemPid, ini_warn_drug_list)) then begin
-      float_msg(target, g_mstr(random(3054, 3058)), FLOAT_COLOR_BAD);
-   end
-   else if (is_in_array(itemPid, ini_attack_drug_list)) then begin
+   if (itemDanger > 1) then begin
       float_msg(target, g_mstr(random(3060, 3062)), FLOAT_COLOR_BAD);
       set_self(target);
       attack(source);
+   end
+   else begin
+      float_msg(target, g_mstr(random(3054, 3058)), FLOAT_COLOR_BAD);
    end
 end
 
