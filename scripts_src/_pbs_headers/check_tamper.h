@@ -46,7 +46,7 @@
 procedure check_tamper(variable isLoud := false) begin
 #ifdef WATCHER_OBJ
    variable user_obj := source_obj;
-   if (DO_CHECK_TAMPER_CONDITION and WATCHER_OBJ) then begin
+   if (DO_CHECK_TAMPER_CONDITION andAlso WATCHER_OBJ) then begin
       ndebug("Checking tamper vs " + obj_name(WATCHER_OBJ));
       if (is_visible(WATCHER_OBJ) and is_critter_dead(WATCHER_OBJ) == false and (isLoud or watch_box_conditions)) then begin
          ndebug("Tampered! triggering watcher");

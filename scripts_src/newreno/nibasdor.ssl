@@ -9,6 +9,7 @@
 #define MAX_DAMAGE         (50)
 
 #define WATCHER_OBJ        bishop_stair_guard_obj
+#define DO_CHECK_TAMPER_CONDITION  (cur_map_index == MAP_NEW_RENO_2)
 
 #include "../generic/zimtldor.ssl"
 #include "../headers/newreno.h"
