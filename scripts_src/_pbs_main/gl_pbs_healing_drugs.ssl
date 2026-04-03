@@ -1,3 +1,5 @@
+#pragma sce
+
 /*
    Healing drug tweaks:
    - Healing drug immediate heal amount will be scaled with First Aid skill (player only).
@@ -124,24 +126,25 @@ int     ret0 - overrides hard-coded handler and selects what should happen with 
 */
 procedure useobjon_hook begin
    variable
-      target := get_sfall_arg,
-      user := get_sfall_arg,
-      item := get_sfall_arg,
+      // target := get_sfall_arg,
+      user := get_sfall_arg_at(1),
+      item := get_sfall_arg_at(2),
       itemPid := obj_pid(item);
 
-   //display_msg(string_format("%s tries to use %s (%d)", obj_name(user), obj_name(item), proto_data(itemPid, it_type)));
-   if (is_scalable_healing_item(itemPid)) then begin
-      if (user == dude_obj) then begin
-         variable
-            healingAmt := calculate_healing_min_max(itemPid, user);
+   //display_msg(string_format("%s tries to use %s", obj_name(user), obj_name(item) /*proto_data(itemPid, it_type)*/));
 
-         set_proto_data(itemPid, PROTO_DR_AMOUNT_1_A, healingAmt[0]);
-         set_proto_data(itemPid, PROTO_DR_AMOUNT_1_B, healingAmt[1]);
-         debug_log(string_format("Changed %s min: %d, max: %d", obj_name(item), healingAmt[0], healingAmt[1]));
-      end else begin // for NPC's always use defaults
-         set_proto_data(itemPid, PROTO_DR_AMOUNT_1_A, default_stats[itemPid][HI_STAT_MIN_HP]);
-         set_proto_data(itemPid, PROTO_DR_AMOUNT_1_B, default_stats[itemPid][HI_STAT_MAX_HP]);
-      end
+   if (not item or (obj_type(item) != OBJ_TYPE_ITEM) or (not is_scalable_healing_item(itemPid))) then return;
+
+   if (user == dude_obj) then begin
+      variable
+         healingAmt := calculate_healing_min_max(itemPid, user);
+
+      set_proto_data(itemPid, PROTO_DR_AMOUNT_1_A, healingAmt[0]);
+      set_proto_data(itemPid, PROTO_DR_AMOUNT_1_B, healingAmt[1]);
+      debug_log(string_format("Changed %s min: %d, max: %d", obj_name(item), healingAmt[0], healingAmt[1]));
+   end else begin // for NPC's always use defaults
+      set_proto_data(itemPid, PROTO_DR_AMOUNT_1_A, default_stats[itemPid][HI_STAT_MIN_HP]);
+      set_proto_data(itemPid, PROTO_DR_AMOUNT_1_B, default_stats[itemPid][HI_STAT_MAX_HP]);
    end
 end
 

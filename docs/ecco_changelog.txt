@@ -1,6 +1,12 @@
 -=== CHANGELOG ===-
 
 
+v1.0.1:
+- fixed NPC drugging script preventing quest-related use of items
+- fixed doors in Mordino's basement being unlocked and potentially crash the game when open
+- fixed potential crash when going to Becky's basement in Den
+
+
 v1.0.0:
 > Encounters:
 - improved cave encounters critter distribution (lower numbers) and added useful things to loot
