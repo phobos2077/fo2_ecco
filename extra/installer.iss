@@ -4,7 +4,7 @@
 
 [Setup]
 #define MyAppName "EcCo Gameplay Overhaul for Fallout 2: RPU"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "phobos2077"
 
 #define RPUVersion "2.4"
@@ -19,7 +19,7 @@
 AppName={#MyAppName}
 AppID=pbs_fallout2_economy_and_combat
 AppVerName={#MyAppPublisher} {#MyAppName}
-OutputBaseFilename=pbs_fo2rpu_ecco_mod_v1-0-0
+OutputBaseFilename=pbs_fo2rpu_ecco_mod_v1-0-1
 DefaultDirName={sd}\Games\Fallout2\
 AppendDefaultDirName=no
 ;UsePreviousAppDir=no

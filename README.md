@@ -2,7 +2,7 @@
 
 A mod for Fallout 2 [Restoration Project Updated](https://github.com/BGforgeNet/Fallout2_Restoration_Project).
 
-An "Lite" version of the mod is also available, which does not require Restoration Project. See release page for downloads.
+A "Lite" version of the mod is also available, which does not require Restoration Project. See release page for downloads.
 
 By phobos2077
 
@@ -26,7 +26,7 @@ Design goals:
 
 **Crafting System**:
 - craft various items: weapons, ammo, drugs, armor, etc.
-- available via a new interface button or a via hotkey
+- available via a new interface button or via a hotkey
 - unlock new items by finding crafting teachers across the game or buying schematics from vendors
 
 **Traps System**:
@@ -47,13 +47,13 @@ Design goals:
 - "fair" inventory management in combat - no cost to open, 2 AP per action, 4 AP to reload (mag sizes matter now)
 
 **Economy**:
-- overall prices are reduced by ~40% so quest rewards and money sinks are more meaningful now
+- most prices are reduced by ~40% so quest rewards and money sinks are more meaningful now
 - Barter skill matters more as it affects prices more strongly now
-- value of goods sold to NPC's now also depend on Barter skill (instead of always being at 100%) and item category
+- value of goods sold to NPC's now also depends on Barter skill (instead of always being at 100%) and item category
 - some items vary in prices between towns, so you can trade for profit with enough skill
 - make money by selling new types of monster parts or by doing several new quests (see details)
 - reduced and made harder to get some overpowered loot in several locations
-- ammo, drugs and weapon abundance from fallen foes and containers is reduced
+- ammo, drugs and weapon abundance from fallen foes is reduced, as well as ammo in containers
 
 **Progression**:
 - several small adjustments to quest flow to integrate content from Restoration Project better into the game
@@ -64,7 +64,7 @@ Design goals:
 **Skills**:
 - healing system (First Aid, Doctor, Repair) is more useful with better logic, higher HP restore amounts and more
 - stealing system is reworked to be more fair and encourage skill progression
-- using drugs on NPC's require to pass skill checks to succeed
+- using drugs on NPC's requires passing skill checks to succeed
 
 **New Quests**:
 - a couple of random-encounter-based "Bounty Hunt" quests
@@ -76,7 +76,7 @@ If you want to dive deeper into the new damage formula and weapon balance, see m
 
 ## COMPATIBILITY
 
-Can ONLY be used with the *Restoration Project: Updated* and *Maps Updated* by Pixote (see release page for more info).
+Can ONLY be used with the *Restoration Project: Updated* (see release page for more info).
 
 See [full readme](https://github.com/phobos2077/fo2_ecco/blob/master/docs/ecco_readme.md) for details on compatibility with other mods.
 
@@ -88,4 +88,4 @@ Start of a new game is **required**, if you're updating from EcCo 0.6.2 or basic
 
 Find the latest release on [releases page](https://github.com/phobos2077/fo2_ecco/releases) and follow instructions.
 
-If you don't like any changes to mechanics or some other aspects, feel free to read and edit the INI files in the mods/ecco folder.
+If you don't like any changes to mechanics or some other aspects, feel free to read and edit the INI files in the ecco_config folder.

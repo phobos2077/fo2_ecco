@@ -122,7 +122,7 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 ### ENERGY WEAPONS
 - New Taser Pistol to stun enemies and a new laser weapon for early/mid game will make this skill useful earlier.
 - Laser weapons are now very effective against everything below Combat/Metal Armor.
-- "Real" Turbo Plasma rifle, costs 4 AP for shot (max damage reduced a bit).
+- "Real" Turbo Plasma rifle: same damage as the regular one, but costs 4 AP per shot and has longer range.
 - Strong single-shot energy weapons now spend more than 1 cell round for each shot.
 
 
