@@ -140,7 +140,7 @@ procedure apcost_handler begin
          cost := 4 - (has_trait(TRAIT_PERK, dude_obj, PERK_bonus_hth_attacks) > 0);
       end
       if (type == ATKTYPE_HIPKICK) or (type == ATKTYPE_HOOKKICK) or (type == ATKTYPE_PIERCINGKICK) then begin
-         cost := 5 - (has_trait(TRAIT_PERK, dude_obj, PERK_weapon_fast_reload) > 0);
+         cost := 5 - (has_trait(TRAIT_PERK, dude_obj, PERK_bonus_hth_attacks) > 0);
       end
       if (cost != -1 and aimed) then 
          cost++;

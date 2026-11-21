@@ -1,7 +1,7 @@
 # EcCo: RP 
 _a Fallout 2: Restoration Project mod by phobos2077_
 
-**v1.0.0**
+**v1.0.1**
 
 
 ### CRAFTING
@@ -22,7 +22,7 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 - You need to pass traps skill check to successfully arm the trap, if you are bad enough, you may end up blowing yourself. But if you're good, you'll have a chance of critical hit with your trap.
 - You can dismantle any trap (both armament and trap kit will return to your inventory) just Using them or using Traps Skill on them.
 - Some traps can be used several times (see number of remaining uses in trap description).
-- Player and party members can't be hurt by your traps.
+- Player and party members won't set off your traps. But explosions will still hurt anyone nearby, so keep your distance!
 - Bear Trap can immobilize the enemy for several turns. He can still shoot you though!
 - When using explosives, explosion damage is approximately equal to damage when using those items normally; damage type is also derived from item (EMP for Pulse grenade, Fire for Molotov, etc.).
 - Some traps require the enemy to step on the exact tile of the trap, while others can trigger in a small radius.
@@ -36,17 +36,17 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 - Enemy AI will now use aimed shots much more often.
 - Critical hits to arms will sometimes make target drop their weapon.
 - Bonus Move perk is now available at level 3 (was 6) and grants 3 Move Points per level (was 2).
-- Most "Melee" NPC's now get Bonus Move perk to close on their gun-wielding foes and make combat more dynamic.
-- Attacking an enemy while sneaking and undetected grants bonus damage.
-- Attacking an enemy from behind with a club-type weapon might knock them out.
+- "Melee" NPC's with high Agility now get bonus Move Points to close on their gun-wielding foes and make combat more dynamic.
+- Attacking an enemy while sneaking and undetected may turn your hit into a critical hit (chance depends on Sneak skill).
+- Hitting a human in the head from behind with a club or sledge while sneaking might knock them out (chance depends on Sneak skill).
 
 
 ### BARTER & ECONOMY
 - Value of items sold to NPC's is affected by skill and generally lower until you get Barter skill high enough.
 - Buy/sell ratio differs between item categories. For example, NPC's will offer less for weapons and armor (vs asking price), to balance against the abundance/high price of these loot items.
 - Buying prices have a steeper curve to increase the importance of Barter skill (slightly higher on low skill, lower on high skill) - see barter.ini or barter SSL code for detailed formula.
-- All prices are ~40% lower than base game. This makes money more valuable and quest-related money transactions more meaningful.
-- Prices of some end-game transactions were reduced to accomodate deflated economy.
+- Most prices are ~40% lower than base game. This makes money more valuable and quest-related money transactions more meaningful.
+- Prices of some end-game transactions were reduced to accommodate deflated economy.
 - Some misc items prices were adjusted, so you can still make profit selling them, especially in early game (gecko pelts and scorpion tails in Klamath, etc.).
 - Some items have their prices differ between towns to simulate supply/demand differences.
 - New book for Barter skill added.
@@ -62,8 +62,8 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 
 
 ### LOOTING
-- There is a chance a weapon will get destroyed when critter dies (except unique and rare weapons).
-- Corpses and containers are stripped from some percent of ammo and stimpaks, thus reducing abundance and incentivizing shopping.
+- There is a chance a weapon will get destroyed when critter dies.
+- Corpses are stripped from some percent of ammo and drugs (stimpaks, etc.), and containers have less ammo, thus reducing abundance and incentivizing shopping.
 - Loot in general is slightly reduced/rearranged in various containers across the game, especially in certain underground facilities.
 - NPCs will be more likely to detect if you're stealing from their property.
 - EPA: room with most powerful stuff at security level will be harder to get in.
@@ -79,12 +79,12 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 - All passive healing was considerably nerfed to motivate more interesting healing options.
 - More doctors now heal party members and crippled limbs.
 - Stimpak/Healing Powder HP gain amount scales with your First Aid skill.
-- New book for Doctor skill.
+- Medical Book now raises Doctor skill.
 
 
 ### AMMO & DAMAGE
 - Parameters of all ammo types were carefully edited to fix vanilla issues and add choices.
-- AP/FMJ generally do less damage then JHP against unarmored, but is effective against armored targets (thanks to new damage formula).
+- AP/FMJ generally do less damage than JHP against unarmored, but is effective against armored targets (thanks to new damage formula).
 - Reduced pack sizes of certain ammo calibers to further balance the total amount of that ammo in game.
 - Weight and cost was rebalanced as well.
 - To further reduce "ammo swimming", all dying critters are stripped from large portion of their ammo.
@@ -95,7 +95,7 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 
 ### GUNS
 - You can see extended weapon stats (examine them twice or hold Ctrl).
-- All two-handed ranged weapons have a hit chance penalty at point-blank range, giving pistols an extra advantage.
+- Rifles and big guns (but not SMGs or Sawed-off shotgun) have a hit chance penalty at point-blank range, giving pistols an extra advantage.
 - New guns for .44 Magnum and 14mm calibers to add variety and make these calibers feel "complete".
 - Reload now costs 4 AP up from 2. This makes magazine capacity a much bigger factor. Some weapon stats were adjusted to compensate for this change.
 - Shotgun Shells: much more deadly against unarmored critters, but cannot penetrate heavy armor and limited in range (but Slugs can!).
@@ -130,10 +130,10 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 - New grenade type that you can craft yourself, as well as recipe for Molotov will ensure weapon availability early.
 - New, more powerful, melee thrown weapons for mid-game, including some that return to you after throw on successful skill roll.
 - All thrown melee weapons now have a big critical chance and armor penetration boost.
-- Melee Damage stat now also applies to thrown weapons, just like it does for Melee.
+- Melee Damage stat now also applies to thrown weapons (70% of it).
 - Stats for thrown weapons were improved to make them more useful.
 - Molotov Cocktail now inflicts fire damage and does not knock back targets.
-- Increased damage by all grenades.
+- Increased damage of Frag and Plasma grenades.
 - EMP grenades now can temporarily disrupt power armors, forcing target to lose turn (also their radius was increased).
 
 
@@ -150,10 +150,10 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 
 ### ARMOR
 - Armor Class lowered for heavy armor (metal and power). AC only affects hit chance, so it makes sense bigger/bulkier target is easier to hit.
-- Laser resistance changed: leather - zero protection, combat - mediocre, metal - good, power armor & tesla - great protection.
+- Laser resistance changed: leather - little to no protection, combat & metal - mediocre, power armor & tesla - great protection.
 - Explosion and Fire resistance slightly lowered for some armor.
 - All changes to armor are applied to all critters wielding that armor.
-- Areness perk now allows you to see NPC's protection per damage type as well as their AC (hold Ctrl when examining).
+- Awareness perk now allows you to see NPC's protection per damage type as well as their AC (hold Ctrl when examining).
 
 
 ### CRITTERS
@@ -162,15 +162,15 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 
 
 ### QUESTS and NPCs
-- Lidya in VC rewards 500 for shipment of alcohol (was 300).
+- Lydia in VC rewards 500 for shipment of alcohol (was 300).
 - Better reward for VC plow quest.
-- Algernon need rest after work.
+- Algernon needs rest after work.
 - Small changes which better integrate some content restored by RP. A few hooks for some content, a new scouting quest in Vault City, and adjustments to the Vault Village quest. (by Lujo)
 
 
 ### MERCHANTS
 - More crafting components sold at general stores.
-- Cash tender in Redding now offers cash from 1000 to 7000 depending on player's current level.
+- Cash tender in Redding now offers more cash as player's level grows.
 - Changed some merchants stock to offer some new items and more ammo for purchase.
 
 
@@ -192,7 +192,7 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 - Learning crafting recipes (see "crafting" section).
 - One of the trappers in Klamath can now teach you gecko skinning (not free).
 - Kill groups of robbers near Redding.
-- Hunt down several rogues throughout the wastelend, one-by-one (NCR).
+- Hunt down several rogues throughout the wasteland, one-by-one (NCR).
 - Bring a number of hides to Modoc tannery.
 - Bring a number of tentacles to NCR doctor.
 
@@ -203,8 +203,8 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 - Small adjustments to base value formulas of some skills for better balance.
 - Buffed some underused perks: Demolition Expert, Pyromaniac, Survivalist, MrFixit, Medic, Ghost, Ranger, Harmless, Salesman.
 - Some mine traps in the game became more dangerous.
-- Nerfed slot jinxer perk: slots break for month instead of 1 day, high rollers give 2/5 of initial money and there is a luck-based chance to fail. You can still become insanely rich by gambling.
-- Nerfed gambling dice: you can win maximum about 1000-5000 caps per table, per week (that's still a LOT of money).
+- Nerfed slot jinxer perk: slots break for month instead of 1 day, high roller and jackpot machines give 2/5 of initial money and there is a luck-based chance to fail. You can still become insanely rich by gambling.
+- Nerfed gambling dice: each table has a limited amount of caps you can win per week (that's still a LOT of money).
 - Bonus Rate of Fire perk was removed (all pistols were completely OP if you take it, especially with the appropriate Trait).
 - Hakunin dreams delayed, so they happen at more appropriate pace (RP has more content...).
 
@@ -218,6 +218,7 @@ _a Fallout 2: Restoration Project mod by phobos2077_
 ```
 DamageFormula=0
 ObjCanHearObjFix=1
+ObjCanSeeObj_ShootThru_Fix=1
 DerivedStats=sfall\stats.ini
 SkillsFile=sfall\skills.ini
 PerksFile=sfall\perks.ini

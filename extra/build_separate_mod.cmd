@@ -108,7 +108,7 @@ cd /d "%root%\separate_mods\%modName%"
 
 echo Running 7Zip...
 set exe="C:\Program Files\7-Zip\7z.exe"
-%exe% a %zipFilePath% mods\* ecco_config\* sfall\* *.txt > nul
+%exe% a %zipFilePath% mods\* ecco_config\* sfall\* *.txt *.md > nul
 
 cd /d "%cwd%"
 echo Done!

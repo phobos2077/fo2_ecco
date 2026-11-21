@@ -41,7 +41,7 @@
 {2100}{}{Brass Knuckles}
 {2101}{}{Hardened knuckle grip that is actually made out of steel. They protect your hand, and do more damage, in unarmed combat. Min ST: 1.}
 {2200}{}{14mm Pistol}
-{2201}{}{A Sig-Sauer 14mm Auto Pistol. Large, single shot handgun. Excellent craftsmanship. Large caliber provides very high penetration. Min ST: 4.}
+{2201}{}{A Sig-Sauer 14mm Auto Pistol. Large, single shot handgun. Excellent craftsmanship. Large caliber provides very high penetration. Min ST: 5.}
 {2300}{}{Assault Rifle}
 {2301}{}{An AK-112 5mm Assault Rifle. An old military model, out of use around the time of the war. Can fire single-shot or burst, using the high velocity 5mm rounds. Min ST: 5.}
 {2400}{}{Plasma Pistol}
@@ -690,7 +690,7 @@
 {35200}{}{H&K G11}
 {35201}{}{This gun revolutionized assault weapon design. The weapon fires a caseless cartridge consisting of a block of propellant with a bullet buried inside. The resultant weight and space savings allow this weapon to have a very high magazine capacity. Min ST: 5.}
 {35300}{}{XL70E3}
-{35301}{}{This was an experimental weapon at the time of the war. Manufactured, primarily, from high-strength polymers, the weapon is almost indestructible. It's light, fast firing, accurate, and can be broken down without the use of any tools. Min ST: 5.}
+{35301}{}{This was an experimental weapon at the time of the war. Manufactured, primarily, from high-strength polymers, the weapon is almost indestructible. It's light, fast firing, accurate, and can be broken down without the use of any tools. Min ST: 4.}
 {35400}{}{Pancor Jackhammer}
 {35401}{}{The Jackhammer, despite its name, is an easy to control shotgun, even when fired on full automatic. The popular bullpup design, which places the magazine behind the trigger, makes the weapon well balanced & easy to control. Min ST: 5.}
 {35500}{}{Light Support Weapon}
@@ -771,7 +771,7 @@
 {39600}{}{YK32 Pulse Pistol}
 {39601}{}{The YK32 is an electrical pulse weapon that was developed by the Yuma Flats Energy Consortium. Though powerful, the YK32 was never considered a practical weapon due to its inefficient energy usage and bulky design. Min ST: 3.}
 {39700}{}{YK42B Pulse Rifle}
-{39701}{}{The YK42B is an electrical pulse weapon that was developed by the Yuma Flats Energy Consortium. It is considered a far superior weapon to the YK32 pistol, having a greater charge capacity and range. Min ST: 3.}
+{39701}{}{The YK42B is an electrical pulse weapon that was developed by the Yuma Flats Energy Consortium. It is considered a far superior weapon to the YK32 pistol, having a greater charge capacity and range. Min ST: 6.}
 {39800}{}{.44 Magnum (Speed Load)}
 {39801}{}{A .44 Magnum Revolver with a speed loader. Min ST: 5.}
 {39900}{}{Super Cattle Prod}
